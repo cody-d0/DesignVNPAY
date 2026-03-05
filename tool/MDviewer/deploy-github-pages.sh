@@ -1,11 +1,9 @@
 #!/bin/bash
-# Deploy to GitHub Pages Script
+# Deploy MDviewer to GitHub Pages — Manual Script
+# Run from repo root: ./tool/MDviewer/deploy-github-pages.sh
+# Or use GitHub Actions (recommended): push to MDviewer branch
 
 set -e  # Exit on error
-
-echo "🚀 GitHub Pages Deployment Script"
-echo "=================================="
-echo ""
 
 # Colors
 GREEN='\033[0;32m'
@@ -14,10 +12,23 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
+echo "🚀 MDviewer → GitHub Pages Deploy"
+echo "=================================="
+echo ""
+
+# Navigate to repo root (script may be called from anywhere)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+VIEWER_DIR="$SCRIPT_DIR"
+cd "$REPO_ROOT"
+
+echo -e "${BLUE}📍 Repo root: ${REPO_ROOT}${NC}"
+echo -e "${BLUE}📍 Viewer dir: ${VIEWER_DIR}${NC}"
+echo ""
+
 # Check if git is initialized
 if [ ! -d .git ]; then
     echo -e "${RED}❌ Error: Not a git repository${NC}"
-    echo "Run: git init"
     exit 1
 fi
 
@@ -25,30 +36,10 @@ fi
 REMOTE_URL=$(git remote get-url origin 2>/dev/null || echo "")
 
 if [ -z "$REMOTE_URL" ]; then
-    echo -e "${YELLOW}⚠️  No remote repository configured${NC}"
-    echo ""
-    echo "Please follow these steps:"
-    echo ""
-    echo "1. Create a new repository on GitHub:"
-    echo "   https://github.com/new"
-    echo ""
-    echo "2. Name it: markdown-viewer (or your preferred name)"
-    echo "3. Make it PUBLIC (required for free GitHub Pages)"
-    echo "4. Don't initialize with README"
-    echo ""
-    echo "5. Then run these commands:"
-    echo "   git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git"
-    echo "   git branch -M main"
-    echo "   git add ."
-    echo "   git commit -m \"Initial commit\""
-    echo "   git push -u origin main"
-    echo ""
-    echo "6. Run this script again: ./deploy-github-pages.sh"
+    echo -e "${RED}❌ No remote repository configured${NC}"
+    echo "Run: git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git"
     exit 1
 fi
-
-echo -e "${BLUE}📍 Repository: ${REMOTE_URL}${NC}"
-echo ""
 
 # Extract username and repo name from URL
 if [[ $REMOTE_URL =~ github\.com[:/]([^/]+)/([^/.]+) ]]; then
@@ -60,70 +51,61 @@ else
     exit 1
 fi
 
-echo -e "${BLUE}👤 Username: ${USERNAME}${NC}"
-echo -e "${BLUE}📦 Repository: ${REPO}${NC}"
-echo -e "${BLUE}🌐 Pages URL: ${PAGES_URL}${NC}"
+echo -e "${BLUE}👤 User: ${USERNAME}${NC}"
+echo -e "${BLUE}📦 Repo: ${REPO}${NC}"
+echo -e "${BLUE}🌐 URL:  ${PAGES_URL}${NC}"
 echo ""
 
-# Generate manifest from MarkdownSV folder
-echo -e "${YELLOW}📝 Generating file manifest from MarkdownSV...${NC}"
-CONTENT_ROOT="../MarkdownSV" python3 generate-manifest.py
+# Step 1: Generate manifest
+echo -e "${YELLOW}📝 Generating files.json from MarkdownSV...${NC}"
+cd "$VIEWER_DIR"
+python3 generate-manifest.py --content MarkdownSV
+cd "$REPO_ROOT"
 
-if [ ! -f files.json ]; then
+if [ ! -f "$VIEWER_DIR/files.json" ]; then
     echo -e "${RED}❌ Error: files.json not generated${NC}"
     exit 1
 fi
-
 echo -e "${GREEN}✅ Manifest generated${NC}"
 echo ""
 
-# Check for uncommitted changes
-if [[ -n $(git status -s) ]]; then
-    echo -e "${YELLOW}📦 Committing changes...${NC}"
-    git add .
-    git commit -m "Update for GitHub Pages deployment" || true
-    echo -e "${GREEN}✅ Changes committed${NC}"
-    echo ""
+# Step 2: Prepare deploy folder
+echo -e "${YELLOW}📦 Preparing deploy folder...${NC}"
+TEMP_DIR=$(mktemp -d)
+echo "   Temp dir: $TEMP_DIR"
+
+# Copy viewer SPA
+cp "$VIEWER_DIR/index.html" "$TEMP_DIR/"
+cp "$VIEWER_DIR/files.json" "$TEMP_DIR/"
+
+# Copy markdown content (flat copy so paths match manifest)
+if [ -d "$VIEWER_DIR/MarkdownSV" ]; then
+    cp -r "$VIEWER_DIR/MarkdownSV/." "$TEMP_DIR/"
+    echo -e "${GREEN}   ✅ Copied MarkdownSV content${NC}"
+else
+    echo -e "${RED}❌ MarkdownSV folder not found${NC}"
+    rm -rf "$TEMP_DIR"
+    exit 1
 fi
 
-# Push to main
-echo -e "${YELLOW}⬆️  Pushing to main branch...${NC}"
-git push origin main
+# Add .nojekyll to prevent Jekyll processing (important for _ prefixed files)
+touch "$TEMP_DIR/.nojekyll"
 
-echo -e "${GREEN}✅ Pushed to main${NC}"
+echo -e "${GREEN}✅ Deploy folder ready${NC}"
 echo ""
 
-# Deploy to gh-pages branch
+# Step 3: Push to gh-pages
 echo -e "${YELLOW}🚀 Deploying to gh-pages branch...${NC}"
-
-# Create temporary directory
-TEMP_DIR=$(mktemp -d)
-echo "Using temp directory: $TEMP_DIR"
-
-# Copy necessary files (viewer assets)
-cp index.html "$TEMP_DIR/"
-cp files.json "$TEMP_DIR/"
-
-# Copy MarkdownSV content (contents only, so paths match manifest)
-if [ -d "../MarkdownSV" ]; then
-  cp -r ../MarkdownSV/. "$TEMP_DIR/" 2>/dev/null || cp -r ../MarkdownSV/* "$TEMP_DIR/" 2>/dev/null || true
-else
-  echo -e "${RED}❌ Error: MarkdownSV folder not found${NC}"
-  exit 1
-fi
-
-# Initialize git in temp directory
 cd "$TEMP_DIR"
-git init
+git init -b gh-pages
 git add -A
-git commit -m "Deploy to GitHub Pages"
+git commit -m "Deploy MDviewer to GitHub Pages — $(date '+%Y-%m-%d %H:%M:%S')"
+git push -f "$REMOTE_URL" gh-pages
 
-# Force push to gh-pages
-git push -f "$REMOTE_URL" main:gh-pages
-
-cd -
+cd "$REPO_ROOT"
 rm -rf "$TEMP_DIR"
 
+echo ""
 echo -e "${GREEN}✅ Deployed to gh-pages branch${NC}"
 echo ""
 
@@ -132,9 +114,9 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo -e "${GREEN}🎉 Deployment Complete!${NC}"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "📋 Next Steps:"
+echo "📋 Next Steps (first time only):"
 echo ""
-echo "1. Go to your repository settings:"
+echo "1. Go to repo settings:"
 echo "   https://github.com/${USERNAME}/${REPO}/settings/pages"
 echo ""
 echo "2. Under 'Build and deployment':"
@@ -142,11 +124,9 @@ echo "   - Source: Deploy from a branch"
 echo "   - Branch: gh-pages"
 echo "   - Folder: / (root)"
 echo ""
-echo "3. Click 'Save'"
+echo "3. Click 'Save' → wait 2-3 min"
 echo ""
-echo "4. Wait 2-3 minutes for deployment"
-echo ""
-echo "5. Visit your site:"
+echo "4. Visit your site:"
 echo -e "   ${BLUE}${PAGES_URL}${NC}"
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
