@@ -1,0 +1,17 @@
+#!/bin/sh
+# Tự động tạo lại files.json (manifest) trước mỗi commit khi có file .md thay đổi.
+# Cài đặt: ./install-manifest-hook.sh hoặc cp githooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+
+set -e
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+# Chạy generate manifest (viewer/ nếu có, else root)
+if [ -f "viewer/generate-manifest.py" ]; then
+  (cd viewer && python3 generate-manifest.py >/dev/null 2>&1) || true
+  [ -f viewer/files.json ] && git add viewer/files.json
+else
+  python3 generate-manifest.py >/dev/null 2>&1 || true
+  [ -f files.json ] && git add files.json
+fi
+exit 0

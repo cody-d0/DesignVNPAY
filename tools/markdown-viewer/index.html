@@ -1,0 +1,3124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <!-- Inter Font from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    (function() {
+      var t = localStorage.getItem('xpos-docs-theme');
+      var mode = 'dark', mesh = false;
+      if (t === 'light' || t === 'dark') { mode = t; mesh = localStorage.getItem('xpos-docs-mesh') === 'true'; }
+      else if (t === 'light-mesh') { mode = 'light'; mesh = true; localStorage.setItem('xpos-docs-theme','light'); localStorage.setItem('xpos-docs-mesh','true'); }
+      else if (t === 'dark-mesh') { mode = 'dark'; mesh = true; localStorage.setItem('xpos-docs-theme','dark'); localStorage.setItem('xpos-docs-mesh','true'); }
+      document.documentElement.setAttribute('data-theme', mode + (mesh ? '-mesh' : ''));
+    })();
+  </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      /* Design System Colors */
+      --color-primary: #475569;
+      --color-secondary: #64748B;
+      --color-cta: #2563EB;
+      --color-background: #F8FAFC;
+      --color-text: #1E293B;
+      --color-text-muted: #64748B;
+      --color-border: #E2E8F0;
+      --color-surface: #FFFFFF;
+      --color-hover: #F1F5F9;
+      --color-accent: #10B981;
+      --color-accent-light: #D1FAE5;
+      
+      /* Spacing Scale */
+      --spacing-xs: 0.25rem;
+      --spacing-sm: 0.5rem;
+      --spacing-md: 1rem;
+      --spacing-lg: 1.5rem;
+      --spacing-xl: 2rem;
+      --spacing-2xl: 3rem;
+      
+      /* Typography Scale */
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --text-xs: 0.75rem;
+      --text-sm: 0.875rem;
+      --text-base: 1rem;
+      --text-lg: 1.125rem;
+      --text-xl: 1.25rem;
+      --text-2xl: 1.5rem;
+      --text-3xl: 1.875rem;
+      
+      /* Transitions */
+      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Dark theme */
+    [data-theme="dark"] {
+      --color-primary: #94A3B8;
+      --color-secondary: #CBD5E1;
+      --color-cta: #60A5FA;
+      --color-background: #0F172A;
+      --color-text: #F1F5F9;
+      --color-text-muted: #94A3B8;
+      --color-border: #334155;
+      --color-surface: #1E293B;
+      --color-hover: #334155;
+      --color-accent: #34D399;
+      --color-accent-light: #064E3B;
+    }
+    
+    /* Light mesh: glass mesh gradient, sáng hơn */
+    [data-theme="light-mesh"] {
+      --color-primary: #475569;
+      --color-secondary: #64748B;
+      --color-cta: #4F46E5;
+      --color-text: #1E293B;
+      --color-text-muted: #64748B;
+      --color-border: rgba(100, 116, 139, 0.4);
+      --color-surface: rgba(255, 255, 255, 0.65);
+      --color-hover: rgba(255, 255, 255, 0.5);
+      --color-accent: #10B981;
+      --color-accent-light: #D1FAE5;
+    }
+    
+    /* Dark mesh: glass mesh gradient, sáng hơn */
+    [data-theme="dark-mesh"] {
+      --color-primary: #A5B4FC;
+      --color-secondary: #C4B5FD;
+      --color-cta: #818CF8;
+      --color-text: #F1F5F9;
+      --color-text-muted: #94A3B8;
+      --color-border: rgba(148, 163, 184, 0.35);
+      --color-surface: rgba(255, 255, 255, 0.08);
+      --color-hover: rgba(255, 255, 255, 0.06);
+      --color-accent: #34D399;
+      --color-accent-light: #064E3B;
+    }
+    
+    html {
+      font-family: var(--font-family);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      scroll-behavior: smooth;
+    }
+    
+    body {
+      background-color: var(--color-background);
+      color: var(--color-text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    /* Glass mesh gradient — sáng hơn, pastel nhẹ */
+    [data-theme="light-mesh"] body {
+      background: 
+        radial-gradient(ellipse 90% 60% at 15% 25%, rgba(167, 139, 250, 0.35) 0%, transparent 45%),
+        radial-gradient(ellipse 70% 70% at 90% 10%, rgba(96, 165, 250, 0.3) 0%, transparent 45%),
+        radial-gradient(ellipse 80% 60% at 50% 85%, rgba(251, 113, 133, 0.25) 0%, transparent 45%),
+        radial-gradient(ellipse 60% 50% at 75% 60%, rgba(103, 232, 249, 0.2) 0%, transparent 45%);
+      background-color: #EFF6FF;
+    }
+    
+    [data-theme="dark-mesh"] body {
+      background: 
+        radial-gradient(ellipse 90% 60% at 20% 20%, rgba(139, 92, 246, 0.45) 0%, transparent 50%),
+        radial-gradient(ellipse 70% 70% at 85% 15%, rgba(59, 130, 246, 0.4) 0%, transparent 50%),
+        radial-gradient(ellipse 80% 60% at 50% 80%, rgba(236, 72, 153, 0.35) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 50% at 75% 65%, rgba(34, 211, 238, 0.3) 0%, transparent 50%);
+      background-color: #1E293B;
+    }
+    
+    /* Accessibility: Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      html {
+        scroll-behavior: auto;
+      }
+    }
+    
+    /* Layout Container — ui-ux-pro-max: responsive 375/768/1024/1440, consistent max-width */
+    .container {
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 0 var(--spacing-md);
+    }
+    @media (min-width: 375px) {
+      .container {
+        padding: 0 var(--spacing-md);
+      }
+    }
+    @media (min-width: 768px) {
+      .container {
+        max-width: 720px;
+        padding: 0 var(--spacing-xl);
+      }
+    }
+    @media (min-width: 1024px) {
+      .container {
+        max-width: 960px;
+      }
+    }
+    @media (min-width: 1440px) {
+      .container {
+        max-width: 1280px;
+      }
+    }
+    
+    /* Header minimal: flat, compact, no decoration */
+    .header {
+      background-color: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    
+    [data-theme="light-mesh"] .header {
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom-color: rgba(100, 116, 139, 0.25);
+    }
+    
+    [data-theme="dark-mesh"] .header {
+      background: rgba(30, 41, 59, 0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom-color: rgba(148, 163, 184, 0.2);
+    }
+    
+    /* Header: fixed height, same size home/file view (ui-ux-pro-max) */
+    .header {
+      min-height: 72px;
+    }
+    
+    .header-content {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: var(--spacing-sm) 0;
+      gap: var(--spacing-md);
+      min-height: 72px;
+    }
+    
+    .header-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-xs);
+    }
+    
+    .header-back-row {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+    
+    .header-back-row:empty {
+      display: none;
+    }
+    
+    .header-brand {
+      min-width: 0;
+      width: 100%;
+      text-align: left;
+    }
+    
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      flex-shrink: 0;
+    }
+    
+    .header-title {
+      font-size: var(--text-base);
+      font-weight: 600;
+      color: var(--color-text);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    @media (min-width: 768px) {
+      .header-title {
+        font-size: var(--text-lg);
+      }
+    }
+    
+    .header-subtitle {
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+      margin-top: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
+    }
+    
+    @media (min-width: 768px) {
+      .header-subtitle {
+        font-size: var(--text-xs);
+        white-space: normal;
+        word-break: break-all;
+      }
+    }
+    
+    /* Back: minimal pill */
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 10px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      font-size: var(--text-xs);
+      font-weight: 500;
+      transition: color var(--transition-fast), background-color var(--transition-fast);
+      cursor: pointer;
+      min-height: 32px;
+    }
+    
+    .back-button:hover {
+      color: var(--color-text);
+      background-color: var(--color-hover);
+    }
+    
+    .back-button:focus {
+      outline: none;
+    }
+    
+    .back-button:focus-visible {
+      outline: 2px solid var(--color-cta);
+      outline-offset: 2px;
+    }
+    
+    .back-button svg {
+      flex-shrink: 0;
+      width: 14px;
+      height: 14px;
+    }
+    
+    /* Main Content — ui-ux-pro-max: no horizontal scroll, responsive padding */
+    .main {
+      padding: var(--spacing-xl) 0;
+      min-height: calc(100vh - 100px);
+      overflow-x: hidden;
+      width: 100%;
+    }
+    @media (min-width: 768px) {
+      .main {
+        padding: var(--spacing-2xl) 0;
+      }
+    }
+    @media (min-width: 1440px) {
+      .main {
+        padding: var(--spacing-2xl) 0;
+      }
+    }
+    
+    /* Drop file to preview overlay — chỉ hiện khi đang kéo file (drag-over), tránh che nội dung */
+    .drop-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0);
+      pointer-events: none;
+      visibility: hidden;
+      transition: background var(--transition-base), visibility var(--transition-base);
+    }
+    .drop-overlay.active {
+      pointer-events: auto;
+    }
+    .drop-overlay.drag-over {
+      visibility: visible;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    .drop-overlay .drop-hint {
+      padding: var(--spacing-xl) var(--spacing-2xl);
+      border-radius: 12px;
+      background: var(--color-surface);
+      border: 2px dashed var(--color-cta);
+      color: var(--color-text);
+      font-size: var(--text-lg);
+      font-weight: 500;
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity var(--transition-base), transform var(--transition-base);
+    }
+    .drop-overlay.drag-over .drop-hint {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .drop-overlay .drop-hint small {
+      display: block;
+      margin-top: 0.5em;
+      font-size: 0.85em;
+      opacity: 0.9;
+    }
+    
+    .filter-tabs {
+      display: flex;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-lg);
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: var(--spacing-xs);
+    }
+    
+    .filter-tab {
+      padding: var(--spacing-sm) var(--spacing-md);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--color-text-muted);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: color var(--transition-base), background-color var(--transition-base), border-color var(--transition-base);
+      font-family: var(--font-family);
+      min-height: 44px;
+      border-radius: 4px 4px 0 0;
+    }
+    
+    .filter-tab:hover {
+      color: var(--color-text);
+      background-color: var(--color-hover);
+    }
+    
+    .filter-tab.active {
+      color: var(--color-cta);
+      border-bottom-color: var(--color-cta);
+    }
+    
+    /* Chỉ hiện focus ring khi điều hướng bàn phím; tránh chồng state sau click */
+    .filter-tab:focus {
+      outline: none;
+    }
+    
+    .filter-tab:focus-visible {
+      outline: 2px solid var(--color-cta);
+      outline-offset: 2px;
+    }
+    
+    /* Tab đang active: chỉ thể hiện bằng gạch dưới, không thêm viền khác */
+    .filter-tab.active:focus {
+      outline: none;
+    }
+    
+    .filter-badge {
+      display: inline-block;
+      background: var(--color-hover);
+      color: var(--color-text-muted);
+      padding: 0.125rem 0.5rem;
+      border-radius: 999px;
+      font-size: var(--text-xs);
+      font-weight: 600;
+      margin-left: var(--spacing-xs);
+    }
+    
+    .filter-tab.active .filter-badge {
+      background: var(--color-cta);
+      color: white;
+    }
+    
+    /* Search Box */
+    .search-container {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-xl);
+      position: relative;
+    }
+    
+    .search-box {
+      position: relative;
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) 3rem;
+      background-color: var(--color-surface);
+      border: 2px solid var(--color-border);
+      border-radius: 8px;
+      font-size: var(--text-base);
+      color: var(--color-text);
+      transition: all var(--transition-base);
+      min-height: 48px;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: var(--color-cta);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    
+    .search-input::placeholder {
+      color: var(--color-text-muted);
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: var(--spacing-md);
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-muted);
+      pointer-events: none;
+    }
+    
+    
+    /* Toast — ui-ux-pro-max: surface, shadow, 200ms transition, reduced-motion, z-index 50 */
+    .toast-container {
+      position: fixed;
+      bottom: var(--spacing-xl);
+      right: var(--spacing-xl);
+      left: var(--spacing-xl);
+      max-width: 24rem;
+      margin-left: auto;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      pointer-events: none;
+    }
+    @media (min-width: 768px) {
+      .toast-container {
+        left: auto;
+        right: var(--spacing-xl);
+        bottom: var(--spacing-xl);
+      }
+    }
+    .toast {
+      padding: var(--spacing-md) var(--spacing-lg);
+      background: var(--color-surface);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      font-size: var(--text-sm);
+      line-height: 1.5;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      pointer-events: auto;
+      transform: translateY(0);
+      opacity: 1;
+      transition: transform var(--transition-base), opacity var(--transition-base);
+    }
+    .toast[aria-hidden="true"] {
+      transform: translateY(0.5rem);
+      opacity: 0;
+      pointer-events: none;
+    }
+    /* Paste and Go fallback — mô phỏng Drop to view khi server không đọc được path */
+    .paste-go-fallback-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: var(--spacing-lg);
+      opacity: 1;
+      visibility: visible;
+      transition: opacity var(--transition-base), visibility var(--transition-base);
+    }
+    .paste-go-fallback-overlay[aria-hidden="true"] {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .paste-go-fallback-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: var(--spacing-xl);
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    .paste-go-fallback-card h3 {
+      margin: 0 0 var(--spacing-md);
+      font-size: var(--text-lg);
+      color: var(--color-text);
+    }
+    .paste-go-fallback-card p {
+      margin: 0 0 var(--spacing-lg);
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      line-height: 1.5;
+    }
+    .paste-go-fallback-actions {
+      display: flex;
+      gap: var(--spacing-md);
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+    .paste-go-fallback-actions .btn-primary {
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: var(--text-sm);
+      cursor: pointer;
+    }
+    .paste-go-fallback-actions .btn-secondary {
+      background: transparent;
+      color: var(--color-text-muted);
+      border: 1px solid var(--color-border);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: var(--text-sm);
+      cursor: pointer;
+    }
+    .toast-icon {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      color: var(--color-accent);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .toast,
+      .toast[aria-hidden="true"] {
+        transition: none;
+      }
+    }
+    
+    /* File Count */
+    .file-count {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      margin-bottom: var(--spacing-md);
+      font-weight: 500;
+    }
+    
+    /* Folder Section */
+    .folder-section {
+      margin-bottom: var(--spacing-2xl);
+    }
+    
+    .folder-header {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-lg);
+      padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm) 0;
+      border-bottom: 2px solid var(--color-border);
+      cursor: pointer;
+      user-select: none;
+      transition: background-color var(--transition-fast);
+      min-height: 44px;
+    }
+    .folder-header:hover {
+      background-color: var(--color-hover);
+      border-radius: 6px;
+    }
+    .folder-section.collapsed .folder-header {
+      margin-bottom: 0;
+    }
+    .folder-section.collapsed .folder-content {
+      display: none;
+    }
+    .folder-collapse-icon {
+      transition: transform var(--transition-base);
+      flex-shrink: 0;
+    }
+    .folder-section.collapsed .folder-collapse-icon {
+      transform: rotate(-90deg);
+    }
+    
+    .folder-icon {
+      color: var(--color-secondary);
+    }
+    
+    .folder-name {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--color-text);
+      flex: 1;
+    }
+    
+    .folder-count {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      background: var(--color-hover);
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+    }
+    
+    /* Tree view (folder tab): compact, readable hierarchy */
+    .tree-node {
+      margin-bottom: var(--spacing-md);
+    }
+    .tree-node .folder-section {
+      margin-bottom: 0;
+    }
+    .tree-node .folder-header {
+      margin-bottom: 0;
+      border-bottom: none;
+      border-radius: 8px;
+      min-height: 40px;
+      padding: 0.375rem 0.625rem;
+    }
+    .tree-node .folder-header:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .tree-node .folder-name {
+      font-size: var(--text-base);
+      font-weight: 600;
+      margin: 0;
+    }
+    .tree-node .folder-count {
+      font-size: var(--text-xs);
+      padding: 0.2rem 0.6rem;
+    }
+    .tree-node .folder-content {
+      border-left: 1px solid var(--color-border);
+      margin-left: 0.95rem;
+      padding-left: 0.6rem;
+    }
+    .tree-node .tree-depth-0 .folder-header { padding-left: 0.625rem; }
+    .tree-node .tree-depth-1 .folder-header { padding-left: 1.35rem; }
+    .tree-node .tree-depth-2 .folder-header { padding-left: 2.05rem; }
+    .tree-node .tree-depth-3 .folder-header { padding-left: 2.75rem; }
+    .tree-node .tree-depth-4 .folder-header { padding-left: 3.45rem; }
+    .tree-node .tree-depth-5 .folder-header { padding-left: 4.15rem; }
+    
+    .tree-file-list {
+      list-style: none;
+      margin: 0.25rem 0 0.5rem 0;
+      padding: 0;
+      display: grid;
+      gap: 0.3rem;
+    }
+    
+    .tree-file-item {
+      border-radius: 6px;
+      border: 1px solid transparent;
+    }
+    
+    .tree-file-link {
+      display: block;
+      text-decoration: none;
+      color: var(--color-text);
+      padding: 0.45rem 0.625rem;
+      border-radius: 6px;
+      transition: background-color var(--transition-fast), border-color var(--transition-fast);
+    }
+    
+    .tree-file-link:hover {
+      background: var(--color-hover);
+      border-color: var(--color-border);
+    }
+    
+    .tree-file-link:focus-visible {
+      outline: 2px solid var(--color-cta);
+      outline-offset: 1px;
+    }
+    
+    .tree-file-name {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      line-height: 1.4;
+      margin-bottom: 0.15rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    
+    .tree-file-path {
+      font-size: 0.72rem;
+      color: var(--color-text-muted);
+      font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+      line-height: 1.45;
+      word-break: break-all;
+    }
+    
+    /* File List */
+    .file-list {
+      list-style: none;
+      display: grid;
+      gap: var(--spacing-md);
+      grid-template-columns: 1fr;
+    }
+    
+    @media (min-width: 768px) {
+      .file-list {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .file-list {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    .file-item {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      transition: all var(--transition-base);
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .file-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border-color: var(--color-primary);
+    }
+    
+    .last-update {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      margin-top: var(--spacing-xs);
+    }
+    
+    .file-link {
+      display: block;
+      padding: var(--spacing-lg);
+      text-decoration: none;
+      color: var(--color-text);
+      cursor: pointer;
+      min-height: 44px;
+    }
+    
+    .file-link:focus {
+      outline: 2px solid var(--color-cta);
+      outline-offset: -2px;
+    }
+    
+    .file-name {
+      font-size: var(--text-base);
+      font-weight: 500;
+      color: var(--color-text);
+      margin-bottom: var(--spacing-xs);
+      line-height: 1.4;
+    }
+    
+    .file-path {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+      line-height: 1.6;
+      word-break: break-all;
+    }
+    
+    .file-icon {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin-right: var(--spacing-sm);
+      vertical-align: middle;
+    }
+    
+    /* Markdown Content — ui-ux-pro-max: readable line-length (65–75ch), no horizontal scroll, responsive width */
+    .markdown-body {
+      display: none;
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
+      overflow-x: hidden;
+    }
+    @media (min-width: 375px) {
+      .markdown-body {
+        padding: 0 var(--spacing-xs);
+      }
+    }
+    @media (min-width: 768px) {
+      .markdown-body {
+        max-width: 720px;
+        padding: 0;
+      }
+    }
+    @media (min-width: 1024px) {
+      .markdown-body {
+        max-width: 800px;
+      }
+    }
+    @media (min-width: 1440px) {
+      .markdown-body {
+        max-width: 832px;
+      }
+    }
+    
+    .markdown-body.active {
+      display: block;
+    }
+    
+    .markdown-body h1 {
+      font-size: var(--text-3xl);
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: var(--spacing-lg);
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+      padding-bottom: var(--spacing-md);
+      border-bottom: 1px solid var(--color-border);
+    }
+    
+    .markdown-body h2 {
+      font-size: var(--text-2xl);
+      font-weight: 600;
+      color: var(--color-text);
+      margin: var(--spacing-xl) 0 var(--spacing-md) 0;
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+    }
+    
+    .markdown-body h3 {
+      font-size: var(--text-xl);
+      font-weight: 600;
+      color: var(--color-text);
+      margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+      line-height: 1.4;
+    }
+    
+    .markdown-body h4 {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--color-text);
+      margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+    }
+    
+    .markdown-body p {
+      font-size: var(--text-base);
+      line-height: 1.75;
+      color: var(--color-text);
+      margin: var(--spacing-md) 0;
+      max-width: 65ch;
+    }
+    
+    .markdown-body ul,
+    .markdown-body ol {
+      margin: var(--spacing-md) 0;
+      padding-left: var(--spacing-xl);
+      line-height: 1.75;
+    }
+    
+    .markdown-body li {
+      margin: var(--spacing-sm) 0;
+    }
+    
+    .markdown-body table {
+      width: 100%;
+      max-width: 100%;
+      border-collapse: collapse;
+      margin: var(--spacing-lg) 0;
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .markdown-body table thead {
+      background-color: var(--color-hover);
+    }
+    
+    .markdown-body table th {
+      padding: var(--spacing-md);
+      text-align: left;
+      font-weight: 600;
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      border-bottom: 1px solid var(--color-border);
+    }
+    
+    .markdown-body table td {
+      padding: var(--spacing-md);
+      border-bottom: 1px solid var(--color-border);
+      font-size: var(--text-sm);
+    }
+    
+    .markdown-body table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .markdown-body table tbody tr:hover {
+      background-color: var(--color-hover);
+    }
+    
+    .markdown-body code {
+      background-color: var(--color-hover);
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+      font-size: 0.9em;
+      color: var(--color-cta);
+      border: 1px solid var(--color-border);
+    }
+    
+    /* Pre/code: monospace + no wrap — tối ưu cho ASCII art / box-drawing wireframe trong PRD */
+    .markdown-body pre {
+      font-family: 'SF Mono', 'Monaco', 'Consolas', 'Courier New', monospace;
+      white-space: pre;
+      background-color: var(--color-surface);
+      color: var(--color-text);
+      padding: var(--spacing-lg);
+      border-radius: 8px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: var(--spacing-lg) 0;
+      border: 1px solid var(--color-border);
+      max-width: 100%;
+      line-height: 1.5;
+      tab-size: 4;
+    }
+    
+    .markdown-body pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      border: none;
+      font-size: var(--text-sm);
+      white-space: pre;
+    }
+    
+    /* ASCII / box-drawing: giữ nguyên căn chỉnh, scroll ngang nếu rộng */
+    .markdown-body pre code.language-ascii,
+    .markdown-body pre code.language-text {
+      font-size: var(--text-sm);
+      letter-spacing: 0;
+    }
+    
+    .markdown-body blockquote {
+      border-left: 4px solid var(--color-cta);
+      padding-left: var(--spacing-lg);
+      margin: var(--spacing-lg) 0;
+      color: var(--color-text-muted);
+      font-style: italic;
+      background-color: var(--color-hover);
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-radius: 0 4px 4px 0;
+    }
+    
+    .markdown-body a {
+      color: var(--color-cta);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color var(--transition-fast);
+    }
+    
+    .markdown-body a:hover {
+      border-bottom-color: var(--color-cta);
+    }
+    
+    .markdown-body a:focus {
+      outline: 2px solid var(--color-cta);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    
+    /* Tất cả ảnh chung 1 view scroll ngang + chú thích alt — ui-ux-pro-max: horizontal-scroll contained, no page overflow */
+    .markdown-body .md-images-scroll {
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      margin: var(--spacing-xl) 0;
+      padding: var(--spacing-md) var(--spacing-md) 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--color-border);
+      background: var(--color-hover);
+      display: flex;
+      flex-direction: row;
+      gap: var(--spacing-xl);
+      align-items: flex-start;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-border) transparent;
+    }
+    .markdown-body .md-images-scroll::-webkit-scrollbar {
+      height: 8px;
+    }
+    .markdown-body .md-images-scroll::-webkit-scrollbar-track {
+      background: var(--color-hover);
+      border-radius: 4px;
+    }
+    .markdown-body .md-images-scroll::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: 4px;
+    }
+    .markdown-body .md-images-scroll::-webkit-scrollbar-thumb:hover {
+      background: var(--color-secondary);
+    }
+    
+    .markdown-body .md-image-item {
+      flex-shrink: 0;
+      width: min-content;
+      min-width: min(240px, 85vw);
+      max-width: min(280px, 92vw);
+    }
+    @media (min-width: 375px) {
+      .markdown-body .md-image-item {
+        min-width: min(260px, 82vw);
+        max-width: min(300px, 88vw);
+      }
+    }
+    @media (min-width: 768px) {
+      .markdown-body .md-image-item {
+        min-width: min(280px, 32vw);
+        max-width: min(360px, 38vw);
+      }
+    }
+    @media (min-width: 1024px) {
+      .markdown-body .md-image-item {
+        min-width: 300px;
+        max-width: 380px;
+      }
+    }
+    @media (min-width: 1440px) {
+      .markdown-body .md-image-item {
+        min-width: 320px;
+        max-width: 400px;
+      }
+    }
+    
+    .markdown-body .md-image-cell {
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--color-border);
+      width: 100%;
+    }
+    
+    .markdown-body .md-image-cell img {
+      max-width: 100%;
+      width: auto;
+      height: auto;
+      max-height: 65vh;
+      display: block;
+      margin: 0;
+      object-fit: contain;
+    }
+    
+    .markdown-body .md-image-caption {
+      display: block;
+      margin-bottom: var(--spacing-sm);
+      margin-top: 0;
+      padding: 0 var(--spacing-xs);
+      font-size: var(--text-sm);
+      line-height: 1.5;
+      color: var(--color-text-muted);
+      font-weight: 500;
+      max-width: 100%;
+      overflow-wrap: break-word;
+    }
+    
+    .markdown-body .img-fallback {
+      display: inline-block;
+      padding: var(--spacing-md);
+      background: var(--color-hover);
+      color: var(--color-text-muted);
+      font-size: var(--text-sm);
+      border-radius: 8px;
+      margin: var(--spacing-lg) 0;
+      border: 1px dashed var(--color-border);
+    }
+    
+    .markdown-body hr {
+      border: none;
+      border-top: 1px solid var(--color-border);
+      margin: var(--spacing-2xl) 0;
+    }
+    
+    /* JSON preview (drop): tree view + controls — responsive, full width, text wrap (ui-ux-pro-max) */
+    .json-view-wrap {
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
+      overflow: auto;
+      padding: 0 var(--spacing-xs);
+      box-sizing: border-box;
+      min-height: 50vh;
+    }
+    @media (min-width: 768px) {
+      .json-view-wrap {
+        padding: 0 var(--spacing-md);
+      }
+    }
+    .json-toolbar {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+    .json-toolbar button {
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      color: var(--color-text);
+      border-radius: 6px;
+      padding: 0.45rem 0.7rem;
+      font-size: var(--text-xs);
+      font-weight: 600;
+      cursor: pointer;
+      min-height: 36px;
+      transition: background-color var(--transition-fast), border-color var(--transition-fast);
+    }
+    .json-toolbar button:hover {
+      background: var(--color-hover);
+      border-color: var(--color-primary);
+    }
+    .json-tree {
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      background: var(--color-surface);
+      padding: 0.75rem;
+      font-family: 'SF Mono', 'Monaco', 'Consolas', 'Courier New', monospace;
+      font-size: 0.84rem;
+      line-height: 1.55;
+      min-width: 0;
+    }
+    .json-root-list,
+    .json-children {
+      list-style: none;
+      margin: 0;
+      padding-left: 1rem;
+    }
+    .json-root-list {
+      padding-left: 0.15rem;
+    }
+    .json-details {
+      margin: 0.25rem 0;
+      border-radius: 6px;
+      transition: background-color 150ms ease, border-color 150ms ease;
+    }
+    .json-details summary {
+      cursor: pointer;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      max-width: 100%;
+      padding: 0.35rem 0.5rem;
+      margin: 0 -0.5rem;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      transition: background-color 150ms ease, border-color 150ms ease;
+    }
+    .json-details summary:hover {
+      background: var(--color-hover);
+    }
+    .json-details summary::marker,
+    .json-details summary::-webkit-details-marker {
+      display: none;
+    }
+    .json-details summary::before {
+      content: '';
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      background: currentColor;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cpath d='M9 18l6-6-6-6'/%3E%3C/svg%3E") no-repeat center;
+      mask-size: contain;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cpath d='M9 18l6-6-6-6'/%3E%3C/svg%3E") no-repeat center;
+      -webkit-mask-size: contain;
+      opacity: 0.7;
+      transition: transform 150ms ease;
+    }
+    .json-details[open] summary::before {
+      transform: rotate(90deg);
+    }
+    .json-details[open] summary {
+      background: var(--color-hover);
+      border-color: var(--color-border);
+    }
+    .json-details:not([open]) summary {
+      border-color: transparent;
+    }
+    .json-type-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 0.2rem 0.5rem;
+      line-height: 1.2;
+      transition: opacity 150ms ease;
+    }
+    .json-type-badge--array {
+      color: #7C3AED;
+      background: rgba(124, 58, 237, 0.15);
+      border: 1px solid rgba(124, 58, 237, 0.4);
+    }
+    .json-type-badge--object {
+      color: var(--color-cta);
+      background: rgba(37, 99, 235, 0.12);
+      border: 1px solid rgba(37, 99, 235, 0.35);
+    }
+    [data-theme="dark"] .json-type-badge--array,
+    [data-theme="dark-mesh"] .json-type-badge--array {
+      background: rgba(167, 139, 250, 0.2);
+      border-color: rgba(167, 139, 250, 0.45);
+      color: #C4B5FD;
+    }
+    [data-theme="dark"] .json-type-badge--object,
+    [data-theme="dark-mesh"] .json-type-badge--object {
+      background: rgba(96, 165, 250, 0.18);
+      border-color: rgba(96, 165, 250, 0.4);
+      color: #93C5FD;
+    }
+    .json-row {
+      margin: 0.12rem 0;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      white-space: normal;
+      max-width: 100%;
+    }
+    .json-key {
+      color: var(--color-cta);
+      font-weight: 600;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+    .json-string {
+      color: var(--color-accent);
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+    .json-number {
+      color: #D97706;
+    }
+    .json-bool {
+      color: #7C3AED;
+    }
+    .json-null {
+      color: var(--color-text-muted);
+    }
+    .json-colon,
+    .json-comma {
+      color: var(--color-text-muted);
+    }
+    .json-view {
+      margin-top: 0.75rem;
+      font-family: 'SF Mono', 'Monaco', 'Consolas', 'Courier New', monospace;
+      font-size: var(--text-sm);
+      line-height: 1.6;
+      color: var(--color-text);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: var(--spacing-lg);
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 60vh;
+      overflow: auto;
+    }
+    
+    /* YAML preview (drop) */
+    .yaml-view-wrap { max-width: 900px; margin: 0 auto; overflow: auto; }
+    .yaml-view { font-family: 'SF Mono', 'Monaco', 'Consolas', monospace; font-size: var(--text-sm); line-height: 1.6; white-space: pre-wrap; word-break: break-word; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: var(--spacing-lg); }
+    .yaml-view .yaml-key { color: var(--color-cta); }
+    .yaml-view .yaml-string { color: var(--color-accent); }
+    .yaml-view .yaml-number { color: #D97706; }
+    
+    /* CSV preview (drop) */
+    .csv-table-wrap { max-width: 100%; overflow: auto; margin: 0 auto; }
+    .csv-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; }
+    .csv-table th, .csv-table td { padding: var(--spacing-sm) var(--spacing-md); border-bottom: 1px solid var(--color-border); text-align: left; }
+    .csv-table thead th { background: var(--color-hover); font-weight: 600; }
+    .csv-table tbody tr:hover { background: var(--color-hover); }
+    
+    /* SVG preview (drop) */
+    .drop-preview-wrap { max-width: 100%; text-align: center; padding: var(--spacing-lg); }
+    .drop-preview-wrap .svg-preview { max-width: 100%; height: auto; max-height: 85vh; }
+    
+    /* Loading & Error States */
+    .loading,
+    .error {
+      text-align: center;
+      padding: var(--spacing-2xl);
+      font-size: var(--text-lg);
+    }
+    
+    .loading {
+      color: var(--color-text-muted);
+    }
+    
+    .error {
+      color: var(--color-error, #DC2626);
+    }
+    
+    [data-theme="dark"] .error {
+      color: #F87171;
+    }
+    
+    .error-hint {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      margin-top: var(--spacing-md);
+    }
+    .error-hint a {
+      color: var(--color-cta);
+    }
+    .error-code-hint {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      margin-top: 0.5rem;
+    }
+    .error-code-hint code { font-family: ui-monospace, monospace; }
+    /* Error block: full payload + Copy CTA (agent fix) — theme-aware */
+    .error-block-actions { margin-top: var(--spacing-lg); display: flex; flex-wrap: wrap; gap: var(--spacing-md); align-items: center; }
+    .error-copy-btn {
+      display: inline-flex; align-items: center; gap: var(--spacing-sm);
+      padding: 0.5rem 1rem; font-size: var(--text-sm); font-weight: 500;
+      color: var(--color-text); background: var(--color-hover);
+      border: 1px solid var(--color-border); border-radius: 8px;
+      cursor: pointer; transition: background 150ms, color 150ms;
+    }
+    .error-copy-btn:hover { background: var(--color-border); }
+    .error-copy-btn:focus-visible { outline: 2px solid var(--color-cta); outline-offset: 2px; }
+    .error-copy-btn.copied { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+    .error-expand-toggle {
+      font-size: var(--text-sm); color: var(--color-cta); background: none; border: none;
+      cursor: pointer; padding: var(--spacing-sm) 0; text-decoration: underline;
+    }
+    .error-expand-toggle:hover { opacity: 0.9; }
+    .error-expand-toggle:focus-visible { outline: 2px solid var(--color-cta); outline-offset: 2px; }
+    .error-full-payload {
+      display: none; font-size: var(--text-sm); font-family: ui-monospace, monospace;
+      white-space: pre-wrap; word-break: break-word;
+      background: var(--color-hover); border: 1px solid var(--color-border);
+      border-radius: 8px; padding: var(--spacing-md); max-height: 240px; overflow: auto;
+      color: var(--color-text); margin-top: var(--spacing-sm); margin-bottom: var(--spacing-md);
+    }
+    .error-full-payload[aria-hidden="false"] { display: block; }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: var(--spacing-2xl);
+      color: var(--color-text-muted);
+    }
+    
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto var(--spacing-md);
+      opacity: 0.5;
+    }
+    
+    .empty-state-illustrated {
+      padding: var(--spacing-2xl) var(--spacing-md);
+    }
+    
+    .empty-state-illustrated .empty-state-img {
+      display: block;
+      margin: 0 auto var(--spacing-md);
+      opacity: 0.6;
+    }
+    
+    .empty-state-illustrated .empty-state-img svg {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto;
+      stroke: var(--color-text-muted);
+    }
+    
+    .empty-state-illustrated p {
+      margin: 0;
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+    }
+    
+    /* Skip to Content Link (Accessibility) */
+    /* Skip link: chỉ hiện khi focus, trên cùng (ui-ux-pro-max: keyboard-nav) */
+    .skip-link {
+      position: fixed;
+      top: -100%;
+      left: var(--spacing-md);
+      z-index: 100;
+      background: var(--color-cta);
+      color: white;
+      padding: var(--spacing-sm) var(--spacing-md);
+      text-decoration: none;
+      border-radius: 0 0 6px 6px;
+      font-weight: 500;
+      transition: top var(--transition-base);
+    }
+    
+    .skip-link:focus {
+      top: 0;
+      outline: none;
+    }
+    
+    .skip-link:focus-visible {
+      outline: 2px solid white;
+      outline-offset: 2px;
+    }
+    
+    /* Theme: [Sáng | Tối] — ui-ux-pro-max: contrast 4.5:1, touch 44px, focus-visible, 150–300ms */
+    .theme-switch {
+      display: inline-flex;
+      align-items: stretch;
+      background: var(--color-hover);
+      border-radius: 10px;
+      padding: 3px;
+      border: 1px solid var(--color-border);
+      gap: 2px;
+    }
+    
+    [data-theme="light"] .theme-switch,
+    [data-theme="light-mesh"] .theme-switch {
+      background: #E2E8F0;
+      border-color: #CBD5E1;
+    }
+    
+    [data-theme="dark"] .theme-switch,
+    [data-theme="dark-mesh"] .theme-switch {
+      background: #334155;
+      border-color: #475569;
+    }
+    
+    .theme-segment {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 12px;
+      min-height: 44px;
+      min-width: 44px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--color-text-muted);
+      font-size: var(--text-xs);
+      font-weight: 500;
+      font-family: var(--font-family);
+      cursor: pointer;
+      transition: color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+        background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .theme-segment:hover {
+      color: var(--color-text);
+    }
+    
+    .theme-segment:focus {
+      outline: none;
+    }
+    
+    .theme-segment:focus-visible {
+      outline: 2px solid var(--color-cta);
+      outline-offset: 2px;
+    }
+    
+    /* Active: Sáng — ui-ux-pro-max: text #0F172A, contrast 4.5:1+ */
+    .theme-segment[aria-pressed="true"][id="theme-light"] {
+      background: #FFFFFF;
+      color: #0F172A;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+    
+    /* Active: Tối — ui-ux-pro-max: text #F1F5F9 on dark */
+    .theme-segment[aria-pressed="true"][id="theme-dark"] {
+      background: #1E293B;
+      color: #F1F5F9;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+    
+    .theme-segment[aria-pressed="false"] {
+      color: var(--color-text-muted);
+      opacity: 0.7;
+    }
+    
+    .theme-segment[aria-pressed="false"]:hover {
+      opacity: 1;
+    }
+    
+    .theme-segment svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+    
+    /* Mesh toggle — cùng design language với theme-switch */
+    .mesh-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 12px;
+      min-height: 44px;
+      min-width: 44px;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      background: var(--color-hover);
+      color: var(--color-text-muted);
+      font-size: var(--text-xs);
+      font-weight: 500;
+      font-family: var(--font-family);
+      cursor: pointer;
+      transition: color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+        background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .mesh-toggle:hover {
+      color: var(--color-text);
+    }
+    
+    .mesh-toggle:focus {
+      outline: none;
+    }
+    
+    .mesh-toggle:focus-visible {
+      outline: 2px solid var(--color-cta);
+      outline-offset: 2px;
+    }
+    
+    .mesh-toggle[aria-pressed="true"] {
+      background: var(--color-cta);
+      color: white;
+      border-color: var(--color-cta);
+    }
+    
+    .mesh-toggle svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+    
+    /* Minimal header: compact nhưng vẫn đủ 44px touch target (ui-ux-pro-max) */
+    .header-actions-minimal .theme-switch {
+      padding: 3px;
+    }
+    .header-actions-minimal .theme-segment,
+    .header-actions-minimal .mesh-toggle {
+      padding: 6px 10px;
+      min-height: 44px;
+      min-width: 44px;
+      gap: 4px;
+    }
+    .header-actions-minimal .theme-segment svg,
+    .header-actions-minimal .mesh-toggle svg {
+      width: 16px;
+      height: 16px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Skip to Content Link for Accessibility -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <!-- Header: Back above title (khi xem file), title canh trái, theme phải -->
+  <header class="header" role="banner" id="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-main">
+          <div class="header-back-row" id="back-button-container" aria-hidden="true"></div>
+          <div class="header-brand">
+            <h1 class="header-title" id="page-title">Markdown</h1>
+            <p class="header-subtitle" id="breadcrumb" aria-live="polite">Loading...</p>
+          </div>
+        </div>
+        <div class="header-actions header-actions-minimal">
+          <div class="theme-switch" role="group" aria-label="Sáng / Tối">
+            <button type="button" class="theme-segment" id="theme-light" aria-pressed="false" aria-label="Sáng" title="Sáng">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </button>
+            <button type="button" class="theme-segment" id="theme-dark" aria-pressed="true" aria-label="Tối" title="Tối">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+            </button>
+          </div>
+          <button type="button" class="mesh-toggle" id="mesh-toggle" aria-pressed="false" aria-label="Bật mesh gradient" title="Mesh">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Main Content -->
+  <main class="main" id="main-content" role="main">
+    <div class="container">
+      <!-- File List View -->
+      <div id="file-list-view">
+        <!-- Sort Tabs: Tab 1 = by folder, Tab 2 = by last update -->
+        <div class="filter-tabs" role="tablist" aria-label="Sort view">
+          <button class="filter-tab active" role="tab" data-sort="lastupdate" aria-selected="true">
+            Cập nhật gần nhất
+          </button>
+          <button class="filter-tab" role="tab" data-sort="folder" aria-selected="false">
+            All <span class="filter-badge" id="badge-folder">0</span>
+          </button>
+        </div>
+        
+        <!-- Search Box -->
+        <div class="search-container">
+          <div class="search-box">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M19 19L14.65 14.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <input 
+              type="search" 
+              id="search-input" 
+              class="search-input"
+              placeholder="Search documentation..."
+              aria-label="Search markdown files"
+              autocomplete="off"
+            >
+          </div>
+        </div>
+        
+        <div class="file-count" id="file-count" role="status" aria-live="polite"></div>
+        
+        <div id="folders-container">
+          <div class="loading">Loading files...</div>
+        </div>
+      </div>
+      
+      <!-- Markdown View -->
+      <div id="markdown-view" class="markdown-body"></div>
+      <div id="drop-overlay" class="drop-overlay" aria-hidden="true" aria-label="Kéo thả file .md hoặc .json để xem trước">
+        <span class="drop-hint">Thả file để xem trước<br><small>.md .mdc .mdx .rst .txt · .json · .yaml .yml · .csv · .svg</small></span>
+      </div>
+      <div id="toast-container" class="toast-container" role="region" aria-label="Thông báo" aria-live="polite"></div>
+      <!-- Paste and Go fallback: khi server không đọc được path → chọn file thủ công (giống Kéo thả) -->
+      <div id="paste-go-fallback-overlay" class="paste-go-fallback-overlay" aria-hidden="true" role="dialog" aria-labelledby="paste-go-fallback-title" aria-modal="true">
+        <div class="paste-go-fallback-card">
+          <h3 id="paste-go-fallback-title">Không mở được từ đường dẫn</h3>
+          <p id="paste-go-fallback-message">Server chưa chạy hoặc path nằm ngoài project. Chọn file thủ công — hoạt động giống <strong>Kéo thả</strong> (đọc trong trình duyệt, không cần server).</p>
+          <div class="paste-go-fallback-actions">
+            <button type="button" class="btn-secondary" id="paste-go-fallback-close">Đóng</button>
+            <button type="button" class="btn-primary" id="paste-go-fallback-pick">Chọn file</button>
+          </div>
+        </div>
+      </div>
+      <input type="file" id="paste-go-fallback-input" accept=".md,.markdown,.mdx,.mdc,.rst,.txt,.resolved" style="display:none" aria-hidden="true">
+    </div>
+  </main>
+
+  <script>
+    // Configuration
+    const BASE_URL = window.location.pathname.replace(/\/[^\/]*$/, '');
+    
+    // State
+    let allFiles = [];
+    let allFolders = {};
+    let newestFiles = [];
+    let currentFile = null;
+    let lastManifestRevision = null;
+    let currentSort = 'lastupdate'; // 'folder' | 'lastupdate'
+    
+    // SVG Icons
+    const FILE_ICON_SVG = `<svg class="file-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M9 1H3C2.73478 1 2.48043 1.10536 2.29289 1.29289C2.10536 1.48043 2 1.73478 2 2V14C2 14.2652 2.10536 14.5196 2.29289 14.7071C2.48043 14.8946 2.73478 15 3 15H13C13.2652 15 13.5196 14.8946 13.7071 14.7071C13.8946 14.5196 14 14.2652 14 14V6L9 1Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M9 1V6H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+    
+    const FOLDER_ICON_SVG = `<svg class="folder-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 5C2 3.89543 2.89543 3 4 3H7.17157C7.70201 3 8.21071 3.21071 8.58579 3.58579L10 5H16C17.1046 5 18 5.89543 18 7V15C18 16.1046 17.1046 17 16 17H4C2.89543 17 2 16.1046 2 15V5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+    
+    const COLLAPSE_ICON_SVG = `<svg class="folder-collapse-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M6 8L10 12L14 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+    
+    /** Empty state illustration for "Trong 1 giờ qua" (clock + doc). Use temp/app image if available. */
+    const EMPTY_RECENT_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="60" cy="60" r="44"/><path d="M60 32v28l16 16"/><rect x="44" y="72" width="32" height="28" rx="2"/><path d="M52 72v-8a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v8"/></svg>';
+    
+    const THEME_KEY = 'xpos-docs-theme';
+    const MESH_KEY = 'xpos-docs-mesh';
+    
+    function getMode() {
+      const m = localStorage.getItem(THEME_KEY);
+      return m === 'light' || m === 'dark' ? m : 'dark';
+    }
+    
+    function getMesh() {
+      return localStorage.getItem(MESH_KEY) === 'true';
+    }
+    
+    function getEffectiveTheme() {
+      return getMode() + (getMesh() ? '-mesh' : '');
+    }
+    
+    function applyTheme() {
+      const theme = getEffectiveTheme();
+      document.documentElement.setAttribute('data-theme', theme);
+      const lightBtn = document.getElementById('theme-light');
+      const darkBtn = document.getElementById('theme-dark');
+      const meshBtn = document.getElementById('mesh-toggle');
+      const mode = getMode();
+      if (lightBtn) lightBtn.setAttribute('aria-pressed', mode === 'light' ? 'true' : 'false');
+      if (darkBtn) darkBtn.setAttribute('aria-pressed', mode === 'dark' ? 'true' : 'false');
+      if (meshBtn) meshBtn.setAttribute('aria-pressed', getMesh() ? 'true' : 'false');
+    }
+    
+    function initTheme() {
+      applyTheme();
+      document.getElementById('theme-light').addEventListener('click', () => {
+        localStorage.setItem(THEME_KEY, 'light');
+        applyTheme();
+      });
+      document.getElementById('theme-dark').addEventListener('click', () => {
+        localStorage.setItem(THEME_KEY, 'dark');
+        applyTheme();
+      });
+      document.getElementById('mesh-toggle').addEventListener('click', () => {
+        localStorage.setItem(MESH_KEY, getMesh() ? 'false' : 'true');
+        applyTheme();
+      });
+    }
+    
+    function addHeadingIds(htmlStr) {
+      if (!htmlStr || typeof htmlStr !== 'string') return htmlStr;
+      const wrap = document.createElement('div');
+      wrap.innerHTML = htmlStr;
+      function slugify(text) {
+        if (!text || typeof text !== 'string') return '';
+        return text.trim().toLowerCase()
+          .replace(/\s*\.\s*/g, '-')
+          .replace(/\s+/g, '-')
+          .replace(/[^\p{L}\p{N}\-]/gu, '')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '') || 'heading';
+      }
+      wrap.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(function(h) {
+        if (!h.id) {
+          const slug = slugify(h.textContent);
+          if (slug) h.id = slug;
+        }
+      });
+      return wrap.innerHTML;
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', init);
+    
+    async function init() {
+      initTheme();
+      // Setup marked options
+      marked.setOptions({
+        breaks: true,
+        gfm: true,
+        headerIds: true
+      });
+      
+      // Load file manifest
+      await loadManifest();
+      
+      // Setup routing
+      window.addEventListener('hashchange', handleRoute);
+      handleRoute();
+      
+      // Setup search with debouncing
+      let searchTimeout;
+      document.getElementById('search-input').addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => handleSearch(e), 200);
+      });
+      
+      // Paste vào ô search: nếu nội dung giống đường dẫn file thì thực thi như Paste and go
+      function looksLikeFilePath(str) {
+        const s = (str || '').trim();
+        if (!s || s.length < 3) return false;
+        if (/^[A-Za-z]:[\\/]/.test(s)) return true;
+        if (s.startsWith('/') || s.startsWith('~/')) return true;
+        const last = s.split(/[\\/]/).pop() || '';
+        if (/[\\/]/.test(s) && /\.(md|markdown|mdx|json|yaml|yml|csv|svg|txt|rst|mdc|resolved)$/i.test(last)) return true;
+        if (/\.(md|markdown|mdx|json|yaml|yml|csv|svg|rst|mdc|resolved)$/i.test(s) && s.indexOf('/') !== -1) return true;
+        if (/\.md\.resolved$/i.test(last)) return true;
+        return false;
+      }
+      document.getElementById('search-input').addEventListener('paste', (e) => {
+        const text = (e.clipboardData && e.clipboardData.getData('text')) || '';
+        if (looksLikeFilePath(text)) {
+          e.preventDefault();
+          document.getElementById('search-input').value = '';
+          openPathWithText(text, { fromSearchBox: true });
+        }
+      });
+      
+      // Setup sort tabs
+      document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.addEventListener('click', () => handleSortChange(tab.dataset.sort));
+      });
+      
+      // Keyboard shortcut: / to focus search
+      document.addEventListener('keydown', (e) => {
+        if (e.key === '/' && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== 'INPUT') {
+          e.preventDefault();
+          document.getElementById('search-input').focus();
+        }
+      });
+      
+      // Open path: click CTA → hiện popover có input; dán (Ctrl+V) hoặc Enter → POST /api/file và mở file
+      function showToast(message, opts) {
+        opts = opts || {};
+        const duration = opts.duration != null ? opts.duration : 3000;
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.setAttribute('role', 'status');
+        toast.setAttribute('aria-live', 'polite');
+        const iconSvg = '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>';
+        const span = document.createElement('span');
+        span.textContent = message || 'Đã mở file';
+        toast.appendChild(document.createRange().createContextualFragment(iconSvg));
+        toast.appendChild(span);
+        container.appendChild(toast);
+        const remove = () => {
+          toast.setAttribute('aria-hidden', 'true');
+          setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 200);
+        };
+        const t = setTimeout(remove, duration);
+        toast.addEventListener('click', () => { clearTimeout(t); remove(); });
+      }
+      // Fallback Paste and Go: mô phỏng Drop to view — chọn file thủ công, đọc trong browser
+      function showPasteGoFallback(pastedPath, errMessage) {
+        const overlay = document.getElementById('paste-go-fallback-overlay');
+        const msgEl = document.getElementById('paste-go-fallback-message');
+        if (msgEl) {
+          msgEl.innerHTML = 'Server chưa chạy hoặc path nằm ngoài project. <strong>Chọn file thủ công</strong> — hoạt động giống <strong>Kéo thả</strong> (đọc trong trình duyệt, không cần server).';
+        }
+        if (overlay) {
+          overlay.setAttribute('aria-hidden', 'false');
+          overlay.style.pointerEvents = 'auto';
+        }
+      }
+      function hidePasteGoFallback() {
+        const overlay = document.getElementById('paste-go-fallback-overlay');
+        const input = document.getElementById('paste-go-fallback-input');
+        if (overlay) {
+          overlay.setAttribute('aria-hidden', 'true');
+          overlay.style.pointerEvents = '';
+        }
+        if (input) input.value = '';
+      }
+      function initPasteGoFallback() {
+        const overlay = document.getElementById('paste-go-fallback-overlay');
+        const btnClose = document.getElementById('paste-go-fallback-close');
+        const btnPick = document.getElementById('paste-go-fallback-pick');
+        const input = document.getElementById('paste-go-fallback-input');
+        if (!overlay || !input) return;
+        function onClose() { hidePasteGoFallback(); }
+        if (btnClose) btnClose.addEventListener('click', onClose);
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) onClose(); });
+        if (btnPick) {
+          btnPick.addEventListener('click', () => {
+            if (input) input.click();
+          });
+        }
+        input.addEventListener('change', function() {
+          const file = this.files && this.files[0];
+          if (!file) return;
+          const name = (file.name || '').toLowerCase();
+          const isMd = /\.(md|markdown|mdx|mdc|rst|txt|resolved)$/i.test(name) || name.endsWith('.md.resolved');
+          if (!isMd) {
+            showToast('Chọn file .md / .txt / .resolved', { duration: 3000 });
+            this.value = '';
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            const text = ev.target && ev.target.result;
+            if (typeof text === 'string') {
+              hidePasteGoFallback();
+              renderMarkdownContent(text, file.name, {});
+              showToast('Đã mở: ' + file.name, { duration: 3500 });
+            }
+          };
+          reader.readAsText(file, 'UTF-8');
+          this.value = '';
+        });
+      }
+      async function openPathWithText(path, options) {
+        options = options || {};
+        const p = (path || '').trim();
+        if (!p) return;
+        try {
+          let res;
+          try {
+            res = await fetch('/api/file', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ path: p })
+            });
+          } catch (netErr) {
+            const msg = (netErr && netErr.message) || '';
+            if (msg.toLowerCase().includes('fetch') || msg.toLowerCase().includes('network')) {
+              showPasteGoFallback(p, msg);
+              return;
+            }
+            throw netErr;
+          }
+          if (!res.ok) {
+            const t = await res.text();
+            throw new Error(t || res.statusText);
+          }
+          const content = await res.text();
+          const resolvedPath = res.headers.get('X-Resolved-Path') || p;
+          viewFileWithContent(resolvedPath, content);
+          if (options.fromSearchBox) {
+            const fileName = resolvedPath.split('/').pop() || resolvedPath;
+            showToast('Đã mở: ' + fileName, { duration: 3500 });
+          }
+        } catch (err) {
+          showPasteGoFallback(p, err.message);
+        }
+      }
+      // Mục lục: click link #id trong markdown → scroll tới heading, không đổi hash (tránh thoát file view)
+      document.getElementById('markdown-view').addEventListener('click', function(e) {
+        const a = e.target.closest('a');
+        if (!a || !a.getAttribute('href') || !a.getAttribute('href').startsWith('#')) return;
+        const id = decodeURIComponent(a.getAttribute('href').slice(1));
+        if (!id) return;
+        const el = document.getElementById(id);
+        if (el) {
+          e.preventDefault();
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+      
+      // Folder collapse (delegated): hỗ trợ cả flat (collapsedFolders) và tree (treeExpandedPaths)
+      document.getElementById('folders-container').addEventListener('click', (e) => {
+        const header = e.target.closest('.folder-header');
+        if (!header) return;
+        const section = header.closest('.folder-section');
+        if (!section) return;
+        section.classList.toggle('collapsed');
+        const pathKey = section.dataset.folderPath;
+        if (pathKey !== undefined) {
+          const expanded = JSON.parse(localStorage.getItem('treeExpandedPaths') || '{}');
+          expanded[pathKey] = !section.classList.contains('collapsed');
+          localStorage.setItem('treeExpandedPaths', JSON.stringify(expanded));
+          header.setAttribute('aria-expanded', expanded[pathKey]);
+        } else {
+          const folderName = section.dataset.folder;
+          const collapsedFolders = JSON.parse(localStorage.getItem('collapsedFolders') || '{}');
+          collapsedFolders[folderName] = section.classList.contains('collapsed');
+          localStorage.setItem('collapsedFolders', JSON.stringify(collapsedFolders));
+        }
+        header.setAttribute('aria-expanded', section.classList.contains('collapsed') ? 'false' : 'true');
+      });
+      document.getElementById('folders-container').addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        const header = e.target.closest('.folder-header');
+        if (!header) return;
+        e.preventDefault();
+        header.click();
+      });
+
+      // Back button (delegated: works for list-viewed file and dropped file)
+      document.addEventListener('click', (e) => {
+        if (e.target.closest('.back-button')) {
+          e.preventDefault();
+          showFileList();
+        }
+      });
+
+      // Drop file to preview
+      initDropFile();
+      initPasteGoFallback();
+
+      // Auto-refresh file list (localhost only)
+      const useLiveApi = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(window.location.origin)
+        || new URLSearchParams(window.location.search).has('live');
+      if (useLiveApi) {
+        let visibilityRefreshTimer;
+        let pollInterval;
+        let revisionInterval;
+        let lastRevision = null;
+        function startPolling() {
+          if (pollInterval) clearInterval(pollInterval);
+          pollInterval = setInterval(() => {
+            if (document.visibilityState === 'visible') loadManifest();
+          }, 30000);
+          // Poll revision (webhook-triggered sync): khi POST /api/refresh → revision tăng → sync ngay
+          if (revisionInterval) clearInterval(revisionInterval);
+          revisionInterval = setInterval(async () => {
+            if (document.visibilityState !== 'visible') return;
+            try {
+              const r = await fetch('/api/revision');
+              const data = await r.json();
+              if (lastManifestRevision !== null && data.revision !== lastManifestRevision) {
+                await loadManifest();
+              }
+              lastManifestRevision = data.revision;
+            } catch (_) {}
+          }, 5000);
+        }
+        function stopPolling() {
+          if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
+          if (revisionInterval) { clearInterval(revisionInterval); revisionInterval = null; }
+        }
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') {
+            clearTimeout(visibilityRefreshTimer);
+            visibilityRefreshTimer = setTimeout(() => loadManifest(), 300);
+            startPolling();
+          } else {
+            stopPolling();
+          }
+        });
+        if (document.visibilityState === 'visible') startPolling();
+      }
+    }
+    
+    function escapeForHtml(s) {
+      if (s == null) return '';
+      var d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+    function buildErrorBlock(shortMsg, fullPayload, codeHint, extraHtml) {
+      var id = 'err-payload-' + Date.now();
+      var displayMsg = shortMsg;
+      var parts = shortMsg.match(/[^.!?]+[.!?]+/g);
+      if (parts && parts.length > 2) displayMsg = parts.slice(0, 2).join(' ');
+      return '<div class="error">' +
+        '<p>' + escapeForHtml(displayMsg) + '</p>' +
+        (codeHint ? '<p class="error-code-hint">' + escapeForHtml(codeHint) + '</p>' : '') +
+        (extraHtml || '') +
+        '<button type="button" class="error-expand-toggle" aria-expanded="false" aria-controls="' + id + '" aria-label="Xem toàn bộ thông tin lỗi">Xem toàn bộ thông tin lỗi</button>' +
+        '<pre id="' + id + '" class="error-full-payload" aria-hidden="true" role="region" aria-label="Toàn bộ thông tin lỗi">' + escapeForHtml(fullPayload) + '</pre>' +
+        '<div class="error-block-actions">' +
+        '<button type="button" class="error-copy-btn" aria-label="Copy thông tin lỗi để dán cho agent">Copy thông tin lỗi</button>' +
+        '</div></div>';
+    }
+    function wireErrorBlock(container) {
+      if (!container) return;
+      var wrap = container.querySelector('.error');
+      if (!wrap) return;
+      var pre = wrap.querySelector('.error-full-payload');
+      var toggle = wrap.querySelector('.error-expand-toggle');
+      var copyBtn = wrap.querySelector('.error-copy-btn');
+      if (toggle && pre) {
+        toggle.addEventListener('click', function() {
+          var isHidden = pre.getAttribute('aria-hidden') === 'true';
+          pre.setAttribute('aria-hidden', isHidden ? 'false' : 'true');
+          toggle.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+          toggle.textContent = isHidden ? 'Ẩn bớt' : 'Xem toàn bộ thông tin lỗi';
+        });
+      }
+      if (copyBtn && pre) {
+        copyBtn.addEventListener('click', function() {
+          var payload = pre.textContent || '';
+          if (!payload) return;
+          navigator.clipboard.writeText(payload).then(function() {
+            copyBtn.textContent = 'Đã copy!';
+            copyBtn.classList.add('copied');
+            setTimeout(function() {
+              copyBtn.textContent = 'Copy thông tin lỗi';
+              copyBtn.classList.remove('copied');
+            }, 2000);
+          }).catch(function() { copyBtn.textContent = 'Không copy được'; });
+        });
+      }
+    }
+    
+    async function loadManifest() {
+      try {
+        // Use live API when on localhost (no manifest/commit needed); else files.json for static deploy
+        const useLiveApi = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(window.location.origin)
+          || new URLSearchParams(window.location.search).has('live');
+        const manifestUrl = useLiveApi ? '/api/files' : 'files.json';
+        const response = await fetch(manifestUrl);
+        const data = await response.json();
+        
+        allFiles = data.files || [];
+        allFolders = data.folders || {};
+        newestFiles = data.newest || [];
+        if (data.revision != null) lastManifestRevision = data.revision;
+        
+        // Update badge for All tab only (last-update tab has no counter)
+        document.getElementById('badge-folder').textContent = allFiles.length;
+        
+        // Chỉ cập nhật header khi đang ở trang danh sách; khi đang preview file thì giữ tên file
+        if (!currentFile) {
+          document.getElementById('page-title').textContent = 'Markdown';
+          document.getElementById('breadcrumb').textContent = 
+            `${allFiles.length} files in ${Object.keys(allFolders).length} folders`;
+        }
+        
+        if (currentSort === 'lastupdate') {
+          renderByLastUpdate(allFiles);
+        } else {
+          renderFolders(allFolders, allFiles);
+        }
+      } catch (error) {
+        console.error('Error loading manifest:', error);
+        var fullPayload = [
+          'MSV-C001 — Error loading file list',
+          'Message: ' + (error && error.message ? error.message : 'Unknown'),
+          'URL: ' + (window.location.origin + '/api/files'),
+          'Stack: ' + (error && error.stack ? error.stack : '')
+        ].join('\n');
+        var shortMsg = (error && error.message ? error.message : 'Error loading file list.') + ' Make sure server is running and /api/files is reachable.';
+        var codeHint = 'Mã: MSV-C001 — Xem MarkdownSV/ERROR-CODES.md hoặc viewer/error-codes.json';
+        document.getElementById('folders-container').innerHTML = buildErrorBlock(shortMsg, fullPayload, codeHint);
+        wireErrorBlock(document.getElementById('folders-container'));
+      }
+    }
+    
+    function handleSortChange(sort) {
+      currentSort = sort;
+      
+      document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.sort === sort);
+        tab.setAttribute('aria-selected', tab.dataset.sort === sort);
+      });
+      
+      document.getElementById('search-input').value = '';
+      
+      if (sort === 'lastupdate') {
+        renderByLastUpdate(allFiles);
+      } else {
+        renderFolders(allFolders, allFiles);
+      }
+    }
+    
+    /** Tab 2: sort by last update. Section "Trong 1 giờ qua" = cập nhật dưới 59p59s; lớn hơn → "Trước đó". */
+    const ONE_HOUR_SEC = 59 * 60 + 59; // 3599s = 59m59s
+    
+    function renderByLastUpdate(files) {
+      const container = document.getElementById('folders-container');
+      document.getElementById('file-count').textContent = '';
+      
+      const nowSec = Date.now() / 1000;
+      const inLastHour = files.filter(f => (nowSec - (f.modified || 0)) <= ONE_HOUR_SEC);
+      const rest = files
+        .filter(f => (nowSec - (f.modified || 0)) > ONE_HOUR_SEC)
+        .sort((a, b) => (b.modified || 0) - (a.modified || 0));
+      
+      const collapsedFolders = JSON.parse(localStorage.getItem('collapsedFolders') || '{}');
+      const sectionKey = 'Trong 1 giờ qua';
+      const isCollapsed = collapsedFolders[sectionKey];
+      const collapsedClass = isCollapsed ? 'collapsed' : '';
+      
+      const lastHourContent = inLastHour.length
+        ? `<ul class="file-list" role="list">${inLastHour.map(f => createFileItemHTML(f)).join('')}</ul>`
+        : `
+        <div class="empty-state empty-state-illustrated" aria-live="polite">
+          <span class="empty-state-img" aria-hidden="true">${EMPTY_RECENT_SVG}</span>
+          <p>Chưa có file nào cập nhật trong 1 giờ qua</p>
+        </div>`;
+      
+      const restCollapsed = collapsedFolders['Trước đó'];
+      const restSection = rest.length
+        ? `<div class="folder-section ${restCollapsed ? 'collapsed' : ''}" data-folder="Trước đó">
+            <div class="folder-header" role="button" tabindex="0" aria-expanded="${!restCollapsed}" aria-controls="folder-content-truoc-do">
+              ${COLLAPSE_ICON_SVG}
+              ${FOLDER_ICON_SVG}
+              <h2 class="folder-name">Trước đó</h2>
+              <span class="folder-count">${rest.length} files</span>
+            </div>
+            <div class="folder-content" id="folder-content-truoc-do">
+              <ul class="file-list" role="list">${rest.map(f => createFileItemHTML(f)).join('')}</ul>
+            </div>
+          </div>`
+        : '';
+      
+      container.innerHTML = `
+        <div class="folder-section ${collapsedClass}" data-folder="${sectionKey}">
+          <div class="folder-header" role="button" tabindex="0" aria-expanded="${!isCollapsed}" aria-controls="folder-content-trong-1-gio-qua">
+            ${COLLAPSE_ICON_SVG}
+            <svg class="folder-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <h2 class="folder-name">Trong 1 giờ qua</h2>
+            <span class="folder-count">${inLastHour.length} files</span>
+          </div>
+          <div class="folder-content" id="folder-content-trong-1-gio-qua">
+            ${lastHourContent}
+          </div>
+        </div>
+        ${restSection}
+      `;
+    }
+    
+    function renderFolders(folders, files) {
+      const container = document.getElementById('folders-container');
+      const fileCount = document.getElementById('file-count');
+      
+      if (Object.keys(folders).length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <p>No files found</p>
+          </div>
+        `;
+        fileCount.textContent = '';
+        return;
+      }
+      
+      fileCount.textContent = `Showing ${files.length} file${files.length !== 1 ? 's' : ''} in ${Object.keys(folders).length} folders`;
+      const tree = buildTree(files);
+      const treeExpanded = JSON.parse(localStorage.getItem('treeExpandedPaths') || '{}');
+      const rootFilesHTML = tree.files.length
+        ? `<ul class="tree-file-list" role="list">${tree.files.map(f => createTreeFileItemHTML(f)).join('')}</ul>`
+        : '';
+      const nodesHTML = tree.children.map(child => renderTreeNode(child, 0, treeExpanded)).join('');
+      container.innerHTML = '<div class="tree-node">' + rootFilesHTML + nodesHTML + '</div>';
+    }
+    
+    /** Build cây thư mục từ danh sách file. Đồng bộ theo MarkdownSV nên bỏ prefix "MarkdownSV/" khi hiển thị tree. */
+    function buildTree(files) {
+      const pathToNode = new Map();
+      const root = { path: '', name: '', children: [], files: [] };
+      pathToNode.set('', root);
+      
+      function normalizePath(folderPath) {
+        const raw = folderPath === 'Root' ? '' : (folderPath || '');
+        return raw.replace(/^MarkdownSV\/?/, '');
+      }
+      
+      function ensureNode(folderPath) {
+        if (pathToNode.has(folderPath)) return pathToNode.get(folderPath);
+        const segments = folderPath.split('/').filter(Boolean);
+        const name = segments[segments.length - 1];
+        const parentPath = segments.slice(0, -1).join('/');
+        const parent = parentPath === '' ? root : ensureNode(parentPath);
+        const node = { path: folderPath, name: name, children: [], files: [] };
+        parent.children.push(node);
+        pathToNode.set(folderPath, node);
+        return node;
+      }
+      
+      files.forEach(file => {
+        const normalized = normalizePath(file.folder || '');
+        const node = normalized ? ensureNode(normalized) : root;
+        node.files.push(file);
+      });
+      
+      function sortNodes(node) {
+        node.children.sort((a, b) => a.name.localeCompare(b.name));
+        node.children.forEach(sortNodes);
+      }
+      sortNodes(root);
+      return root;
+    }
+    
+    function getTreeFileCount(node) {
+      let total = node.files.length;
+      node.children.forEach((c) => { total += getTreeFileCount(c); });
+      return total;
+    }
+    
+    /** Render một node cây (đệ quy), depth = cấp thụt lề. */
+    function renderTreeNode(node, depth, treeExpanded) {
+      const pathKey = node.path || '__root__';
+      const isExpanded = treeExpanded[pathKey] !== false;
+      const collapsedClass = isExpanded ? '' : 'collapsed';
+      const fileListHTML = node.files.map(f => createTreeFileItemHTML(f)).join('');
+      const childrenHTML = node.children.map(child => renderTreeNode(child, depth + 1, treeExpanded)).join('');
+      const id = 'tree-' + (pathKey.replace(/[^a-z0-9]/gi, '-') || 'root');
+      const totalFiles = getTreeFileCount(node);
+      
+      return `
+        <div class="folder-section tree-depth-${depth} ${collapsedClass}" data-folder="${(node.path || '').replace(/"/g, '&quot;')}" data-folder-path="${pathKey.replace(/"/g, '&quot;')}">
+          <div class="folder-header" role="button" tabindex="0" aria-expanded="${isExpanded}" aria-controls="${id}">
+            ${COLLAPSE_ICON_SVG}
+            ${FOLDER_ICON_SVG}
+            <h2 class="folder-name">${node.name}</h2>
+            <span class="folder-count">${totalFiles} file${totalFiles !== 1 ? 's' : ''}</span>
+          </div>
+          <div class="folder-content" id="${id}">
+            ${fileListHTML ? `<ul class="tree-file-list" role="list">${fileListHTML}</ul>` : ''}
+            ${childrenHTML}
+          </div>
+        </div>
+      `;
+    }
+    
+    function parseTimestamp(val) {
+      if (val == null || val === '') return null;
+      let d;
+      if (typeof val === 'number') {
+        d = new Date(val >= 1e12 ? val : val * 1000);
+      } else if (typeof val === 'string' && /^\d+(\.\d+)?$/.test(val.trim())) {
+        const n = parseFloat(val);
+        d = new Date(n >= 1e12 ? n : n * 1000);
+      } else {
+        d = new Date(val);
+      }
+      return isNaN(d.getTime()) ? null : d;
+    }
+    function formatDateTime(d, now, options) {
+      const diffMs = now - d;
+      const diffDays = Math.floor(diffMs / 86400000);
+      const timeStr = d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+      if (diffDays === 0) return options.today ? `${options.today} ${timeStr}` : timeStr;
+      if (diffDays === 1) return options.yesterday || 'Hôm qua';
+      if (diffDays < 7) return `${diffDays} ngày trước`;
+      return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: d.getFullYear() !== now.getFullYear() ? 'numeric' : undefined });
+    }
+    
+    function createFileItemHTML(file) {
+      const now = new Date();
+      const modified = parseTimestamp(file.modified ?? file.modified_iso);
+      const created = parseTimestamp(file.created ?? file.created_iso);
+      let label = '';
+      let text = '';
+      if (modified) {
+        const isNew = created && Math.abs(modified - created) < 2;
+        text = formatDateTime(modified, now, { today: 'Hôm nay', yesterday: 'Hôm qua' });
+        label = isNew ? 'Tạo mới' : 'Cập nhật';
+      } else if (file.modified_iso) {
+        try {
+          const d = new Date(file.modified_iso);
+          if (!isNaN(d.getTime())) text = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+          label = 'Cập nhật';
+        } catch (_) {}
+      }
+      const lastUpdateHTML = (label && text) ? `<div class="last-update">${label}: ${text}</div>` : '';
+      
+      return `
+        <li class="file-item">
+          <a href="#view=${encodeURIComponent(file.path)}" class="file-link" role="listitem">
+            ${FILE_ICON_SVG}
+            <div>
+              <div class="file-name">${file.name}</div>
+              <div class="file-path">${file.path}</div>
+              ${lastUpdateHTML}
+            </div>
+          </a>
+        </li>
+      `;
+    }
+    
+    function createTreeFileItemHTML(file) {
+      return `
+        <li class="tree-file-item">
+          <a href="#view=${encodeURIComponent(file.path)}" class="tree-file-link" role="listitem">
+            <div class="tree-file-name">${FILE_ICON_SVG}<span>${file.name}</span></div>
+            <div class="tree-file-path">${file.path}</div>
+          </a>
+        </li>
+      `;
+    }
+    
+    function handleSearch(e) {
+      const query = e.target.value.toLowerCase();
+      
+      if (!query) {
+        if (currentSort === 'lastupdate') {
+          renderByLastUpdate(allFiles);
+        } else {
+          renderFolders(allFolders, allFiles);
+        }
+        return;
+      }
+      
+      const filtered = allFiles.filter(file =>
+        file.path.toLowerCase().includes(query) ||
+        file.name.toLowerCase().includes(query) ||
+        (file.folder && file.folder.toLowerCase().includes(query))
+      );
+      
+      if (currentSort === 'lastupdate') {
+        renderByLastUpdate(filtered);
+      } else {
+        const filteredFolders = {};
+        filtered.forEach(file => {
+          if (!filteredFolders[file.folder]) filteredFolders[file.folder] = [];
+          filteredFolders[file.folder].push(file);
+        });
+        renderFolders(filteredFolders, filtered);
+      }
+    }
+    
+    function handleRoute() {
+      const hash = window.location.hash;
+      
+      if (hash.startsWith('#view=')) {
+        const filePath = decodeURIComponent(hash.substring(6));
+        viewFile(filePath);
+      } else {
+        showFileList();
+      }
+    }
+    
+    function initDropFile() {
+      const overlay = document.getElementById('drop-overlay');
+      if (!overlay) return;
+      function isMarkdownLike(file) {
+        const name = (file.name || '').toLowerCase();
+        return /\.(md|markdown|mdx|mkd|mdoc|rst|txt)$/.test(name) || (file.type && file.type.indexOf('text/') === 0);
+      }
+      function isJsonFile(file) {
+        const name = (file.name || '').toLowerCase();
+        return name.endsWith('.json') || (file.type && file.type.indexOf('json') >= 0);
+      }
+      function isSvgFile(file) {
+        const name = (file.name || '').toLowerCase();
+        return name.endsWith('.svg') || (file.type && file.type.indexOf('svg') >= 0);
+      }
+      function isYamlFile(file) {
+        const name = (file.name || '').toLowerCase();
+        return name.endsWith('.yaml') || name.endsWith('.yml');
+      }
+      function isCsvFile(file) {
+        const name = (file.name || '').toLowerCase();
+        return name.endsWith('.csv') || (file.type && file.type.indexOf('csv') >= 0);
+      }
+      function isMdcFile(file) {
+        const name = (file.name || '').toLowerCase();
+        return name.endsWith('.mdc');
+      }
+      document.addEventListener('dragenter', (e) => {
+        if (e.dataTransfer.types.indexOf('Files') === -1) return;
+        e.preventDefault();
+        overlay.classList.add('active');
+        overlay.setAttribute('aria-hidden', 'false');
+      });
+      document.addEventListener('dragover', (e) => {
+        if (e.dataTransfer.types.indexOf('Files') === -1) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+        overlay.classList.add('drag-over');
+      });
+      document.addEventListener('dragleave', (e) => {
+        if (!e.relatedTarget || !document.contains(e.relatedTarget)) {
+          overlay.classList.remove('drag-over', 'active');
+          overlay.setAttribute('aria-hidden', 'true');
+        }
+      });
+      document.addEventListener('dragend', () => {
+        overlay.classList.remove('drag-over', 'active');
+        overlay.setAttribute('aria-hidden', 'true');
+      });
+      document.addEventListener('drop', (e) => {
+        e.preventDefault();
+        overlay.classList.remove('drag-over', 'active');
+        overlay.setAttribute('aria-hidden', 'true');
+        const items = e.dataTransfer.items;
+        const files = e.dataTransfer.files;
+        if (!items && !files) return;
+        // Prefer folder drop (so we can resolve image paths from same folder)
+        if (items && items.length > 0) {
+          const entry = items[0].webkitGetAsEntry ? items[0].webkitGetAsEntry() : (items[0].getAsEntry && items[0].getAsEntry());
+          if (entry && entry.isDirectory) {
+            traverseDirAndRender(entry);
+            return;
+          }
+        }
+        const file = files && files[0];
+        if (!file) return;
+        if (isJsonFile(file)) {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            const text = ev.target && ev.target.result;
+            if (typeof text === 'string') {
+              try {
+                const data = JSON.parse(text);
+                renderJsonContent(data, file.name);
+              } catch (err) {
+                renderJsonContent(null, file.name, text);
+              }
+            }
+          };
+          reader.readAsText(file, 'UTF-8');
+          return;
+        }
+        if (isSvgFile(file)) {
+          const url = URL.createObjectURL(file);
+          droppedObjectUrls.push(url);
+          renderSvgContent(url, file.name);
+          return;
+        }
+        if (isYamlFile(file)) {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            const text = ev.target && ev.target.result;
+            if (typeof text === 'string') renderYamlContent(text, file.name);
+          };
+          reader.readAsText(file, 'UTF-8');
+          return;
+        }
+        if (isCsvFile(file)) {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            const text = ev.target && ev.target.result;
+            if (typeof text === 'string') renderCsvContent(text, file.name);
+          };
+          reader.readAsText(file, 'UTF-8');
+          return;
+        }
+        if (isMdcFile(file) || isMarkdownLike(file)) {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            const text = ev.target && ev.target.result;
+            if (typeof text === 'string') renderMarkdownContent(text, file.name, {});
+          };
+          reader.readAsText(file, 'UTF-8');
+        }
+      });
+    }
+    
+    /** Traverse dropped folder, collect files, find .md and render with image map */
+    function traverseDirAndRender(dirEntry) {
+      const fileMap = {}; // path relative to folder root (no leading /) -> File
+      function readAllEntries(reader) {
+        return new Promise((resolve, reject) => {
+          const acc = [];
+          function read() {
+            reader.readEntries((entries) => {
+              if (entries.length === 0) {
+                resolve(acc);
+                return;
+              }
+              acc.push(...entries);
+              read();
+            }, reject);
+          }
+          read();
+        });
+      }
+      function walk(entry, prefix) {
+        return new Promise((resolve, reject) => {
+          if (entry.isFile) {
+            entry.file((file) => {
+              const key = (prefix + entry.name).replace(/^\/+/, '');
+              fileMap[key] = file;
+              resolve();
+            }, reject);
+            return;
+          }
+          if (entry.isDirectory) {
+            const reader = entry.createReader();
+            readAllEntries(reader).then((entries) => {
+              return Promise.all(entries.map((e) => walk(e, prefix + entry.name + '/')));
+            }).then(() => resolve()).catch(reject);
+          } else {
+            resolve();
+          }
+        });
+      }
+      walk(dirEntry, '/').then(() => {
+        const mdKeys = Object.keys(fileMap).filter((k) => /\.(md|markdown|mdx|mdc|mkd|mdoc|rst|txt)$/i.test(k));
+        const mdKey = mdKeys[0];
+        if (!mdKey) return;
+        const mdFile = fileMap[mdKey];
+        const baseDir = mdKey.replace(/\/[^/]+$/, ''); // directory of the .md relative to folder root
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const text = ev.target && ev.target.result;
+          if (typeof text === 'string') {
+            renderMarkdownContent(text, mdFile.name, { fileMap: fileMap, baseDir: baseDir });
+          }
+        };
+        reader.readAsText(mdFile, 'UTF-8');
+      }).catch((err) => {
+        console.error('Traverse dropped folder:', err);
+      });
+    }
+    
+    // Object URLs created for dropped-folder images; revoked when going back to list
+    let droppedObjectUrls = [];
+    
+    /** Syntax-highlight JSON string for display */
+    function highlightJsonString(jsonStr) {
+      return jsonStr
+        .replace(/("(?:[^"\\]|\\.)*")\s*:/g, '<span class="json-key">$1</span>:')
+        .replace(/("(?:[^"\\]|\\.)*")/g, '<span class="json-string">$1</span>')
+        .replace(/\b(-?\d+\.?\d*([eE][+-]?\d+)?)\b/g, '<span class="json-number">$1</span>')
+        .replace(/\b(true|false)\b/g, '<span class="json-bool">$1</span>')
+        .replace(/\bnull\b/g, '<span class="json-null">null</span>');
+    }
+    
+    function escapeHtml(s) {
+      if (s == null) return '';
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+    
+    function getJsonValueHTML(value) {
+      if (value === null) return '<span class="json-null">null</span>';
+      if (typeof value === 'string') return '<span class="json-string">"' + escapeHtml(value) + '"</span>';
+      if (typeof value === 'number') return '<span class="json-number">' + String(value) + '</span>';
+      if (typeof value === 'boolean') return '<span class="json-bool">' + String(value) + '</span>';
+      return '<span class="json-string">"' + escapeHtml(String(value)) + '"</span>';
+    }
+    
+    function renderJsonNode(value, key, depth) {
+      const hasKey = key !== null && key !== undefined;
+      const keyHTML = hasKey ? '<span class="json-key">"' + escapeHtml(String(key)) + '"</span><span class="json-colon">: </span>' : '';
+      
+      if (value === null || typeof value !== 'object') {
+        return '<li class="json-row">' + keyHTML + getJsonValueHTML(value) + '</li>';
+      }
+      
+      const isArray = Array.isArray(value);
+      const entries = isArray
+        ? value.map((v, i) => [String(i), v])
+        : Object.entries(value);
+      const typeName = isArray ? 'Array' : 'Object';
+      const typeClass = isArray ? 'json-details--array' : 'json-details--object';
+      const badge = '<span class="json-type-badge json-type-badge--' + (isArray ? 'array' : 'object') + '">' + typeName + ' · ' + entries.length + '</span>';
+      const openAttr = ' open';
+      
+      if (entries.length === 0) {
+        const emptyVal = isArray ? '[]' : '{}';
+        return '<li class="json-row">' + keyHTML + '<span class="json-null">' + emptyVal + '</span></li>';
+      }
+      
+      const children = entries.map(([k, v]) => renderJsonNode(v, k, depth + 1)).join('');
+      return `
+        <li class="json-group">
+          <details class="json-details ${typeClass}"${openAttr}>
+            <summary>${keyHTML}${badge}</summary>
+            <ul class="json-children">${children}</ul>
+          </details>
+        </li>
+      `;
+    }
+    
+    function bindJsonToolbar(markdownView, rawText) {
+      const expandBtn = markdownView.querySelector('#json-expand-all');
+      const collapseBtn = markdownView.querySelector('#json-collapse-all');
+      const toggleRawBtn = markdownView.querySelector('#json-toggle-raw');
+      const rawBlock = markdownView.querySelector('#json-raw-block');
+      if (expandBtn) {
+        expandBtn.addEventListener('click', () => {
+          markdownView.querySelectorAll('.json-details').forEach((d) => { d.open = true; });
+        });
+      }
+      if (collapseBtn) {
+        collapseBtn.addEventListener('click', () => {
+          markdownView.querySelectorAll('.json-details').forEach((d) => { d.open = false; });
+        });
+      }
+      if (toggleRawBtn && rawBlock) {
+        toggleRawBtn.addEventListener('click', () => {
+          const isHidden = rawBlock.style.display === 'none' || !rawBlock.style.display;
+          rawBlock.style.display = isHidden ? 'block' : 'none';
+          toggleRawBtn.textContent = isHidden ? 'Hide raw' : 'Show raw';
+        });
+      }
+      if (rawBlock) {
+        const escaped = rawText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        rawBlock.innerHTML = '<pre class="json-view">' + highlightJsonString(escaped) + '</pre>';
+      }
+    }
+    
+    function renderJsonContent(data, fileName, rawText) {
+      const markdownView = setDroppedPreviewHeader(fileName || 'Dropped JSON', 'Dropped JSON');
+      if (data === null || data === undefined) {
+        const raw = (rawText || '');
+        const safe = raw.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        markdownView.innerHTML = '<div class="error"><h2>Không phải JSON hợp lệ</h2><p>File không parse được. Nội dung thô:</p><pre class="json-view">' + safe + '</pre></div>';
+        window.scrollTo(0, 0);
+        return;
+      }
+      const raw = rawText || JSON.stringify(data, null, 2);
+      const treeHTML = renderJsonNode(data, null, 0);
+      markdownView.innerHTML = `
+        <div class="json-view-wrap">
+          <div class="json-toolbar">
+            <button id="json-expand-all" type="button">Expand all</button>
+            <button id="json-collapse-all" type="button">Collapse all</button>
+            <button id="json-toggle-raw" type="button">Show raw</button>
+          </div>
+          <div class="json-tree">
+            <ul class="json-root-list">${treeHTML}</ul>
+          </div>
+          <div id="json-raw-block" style="display:none;"></div>
+        </div>
+      `;
+      bindJsonToolbar(markdownView, raw);
+      window.scrollTo(0, 0);
+    }
+    
+    function setDroppedPreviewHeader(fileName, label) {
+      currentFile = fileName || label;
+      document.getElementById('page-title').textContent = fileName || label;
+      document.getElementById('breadcrumb').textContent = 'Dropped: ' + (fileName || '');
+      const backContainer = document.getElementById('back-button-container');
+      backContainer.innerHTML = '<a href="#" class="back-button" aria-label="Quay lại danh sách"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Quay lại</span></a>';
+      backContainer.setAttribute('aria-hidden', 'false');
+      document.getElementById('main-header').classList.add('has-back');
+      document.title = (fileName || 'Dropped') + ' — Markdown';
+      document.getElementById('file-list-view').style.display = 'none';
+      const markdownView = document.getElementById('markdown-view');
+      markdownView.classList.add('active');
+      return markdownView;
+    }
+    
+    function renderSvgContent(objectUrl, fileName) {
+      const markdownView = setDroppedPreviewHeader(fileName, 'Dropped SVG');
+      markdownView.innerHTML = '<div class="drop-preview-wrap"><object data="' + objectUrl + '" type="image/svg+xml" class="svg-preview" aria-label="SVG preview"></object></div>';
+      window.scrollTo(0, 0);
+    }
+    
+    function renderYamlContent(text, fileName) {
+      const markdownView = setDroppedPreviewHeader(fileName, 'Dropped YAML');
+      const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const highlighted = escaped
+        .replace(/^(\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/gm, '$1<span class="yaml-key">$2</span>:')
+        .replace(/:(\s*)(["\']([^"\']*)["\'])/g, ':$1<span class="yaml-string">$2</span>')
+        .replace(/:(\s*)(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g, ':$1<span class="yaml-number">$2</span>');
+      markdownView.innerHTML = '<div class="yaml-view-wrap"><pre class="yaml-view">' + highlighted + '</pre></div>';
+      window.scrollTo(0, 0);
+    }
+    
+    function parseCsv(text) {
+      const rows = [];
+      let row = [];
+      let cur = '';
+      let inQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (c === '"') {
+          if (inQuotes && text[i + 1] === '"') { cur += '"'; i++; }
+          else inQuotes = !inQuotes;
+        } else if (c === ',' && !inQuotes) {
+          row.push(cur.trim());
+          cur = '';
+        } else if ((c === '\n' || c === '\r') && !inQuotes) {
+          row.push(cur.trim());
+          cur = '';
+          if (row.length || cur.length) rows.push(row);
+          row = [];
+          if (c === '\r' && text[i + 1] === '\n') i++;
+        } else {
+          cur += c;
+        }
+      }
+      row.push(cur.trim());
+      if (row.length) rows.push(row);
+      return rows;
+    }
+    
+    function renderCsvContent(text, fileName) {
+      const markdownView = setDroppedPreviewHeader(fileName, 'Dropped CSV');
+      const rows = parseCsv(text);
+      if (rows.length === 0) {
+        markdownView.innerHTML = '<div class="error">File CSV trống hoặc không parse được.</div>';
+        window.scrollTo(0, 0);
+        return;
+      }
+      const header = rows[0];
+      const body = rows.slice(1);
+      let table = '<table class="csv-table"><thead><tr>';
+      header.forEach((cell) => { table += '<th>' + escapeHtml(cell) + '</th>'; });
+      table += '</tr></thead><tbody>';
+      body.forEach((row) => {
+        table += '<tr>';
+        for (let i = 0; i < header.length; i++) {
+          table += '<td>' + escapeHtml(row[i] !== undefined ? row[i] : '') + '</td>';
+        }
+        table += '</tr>';
+      });
+      table += '</tbody></table>';
+      markdownView.innerHTML = '<div class="csv-table-wrap">' + table + '</div>';
+      window.scrollTo(0, 0);
+    }
+    
+    function renderMarkdownContent(markdownText, fileName, options) {
+      options = options || {};
+      const fileMap = options.fileMap || null;
+      const baseDir = options.baseDir || '';
+      if (droppedObjectUrls.length) {
+        droppedObjectUrls.forEach((u) => URL.revokeObjectURL(u));
+        droppedObjectUrls = [];
+      }
+      currentFile = fileName || 'Dropped file';
+      document.getElementById('page-title').textContent = fileName || 'Dropped file';
+      document.getElementById('breadcrumb').textContent = 'Dropped: ' + (fileName || '');
+      const backContainer = document.getElementById('back-button-container');
+      backContainer.innerHTML = '<a href="#" class="back-button" aria-label="Quay lại danh sách"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Quay lại</span></a>';
+      backContainer.setAttribute('aria-hidden', 'false');
+      document.getElementById('main-header').classList.add('has-back');
+      document.title = (fileName || 'Dropped') + ' — Markdown';
+      document.getElementById('file-list-view').style.display = 'none';
+      const markdownView = document.getElementById('markdown-view');
+      markdownView.classList.add('active');
+      markdownView.innerHTML = '<div class="loading">Loading...</div>';
+      try {
+        function resolveImageUrl(path) {
+          path = (path || '').trim();
+          if (!path) return path;
+          if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) return path;
+          if (fileMap) {
+            const pathOnly = path.replace(/#.*$/, '').replace(/\?.*$/, '');
+            const normalized = (baseDir + '/' + pathOnly).replace(/\/+/g, '/').replace(/^\/+/, '').replace(/\/+$/, '');
+            const file = fileMap[normalized] || fileMap[normalized.replace(/^\.\//, '')];
+            if (file) {
+              const url = URL.createObjectURL(file);
+              droppedObjectUrls.push(url);
+              return url;
+            }
+            return path;
+          }
+          var base = location.pathname.replace(/\/[^/]*$/, '') || '/';
+          var segs = path.replace(/^\.\//, '').split('/').filter(Boolean).map(encodeURIComponent);
+          return location.origin + base + (base.endsWith('/') ? '' : '/') + segs.join('/');
+        }
+        const md = markdownText.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, path) => '![' + alt + '](' + resolveImageUrl(path) + ')');
+        let html = marked.parse(md);
+        html = addHeadingIds(html);
+        html = html.replace(/<img([^>]*)\ssrc=["']([^"']+)["']([^>]*)>/gi, (m, b, s, a) => '<img' + b + ' src="' + resolveImageUrl(s) + '"' + a + '>');
+        html = html.replace(/<img /gi, '<img loading="lazy" onerror="this.style.display=\'none\';var s=document.createElement(\'span\');s.className=\'img-fallback\';s.textContent=this.alt||\'[Ảnh]\';this.parentNode.appendChild(s);" ');
+        function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+        const imgCollector = [];
+        html = html.replace(/<img([^>]+)>/gi, (match, attrs) => {
+          const altM = attrs.match(/\salt=["']([^"']*)["']/i);
+          const alt = (altM && altM[1]) ? altM[1] : '[Ảnh]';
+          imgCollector.push({ attrs, alt });
+          return '<!--MDIMG:' + (imgCollector.length - 1) + '-->';
+        });
+        if (imgCollector.length > 0) {
+          const firstPos = html.indexOf('<!--MDIMG:0-->');
+          html = html.replace(/<!--MDIMG:\d+-->/g, '');
+          const scrollBlock = '<div class="md-images-scroll" role="region" aria-label="Hình ảnh minh họa (cuộn ngang)">' + imgCollector.map(function(item) {
+            return '<figure class="md-image-item"><figcaption class="md-image-caption">' + esc(item.alt) + '</figcaption><div class="md-image-cell"><img' + item.attrs + '></div></figure>';
+          }).join('') + '</div>';
+          html = html.slice(0, firstPos) + scrollBlock + html.slice(firstPos);
+        }
+        markdownView.innerHTML = html;
+        window.scrollTo(0, 0);
+      } catch (err) {
+        console.error('Error rendering dropped markdown:', err);
+        markdownView.innerHTML = '<div class="error"><h2>Lỗi</h2><p>' + err.message + '</p></div>';
+      }
+    }
+    
+    function showFileList() {
+      if (droppedObjectUrls.length) {
+        droppedObjectUrls.forEach((u) => URL.revokeObjectURL(u));
+        droppedObjectUrls = [];
+      }
+      currentFile = null;
+      
+      document.getElementById('page-title').textContent = 'Markdown';
+      document.getElementById('breadcrumb').textContent = 
+        `${allFiles.length} files in ${Object.keys(allFolders).length} folders`;
+      const backContainer = document.getElementById('back-button-container');
+      backContainer.innerHTML = '';
+      backContainer.setAttribute('aria-hidden', 'true');
+      document.getElementById('main-header').classList.remove('has-back');
+      document.title = 'Markdown';
+      
+      document.getElementById('file-list-view').style.display = 'block';
+      document.getElementById('markdown-view').classList.remove('active');
+      document.getElementById('search-input').value = '';
+      
+      if (currentSort === 'lastupdate') {
+        renderByLastUpdate(allFiles);
+      } else {
+        renderFolders(allFolders, allFiles);
+      }
+    }
+    
+    async function viewFile(filePath) {
+      currentFile = filePath;
+      
+      // Update UI: Back bên trái, title = tên file, breadcrumb = đường dẫn
+      const fileName = filePath.split('/').pop();
+      document.getElementById('page-title').textContent = fileName;
+      document.getElementById('breadcrumb').textContent = filePath;
+      const backContainer = document.getElementById('back-button-container');
+      backContainer.innerHTML = `
+        <a href="#" class="back-button" aria-label="Quay lại danh sách">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Quay lại</span>
+        </a>
+      `;
+      backContainer.setAttribute('aria-hidden', 'false');
+      document.getElementById('main-header').classList.add('has-back');
+      document.title = fileName + ' — Markdown';
+      
+      document.getElementById('file-list-view').style.display = 'none';
+      const markdownView = document.getElementById('markdown-view');
+      markdownView.classList.add('active');
+      markdownView.innerHTML = '<div class="loading">Loading markdown...</div>';
+      
+      // Load and render markdown (always request from site root so / and /viewer/ both work)
+      try {
+        const fileUrl = new URL(filePath, location.origin + '/').href;
+        const response = await fetch(fileUrl);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const markdown = await response.text();
+        renderMarkdownIntoView(filePath, markdown, markdownView);
+      } catch (error) {
+        console.error('Error loading markdown:', error);
+        const isLocal = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(location.origin);
+        const hint = isLocal
+          ? '<p class="error-hint">Nếu bạn mở từ thư mục con (vd. /viewer/), hãy mở trực tiếp <a href="' + location.origin + '/">' + location.origin + '</a> để xem tài liệu.</p>'
+          : '';
+        var fullPayload = [
+          'MSV-C002 — Error loading file',
+          'Message: ' + (error && error.message ? error.message : ''),
+          'File: ' + filePath,
+          'URL: ' + (new URL(filePath, location.origin + '/').href),
+          'Stack: ' + (error && error.stack ? error.stack : '')
+        ].join('\n');
+        var shortMsg = (error && error.message ? error.message : 'Error loading file.') + ' File: ' + filePath;
+        var codeHint = 'Mã: MSV-C002 — Xem MarkdownSV/ERROR-CODES.md (path, CORS, refresh)';
+        markdownView.innerHTML = buildErrorBlock(shortMsg, fullPayload, codeHint, hint) +
+          '<br><a href="#" class="back-button" aria-label="Quay lại danh sách">← Quay lại</a>';
+        wireErrorBlock(markdownView);
+      }
+    }
+    
+    function renderMarkdownIntoView(filePath, markdown, markdownView) {
+      if (!markdownView) markdownView = document.getElementById('markdown-view');
+      const baseDir = filePath.includes('/') ? filePath.replace(/\/[^/]+$/, '') : '';
+      function toAbsoluteImageUrl(path) {
+        if (!path || path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) return path;
+        try {
+          let decoded = path.trim();
+          try { decoded = decodeURIComponent(decoded); } catch (_) {}
+          const isRelative = !decoded.startsWith('/') && !decoded.startsWith('http://') && !decoded.startsWith('https://') && !decoded.startsWith('data:');
+          if (baseDir && isRelative) {
+            decoded = (baseDir + '/' + decoded).replace(/^\.\//, '').replace(/\/+/g, '/');
+          } else if (!isRelative) {
+            decoded = decoded.replace(/^\.\//, '').replace(/^\/+/, '');
+          }
+          const segments = decoded.split('/').filter(Boolean).map(s => encodeURIComponent(s));
+          return segments.length ? location.origin + '/' + segments.join('/') : path;
+        } catch (_) {
+          return path;
+        }
+      }
+      const markdownWithAbsoluteImages = markdown.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, path) => {
+        return '![' + alt + '](' + toAbsoluteImageUrl(path.trim()) + ')';
+      });
+      let html = marked.parse(markdownWithAbsoluteImages);
+      html = addHeadingIds(html);
+      function resolveDocPath(rel) {
+        if (!rel || rel.startsWith('http://') || rel.startsWith('https://') || rel.startsWith('mailto:') || rel.startsWith('#')) return null;
+        const s = rel.trim().replace(/^\.\//, '');
+        if (!s.endsWith('.md') && !s.includes('.md#')) return null;
+        const pathPart = s.split('#')[0];
+        if (!pathPart.endsWith('.md')) return null;
+        const parts = baseDir ? (baseDir + '/' + pathPart).replace(/\/+/g, '/').split('/') : pathPart.replace(/\/+/g, '/').split('/');
+        const resolved = parts.filter(Boolean).join('/');
+        return resolved || null;
+      }
+      html = html.replace(/<a\s+([^>]*\s)?href=["']([^"']+)["']([^>]*)>/gi, (match, before, href, after) => {
+        const resolved = resolveDocPath(href);
+        if (resolved) {
+          return '<a ' + (before || '').trim() + ' href="#view=' + encodeURIComponent(resolved) + '"' + after + '>';
+        }
+        return match;
+      });
+      html = html.replace(/<img([^>]*)\ssrc=["']([^"']+)["']([^>]*)>/gi, (match, before, rawSrc, after) => {
+        const url = toAbsoluteImageUrl(rawSrc);
+        return '<img' + before + ' src="' + url + '"' + after + '>';
+      });
+      html = html.replace(/<img /gi, '<img loading="lazy" onerror="this.style.display=\'none\';var s=document.createElement(\'span\');s.className=\'img-fallback\';s.textContent=this.alt||\'[Ảnh]\';this.parentNode.appendChild(s);" ');
+      function escapeHtml(s) {
+        const div = document.createElement('div');
+        div.textContent = s;
+        return div.innerHTML;
+      }
+      const imgCollector = [];
+      html = html.replace(/<img([^>]+)>/gi, (match, attrs) => {
+        const altM = attrs.match(/\salt=["']([^"']*)["']/i);
+        const alt = (altM && altM[1]) ? altM[1] : '[Ảnh]';
+        const i = imgCollector.length;
+        imgCollector.push({ attrs, alt });
+        return '<!--MDIMG:' + i + '-->';
+      });
+      if (imgCollector.length > 0) {
+        const firstPos = html.indexOf('<!--MDIMG:0-->');
+        html = html.replace(/<!--MDIMG:\d+-->/g, '');
+        const scrollBlock = '<div class="md-images-scroll" role="region" aria-label="Hình ảnh minh họa (cuộn ngang)">' +
+          imgCollector.map(function(item) {
+            return '<figure class="md-image-item">' +
+              '<figcaption class="md-image-caption">' + escapeHtml(item.alt) + '</figcaption>' +
+              '<div class="md-image-cell"><img' + item.attrs + '></div></figure>';
+          }).join('') + '</div>';
+        html = html.slice(0, firstPos) + scrollBlock + html.slice(firstPos);
+      }
+      markdownView.innerHTML = html;
+      window.scrollTo(0, 0);
+    }
+    
+    function viewFileWithContent(filePath, markdownContent) {
+      currentFile = filePath;
+      const fileName = filePath.split('/').pop();
+      document.getElementById('page-title').textContent = fileName;
+      document.getElementById('breadcrumb').textContent = filePath;
+      const backContainer = document.getElementById('back-button-container');
+      backContainer.innerHTML = `
+        <a href="#" class="back-button" aria-label="Quay lại danh sách">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Quay lại</span>
+        </a>
+      `;
+      backContainer.setAttribute('aria-hidden', 'false');
+      document.getElementById('main-header').classList.add('has-back');
+      document.title = fileName + ' — Markdown';
+      document.getElementById('file-list-view').style.display = 'none';
+      const markdownView = document.getElementById('markdown-view');
+      markdownView.classList.add('active');
+      markdownView.innerHTML = '<div class="loading">Loading markdown...</div>';
+      try {
+        renderMarkdownIntoView(filePath, markdownContent, markdownView);
+      } catch (err) {
+        console.error('Error rendering markdown:', err);
+        var fullPayload = [
+          'MSV-C004 — Lỗi hiển thị Markdown',
+          'Message: ' + (err && err.message ? err.message : ''),
+          'File: ' + filePath,
+          'Stack: ' + (err && err.stack ? err.stack : '')
+        ].join('\n');
+        var shortMsg = (err && err.message ? err.message : 'Lỗi hiển thị.') + ' File: ' + filePath;
+        var codeHint = 'Mã: MSV-C004 — Xem MarkdownSV/ERROR-CODES.md (marked.parse, sanitize)';
+        markdownView.innerHTML = buildErrorBlock(shortMsg, fullPayload, codeHint);
+        wireErrorBlock(markdownView);
+        window.scrollTo(0, 0);
+      }
+      const resolvedHash = 'view=' + encodeURIComponent(filePath);
+      if (window.location.hash !== '#' + resolvedHash) {
+        history.replaceState(null, '', '#' + resolvedHash);
+      }
+    }
+  </script>
+</body>
+</html>

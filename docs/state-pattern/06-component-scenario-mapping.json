@@ -1,0 +1,268 @@
+{
+  "meta": {
+    "description": "Mapping table: component_group / component_key → state-pattern scenario IDs",
+    "source_scenarios": "XPOS/state-pattern/02-scenario-catalog.md",
+    "source_component_registry": ".cursor/skills/comp-extraction/SKILL.md (PRD Component Registry)",
+    "generated_at": "2026-02-12",
+    "schema_version": "mapping-v1"
+  },
+  "scenarios": {
+    "S1": {
+      "name": "NEW Badge — Hide After Viewed",
+      "abstract_pattern": "Novelty indicator clears after user engagement",
+      "interaction_state": "viewed",
+      "events": ["FILE_OPENED"],
+      "persistence": "localStorage"
+    },
+    "S2": {
+      "name": "Dismissible Announcements",
+      "abstract_pattern": "One-time or limited-show content dismissed by user",
+      "interaction_state": "dismissed",
+      "events": ["ITEM_DISMISSED", "UNDO"],
+      "persistence": "localStorage"
+    },
+    "S3": {
+      "name": "Recently Viewed",
+      "abstract_pattern": "Ordered history of user-accessed items",
+      "interaction_state": "recentlyViewed",
+      "events": ["FILE_OPENED"],
+      "persistence": "localStorage"
+    },
+    "S4": {
+      "name": "Pinned Items",
+      "abstract_pattern": "User-marked favorites surfaced in priority position",
+      "interaction_state": "pinned",
+      "events": ["ITEM_PINNED", "ITEM_UNPINNED"],
+      "persistence": "localStorage"
+    },
+    "S5": {
+      "name": "Onboarding Checklist",
+      "abstract_pattern": "Progressive task completion tracked per user",
+      "interaction_state": "onboarding",
+      "events": ["ONBOARDING_STEP_COMPLETED"],
+      "persistence": "localStorage"
+    },
+    "S6": {
+      "name": "Search History",
+      "abstract_pattern": "Recent queries stored and suggested on repeat use",
+      "interaction_state": "searchHistory",
+      "events": ["SEARCH_QUERY_CHANGED", "SEARCH_HISTORY_CLEARED"],
+      "persistence": "localStorage"
+    },
+    "S7": {
+      "name": "Filter Preference Memory",
+      "abstract_pattern": "Last-used filter/tab remembered across sessions",
+      "interaction_state": "filterPreference",
+      "events": ["FILTER_CHANGED"],
+      "persistence": "localStorage"
+    },
+    "S8": {
+      "name": "Folder Expand/Collapse",
+      "abstract_pattern": "Collapsible section state persists within session",
+      "interaction_state": "folderExpanded",
+      "events": ["FOLDER_TOGGLED"],
+      "persistence": "sessionStorage"
+    }
+  },
+  "group_mapping": {
+    "Input/Form": {
+      "applicable_scenarios": ["S1", "S5", "S7"],
+      "reasoning": {
+        "S1": "Form fields with validation status can show 'new/updated' indicators (e.g., new required field added)",
+        "S5": "Onboarding: guide user through form fields step-by-step (fill name → fill phone → submit)",
+        "S7": "Remember last-used form variant or input mode preference"
+      },
+      "not_applicable": ["S4", "S8"],
+      "not_applicable_reason": "Input fields are not pinnable items; no collapsible hierarchy"
+    },
+    "Layout": {
+      "applicable_scenarios": ["S2", "S8"],
+      "reasoning": {
+        "S2": "Headers/footers host dismissible banners, announcements, system notices",
+        "S8": "Sections within layout (accordion, expandable panels) need expand/collapse memory"
+      },
+      "not_applicable": ["S3", "S4", "S6"],
+      "not_applicable_reason": "Layout containers are structural, not user-navigable items"
+    },
+    "Navigation/Action": {
+      "applicable_scenarios": ["S2", "S5", "S7"],
+      "reasoning": {
+        "S2": "Action buttons can trigger dismissible tooltips or first-time-use hints",
+        "S5": "Onboarding: track whether user has performed key actions (clicked button X)",
+        "S7": "Remember last-used action or navigation path preference"
+      },
+      "not_applicable": ["S3", "S8"],
+      "not_applicable_reason": "Buttons are not browsable items with history; no collapsible structure"
+    },
+    "Search/Filter": {
+      "applicable_scenarios": ["S6", "S7"],
+      "reasoning": {
+        "S6": "Search bar directly maps to search history scenario",
+        "S7": "Filter tabs directly map to filter preference memory"
+      },
+      "not_applicable": ["S4", "S8"],
+      "not_applicable_reason": "Filters are controls, not pinnable content; no collapsible hierarchy"
+    },
+    "Cards/Lists": {
+      "applicable_scenarios": ["S1", "S2", "S3", "S4", "S8"],
+      "reasoning": {
+        "S1": "Cards/list items are prime candidates for NEW/updated badges (new product, new order)",
+        "S2": "Dismissible banners or tips within card sections",
+        "S3": "Recently viewed cards/items (recent products, recent orders)",
+        "S4": "Pin favorite cards to top (pinned products, pinned orders)",
+        "S8": "Grouped lists with collapsible sections (order groups, category groups)"
+      },
+      "not_applicable": [],
+      "not_applicable_reason": "Cards/Lists are the most versatile group for interaction patterns"
+    },
+    "Info/Feedback": {
+      "applicable_scenarios": ["S1", "S2"],
+      "reasoning": {
+        "S1": "Info boxes can show NEW badge for fresh notifications or updates",
+        "S2": "Infobox, helper text, success popups are classic dismissible content"
+      },
+      "not_applicable": ["S3", "S4", "S6", "S8"],
+      "not_applicable_reason": "Feedback elements are transient, not navigable/pinnable/searchable"
+    },
+    "Special": {
+      "applicable_scenarios": ["S1", "S2", "S5"],
+      "reasoning": {
+        "S1": "Special components (QR container, payment options) can show 'new feature' badges",
+        "S2": "Dismissible setup guides or first-time tips for special components",
+        "S5": "Onboarding for complex flows (upload area guide, payment setup steps)"
+      },
+      "not_applicable": ["S6"],
+      "not_applicable_reason": "Special components rarely involve search functionality"
+    }
+  },
+  "component_key_mapping": {
+    "CardItem": ["S1", "S2", "S3", "S4"],
+    "ProductCard": ["S1", "S3", "S4"],
+    "OrderCard": ["S1", "S3"],
+    "StatisticCards": ["S1"],
+    "RecentOrdersList": ["S1", "S3"],
+    "ListItem": ["S1", "S3", "S4"],
+    "SearchBar": ["S6"],
+    "DropdownFilter": ["S7"],
+    "FilterTabs": ["S7"],
+    "Header": ["S2"],
+    "HeaderView": ["S2"],
+    "Footer": ["S2"],
+    "StickyFooter": ["S2"],
+    "BottomBar": ["S2"],
+    "InfoBox": ["S1", "S2"],
+    "RequirementBox": ["S2"],
+    "HelperText": ["S2"],
+    "SuccessHeader": ["S2"],
+    "SuccessPopup": ["S2"],
+    "GrowthLabel": ["S1"],
+    "InputField": ["S5"],
+    "InputFieldPhone": ["S5"],
+    "InputFieldPassword": ["S5"],
+    "OTPInput": ["S5"],
+    "PinInput": ["S5"],
+    "PasswordFields": ["S5"],
+    "ReadOnlyField": [],
+    "Button": ["S5"],
+    "ButtonPrimary": ["S5"],
+    "ButtonOutline": ["S5"],
+    "ActionButtons": ["S2", "S5"],
+    "ActionLink": ["S2"],
+    "Link": [],
+    "LogoutButton": [],
+    "Separator": [],
+    "UploadArea": ["S2", "S5"],
+    "Timer": [],
+    "OrderDetailSummary": ["S3"],
+    "PaymentOptions": ["S1", "S2", "S5"],
+    "QRCodeContainer": ["S2"],
+    "BillDetail": ["S3"],
+    "SectionInfo": ["S8"],
+    "SectionItems": ["S8"],
+    "FormSection1": ["S8"],
+    "FormSection2": ["S8"],
+    "Switch": ["S7"],
+    "Dialog": ["S2"]
+  },
+  "ux_guideline_cross_refs": {
+    "S1": {
+      "ux_guidelines_csv": [3],
+      "web_interface_csv": [21, 22],
+      "rule_excerpts": [
+        "ux-guidelines#3: Active State — Current page/section should be visually indicated",
+        "web-interface#21: URL Reflects State — URL should reflect current UI state",
+        "web-interface#22: Deep Linking — Stateful components should support deep-linking"
+      ]
+    },
+    "S2": {
+      "ux_guidelines_csv": [7, 10],
+      "web_interface_csv": [23, 5],
+      "rule_excerpts": [
+        "ux-guidelines#7: Excessive Motion — Animate 1-2 key elements per view",
+        "ux-guidelines#10: Loading States — Show feedback during async operations",
+        "web-interface#23: Confirm Destructive Actions — Show confirmation before delete",
+        "web-interface#5: Aria Live — Async updates need aria-live for screen readers"
+      ]
+    },
+    "S3": {
+      "ux_guidelines_csv": [4, 5],
+      "web_interface_csv": [21],
+      "rule_excerpts": [
+        "ux-guidelines#4: Back Button — Preserve navigation history properly",
+        "ux-guidelines#5: Deep Linking — URLs should reflect current state",
+        "web-interface#21: URL Reflects State"
+      ]
+    },
+    "S4": {
+      "ux_guidelines_csv": [3, 11],
+      "web_interface_csv": [23, 3],
+      "rule_excerpts": [
+        "ux-guidelines#3: Active State — Visually indicate pinned status",
+        "ux-guidelines#11: Hover vs Tap — Use click/tap for pin toggle",
+        "web-interface#23: Confirm Destructive Actions — Confirm unpin-all",
+        "web-interface#3: Keyboard Handlers — Pin toggle via keyboard"
+      ]
+    },
+    "S5": {
+      "ux_guidelines_csv": [10, 22],
+      "web_interface_csv": [5, 14],
+      "rule_excerpts": [
+        "ux-guidelines#10: Loading States — Show progress feedback",
+        "ux-guidelines#22: Touch Target Size — 44px min for checklist items",
+        "web-interface#5: Aria Live — Announce progress changes",
+        "web-interface#14: Submit Button — Show loading state during async completion"
+      ]
+    },
+    "S6": {
+      "ux_guidelines_csv": [22, 23],
+      "web_interface_csv": [10, 12],
+      "rule_excerpts": [
+        "ux-guidelines#22: Touch Target Size — Min 44px for history items",
+        "ux-guidelines#23: Touch Spacing — 8px gap between history entries",
+        "web-interface#10: Autocomplete Attribute — Add autocomplete for search",
+        "web-interface#12: Never Block Paste — Allow paste in search"
+      ]
+    },
+    "S7": {
+      "ux_guidelines_csv": [3, 5],
+      "web_interface_csv": [21, 22],
+      "rule_excerpts": [
+        "ux-guidelines#3: Active State — Visually indicate active filter",
+        "ux-guidelines#5: Deep Linking — URL reflects filter state",
+        "web-interface#21: URL Reflects State — Sync filter to URL",
+        "web-interface#22: Deep Linking — Shareable filter state"
+      ]
+    },
+    "S8": {
+      "ux_guidelines_csv": [8, 9, 13],
+      "web_interface_csv": [3, 7],
+      "rule_excerpts": [
+        "ux-guidelines#8: Duration Timing — 150-300ms for expand/collapse",
+        "ux-guidelines#9: Reduced Motion — Respect prefers-reduced-motion",
+        "ux-guidelines#13: Transform Performance — Use transform for animations",
+        "web-interface#3: Keyboard Handlers — Toggle via Enter/Space",
+        "web-interface#7: Visible Focus States — Focus ring on collapsed header"
+      ]
+    }
+  }
+}
