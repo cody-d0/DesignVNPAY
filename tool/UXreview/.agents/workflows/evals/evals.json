@@ -1,0 +1,191 @@
+{
+    "skill_name": "figma-to-ux-review",
+    "version": "2.0",
+    "description": "Test cases cho pipeline Figma → PRD .md → UX Review Report. Mỗi eval kiểm tra toàn pipeline hoặc sub-segment với focus areas khác nhau.",
+    "evals": [
+        {
+            "id": 1,
+            "name": "banking-full-flow-6-screens",
+            "prompt": "Review UX cho feature 'Chuyển tiền nội bộ cùng chủ' trong app Co-op Bank KHCN. Figma URL: https://www.figma.com/design/XyZ123/Co-op-Bank-KHCN?node-id=100-200. Domain: banking. Output vào co-op-bank-khcn/chuyen-tien-noi-bo-cung-chu/",
+            "expected_output": "PRD .md pack (overview + 6 feature files) + ux-review-report.md. Report phải có Critical/Major/Minor findings với DDL references. Ảnh wireframe phải tồn tại trong ui/ folder.",
+            "focus_areas": [
+                "Full pipeline end-to-end",
+                "Banking domain (OTP, security, financial validation)",
+                "6 screens (form → popup → schedule variants → confirm → result)",
+                "Error states detection",
+                "Image integrity verification"
+            ],
+            "reference_output": "co-op-bank-khcn/chuyen-tien-noi-bo-cung-chu/ux-review-report.md",
+            "known_issues_in_reference": [
+                "ui/ folder rỗng — ảnh không được export (IMAGE_EXPORT gate fail thực tế)",
+                "Report vẫn có vision evidence dù không có ảnh — chứng tỏ agent hallucinated OCR"
+            ],
+            "assertions": [
+                {
+                    "id": "A1-greeting",
+                    "text": "Agent phải mở đầu bằng greeting theo HC-0 script (có emoji, có bảng input, có ước lượng thời gian)",
+                    "type": "qualitative"
+                },
+                {
+                    "id": "A1-scope-preview",
+                    "text": "Agent phải echo lại thông tin input + preview screens từ Figma trước khi bắt đầu",
+                    "type": "qualitative"
+                },
+                {
+                    "id": "A1-images-exist",
+                    "text": "Sau Phase 0-1, thư mục ui/ phải có ít nhất 1 file .png per screen (≥ 6 files)",
+                    "type": "deterministic",
+                    "check": "find {output_dir}/*/ui/ -name '*.png' | wc -l >= 6"
+                },
+                {
+                    "id": "A1-image-gate-run",
+                    "text": "Agent phải chạy HC-1 (IMAGE_EXPORT_VERIFY) và báo cáo cho user trước khi chạy OCR",
+                    "type": "qualitative"
+                },
+                {
+                    "id": "A1-ocr-gate-run",
+                    "text": "Agent phải chạy HC-2 (OCR_COMPLETENESS) và báo cáo summary per screen",
+                    "type": "qualitative"
+                },
+                {
+                    "id": "A1-handoff-exists",
+                    "text": ".handoff/handoff-manifest.json và screen_inventory.json phải tồn tại",
+                    "type": "deterministic",
+                    "check": "test -f {output_dir}/.handoff/handoff-manifest.json && test -f {output_dir}/.handoff/screen_inventory.json"
+                },
+                {
+                    "id": "A1-handoff-gate-run",
+                    "text": "Agent phải chạy HC-4 (HANDOFF_READY) với checklist 7 items + IMAGE check mới",
+                    "type": "qualitative"
+                },
+                {
+                    "id": "A1-vision-gate-run",
+                    "text": "Agent phải chạy VISION_READY gate trước Skill C — verify ảnh tồn tại",
+                    "type": "qualitative"
+                },
+                {
+                    "id": "A1-report-exists",
+                    "text": "ux-review-report.md phải được tạo",
+                    "type": "deterministic",
+                    "check": "test -f {output_dir}/ux-review-report.md"
+                },
+                {
+                    "id": "A1-report-has-ddl",
+                    "text": "Report phải có ít nhất 3 DDL references (ux-guidelines.csv# hoặc web-interface.csv#)",
+                    "type": "deterministic",
+                    "check": "grep -c 'ux-guidelines.csv#\\|web-interface.csv#' {output_dir}/ux-review-report.md >= 3"
+                },
+                {
+                    "id": "A1-report-severity",
+                    "text": "Report phải có findings chia theo Critical/Major/Minor",
+                    "type": "deterministic",
+                    "check": "grep -c 'Critical\\|Major\\|Minor' {output_dir}/ux-review-report.md >= 3"
+                },
+                {
+                    "id": "A1-hc5-review",
+                    "text": "Agent phải chạy HC-5 (preview findings + hỏi user accept) trước khi ghi report cuối",
+                    "type": "qualitative"
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "name": "banking-home-with-images",
+            "prompt": "Review UX cho section Home của app Public Bank PB Engage VN. Ảnh đã có sẵn trong thư mục PBbank/ui/ (8 artboards). Domain: banking. Output vào PBbank/",
+            "expected_output": "ux-review-report.md cho Home section. 4 screens (pre-login, logged-in, thong-bao, avatar-menu). Report phải có evidence từ ảnh thực (không hallucinate).",
+            "focus_areas": [
+                "Pipeline với ảnh đã có sẵn (skip Figma export)",
+                "Image gate phải PASS vì ảnh đã tồn tại",
+                "Vision review trên ảnh THỰC — evidence phải match nội dung ảnh",
+                "Accessibility findings (ARIA, focus trap, semantic HTML)",
+                "Multiple artboards per screen"
+            ],
+            "reference_output": "PBbank/ux-review-report.md",
+            "known_issues_in_reference": [
+                "Report chất lượng cao, evidence match ảnh thực",
+                "Touch target checks là 'unverifiable' từ static image — hợp lý"
+            ],
+            "assertions": [
+                {
+                    "id": "A2-greeting",
+                    "text": "Agent phải mở đầu bằng greeting theo HC-0",
+                    "type": "qualitative"
+                },
+                {
+                    "id": "A2-image-gate-pass",
+                    "text": "HC-1 phải PASS vì ảnh đã có (8 files trong ui/). Agent phải report kết quả gate rõ ràng",
+                    "type": "qualitative"
+                },
+                {
+                    "id": "A2-evidence-real",
+                    "text": "Findings trong report phải có evidence trích từ ảnh thực (đề cập đúng text, icon, layout thấy trong ảnh)",
+                    "type": "qualitative"
+                },
+                {
+                    "id": "A2-no-hallucination",
+                    "text": "Report KHÔNG được mention chi tiết UI không tồn tại trong ảnh (agent vision hallucination)",
+                    "type": "qualitative"
+                },
+                {
+                    "id": "A2-screen-count",
+                    "text": "Report phải cover ít nhất 3 screens (8 artboards → 3-4 screens hợp lý)",
+                    "type": "deterministic",
+                    "check": "grep -c '### ' {output_dir}/ux-review-report.md >= 3"
+                },
+                {
+                    "id": "A2-vision-gate-pass",
+                    "text": "VISION_READY gate phải PASS và Skill C phải đọc ảnh thực",
+                    "type": "qualitative"
+                },
+                {
+                    "id": "A2-a11y-findings",
+                    "text": "Report phải có ít nhất 1 accessibility finding (ARIA, focus, contrast, screen reader)",
+                    "type": "deterministic",
+                    "check": "grep -ci 'aria\\|accessible\\|a11y\\|focus trap\\|screen reader\\|wcag' {output_dir}/ux-review-report.md >= 1"
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "name": "gate-failure-no-images",
+            "prompt": "Review UX cho feature Transfer trong app TestBank. Figma URL: https://www.figma.com/design/INVALID_KEY/TestBank?node-id=0-1. Domain: banking. Output vào test-bank/transfer/",
+            "expected_output": "Pipeline phải DỪNG tại HC-1 (IMAGE_EXPORT_VERIFY) vì Figma URL không hợp lệ → không export được ảnh. Agent phải thông báo rõ ràng và đề xuất recovery.",
+            "focus_areas": [
+                "Gate failure scenario — pipeline phải STOP đúng chỗ",
+                "Error recovery flow",
+                "Agent không được tiếp tục OCR khi không có ảnh",
+                "Agent không được hallucinate report khi missing images"
+            ],
+            "reference_output": null,
+            "known_issues_in_reference": null,
+            "assertions": [
+                {
+                    "id": "A3-greeting",
+                    "text": "Agent vẫn phải mở đầu bằng greeting HC-0",
+                    "type": "qualitative"
+                },
+                {
+                    "id": "A3-gate-stop",
+                    "text": "Pipeline phải DỪNG tại HC-1 hoặc sớm hơn. KHÔNG được tiếp tục sang Phase 2",
+                    "type": "qualitative"
+                },
+                {
+                    "id": "A3-no-report",
+                    "text": "KHÔNG được tạo ux-review-report.md khi images không tồn tại",
+                    "type": "deterministic",
+                    "check": "test ! -f test-bank/transfer/ux-review-report.md"
+                },
+                {
+                    "id": "A3-recovery-offered",
+                    "text": "Agent phải đề xuất recovery: retry export hoặc user upload thủ công",
+                    "type": "qualitative"
+                },
+                {
+                    "id": "A3-no-hallucination",
+                    "text": "Agent KHÔNG được tạo OCR data hoặc vision evidence khi chưa có ảnh",
+                    "type": "qualitative"
+                }
+            ]
+        }
+    ]
+}
