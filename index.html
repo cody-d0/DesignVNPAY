@@ -134,6 +134,16 @@
           }
         }
       }
+      // Size the sliding indicator to match Light/Dark button width
+      requestAnimationFrame(function () {
+        var lightBtn = document.getElementById('theme-light');
+        if (lightBtn) {
+          var w = lightBtn.offsetWidth;
+          if (w > 0) {
+            document.getElementById('theme-toggle').style.setProperty('--seg-w', w + 'px');
+          }
+        }
+      });
     }
     applyTheme();
   </script>
@@ -145,6 +155,17 @@
     }
 
     :root {
+      /* ── Unified Gradient Palette ── */
+      --g1: #818CF8;
+      /* Indigo 400 */
+      --g2: #A78BFA;
+      /* Violet 400 */
+      --g3: #C084FC;
+      /* Purple 400 */
+      --g4: #7DD3FC;
+      /* Sky 300 */
+      --g5: #6366F1;
+      /* Indigo 500 */
       --color-primary: #475569;
       --color-secondary: #64748B;
       --color-cta: #2563EB;
@@ -257,8 +278,8 @@
     [data-theme="light-mesh"] body {
       background: radial-gradient(ellipse 90% 60% at 15% 25%, rgba(167, 139, 250, 0.35) 0%, transparent 45%),
         radial-gradient(ellipse 70% 70% at 90% 10%, rgba(96, 165, 250, 0.3) 0%, transparent 45%),
-        radial-gradient(ellipse 80% 60% at 50% 85%, rgba(251, 113, 133, 0.25) 0%, transparent 45%),
-        radial-gradient(ellipse 60% 50% at 75% 60%, rgba(103, 232, 249, 0.2) 0%, transparent 45%);
+        radial-gradient(ellipse 80% 60% at 50% 85%, rgba(192, 132, 252, 0.25) 0%, transparent 45%),
+        radial-gradient(ellipse 60% 50% at 75% 60%, rgba(125, 211, 252, 0.2) 0%, transparent 45%);
       background-color: #EFF6FF;
     }
 
@@ -359,8 +380,8 @@
     .header {
       position: fixed;
       top: 14px;
-      left: 20px;
-      right: 20px;
+      left: 36px;
+      right: 36px;
       z-index: 50;
       padding: 0;
       background: var(--color-surface);
@@ -503,34 +524,35 @@
     }
 
     /* ═══════════════════════════════
-       THEME CONTROLS — 2-segment toggle + mesh button
-       Supports all 4 combos: light, dark, light-mesh, dark-mesh
+       THEME CONTROLS — Unified pill: ☀ · ☽ │ Mesh
+       Single container, all segments 28px height
        ═══════════════════════════════ */
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 6px;
     }
 
-    /* ── Theme toggle (Light/Dark) ── */
+    /* ── Unified pill container ── */
     .theme-toggle {
       position: relative;
       display: flex;
       align-items: center;
+      height: 34px;
       padding: 3px;
-      border-radius: 10px;
+      border-radius: 12px;
       background: rgba(0, 0, 0, 0.04);
       border: 1px solid rgba(0, 0, 0, 0.06);
-      gap: 0;
+      gap: 2px;
     }
 
+    /* ── Sliding indicator (Light OR Dark) ── */
     .theme-toggle__indicator {
       position: absolute;
       top: 3px;
       left: 3px;
       height: calc(100% - 6px);
-      width: calc(50% - 3px);
-      border-radius: 8px;
+      width: var(--seg-w, 28px);
+      border-radius: 9px;
       background: #fff;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
       transition: transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1),
@@ -545,9 +567,10 @@
     }
 
     .theme-toggle[data-active="1"] .theme-toggle__indicator {
-      transform: translateX(100%);
+      transform: translateX(calc(100% + 2px));
     }
 
+    /* ── Button segments — uniform 28px height ── */
     .theme-toggle__btn {
       position: relative;
       z-index: 1;
@@ -555,12 +578,13 @@
       align-items: center;
       justify-content: center;
       gap: 5px;
-      padding: 5px 12px;
+      height: 28px;
+      padding: 0 10px;
       border: none;
-      border-radius: 8px;
+      border-radius: 9px;
       background: transparent;
       font-family: var(--font-family);
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 500;
       letter-spacing: 0.01em;
       color: var(--color-text-muted);
@@ -579,53 +603,103 @@
     }
 
     .theme-toggle__btn svg {
-      display: none;
+      display: block;
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
     }
 
-    /* ══════════════════════════════════════════
-       MESH ON/OFF TEXT BUTTON
-       Separate pill toggle, default ON
-       ══════════════════════════════════════════ */
-    .mesh-btn {
-      padding: 5px 14px;
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      border-radius: 10px;
-      background: rgba(0, 0, 0, 0.04);
-      font-family: var(--font-family);
-      font-size: 0.68rem;
-      font-weight: 500;
-      letter-spacing: 0.01em;
-      color: var(--color-text-muted);
-      cursor: pointer;
-      transition: background 300ms ease, color 300ms ease,
-        border-color 300ms ease, box-shadow 300ms ease;
-      white-space: nowrap;
-      -webkit-tap-highlight-color: transparent;
+    /* ── Icon-only (Light/Dark) — square 28×28 ── */
+    .theme-toggle__icon {
+      width: 28px;
+      padding: 0;
     }
 
-    .mesh-btn:hover {
-      color: var(--color-text);
-      border-color: rgba(139, 92, 246, 0.3);
+    /* ── Divider ── */
+    .theme-toggle__divider {
+      width: 1px;
+      height: 14px;
+      background: var(--color-border);
+      opacity: 0.6;
+      flex-shrink: 0;
+      margin: 0 3px;
+      transition: opacity 300ms ease, background 300ms ease;
     }
 
-    .mesh-btn.active {
-      color: #fff;
-      border-color: transparent;
-      background: linear-gradient(135deg,
-          rgba(var(--mesh-c1, 56, 38, 102), 0.85),
-          rgba(var(--mesh-c2, 139, 92, 246), 0.65),
-          rgba(var(--mesh-c3, 6, 182, 212), 0.5));
-      box-shadow: 0 0 10px rgba(var(--mesh-c2, 139, 92, 246), 0.25),
-        0 0 4px rgba(var(--mesh-c3, 6, 182, 212), 0.15);
+    /* ── Mesh segment — same 28px height ── */
+    .theme-toggle__mesh {
+      gap: 4px;
+      padding: 0 10px;
+      min-width: 58px;
+      border-radius: 9px;
+      transition: background 500ms cubic-bezier(0.16, 1, 0.3, 1),
+        color 300ms ease,
+        box-shadow 500ms cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .mesh-btn:focus {
+    /* ── Mesh dot (OFF state) ── */
+    .mesh-dot {
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--color-text-muted);
+      opacity: 0.35;
+      transition: opacity 400ms ease, width 300ms ease,
+        transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      flex-shrink: 0;
+    }
+
+    .theme-toggle__mesh:hover .mesh-dot {
+      opacity: 0.6;
+    }
+
+    /* ═══ Mesh ON — Gradient pill (unified palette) ═══ */
+    .theme-toggle__mesh.active {
+      background: linear-gradient(110deg,
+          var(--g1), var(--g2), var(--g3),
+          var(--g2), var(--g4), var(--g1));
+      background-size: 250% 100%;
+      animation: meshPillFlow 6s ease-in-out infinite;
+      color: rgba(255, 255, 255, 0.95);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      box-shadow: 0 0 8px rgba(129, 140, 248, 0.2);
+    }
+
+    .theme-toggle__mesh.active:hover {
+      box-shadow: 0 0 14px rgba(129, 140, 248, 0.35);
+    }
+
+    .theme-toggle__mesh.active .mesh-dot {
+      opacity: 0;
+      width: 0;
+      transform: scale(0);
+    }
+
+    @keyframes meshPillFlow {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    /* ── Focus ── */
+    .theme-toggle__btn:focus {
       outline: none;
     }
 
-    .mesh-btn:focus-visible {
+    .theme-toggle__btn:focus-visible {
       outline: 2px solid var(--color-cta);
       outline-offset: 1px;
+      border-radius: 8px;
     }
 
     /* ══════════════════════════════════════════
@@ -703,8 +777,8 @@
       border-radius: 11.5px;
       padding: 1.5px;
       background: conic-gradient(from var(--mesh-border-angle, 0deg),
-          rgba(6, 182, 212, 0.5), rgba(14, 165, 233, 0.3), transparent 8%,
-          transparent 88%, rgba(139, 92, 246, 0.3), rgba(6, 182, 212, 0.5));
+          rgba(125, 211, 252, 0.5), rgba(14, 165, 233, 0.3), transparent 8%,
+          transparent 88%, rgba(167, 139, 250, 0.3), rgba(125, 211, 252, 0.5));
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
@@ -718,14 +792,14 @@
 
     /* ── Hover (OFF) — energy tease ── */
     .mesh-toggle-btn:hover {
-      border-color: rgba(6, 182, 212, 0.35);
-      background: rgba(6, 182, 212, 0.04);
+      border-color: rgba(125, 211, 252, 0.35);
+      background: rgba(125, 211, 252, 0.04);
       transform: scale(1.08);
-      box-shadow: 0 0 12px rgba(6, 182, 212, 0.08);
+      box-shadow: 0 0 12px rgba(125, 211, 252, 0.08);
     }
 
     .mesh-toggle-btn:hover .sparkle-main {
-      filter: grayscale(0.2) opacity(0.8) drop-shadow(0 0 6px rgba(6, 182, 212, 0.35));
+      filter: grayscale(0.2) opacity(0.8) drop-shadow(0 0 6px rgba(125, 211, 252, 0.35));
       transform: scale(1.18) rotate(15deg);
       animation: none;
     }
@@ -742,13 +816,13 @@
     .mesh-toggle-btn.active {
       border-color: transparent;
       background: linear-gradient(135deg,
-          rgba(var(--mesh-c1, 56, 38, 102), 0.85) 0%,
-          rgba(var(--mesh-c3, 6, 182, 212), 0.3) 50%,
-          rgba(var(--mesh-c2, 139, 92, 246), 0.4) 100%);
+          rgba(var(--mesh-c1, 99, 102, 241), 0.85) 0%,
+          rgba(var(--mesh-c3, 125, 211, 252), 0.3) 50%,
+          rgba(var(--mesh-c2, 167, 139, 250), 0.4) 100%);
       box-shadow:
-        0 0 20px rgba(var(--mesh-c2, 139, 92, 246), 0.4),
-        0 0 8px rgba(var(--mesh-c3, 6, 182, 212), 0.3),
-        inset 0 0 12px rgba(var(--mesh-c2, 139, 92, 246), 0.15);
+        0 0 20px rgba(var(--mesh-c2, 167, 139, 250), 0.4),
+        0 0 8px rgba(var(--mesh-c3, 125, 211, 252), 0.3),
+        inset 0 0 12px rgba(var(--mesh-c2, 167, 139, 250), 0.15);
       animation: meshBtnActivePulse 3s ease-in-out infinite;
     }
 
@@ -758,14 +832,14 @@
     }
 
     .mesh-toggle-btn.active .sparkle-main {
-      filter: grayscale(0) opacity(1) drop-shadow(0 0 6px rgba(6, 182, 212, 0.8)) drop-shadow(0 0 14px rgba(139, 92, 246, 0.5)) drop-shadow(0 0 24px rgba(6, 182, 212, 0.25));
+      filter: grayscale(0) opacity(1) drop-shadow(0 0 6px rgba(125, 211, 252, 0.8)) drop-shadow(0 0 14px rgba(167, 139, 250, 0.5)) drop-shadow(0 0 24px rgba(125, 211, 252, 0.25));
       transform: scale(1.15);
       animation: meshIconGlow 3s ease-in-out infinite;
     }
 
     .mesh-toggle-btn.active .sparkle-mini {
       opacity: 0.85;
-      filter: grayscale(0) drop-shadow(0 0 4px rgba(6, 182, 212, 0.6));
+      filter: grayscale(0) drop-shadow(0 0 4px rgba(125, 211, 252, 0.6));
       animation: meshMiniPulse 2s ease-in-out infinite;
     }
 
@@ -776,9 +850,9 @@
     /* Active hover — intensify */
     .mesh-toggle-btn.active:hover {
       box-shadow:
-        0 0 28px rgba(139, 92, 246, 0.55),
-        0 0 12px rgba(6, 182, 212, 0.4),
-        inset 0 0 16px rgba(139, 92, 246, 0.2);
+        0 0 28px rgba(167, 139, 250, 0.55),
+        0 0 12px rgba(125, 211, 252, 0.4),
+        inset 0 0 16px rgba(167, 139, 250, 0.2);
       transform: scale(1.12);
     }
 
@@ -797,7 +871,7 @@
     }
 
     .mesh-toggle-btn.igniting .sparkle-main {
-      filter: grayscale(0) opacity(1) drop-shadow(0 0 8px rgba(6, 182, 212, 0.7)) drop-shadow(0 0 20px rgba(139, 92, 246, 0.4));
+      filter: grayscale(0) opacity(1) drop-shadow(0 0 8px rgba(125, 211, 252, 0.7)) drop-shadow(0 0 20px rgba(167, 139, 250, 0.4));
       transform: scale(1.25) rotate(20deg);
       animation: none;
     }
@@ -815,8 +889,8 @@
       inset: -6px;
       border-radius: 16px;
       background: radial-gradient(circle,
-          rgba(6, 182, 212, 0.4) 0%,
-          rgba(139, 92, 246, 0.25) 35%,
+          rgba(125, 211, 252, 0.4) 0%,
+          rgba(167, 139, 250, 0.25) 35%,
           transparent 70%);
       animation: meshIgnitionPulse 1200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
       pointer-events: none;
@@ -831,7 +905,7 @@
     }
 
     .mesh-toggle-btn.extinguishing .sparkle-main {
-      filter: grayscale(0.8) opacity(0.3) drop-shadow(0 0 3px rgba(6, 182, 212, 0.2));
+      filter: grayscale(0.8) opacity(0.3) drop-shadow(0 0 3px rgba(125, 211, 252, 0.2));
       transform: scale(0.9) rotate(-10deg);
       transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -850,7 +924,7 @@
       isolation: isolate;
     }
 
-    /* 3px gradient border — outside, real-time mesh-matching colors */
+    /* 3px gradient border — vivid, unified palette */
     .header::before {
       content: '';
       position: absolute;
@@ -858,10 +932,11 @@
       border-radius: 17px;
       padding: 3px;
       background: linear-gradient(135deg,
-          rgba(var(--mesh-c1, 56, 38, 102), 0.6),
-          rgba(var(--mesh-c2, 139, 92, 246), 0.45),
-          rgba(var(--mesh-c3, 6, 182, 212), 0.4),
-          rgba(var(--mesh-c1, 56, 38, 102), 0.5));
+          rgba(99, 102, 241, 0.75),
+          rgba(167, 139, 250, 0.7),
+          rgba(192, 132, 252, 0.65),
+          rgba(125, 211, 252, 0.6),
+          rgba(99, 102, 241, 0.7));
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
@@ -870,6 +945,25 @@
       z-index: 3;
       pointer-events: none;
       transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Light-mesh: higher saturation to fight white washout */
+    [data-theme="light-mesh"] .header::before {
+      background: linear-gradient(135deg,
+          rgba(99, 102, 241, 0.9),
+          rgba(167, 139, 250, 0.85),
+          rgba(192, 132, 252, 0.8),
+          rgba(125, 211, 252, 0.75),
+          rgba(99, 102, 241, 0.85));
+    }
+
+    /* Dark-mesh: tracks live canvas colors for ambient match */
+    [data-theme="dark-mesh"] .header::before {
+      background: linear-gradient(135deg,
+          rgba(var(--mesh-c1, 99, 102, 241), 0.7),
+          rgba(var(--mesh-c2, 167, 139, 250), 0.6),
+          rgba(var(--mesh-c3, 125, 211, 252), 0.5),
+          rgba(var(--mesh-c1, 99, 102, 241), 0.65));
     }
 
     @property --mesh-border-angle {
@@ -902,6 +996,36 @@
     .header.mesh-active::before {
       opacity: 1;
       animation: meshBorderBreathePulse 4s ease-in-out infinite;
+    }
+
+    /* ── GPU Layer Promotion for animated elements ── */
+    .header::before,
+    .mesh-bg-fx::before,
+    .mesh-bg-fx::after,
+    .glass-aurora__blob--1,
+    .glass-aurora__blob--2,
+    .glass-aurora__blob--3,
+    .theme-toggle__indicator,
+    .drop-glass-card::before {
+      will-change: transform, opacity;
+    }
+
+    /* Remove will-change when header not animating */
+    .header:not(.mesh-active):not(.mesh-flooding):not(.mesh-dissolving)::before {
+      will-change: auto;
+    }
+
+    /* ── Mobile: disable expensive backdrop-filter blur ── */
+    @media (max-width: 768px) {
+      .drop-glass-card {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+
+      .glass-aurora__frost {
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+      }
     }
 
     /* ══════════════════════════════════════════
@@ -937,13 +1061,13 @@
         repeating-linear-gradient(0deg,
           transparent,
           transparent 22px,
-          rgba(139, 92, 246, 0.3) 22px,
-          rgba(139, 92, 246, 0.3) 23px),
+          rgba(167, 139, 250, 0.3) 22px,
+          rgba(167, 139, 250, 0.3) 23px),
         repeating-linear-gradient(90deg,
           transparent,
           transparent 22px,
-          rgba(6, 182, 212, 0.25) 22px,
-          rgba(6, 182, 212, 0.25) 23px);
+          rgba(125, 211, 252, 0.25) 22px,
+          rgba(125, 211, 252, 0.25) 23px);
       opacity: 0;
       animation: meshFxCycleA 9s ease-in-out infinite;
     }
@@ -954,9 +1078,9 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle 1.5px at 10px 10px, rgba(139, 92, 246, 0.5) 1px, transparent 1.5px),
-        radial-gradient(circle 1.5px at 26px 26px, rgba(56, 38, 102, 0.45) 1px, transparent 1.5px),
-        radial-gradient(circle 1px at 18px 5px, rgba(6, 182, 212, 0.35) 0.5px, transparent 1px);
+        radial-gradient(circle 1.5px at 10px 10px, rgba(167, 139, 250, 0.5) 1px, transparent 1.5px),
+        radial-gradient(circle 1.5px at 26px 26px, rgba(99, 102, 241, 0.45) 1px, transparent 1.5px),
+        radial-gradient(circle 1px at 18px 5px, rgba(125, 211, 252, 0.35) 0.5px, transparent 1px);
       background-size: 36px 18px, 36px 18px, 36px 18px;
       opacity: 0;
       animation: meshFxCycleB 9s ease-in-out infinite;
@@ -970,8 +1094,8 @@
         repeating-linear-gradient(0deg,
           transparent,
           transparent 3px,
-          rgba(56, 38, 102, 0.06) 3px,
-          rgba(56, 38, 102, 0.06) 4px);
+          rgba(99, 102, 241, 0.06) 3px,
+          rgba(99, 102, 241, 0.06) 4px);
     }
 
     .header.mesh-dissolving .mesh-bg-fx {
@@ -1079,24 +1203,24 @@
       0%,
       100% {
         box-shadow:
-          0 0 16px rgba(139, 92, 246, 0.35),
-          0 0 6px rgba(6, 182, 212, 0.25),
-          inset 0 0 10px rgba(139, 92, 246, 0.1);
+          0 0 16px rgba(167, 139, 250, 0.35),
+          0 0 6px rgba(125, 211, 252, 0.25),
+          inset 0 0 10px rgba(167, 139, 250, 0.1);
         background: linear-gradient(135deg,
-            rgba(56, 38, 102, 0.85) 0%,
-            rgba(6, 182, 212, 0.3) 50%,
-            rgba(139, 92, 246, 0.4) 100%);
+            rgba(99, 102, 241, 0.85) 0%,
+            rgba(125, 211, 252, 0.3) 50%,
+            rgba(167, 139, 250, 0.4) 100%);
       }
 
       50% {
         box-shadow:
-          0 0 26px rgba(139, 92, 246, 0.5),
-          0 0 12px rgba(6, 182, 212, 0.4),
-          inset 0 0 14px rgba(6, 182, 212, 0.15);
+          0 0 26px rgba(167, 139, 250, 0.5),
+          0 0 12px rgba(125, 211, 252, 0.4),
+          inset 0 0 14px rgba(125, 211, 252, 0.15);
         background: linear-gradient(135deg,
-            rgba(56, 38, 102, 0.7) 0%,
-            rgba(139, 92, 246, 0.4) 50%,
-            rgba(6, 182, 212, 0.35) 100%);
+            rgba(99, 102, 241, 0.7) 0%,
+            rgba(167, 139, 250, 0.4) 50%,
+            rgba(125, 211, 252, 0.35) 100%);
       }
     }
 
@@ -1105,12 +1229,12 @@
 
       0%,
       100% {
-        filter: grayscale(0) opacity(1) drop-shadow(0 0 6px rgba(6, 182, 212, 0.8)) drop-shadow(0 0 14px rgba(139, 92, 246, 0.5));
+        filter: grayscale(0) opacity(1) drop-shadow(0 0 6px rgba(125, 211, 252, 0.8)) drop-shadow(0 0 14px rgba(167, 139, 250, 0.5));
         transform: scale(1.15);
       }
 
       50% {
-        filter: grayscale(0) opacity(1) drop-shadow(0 0 10px rgba(139, 92, 246, 0.9)) drop-shadow(0 0 20px rgba(6, 182, 212, 0.6));
+        filter: grayscale(0) opacity(1) drop-shadow(0 0 10px rgba(167, 139, 250, 0.9)) drop-shadow(0 0 20px rgba(125, 211, 252, 0.6));
         transform: scale(1.2) rotate(8deg);
       }
     }
@@ -1207,40 +1331,22 @@
       color: rgba(255, 255, 255, 0.9);
     }
 
-    [data-theme="dark"] .mesh-btn,
-    [data-theme="dark-mesh"] .mesh-btn {
-      border-color: rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.04);
-      color: rgba(255, 255, 255, 0.35);
+    /* Divider in dark themes */
+    [data-theme="dark"] .theme-toggle__divider,
+    [data-theme="dark-mesh"] .theme-toggle__divider {
+      background: rgba(255, 255, 255, 0.1);
     }
 
-    [data-theme="dark"] .mesh-btn:hover,
-    [data-theme="dark-mesh"] .mesh-btn:hover {
-      color: rgba(255, 255, 255, 0.7);
-      border-color: rgba(139, 92, 246, 0.4);
+    /* Mesh dot — dark theme OFF */
+    [data-theme="dark"] .mesh-dot,
+    [data-theme="dark-mesh"] .mesh-dot {
+      background: rgba(255, 255, 255, 0.25);
     }
 
-    [data-theme="dark"] .mesh-btn.active {
-      color: #fff;
-      border-color: transparent;
-      background: linear-gradient(135deg,
-          rgba(56, 38, 102, 0.9),
-          rgba(6, 182, 212, 0.45),
-          rgba(139, 92, 246, 0.6));
-      box-shadow: 0 0 14px rgba(139, 92, 246, 0.35),
-        0 0 6px rgba(6, 182, 212, 0.25);
-    }
-
-    /* Mesh-active: button gradient tracks live mesh canvas */
-    [data-theme="dark-mesh"] .mesh-btn.active {
-      color: #fff;
-      border-color: transparent;
-      background: linear-gradient(135deg,
-          rgba(var(--mesh-c1, 56, 38, 102), 0.9),
-          rgba(var(--mesh-c3, 6, 182, 212), 0.45),
-          rgba(var(--mesh-c2, 139, 92, 246), 0.6));
-      box-shadow: 0 0 14px rgba(var(--mesh-c2, 139, 92, 246), 0.35),
-        0 0 6px rgba(var(--mesh-c3, 6, 182, 212), 0.25);
+    /* Mesh gradient — dark-mesh: refined glow */
+    [data-theme="dark-mesh"] .theme-toggle__mesh.active {
+      box-shadow: 0 0 12px rgba(129, 140, 248, 0.3),
+        0 0 20px rgba(167, 139, 250, 0.15);
     }
 
     /* ── Mesh-active glass overrides ── */
@@ -1249,11 +1355,6 @@
       -webkit-backdrop-filter: blur(8px);
       background: rgba(255, 255, 255, 0.03);
       border-color: rgba(255, 255, 255, 0.05);
-    }
-
-    [data-theme="dark-mesh"] .mesh-btn.active {
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
     }
 
     [data-theme="light-mesh"] .theme-toggle {
@@ -1266,26 +1367,6 @@
     [data-theme="light-mesh"] .theme-toggle__indicator {
       background: rgba(255, 255, 255, 0.85);
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-    }
-
-    [data-theme="light-mesh"] .mesh-btn.active {
-      background: linear-gradient(135deg,
-          rgba(56, 38, 102, 0.6),
-          rgba(6, 182, 212, 0.25),
-          rgba(139, 92, 246, 0.35));
-      box-shadow: 0 0 10px rgba(139, 92, 246, 0.2),
-        0 0 4px rgba(6, 182, 212, 0.15);
-    }
-
-    /* Focus visible */
-    .theme-toggle__btn:focus {
-      outline: none;
-    }
-
-    .theme-toggle__btn:focus-visible {
-      outline: 2px solid var(--color-cta);
-      outline-offset: 1px;
-      border-radius: 6px;
     }
 
     /* prefers-reduced-motion */
@@ -1332,12 +1413,42 @@
     }
 
     @media (max-width: 480px) {
-      .theme-toggle__label {
+      .header {
+        left: 12px;
+        right: 12px;
+      }
+
+      .header-content {
+        padding: 8px 12px;
+        gap: 6px;
+      }
+
+      .header-subtitle {
         display: none;
       }
 
-      .theme-toggle__btn {
-        padding: 5px 8px;
+      .theme-toggle {
+        height: 32px;
+      }
+
+      .theme-toggle__icon {
+        width: 26px;
+      }
+
+      .theme-toggle__icon svg {
+        width: 12px;
+        height: 12px;
+      }
+
+      .theme-toggle__divider {
+        height: 12px;
+        margin: 0 2px;
+      }
+
+      .theme-toggle__mesh {
+        min-width: 52px;
+        font-size: 0.58rem;
+        padding: 0 8px;
       }
     }
 
@@ -1467,7 +1578,7 @@
 
     [data-theme="dark-mesh"] .drop-hero-title .hero-line-2,
     [data-theme="dark"] .drop-hero-title .hero-line-2 {
-      background: linear-gradient(135deg, rgba(168, 85, 247, 0.95), rgba(99, 102, 241, 0.85), rgba(52, 211, 153, 0.7));
+      background: linear-gradient(135deg, var(--g3) 0%, var(--g5) 50%, var(--g2) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -1528,11 +1639,11 @@
       background: rgba(255, 255, 255, 0.10);
       backdrop-filter: blur(20px) saturate(160%);
       -webkit-backdrop-filter: blur(20px) saturate(160%);
-      border-color: rgba(var(--mesh-c2, 139, 92, 246), 0.25);
+      border-color: rgba(var(--mesh-c2, 167, 139, 250), 0.25);
       box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.08),
         inset 0 -1px 0 rgba(255, 255, 255, 0.04),
-        0 0 30px rgba(var(--mesh-c2, 139, 92, 246), 0.08);
+        0 0 30px rgba(var(--mesh-c2, 167, 139, 250), 0.08);
     }
 
     /* ── Glass Aurora — animated blobs inside card ── */
@@ -1566,8 +1677,8 @@
       top: -40px;
       left: -30px;
       background: radial-gradient(circle,
-          rgba(var(--mesh-c1, 56, 38, 102), 0.4) 0%,
-          rgba(var(--mesh-c2, 139, 92, 246), 0.15) 50%,
+          rgba(var(--mesh-c1, 99, 102, 241), 0.4) 0%,
+          rgba(var(--mesh-c2, 167, 139, 250), 0.15) 50%,
           transparent 70%);
       animation: glassBlob1 8s ease-in-out infinite;
     }
@@ -1579,8 +1690,8 @@
       bottom: -30px;
       right: -20px;
       background: radial-gradient(circle,
-          rgba(var(--mesh-c3, 6, 182, 212), 0.35) 0%,
-          rgba(var(--mesh-c2, 139, 92, 246), 0.12) 50%,
+          rgba(var(--mesh-c3, 125, 211, 252), 0.35) 0%,
+          rgba(var(--mesh-c2, 167, 139, 250), 0.12) 50%,
           transparent 70%);
       animation: glassBlob2 10s ease-in-out infinite;
     }
@@ -1592,8 +1703,8 @@
       top: 40%;
       right: 15%;
       background: radial-gradient(circle,
-          rgba(var(--mesh-c2, 139, 92, 246), 0.3) 0%,
-          rgba(var(--mesh-c1, 56, 38, 102), 0.1) 50%,
+          rgba(var(--mesh-c2, 167, 139, 250), 0.3) 0%,
+          rgba(var(--mesh-c1, 99, 102, 241), 0.1) 50%,
           transparent 70%);
       animation: glassBlob3 6s ease-in-out infinite;
     }
@@ -1670,9 +1781,9 @@
       border-radius: 20px;
       padding: 1px;
       background: conic-gradient(from 180deg,
-          rgba(168, 85, 247, 0.15), rgba(59, 130, 246, 0.12),
-          rgba(52, 211, 153, 0.10), rgba(251, 146, 60, 0.08),
-          rgba(236, 72, 153, 0.12), rgba(168, 85, 247, 0.15));
+          rgba(192, 132, 252, 0.15), rgba(129, 140, 248, 0.12),
+          rgba(167, 139, 250, 0.10), rgba(125, 211, 252, 0.10),
+          rgba(99, 102, 241, 0.12), rgba(192, 132, 252, 0.15));
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
@@ -1691,15 +1802,25 @@
     /* Dark-mesh: iridescent edge uses live mesh colors */
     [data-theme="dark-mesh"] .drop-glass-card::before {
       background: conic-gradient(from var(--mesh-border-angle, 0deg),
-          rgba(var(--mesh-c1, 56, 38, 102), 0.35),
-          rgba(var(--mesh-c2, 139, 92, 246), 0.25),
-          rgba(var(--mesh-c3, 6, 182, 212), 0.2),
+          rgba(var(--mesh-c1, 99, 102, 241), 0.35),
+          rgba(var(--mesh-c2, 167, 139, 250), 0.25),
+          rgba(var(--mesh-c3, 125, 211, 252), 0.2),
           transparent 25%,
           transparent 75%,
-          rgba(var(--mesh-c3, 6, 182, 212), 0.15),
-          rgba(var(--mesh-c1, 56, 38, 102), 0.35));
+          rgba(var(--mesh-c3, 125, 211, 252), 0.15),
+          rgba(var(--mesh-c1, 99, 102, 241), 0.35));
       opacity: 1;
       animation: meshBorderSpin 8s linear infinite;
+    }
+
+    /* Light-mesh: brighter card border to avoid washout */
+    [data-theme="light-mesh"] .drop-glass-card::before {
+      background: conic-gradient(from 180deg,
+          rgba(99, 102, 241, 0.3), rgba(167, 139, 250, 0.25),
+          rgba(192, 132, 252, 0.2), rgba(125, 211, 252, 0.2),
+          rgba(99, 102, 241, 0.25), rgba(192, 132, 252, 0.3));
+      opacity: 1;
+      animation: dz-shimmer 12s linear infinite;
     }
 
     @keyframes dz-shimmer {
@@ -1741,7 +1862,7 @@
     [data-theme="dark-mesh"] .drop-glass-card:hover {
       box-shadow: 0 16px 56px rgba(0, 0, 0, 0.35),
         inset 0 1px 0 rgba(255, 255, 255, 0.1),
-        0 0 40px rgba(var(--mesh-c2, 139, 92, 246), 0.1);
+        0 0 40px rgba(var(--mesh-c2, 167, 139, 250), 0.1);
     }
 
     .drop-glass-card.drag-over {
@@ -1909,12 +2030,12 @@
     }
 
     [data-theme="dark"] .drop-zone-pick {
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.9), rgba(129, 140, 248, 0.85));
+      background: linear-gradient(135deg, var(--g5), var(--g1));
       box-shadow: 0 2px 12px rgba(99, 102, 241, 0.2);
     }
 
     [data-theme="dark-mesh"] .drop-zone-pick {
-      background: linear-gradient(135deg, rgba(168, 85, 247, 0.9), rgba(99, 102, 241, 0.9));
+      background: linear-gradient(135deg, var(--g3), var(--g5));
       box-shadow: 0 2px 12px rgba(168, 85, 247, 0.2);
     }
 
@@ -2018,6 +2139,10 @@
       .drop-hero-left {
         text-align: center;
         padding-bottom: 0;
+      }
+
+      .drop-hero-tagline {
+        justify-content: center;
       }
 
       .drop-hero-desc {
@@ -2440,10 +2565,10 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: rgba(6, 182, 212, 0.55);
+      color: rgba(125, 211, 252, 0.55);
       padding: 3px 8px;
       border-radius: 4px;
-      background: rgba(6, 182, 212, 0.06);
+      background: rgba(125, 211, 252, 0.06);
       margin-bottom: 6px;
     }
 
@@ -2473,7 +2598,7 @@
       background: linear-gradient(135deg,
           rgba(248, 250, 252, 0.98) 0%,
           rgba(241, 245, 249, 0.95) 100%);
-      border: 1px solid rgba(6, 182, 212, 0.12);
+      border: 1px solid rgba(125, 211, 252, 0.12);
       padding: 18px 22px;
       border-radius: 10px;
       box-shadow:
@@ -2486,7 +2611,7 @@
       background: linear-gradient(135deg,
           rgba(255, 255, 255, 0.7) 0%,
           rgba(241, 245, 249, 0.6) 100%);
-      border-color: rgba(139, 92, 246, 0.15);
+      border-color: rgba(167, 139, 250, 0.15);
       backdrop-filter: blur(8px);
     }
 
@@ -2496,37 +2621,37 @@
       background: linear-gradient(135deg,
           rgba(20, 20, 35, 0.95) 0%,
           rgba(15, 18, 30, 0.98) 100%);
-      border-color: rgba(6, 182, 212, 0.12);
+      border-color: rgba(125, 211, 252, 0.12);
       box-shadow:
         0 2px 12px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.03);
-      text-shadow: 0 0 1px rgba(6, 182, 212, 0.06);
+      text-shadow: 0 0 1px rgba(125, 211, 252, 0.06);
     }
 
     /* Dark Mesh theme */
     [data-theme="dark-mesh"] .ascii-diagram-container pre {
       color: #f0f0ff;
       background: linear-gradient(135deg,
-          rgba(56, 38, 102, 0.25) 0%,
+          rgba(99, 102, 241, 0.25) 0%,
           rgba(15, 18, 35, 0.8) 100%);
-      border-color: rgba(139, 92, 246, 0.18);
+      border-color: rgba(167, 139, 250, 0.18);
       box-shadow:
-        0 4px 20px rgba(139, 92, 246, 0.06),
-        inset 0 1px 0 rgba(139, 92, 246, 0.05);
+        0 4px 20px rgba(167, 139, 250, 0.06),
+        inset 0 1px 0 rgba(167, 139, 250, 0.05);
       backdrop-filter: blur(8px);
-      text-shadow: 0 0 2px rgba(139, 92, 246, 0.08);
+      text-shadow: 0 0 2px rgba(167, 139, 250, 0.08);
     }
 
     /* Badge theme overrides */
     [data-theme="dark"] .ascii-diagram-badge,
     [data-theme="dark-mesh"] .ascii-diagram-badge {
-      color: rgba(6, 182, 212, 0.65);
-      background: rgba(6, 182, 212, 0.08);
+      color: rgba(125, 211, 252, 0.65);
+      background: rgba(125, 211, 252, 0.08);
     }
 
     [data-theme="dark-mesh"] .ascii-diagram-badge {
-      color: rgba(139, 92, 246, 0.7);
-      background: rgba(139, 92, 246, 0.1);
+      color: rgba(167, 139, 250, 0.7);
+      background: rgba(167, 139, 250, 0.1);
     }
 
     /* JSON preview */
@@ -2839,13 +2964,34 @@
       <div class="header-actions">
         <div class="theme-toggle" role="radiogroup" aria-label="Chế độ sáng tối" data-active="1" id="theme-toggle">
           <div class="theme-toggle__indicator" aria-hidden="true"></div>
-          <button type="button" class="theme-toggle__btn" id="theme-light" role="radio" aria-checked="false"
-            aria-pressed="false" aria-label="Sáng" onclick="setTheme('light')">Light</button>
-          <button type="button" class="theme-toggle__btn" id="theme-dark" role="radio" aria-checked="true"
-            aria-pressed="true" aria-label="Tối" onclick="setTheme('dark')">Dark</button>
+          <button type="button" class="theme-toggle__btn theme-toggle__icon" id="theme-light" role="radio"
+            aria-checked="false" aria-pressed="false" aria-label="Sáng" onclick="setTheme('light')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+          </button>
+          <button type="button" class="theme-toggle__btn theme-toggle__icon" id="theme-dark" role="radio"
+            aria-checked="true" aria-pressed="true" aria-label="Tối" onclick="setTheme('dark')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+          <div class="theme-toggle__divider" aria-hidden="true"></div>
+          <button type="button" class="theme-toggle__btn theme-toggle__mesh" id="mesh-toggle" aria-pressed="true"
+            aria-label="Mesh effect" onclick="toggleMesh()">
+            <span class="mesh-dot" aria-hidden="true"></span>Mesh
+          </button>
         </div>
-        <button type="button" class="mesh-btn" id="mesh-toggle" aria-pressed="true" aria-label="Mesh effect"
-          onclick="toggleMesh()">Mesh</button>
       </div>
     </div>
   </header>
@@ -3273,7 +3419,7 @@
       const canvas = document.getElementById('mesh-canvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
-      let w, h, time = 0, animId = null, isRunning = false;
+      let w, h, time = 0, animId = null, isRunning = false, imgBuf = null;
 
       function resize() {
         const scale = Math.min(window.devicePixelRatio || 1, 1.5);
@@ -3282,6 +3428,7 @@
         h = canvas.height = Math.floor(window.innerHeight * scale * factor);
         canvas.style.width = window.innerWidth + 'px';
         canvas.style.height = window.innerHeight + 'px';
+        imgBuf = null;  // Invalidate buffer — re-created on next render
       }
 
       // Cosine palette: color(t) = a + b·cos(2π(c·t + d))
@@ -3321,10 +3468,15 @@
         }
       }
 
-      const STEP = 3;
+      // Adaptive pixel step: lower density = faster render
+      const STEP = window.devicePixelRatio > 1.5 ? 3 : (window.innerWidth < 768 ? 5 : 4);
+
       function render() {
-        const img = ctx.createImageData(w, h);
-        const d = img.data;
+        // Reuse ImageData instead of allocating every frame
+        if (!imgBuf || imgBuf.width !== w || imgBuf.height !== h) {
+          imgBuf = ctx.createImageData(w, h);
+        }
+        const d = imgBuf.data;
         for (let py = 0; py < h; py += STEP) {
           for (let px = 0; px < w; px += STEP) {
             const nx = px / w, ny = py / h;
@@ -3350,7 +3502,7 @@
             }
           }
         }
-        ctx.putImageData(img, 0, 0);
+        ctx.putImageData(imgBuf, 0, 0);
       }
 
       // Export 3 representative mesh colors as CSS vars for real-time matching
@@ -3366,15 +3518,22 @@
       }
 
       let lastT = performance.now();
+      let lastFrame = 0;           // 30fps throttle
+      let colorExportTick = 0;     // Throttle DOM color writes
+
       function loop(now) {
         if (!isRunning) return;
+        animId = requestAnimationFrame(loop);
+        // Cap at ~30fps — mesh gradient is slow-moving, 60fps unnecessary
+        if (now - lastFrame < 33) return;
+        lastFrame = now;
         const dt = (now - lastT) / 1000;
         lastT = now;
         time += dt;
         updatePts(dt);
         render();
-        exportMeshColors();
-        animId = requestAnimationFrame(loop);
+        // Export colors only every 10th rendered frame (~3×/sec)
+        if (++colorExportTick % 10 === 0) exportMeshColors();
       }
 
       // Performance check
