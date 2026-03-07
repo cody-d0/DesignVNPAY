@@ -2092,6 +2092,7 @@
             visibilityRefreshTimer = setTimeout(() => loadManifest(), 300);
             startPolling();
           } else {
+            clearTimeout(visibilityRefreshTimer);
             stopPolling();
           }
         });
@@ -2151,13 +2152,17 @@
       }
     }
     
+    let _manifestAbort = null;
     async function loadManifest() {
+      // Abort previous in-flight request to prevent overlapping fetches
+      if (_manifestAbort) _manifestAbort.abort();
+      _manifestAbort = new AbortController();
       try {
         // Use live API when on localhost (no manifest/commit needed); else files.json for static deploy
         const useLiveApi = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(window.location.origin)
           || new URLSearchParams(window.location.search).has('live');
         const manifestUrl = useLiveApi ? '/api/files' : 'files.json';
-        const response = await fetch(manifestUrl);
+        const response = await fetch(manifestUrl, { signal: _manifestAbort.signal });
         const data = await response.json();
         
         allFiles = data.files || [];
@@ -2181,6 +2186,7 @@
           renderFolders(allFolders, allFiles);
         }
       } catch (error) {
+        if (error && error.name === 'AbortError') return; // silently ignore cancelled requests
         console.error('Error loading manifest:', error);
         var fullPayload = [
           'MSV-C001 — Error loading file list',
