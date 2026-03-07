@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C6 — JSON Crack Graph · viewer.io.vn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #F5F5F5;
+            --surface: #FFFFFF;
+            --border: #E2E2E2;
+            --text: #202020;
+            --text-secondary: #767676;
+            --accent: #6C5CE7;
+            --accent-light: #A29BFE;
+            --green: #00B894;
+            --blue: #0984E3;
+            --orange: #FDCB6E;
+            --pink: #FD79A8;
+            --font: 'Inter', -apple-system, sans-serif;
+            --transition: 200ms ease;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            height: 44px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tb-logo {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--accent);
+            letter-spacing: -0.02em;
+        }
+
+        .tb-logo span {
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .tb-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--border);
+        }
+
+        .tb-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .tb-status .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+        }
+
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tb-btn {
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            font-family: var(--font);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tb-btn:hover {
+            border-color: var(--text-secondary);
+            color: var(--text);
+        }
+
+        .tb-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Main split layout */
+        .split {
+            display: flex;
+            height: calc(100vh - 44px);
+            margin-top: 44px;
+        }
+
+        /* Left panel — drop zone as "editor" */
+        .panel-left {
+            flex: 1;
+            background: #1E1E2E;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel-left .line-numbers {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            bottom: 16px;
+            width: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.15);
+            font-family: monospace;
+            line-height: 1.6;
+        }
+
+        .panel-left .drop-content {
+            z-index: 1;
+        }
+
+        .drop-content .code-icon {
+            width: 48px;
+            height: 48px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-bottom: 16px;
+        }
+
+        .drop-content h2 {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+        }
+
+        .drop-content p {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.82rem;
+            margin-bottom: 24px;
+        }
+
+        .drop-content .file-chips {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .file-chip {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .chip-md {
+            background: rgba(0, 184, 148, 0.2);
+            color: #00B894;
+        }
+
+        .chip-json {
+            background: rgba(9, 132, 227, 0.2);
+            color: #74B9FF;
+        }
+
+        .chip-yaml {
+            background: rgba(253, 203, 110, 0.2);
+            color: #FDCB6E;
+        }
+
+        .chip-csv {
+            background: rgba(108, 92, 231, 0.2);
+            color: #A29BFE;
+        }
+
+        .chip-svg {
+            background: rgba(253, 121, 168, 0.2);
+            color: #FD79A8;
+        }
+
+        .panel-left.drag-over {
+            background: #252545;
+        }
+
+        .panel-left.drag-over .drop-content h2 {
+            color: var(--accent-light);
+        }
+
+        /* Resize handle */
+        .resize-handle {
+            width: 4px;
+            background: var(--border);
+            cursor: col-resize;
+            transition: background 0.15s;
+            position: relative;
+        }
+
+        .resize-handle:hover,
+        .resize-handle:active {
+            background: var(--accent);
+        }
+
+        .resize-handle::after {
+            content: '⋮';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+        }
+
+        /* Right panel — preview placeholder */
+        .panel-right {
+            flex: 1;
+            background: var(--surface);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 32px;
+            position: relative;
+        }
+
+        .panel-right .tab-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab-item {
+            padding: 10px 20px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-item:hover {
+            color: var(--text);
+        }
+
+        .tab-item.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .preview-empty {
+            color: var(--text-secondary);
+        }
+
+        .preview-empty svg {
+            width: 48px;
+            height: 48px;
+            color: var(--border);
+            margin-bottom: 12px;
+        }
+
+        .preview-empty p {
+            font-size: 0.85rem;
+        }
+
+        .preview-empty .hint {
+            font-size: 0.75rem;
+            color: #B0B0B0;
+            margin-top: 6px;
+        }
+
+        /* Bottom bar */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 28px;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            z-index: 100;
+        }
+
+        .bottom-bar .left {
+            display: flex;
+            gap: 16px;
+        }
+
+        .bottom-bar .right {
+            display: flex;
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .split {
+                flex-direction: column;
+            }
+
+            .resize-handle {
+                width: 100%;
+                height: 4px;
+                cursor: row-resize;
+            }
+
+            .panel-left .line-numbers {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <span class="tb-logo">viewer<span>.io.vn</span></span>
+            <span class="tb-divider"></span>
+            <span class="tb-status"><span class="status-dot"></span>Ready</span>
+        </div>
+        <div class="toolbar-right">
+            <button class="tb-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                Theme
+            </button>
+            <button class="tb-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                Export
+            </button>
+        </div>
+    </div>
+
+    <div class="split">
+        <div class="panel-left" id="drop-zone">
+            <div class="line-numbers">
+                1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30
+            </div>
+            <div class="drop-content">
+                <svg class="code-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                    <path d="M14 2v6h6" />
+                    <path d="M12 18v-6" />
+                    <path d="M9 15l3-3 3 3" />
+                </svg>
+                <h2>Drop file here</h2>
+                <p>or paste raw content</p>
+                <div class="file-chips">
+                    <span class="file-chip chip-md">.md</span>
+                    <span class="file-chip chip-json">.json</span>
+                    <span class="file-chip chip-yaml">.yaml</span>
+                    <span class="file-chip chip-csv">.csv</span>
+                    <span class="file-chip chip-svg">.svg</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="resize-handle"></div>
+
+        <div class="panel-right">
+            <div class="tab-bar">
+                <span class="tab-item active">Preview</span>
+                <span class="tab-item">Raw</span>
+                <span class="tab-item">Structure</span>
+            </div>
+            <div class="preview-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <p>Preview will appear here</p>
+                <p class="hint">Drop a file on the left panel to start</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+        <div class="left">
+            <span>No file loaded</span>
+            <span>·</span>
+            <span>UTF-8</span>
+        </div>
+        <div class="right">
+            <span>100% Client-side</span>
+            <span>·</span>
+            <span>v1.0</span>
+        </div>
+    </div>
+
+    <script>
+        const dz = document.getElementById('drop-zone');
+        ['dragenter', 'dragover'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('drag-over'); }));
+        ['dragleave', 'drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('drag-over'); }));
+    </script>
+</body>
+
+</html>

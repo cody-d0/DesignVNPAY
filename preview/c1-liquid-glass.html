@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C1 — Liquid Glass · viewer.io.vn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-start: #fde1d3;
+            --bg-mid: #e8d5e0;
+            --bg-end: #d4c5f0;
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.45);
+            --glass-blur: 24px;
+            --glass-saturate: 180%;
+            --text-primary: #1a1025;
+            --text-secondary: #6b5a7a;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 10px;
+            --font: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            --transition: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: var(--font);
+            background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 50%, var(--bg-end) 100%);
+            color: var(--text-primary);
+            overflow: hidden;
+        }
+
+        /* Animated background orbs */
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            z-index: 0;
+            animation: float 12s ease-in-out infinite;
+        }
+
+        body::before {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #f8b4c8 0%, transparent 70%);
+            top: -10%;
+            left: -5%;
+        }
+
+        body::after {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, #b8a4f0 0%, transparent 70%);
+            bottom: -15%;
+            right: -8%;
+            animation-delay: -6s;
+            animation-direction: reverse;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(30px, -20px) scale(1.05);
+            }
+
+            66% {
+                transform: translate(-20px, 15px) scale(0.95);
+            }
+        }
+
+        /* Header — floating glass bar */
+        header {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            right: 16px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+            -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+
+        .logo span {
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+
+        .theme-pills {
+            display: flex;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .theme-pill {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-secondary);
+        }
+
+        .theme-pill:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .theme-pill.active {
+            background: rgba(255, 255, 255, 0.7);
+            color: var(--text-primary);
+        }
+
+        .theme-pill svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Main content */
+        main {
+            position: relative;
+            z-index: 1;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 24px 24px;
+        }
+
+        .drop-card {
+            position: relative;
+            width: 100%;
+            max-width: 560px;
+            padding: 56px 40px 48px;
+            text-align: center;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+            -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            transition: var(--transition);
+        }
+
+        /* Iridescent edge glow */
+        .drop-card::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: calc(var(--radius-lg) + 2px);
+            background: linear-gradient(135deg,
+                    rgba(248, 180, 200, 0.4) 0%,
+                    rgba(180, 200, 248, 0.4) 25%,
+                    rgba(200, 248, 180, 0.4) 50%,
+                    rgba(248, 220, 180, 0.4) 75%,
+                    rgba(248, 180, 200, 0.4) 100%);
+            background-size: 300% 300%;
+            animation: iridescent 6s ease infinite;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .drop-card:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes iridescent {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .drop-card.drag-over {
+            border-color: rgba(120, 100, 255, 0.5);
+            box-shadow: 0 8px 48px rgba(120, 100, 255, 0.15);
+            transform: scale(1.02);
+        }
+
+        .drop-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 24px;
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+
+        .drop-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+        }
+
+        .drop-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        /* File type pills */
+        .file-types {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+
+        .file-pill {
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: var(--text-secondary);
+            backdrop-filter: blur(8px);
+            transition: var(--transition);
+        }
+
+        .file-pill:hover {
+            background: rgba(255, 255, 255, 0.6);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+
+        /* CTA button */
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            font-family: var(--font);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-btn::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(248, 180, 200, 0.3), rgba(180, 180, 248, 0.3), rgba(180, 248, 200, 0.3));
+            background-size: 200% 200%;
+            animation: iridescent 4s ease infinite;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .cta-btn:hover {
+            background: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .cta-btn:hover::before {
+            opacity: 1;
+        }
+
+        .cta-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Badge */
+        .badge {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: linear-gradient(135deg, #f8b4c8, #b8a4f0);
+            color: white;
+            box-shadow: 0 2px 8px rgba(184, 164, 240, 0.4);
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                top: 8px;
+                left: 8px;
+                right: 8px;
+                padding: 10px 16px;
+            }
+
+            .drop-card {
+                padding: 40px 24px 36px;
+            }
+
+            .drop-title {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">viewer.io<span>.vn</span></div>
+        <div class="theme-pills">
+            <button class="theme-pill active" aria-label="Sáng" title="Sáng">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            </button>
+            <button class="theme-pill" aria-label="Tối" title="Tối">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="drop-card" id="drop-zone">
+            <div class="badge">Liquid Glass</div>
+            <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+                <path d="M12 3v13m0 0l-4-4m4 4l4-4" transform="rotate(-90 12 12)" />
+            </svg>
+            <h1 class="drop-title">Drop to preview</h1>
+            <p class="drop-subtitle">Mở file ngay trong trình duyệt — không cần server, không upload.</p>
+            <div class="file-types">
+                <span class="file-pill">.md</span>
+                <span class="file-pill">.json</span>
+                <span class="file-pill">.yaml</span>
+                <span class="file-pill">.csv</span>
+                <span class="file-pill">.svg</span>
+                <span class="file-pill">.txt</span>
+                <span class="file-pill">.rst</span>
+            </div>
+            <button class="cta-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                </svg>
+                Chọn file
+            </button>
+        </div>
+    </main>
+
+    <script>
+        const dz = document.getElementById('drop-zone');
+        ['dragenter', 'dragover'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('drag-over'); }));
+        ['dragleave', 'drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('drag-over'); }));
+    </script>
+</body>
+
+</html>

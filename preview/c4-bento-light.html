@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C4 — Warm Bento · viewer.io.vn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #FAF8F5;
+            --surface: #FFFFFF;
+            --border: rgba(0, 0, 0, 0.06);
+            --text: #1a1a1a;
+            --text-secondary: #7a7a7a;
+            --text-dim: #aaaaaa;
+            --radius: 20px;
+            --radius-sm: 14px;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.03);
+            --shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.06), 0 8px 30px rgba(0, 0, 0, 0.06);
+            --font: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            --transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+
+            --mint: #d1fae5;
+            --mint-text: #065f46;
+            --blue: #dbeafe;
+            --blue-text: #1e40af;
+            --peach: #ffedd5;
+            --peach-text: #9a3412;
+            --lavender: #ede9fe;
+            --lavender-text: #5b21b6;
+            --rose: #ffe4e6;
+            --rose-text: #9f1239;
+        }
+
+        html,
+        body {
+            min-height: 100vh;
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        /* Noise texture */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            opacity: 0.03;
+            z-index: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            right: 16px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 0.95rem;
+            letter-spacing: -0.03em;
+        }
+
+        .logo span {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .toggle-pill {
+            display: flex;
+            gap: 2px;
+            background: rgba(0, 0, 0, 0.04);
+            border-radius: 20px;
+            padding: 3px;
+        }
+
+        .toggle-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-dim);
+        }
+
+        .toggle-dot:hover {
+            color: var(--text-secondary);
+        }
+
+        .toggle-dot.active {
+            background: white;
+            color: var(--text);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .toggle-dot svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Bento grid */
+        .bento {
+            position: relative;
+            z-index: 1;
+            max-width: 840px;
+            margin: 0 auto;
+            padding: 80px 16px 32px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: auto auto auto;
+            gap: 12px;
+        }
+
+        .bento-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            transition: var(--transition);
+            cursor: default;
+        }
+
+        .bento-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Drop zone — spans 2 columns, 2 rows */
+        .card-drop {
+            grid-column: 1 / 2;
+            grid-row: 1 / 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 28px;
+            border: 2px dashed rgba(0, 0, 0, 0.08);
+            background: var(--surface);
+            cursor: pointer;
+            min-height: 320px;
+        }
+
+        .card-drop:hover {
+            border-color: rgba(0, 0, 0, 0.15);
+        }
+
+        .card-drop.drag-over {
+            border-color: var(--mint-text);
+            background: var(--mint);
+        }
+
+        .drop-illustration {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 20px;
+            color: var(--text-dim);
+        }
+
+        .card-drop h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: -0.02em;
+        }
+
+        .card-drop p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* File type cards */
+        .card-type {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 20px;
+            min-height: 120px;
+        }
+
+        .card-type .type-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .card-type .type-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .card-type .ext {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+        }
+
+        .card-md {}
+
+        .card-md .type-icon {
+            background: var(--mint);
+            color: var(--mint-text);
+        }
+
+        .card-md .ext {
+            color: var(--mint-text);
+        }
+
+        .card-json {}
+
+        .card-json .type-icon {
+            background: var(--blue);
+            color: var(--blue-text);
+        }
+
+        .card-json .ext {
+            color: var(--blue-text);
+        }
+
+        .card-yaml {}
+
+        .card-yaml .type-icon {
+            background: var(--peach);
+            color: var(--peach-text);
+        }
+
+        .card-yaml .ext {
+            color: var(--peach-text);
+        }
+
+        .card-csv {}
+
+        .card-csv .type-icon {
+            background: var(--lavender);
+            color: var(--lavender-text);
+        }
+
+        .card-csv .ext {
+            color: var(--lavender-text);
+        }
+
+        .card-svg {}
+
+        .card-svg .type-icon {
+            background: var(--rose);
+            color: var(--rose-text);
+        }
+
+        .card-svg .ext {
+            color: var(--rose-text);
+        }
+
+        /* Info card */
+        .card-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .card-info .lock-icon {
+            width: 28px;
+            height: 28px;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+
+        .card-info .info-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 2px;
+        }
+
+        .card-info .info-sub {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        /* Browse card */
+        .card-browse {
+            grid-column: 3 / 4;
+            grid-row: 3 / 4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--text);
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: -0.01em;
+            cursor: pointer;
+            border-color: transparent;
+        }
+
+        .card-browse:hover {
+            background: #333;
+        }
+
+        .card-browse svg {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .bento-card {
+                transition: none;
+            }
+
+            .bento-card:hover {
+                transform: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .bento {
+                grid-template-columns: 1fr 1fr;
+                padding-top: 72px;
+            }
+
+            .card-drop {
+                grid-column: 1 / -1;
+                grid-row: auto;
+                min-height: 240px;
+            }
+
+            .card-browse {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .bento {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">viewer<span>.io.vn</span></div>
+        <div class="toggle-pill">
+            <button class="toggle-dot active" aria-label="Sáng">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            </button>
+            <button class="toggle-dot" aria-label="Tối">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="bento">
+        <!-- Drop zone -->
+        <div class="bento-card card-drop" id="drop-zone">
+            <svg class="drop-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="12" y1="18" x2="12" y2="12" />
+                <polyline points="9 15 12 12 15 15" />
+            </svg>
+            <h2>Thả file vào đây</h2>
+            <p>hoặc nhấn để chọn file</p>
+        </div>
+
+        <!-- File type cards -->
+        <div class="bento-card card-type card-md">
+            <div class="type-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                    <path d="M14 2v6h6" />
+                </svg>
+            </div>
+            <span class="ext">.md</span>
+        </div>
+
+        <div class="bento-card card-type card-json">
+            <div class="type-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 18l2-2-2-2" />
+                    <path d="M8 18l-2-2 2-2" />
+                    <path d="M14 4l-4 16" />
+                </svg>
+            </div>
+            <span class="ext">.json</span>
+        </div>
+
+        <div class="bento-card card-type card-yaml">
+            <div class="type-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 7V4h16v3" />
+                    <path d="M9 20h6" />
+                    <path d="M12 4v16" />
+                </svg>
+            </div>
+            <span class="ext">.yaml</span>
+        </div>
+
+        <!-- Info card -->
+        <div class="bento-card card-info">
+            <svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0110 0v4" />
+            </svg>
+            <div class="info-title">100%</div>
+            <div class="info-sub">Client-side</div>
+        </div>
+
+        <div class="bento-card card-type card-csv">
+            <div class="type-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                    <path d="M9 14l2 2 4-4" />
+                </svg>
+            </div>
+            <span class="ext">.csv</span>
+        </div>
+
+        <div class="bento-card card-type card-svg">
+            <div class="type-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 16v-4" />
+                    <path d="M12 8h.01" />
+                </svg>
+            </div>
+            <span class="ext">.svg</span>
+        </div>
+
+        <!-- Browse button card -->
+        <div class="bento-card card-browse" role="button" tabindex="0" aria-label="Chọn file">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            Chọn file
+        </div>
+    </div>
+
+    <script>
+        const dz = document.getElementById('drop-zone');
+        ['dragenter', 'dragover'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('drag-over'); }));
+        ['dragleave', 'drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('drag-over'); }));
+    </script>
+</body>
+
+</html>

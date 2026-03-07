@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C3 — Linear Dark · viewer.io.vn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0a;
+            --surface: #111111;
+            --border: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(255, 255, 255, 0.12);
+            --text: #ededed;
+            --text-secondary: #888888;
+            --text-dim: #555555;
+            --accent: #0066ff;
+            --font: 'Inter', -apple-system, sans-serif;
+            --font-mono: 'Geist Mono', 'JetBrains Mono', monospace;
+            --transition: 200ms ease;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        /* Noise texture */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            opacity: 0.025;
+            z-index: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            pointer-events: none;
+        }
+
+        /* Subtle radial glow */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 400px;
+            background: radial-gradient(ellipse, rgba(0, 102, 255, 0.04) 0%, transparent 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            height: 48px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(12px);
+        }
+
+        .logo {
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            letter-spacing: -0.01em;
+        }
+
+        .logo strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--text-dim);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .icon-btn:hover {
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .icon-btn.active {
+            color: var(--text);
+        }
+
+        .icon-btn svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .separator {
+            width: 1px;
+            height: 16px;
+            background: var(--border);
+            margin: 0 8px;
+        }
+
+        .kbd {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Main */
+        main {
+            position: relative;
+            z-index: 1;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            padding: 48px 24px 24px;
+        }
+
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            color: var(--text-dim);
+            margin-bottom: 24px;
+            opacity: 0.5;
+        }
+
+        .main-text {
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            letter-spacing: -0.01em;
+        }
+
+        /* File types */
+        .file-row {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 32px;
+        }
+
+        .file-tag {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            background: transparent;
+            transition: var(--transition);
+            cursor: default;
+        }
+
+        .file-tag:hover {
+            border-color: var(--border-hover);
+            color: var(--text-secondary);
+        }
+
+        /* CTA button — Linear/Vercel style */
+        .browse-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            border-radius: 8px;
+            border: none;
+            background: var(--text);
+            font-family: var(--font);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--bg);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .browse-btn:hover {
+            box-shadow: 0 0 20px rgba(0, 102, 255, 0.25), 0 0 40px rgba(0, 102, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .browse-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Drop zone overlay state */
+        .drop-area {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+        }
+
+        .drop-area.drag-over::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            border: 2px dashed var(--accent);
+            background: rgba(0, 102, 255, 0.03);
+            z-index: 200;
+            pointer-events: none;
+        }
+
+        /* Footer */
+        .footer {
+            position: fixed;
+            bottom: 16px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .footer-dot {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: var(--text-dim);
+            opacity: 0.5;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 0 16px;
+            }
+
+            .kbd {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo"><strong>viewer</strong>.io.vn</div>
+        <div class="header-right">
+            <span class="kbd">⌘V paste</span>
+            <div class="separator"></div>
+            <button class="icon-btn" aria-label="Sáng">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            </button>
+            <button class="icon-btn active" aria-label="Tối">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="drop-area" id="drop-zone">
+        <main>
+            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            <p class="main-text">Drop a file to preview</p>
+            <div class="file-row">
+                <span class="file-tag">.md</span>
+                <span class="file-tag">.json</span>
+                <span class="file-tag">.yaml</span>
+                <span class="file-tag">.csv</span>
+                <span class="file-tag">.svg</span>
+                <span class="file-tag">.txt</span>
+            </div>
+            <button class="browse-btn">Browse files</button>
+        </main>
+    </div>
+
+    <div class="footer">
+        <span>Client-side only</span>
+        <span class="footer-dot"></span>
+        <span>No upload</span>
+        <span class="footer-dot"></span>
+        <span>Zero tracking</span>
+    </div>
+
+    <script>
+        const dz = document.getElementById('drop-zone');
+        ['dragenter', 'dragover'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('drag-over'); }));
+        ['dragleave', 'drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('drag-over'); }));
+    </script>
+</body>
+
+</html>

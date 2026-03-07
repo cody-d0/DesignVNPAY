@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C5 — Notion Editorial · viewer.io.vn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #FFFFFF;
+            --bg-hover: #F7F7F5;
+            --surface: #FFFFFF;
+            --border: #E8E5E0;
+            --text: #37352F;
+            --text-secondary: #9B9A97;
+            --text-dim: #CFCDC9;
+            --accent: #EB5757;
+            --accent-bg: #FDEBEC;
+            --font-serif: 'Source Serif 4', Georgia, serif;
+            --font-sans: 'Inter', -apple-system, sans-serif;
+            --transition: 200ms ease;
+            --max-w: 720px;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 240px;
+            background: #FBFAF9;
+            border-right: 1px solid var(--border);
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-logo .logo-icon {
+            width: 20px;
+            height: 20px;
+            background: var(--text);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .sidebar-logo span {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .sidebar-section {
+            margin-bottom: 16px;
+        }
+
+        .sidebar-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+            padding: 0 8px;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .sidebar-item:hover {
+            background: var(--bg-hover);
+            color: var(--text);
+        }
+
+        .sidebar-item.active {
+            background: var(--bg-hover);
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .sidebar-item svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-item .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 12px 8px;
+            border-top: 1px solid var(--border);
+        }
+
+        .sidebar-footer .theme-row {
+            display: flex;
+            gap: 4px;
+        }
+
+        .theme-sq {
+            flex: 1;
+            padding: 6px 0;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: transparent;
+            font-family: var(--font-sans);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .theme-sq:hover {
+            border-color: var(--text-secondary);
+        }
+
+        .theme-sq.active {
+            background: var(--text);
+            color: white;
+            border-color: var(--text);
+        }
+
+        /* Main content */
+        main {
+            margin-left: 240px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 24px;
+        }
+
+        .drop-area {
+            width: 100%;
+            max-width: var(--max-w);
+            text-align: center;
+        }
+
+        .page-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            line-height: 1;
+        }
+
+        .page-title {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+            line-height: 1.15;
+        }
+
+        .page-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        /* Drop zone — Notion style dashed border */
+        .drop-block {
+            width: 100%;
+            padding: 48px 24px;
+            border: 2px dashed var(--text-dim);
+            border-radius: 8px;
+            background: var(--bg-hover);
+            transition: var(--transition);
+            cursor: pointer;
+            margin-bottom: 32px;
+        }
+
+        .drop-block:hover {
+            border-color: var(--text-secondary);
+            background: #F0EFEC;
+        }
+
+        .drop-block.drag-over {
+            border-color: var(--accent);
+            background: var(--accent-bg);
+        }
+
+        .drop-block .drop-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .drop-block .drop-text strong {
+            color: var(--text);
+        }
+
+        /* File types — Notion property style */
+        .file-props {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 32px;
+            text-align: left;
+        }
+
+        .file-prop {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 8px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .file-prop:hover {
+            background: var(--bg-hover);
+        }
+
+        .file-prop .prop-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            width: 80px;
+            flex-shrink: 0;
+        }
+
+        .file-prop .prop-tags {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .prop-tag {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .tag-md {
+            background: #E3F6E8;
+            color: #1E7A3C;
+        }
+
+        .tag-json {
+            background: #D3E5F8;
+            color: #1E4A7A;
+        }
+
+        .tag-yaml {
+            background: #F8E8D3;
+            color: #7A4A1E;
+        }
+
+        .tag-csv {
+            background: #EDE3F8;
+            color: #5A1E7A;
+        }
+
+        .tag-svg {
+            background: #F8D3D3;
+            color: #7A1E1E;
+        }
+
+        .tag-txt {
+            background: #E8E8E8;
+            color: #4A4A4A;
+        }
+
+        .browse-link {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .browse-link:hover {
+            color: var(--text);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            main {
+                margin-left: 0;
+            }
+
+            .page-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">V</div>
+            <span>viewer.io.vn</span>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-label">Quick Access</div>
+            <div class="sidebar-item active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                    <path d="M14 2v6h6" />
+                </svg>
+                Drop & View
+            </div>
+            <div class="sidebar-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 8v4l3 3" />
+                    <circle cx="12" cy="12" r="10" />
+                </svg>
+                Recent Files
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-label">Supported</div>
+            <div class="sidebar-item"><span class="dot" style="background:#1E7A3C"></span> Markdown</div>
+            <div class="sidebar-item"><span class="dot" style="background:#1E4A7A"></span> JSON</div>
+            <div class="sidebar-item"><span class="dot" style="background:#7A4A1E"></span> YAML</div>
+            <div class="sidebar-item"><span class="dot" style="background:#5A1E7A"></span> CSV</div>
+            <div class="sidebar-item"><span class="dot" style="background:#7A1E1E"></span> SVG</div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="theme-row">
+                <button class="theme-sq active">Light</button>
+                <button class="theme-sq">Dark</button>
+                <button class="theme-sq">Mesh</button>
+            </div>
+        </div>
+    </aside>
+
+    <main>
+        <div class="drop-area">
+            <div class="page-icon">📄</div>
+            <h1 class="page-title">Drop & View</h1>
+            <p class="page-subtitle">Mở bất kỳ file nào ngay trong trình duyệt.<br />Không cần server, không upload,
+                không tracking.</p>
+
+            <div class="drop-block" id="drop-zone">
+                <p class="drop-text"><strong>Kéo thả file vào đây</strong> hoặc nhấn để chọn</p>
+            </div>
+
+            <div class="file-props">
+                <div class="file-prop">
+                    <span class="prop-label">Supported</span>
+                    <div class="prop-tags">
+                        <span class="prop-tag tag-md">.md</span>
+                        <span class="prop-tag tag-json">.json</span>
+                        <span class="prop-tag tag-yaml">.yaml</span>
+                        <span class="prop-tag tag-csv">.csv</span>
+                        <span class="prop-tag tag-svg">.svg</span>
+                        <span class="prop-tag tag-txt">.txt</span>
+                    </div>
+                </div>
+                <div class="file-prop">
+                    <span class="prop-label">Privacy</span>
+                    <div class="prop-tags">
+                        <span class="prop-tag" style="background:#E3F6E8;color:#1E7A3C">🔒 100% client-side</span>
+                    </div>
+                </div>
+            </div>
+
+            <span class="browse-link">or choose a file from your computer</span>
+        </div>
+    </main>
+
+    <script>
+        const dz = document.getElementById('drop-zone');
+        ['dragenter', 'dragover'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('drag-over'); }));
+        ['dragleave', 'drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('drag-over'); }));
+    </script>
+</body>
+
+</html>

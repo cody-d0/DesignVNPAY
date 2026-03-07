@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>viewer.io.vn — File Preview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --syne: 'Syne', sans-serif;
+            --dm: 'DM Sans', sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-out: cubic-bezier(0, 0, 0.2, 1);
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+            font-family: var(--dm);
+            background: #08060e;
+            color: #e8e4f0;
+        }
+
+        /* ═══════════════════════════════
+       GRADIENT MESH — Canvas rendered
+       Iñigo Quílez cosine palette
+       ═══════════════════════════════ */
+        canvas#gradient {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            animation: canvas-in 3s var(--ease) 0.2s forwards;
+        }
+
+        @keyframes canvas-in {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Film grain — adds photographic texture */
+        .grain {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.05;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* Vignette */
+        .vignette {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background: radial-gradient(ellipse 70% 60% at 50% 50%, transparent 40%, rgba(8, 6, 14, 0.6) 100%);
+        }
+
+        /* ═══════════════════════════════
+       HEADER — floating glass
+       ═══════════════════════════════ */
+        header {
+            position: fixed;
+            top: 16px;
+            left: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 18px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px) saturate(150%);
+            -webkit-backdrop-filter: blur(24px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            opacity: 0;
+            transform: translateY(-12px);
+            animation: slide-in 0.8s var(--ease) 0.6s forwards;
+        }
+
+        .logo {
+            font-family: var(--syne);
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.85);
+            letter-spacing: -0.03em;
+        }
+
+        .logo-dot {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .h-btn {
+            padding: 5px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.03);
+            font-family: var(--dm);
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 200ms var(--ease-out);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .h-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .h-btn svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .kbd {
+            font-family: var(--mono);
+            font-size: 0.58rem;
+            padding: 1px 4px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        /* ═══════════════════════════════
+       MAIN — Asymmetric composition
+       Large title left, card right-offset
+       ═══════════════════════════════ */
+        main {
+            position: relative;
+            z-index: 2;
+            height: 100vh;
+            padding: 0 clamp(24px, 5vw, 80px);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 40px;
+        }
+
+        /* LEFT — Typography hero */
+        .hero-left {
+            padding-bottom: 40px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slide-in 1s var(--ease) 0.3s forwards;
+        }
+
+        .hero-tagline {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: rgba(255, 255, 255, 0.25);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-tagline::before {
+            content: '';
+            width: 24px;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(168, 85, 247, 0.6), transparent);
+        }
+
+        .hero-title {
+            font-family: var(--syne);
+            font-size: clamp(2.8rem, 5.5vw, 4.5rem);
+            font-weight: 800;
+            letter-spacing: -0.06em;
+            line-height: 0.92;
+            margin-bottom: 16px;
+        }
+
+        .hero-title .line-1 {
+            display: block;
+            background: linear-gradient(135deg, #fff 20%, rgba(200, 180, 255, 0.9) 80%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-title .line-2 {
+            display: block;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(59, 130, 246, 0.7) 50%, rgba(52, 211, 153, 0.6) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-desc {
+            font-size: 0.95rem;
+            font-weight: 300;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.35);
+            max-width: 380px;
+            font-style: italic;
+        }
+
+        .hero-desc em {
+            font-style: normal;
+            color: rgba(255, 255, 255, 0.55);
+        }
+
+        /* RIGHT — Glass card */
+        .card-wrapper {
+            display: flex;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(40px) scale(0.97);
+            animation: card-in 1.2s var(--ease) 0.5s forwards;
+        }
+
+        @keyframes card-in {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .glass-card {
+            width: 100%;
+            max-width: 380px;
+            padding: 36px 32px 32px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(48px) saturate(180%) brightness(1.08);
+            -webkit-backdrop-filter: blur(48px) saturate(180%) brightness(1.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            transition: all 500ms var(--ease);
+        }
+
+        /* Iridescent edge */
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 24px;
+            padding: 1px;
+            background: conic-gradient(from 180deg,
+                    rgba(168, 85, 247, 0.15), rgba(59, 130, 246, 0.12),
+                    rgba(52, 211, 153, 0.1), rgba(251, 146, 60, 0.08),
+                    rgba(236, 72, 153, 0.12), rgba(168, 85, 247, 0.15));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            animation: shimmer 12s linear infinite;
+        }
+
+        @keyframes shimmer {
+            to {
+                filter: hue-rotate(360deg);
+            }
+        }
+
+        /* Top refraction */
+        .glass-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            border-radius: 24px 24px 0 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 56px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+        }
+
+        .glass-card.drag-over {
+            transform: translateY(-8px) scale(1.01);
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        /* Card header */
+        .card-label {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Upload zone */
+        .upload-zone {
+            padding: 28px 20px;
+            margin-bottom: 16px;
+            border: 1.5px dashed rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            position: relative;
+            z-index: 1;
+            transition: all 300ms var(--ease);
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.015);
+        }
+
+        .upload-zone:hover {
+            border-color: rgba(168, 85, 247, 0.25);
+            background: rgba(168, 85, 247, 0.03);
+        }
+
+        .upload-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 10px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(168, 85, 247, 0.08);
+            border: 1px solid rgba(168, 85, 247, 0.12);
+            transition: all 300ms var(--ease);
+        }
+
+        .upload-zone:hover .upload-icon {
+            background: rgba(168, 85, 247, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .upload-icon svg {
+            width: 18px;
+            height: 18px;
+            color: rgba(168, 85, 247, 0.6);
+        }
+
+        .upload-text {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .upload-text strong {
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+        }
+
+        /* File type pills */
+        .file-types {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ft {
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-family: var(--mono);
+            font-size: 0.62rem;
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 200ms var(--ease);
+        }
+
+        .ft:hover {
+            background: rgba(168, 85, 247, 0.1);
+            color: rgba(168, 85, 247, 0.7);
+            border-color: rgba(168, 85, 247, 0.15);
+        }
+
+        /* CTA */
+        .cta-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-primary {
+            padding: 10px 24px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.9), rgba(99, 102, 241, 0.9));
+            font-family: var(--syne);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            transition: all 250ms var(--ease);
+            box-shadow: 0 2px 12px rgba(168, 85, 247, 0.2);
+        }
+
+        .cta-primary:hover {
+            transform: scale(1.04);
+            box-shadow: 0 4px 24px rgba(168, 85, 247, 0.35);
+        }
+
+        .cta-ghost {
+            padding: 10px 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: transparent;
+            font-family: var(--dm);
+            font-size: 0.78rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 250ms var(--ease);
+        }
+
+        .cta-ghost:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* ═══════════════════════════════
+       FOOTER
+       ═══════════════════════════════ */
+        .footer-info {
+            position: fixed;
+            bottom: 18px;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            opacity: 0;
+            animation: slide-in 0.8s var(--ease) 1.2s forwards;
+        }
+
+        .footer-chip {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.2);
+            transition: all 250ms var(--ease);
+        }
+
+        .footer-chip:hover {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer-chip svg {
+            width: 10px;
+            height: 10px;
+        }
+
+        .footer-sep {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ═══════════════════════════════
+       ANIMATIONS
+       ═══════════════════════════════ */
+        @keyframes slide-in {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Stagger file type pills */
+        .ft {
+            opacity: 0;
+            animation: pill-in 0.5s var(--ease) forwards;
+        }
+
+        .ft:nth-child(1) {
+            animation-delay: 0.8s;
+        }
+
+        .ft:nth-child(2) {
+            animation-delay: 0.85s;
+        }
+
+        .ft:nth-child(3) {
+            animation-delay: 0.9s;
+        }
+
+        .ft:nth-child(4) {
+            animation-delay: 0.95s;
+        }
+
+        .ft:nth-child(5) {
+            animation-delay: 1s;
+        }
+
+        .ft:nth-child(6) {
+            animation-delay: 1.05s;
+        }
+
+        @keyframes pill-in {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ═══════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════ */
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation: none !important;
+                transition: none !important;
+            }
+
+            canvas {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            main {
+                grid-template-columns: 1fr;
+                padding: 100px 24px 80px;
+                gap: 24px;
+                align-content: center;
+            }
+
+            .hero-left {
+                text-align: center;
+                padding-bottom: 0;
+            }
+
+            .hero-desc {
+                margin: 0 auto;
+            }
+
+            .hero-title {
+                font-size: 2.2rem;
+            }
+
+            .glass-card {
+                max-width: 100%;
+            }
+
+            .footer-info {
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="gradient"></canvas>
+    <div class="grain"></div>
+    <div class="vignette"></div>
+
+    <header>
+        <div class="logo">viewer<span class="logo-dot">.io.vn</span></div>
+        <div class="header-right">
+            <button class="h-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="4" />
+                    <path
+                        d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.07-7.07l-1.41 1.41M8.34 15.66l-1.41 1.41m12.14 0l-1.41-1.41M8.34 8.34L6.93 6.93" />
+                </svg>
+                Theme
+            </button>
+            <button class="h-btn">Paste <span class="kbd">⌘V</span></button>
+        </div>
+    </header>
+
+    <main>
+        <div class="hero-left">
+            <div class="hero-tagline">client-side preview</div>
+            <h1 class="hero-title">
+                <span class="line-1">viewer</span>
+                <span class="line-2">.io.vn</span>
+            </h1>
+            <p class="hero-desc">
+                Xem trước <em>markdown, JSON, YAML, CSV, SVG</em> ngay trong trình duyệt.
+                Không upload. Không tracking. <em>Chỉ bạn và file của bạn.</em>
+            </p>
+        </div>
+
+        <div class="card-wrapper">
+            <div class="glass-card" id="drop-zone">
+                <div class="card-label">Drop zone</div>
+                <div class="upload-zone">
+                    <div class="upload-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                    </div>
+                    <p class="upload-text"><strong>Kéo thả file</strong> hoặc nhấn chọn</p>
+                </div>
+                <div class="file-types">
+                    <span class="ft">.md</span><span class="ft">.json</span><span class="ft">.yaml</span>
+                    <span class="ft">.csv</span><span class="ft">.svg</span><span class="ft">.txt</span>
+                </div>
+                <div class="cta-row">
+                    <button class="cta-primary">Chọn file</button>
+                    <button class="cta-ghost">⌘V Paste</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="footer-info">
+        <div class="footer-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" />
+                <path d="M7 11V7a5 5 0 0110 0v4" />
+            </svg>
+            private
+        </div>
+        <div class="footer-sep"></div>
+        <div class="footer-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+            </svg>
+            instant
+        </div>
+        <div class="footer-sep"></div>
+        <div class="footer-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+            </svg>
+            6 formats
+        </div>
+    </div>
+
+    <script>
+  // ══════════════════════════════════════
+  // Stripe-quality animated mesh gradient
+  // Cosine palette + floating control pts
+  // ══════════════════════════════════════
+
+  const canvas = document.getElementById('gradient');
+  const ctx = canvas.getContext('2d');
+  let w, h, time = 0, animId;
+
+  function resize() {
+    // Render at lower resolution for performance, CSS scales up
+    const scale = Math.min(window.devicePixelRatio || 1, 1.5);
+    const factor = 0.5; // Half-res for smoother perf
+    w = canvas.width = Math.floor(window.innerWidth * scale * factor);
+    h = canvas.height = Math.floor(window.innerHeight * scale * factor);
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+  }
+
+  // Cosine palette: color(t) = a + b·cos(2π(c·t + d))
+  function cosColor(t, a, b, c, d) {
+    const T = Math.PI * 2;
+    return [
+      (a[0] + b[0] * Math.cos(T * (c[0]*t + d[0]))) * 255,
+      (a[1] + b[1] * Math.cos(T * (c[1]*t + d[1]))) * 255,
+      (a[2] + b[2] * Math.cos(T * (c[2]*t + d[2]))) * 255
+    ];
+  }
+
+  // Rich purple→indigo→magenta→teal palette (Stripe-inspired but deeper/darker)
+  const PA = [0.38, 0.28, 0.48];  // Bias toward blue-purple, overall darker
+  const PB = [0.42, 0.38, 0.42];  // Moderate amplitude
+  const PC = [1.2, 1.0, 0.8];     // Frequency per channel — slight offset = richness
+  const PD = [0.0, 0.15, 0.35];   // Phase — this creates the purple→blue→teal sweep
+
+  // Floating control points — each "owns" a color region
+  const NP = 6;
+  const pts = [];
+  for (let i = 0; i < NP; i++) {
+    pts.push({
+      x: 0.12 + Math.random() * 0.76,
+      y: 0.12 + Math.random() * 0.76,
+      vx: (Math.random() - 0.5) * 0.15,
+      vy: (Math.random() - 0.5) * 0.15,
+      phase: Math.random() * Math.PI * 2,
+      freq: 0.15 + Math.random() * 0.25
+    });
+  }
+
+  function updatePts(dt) {
+    for (const p of pts) {
+      p.x += Math.sin(time * p.freq + p.phase) * dt * 0.008;
+      p.y += Math.cos(time * p.freq * 0.7 + p.phase + 1) * dt * 0.008;
+      // Soft contain
+      if (p.x < 0.05) p.x += 0.003; if (p.x > 0.95) p.x -= 0.003;
+      if (p.y < 0.05) p.y += 0.003; if (p.y > 0.95) p.y -= 0.003;
+    }
+  }
+
+  const STEP = 3;
+
+  function render() {
+    const img = ctx.createImageData(w, h);
+    const d = img.data;
+
+    for (let py = 0; py < h; py += STEP) {
+      for (let px = 0; px < w; px += STEP) {
+        const nx = px / w, ny = py / h;
+        let tw = 0, ct = 0;
+
+        for (let i = 0; i < NP; i++) {
+          const dx = nx - pts[i].x, dy = ny - pts[i].y;
+          const wt = Math.exp(-(dx*dx + dy*dy) * 4.5);
+          tw += wt;
+          ct += wt * ((i / NP) + time * 0.006);
+        }
+        ct /= tw;
+
+        // Add spatial warp for extra organicness
+        ct += Math.sin(nx * 3.5 + time * 0.02) * 0.04;
+        ct += Math.cos(ny * 2.8 + time * 0.015) * 0.03;
+
+        const [r, g, b] = cosColor(ct, PA, PB, PC, PD);
+
+        for (let dy = 0; dy < STEP && py+dy < h; dy++) {
+          for (let dx = 0; dx < STEP && px+dx < w; dx++) {
+            const idx = ((py+dy) * w + (px+dx)) * 4;
+            d[idx]   = Math.max(0, Math.min(255, r));
+            d[idx+1] = Math.max(0, Math.min(255, g));
+            d[idx+2] = Math.max(0, Math.min(255, b));
+            d[idx+3] = 255;
+          }
+        }
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+
+  let lastT = performance.now();
+  function loop(now) {
+    const dt = (now - lastT) / 1000;
+    lastT = now;
+    time += dt;
+    updatePts(dt);
+    render();
+    animId = requestAnimationFrame(loop);
+  }
+
+  // CSS fallback for slow devices
+  function fallback() {
+    canvas.style.display = 'none';
+    document.body.style.background = `
+      radial-gradient(ellipse 80% 50% at 25% 35%, rgba(88,28,135,0.7) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 60% at 75% 65%, rgba(30,58,138,0.6) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 40% at 50% 20%, rgba(126,34,206,0.4) 0%, transparent 45%),
+      radial-gradient(ellipse 40% 50% at 80% 30%, rgba(14,116,144,0.3) 0%, transparent 40%),
+      #08060e`;
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Performance gate
+  const t0 = performance.now();
+  render();
+  if (performance.now() - t0 > 80) { fallback(); }
+  else { animId = requestAnimationFrame(loop); }
+
+  // Visibility pause
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) cancelAnimationFrame(animId);
+    else { lastT = performance.now(); animId = requestAnimationFrame(loop); }
+  });
+
+  // Drag & drop
+  const dz = document.getElementById('drop-zone');
+  ['dragenter','dragover'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('drag-over'); }));
+  ['dragleave','drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('drag-over'); }));
+    </script>
+</body>
+
+</html>

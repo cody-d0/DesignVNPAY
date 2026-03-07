@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C7 — Terminal Pro · viewer.io.vn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0C0C0C;
+            --surface: #161616;
+            --surface-2: #1C1C1C;
+            --border: #2A2A2A;
+            --text: #D4D4D4;
+            --text-muted: #6A6A6A;
+            --green: #50FA7B;
+            --yellow: #F1FA8C;
+            --pink: #FF79C6;
+            --cyan: #8BE9FD;
+            --purple: #BD93F9;
+            --orange: #FFB86C;
+            --red: #FF5555;
+            --font: 'JetBrains Mono', monospace;
+            --transition: 150ms ease;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        /* CRT scanline overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.05) 2px,
+                    rgba(0, 0, 0, 0.05) 4px);
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Terminal window */
+        .terminal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 680px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 80px rgba(80, 250, 123, 0.03);
+        }
+
+        /* Title bar */
+        .titlebar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .traffic-lights {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tl {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .tl-red {
+            background: var(--red);
+        }
+
+        .tl-yellow {
+            background: var(--yellow);
+        }
+
+        .tl-green {
+            background: var(--green);
+        }
+
+        .titlebar-title {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            letter-spacing: 0.02em;
+        }
+
+        .titlebar-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .ta-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .ta-btn:hover {
+            background: var(--surface-2);
+            color: var(--text);
+        }
+
+        .ta-btn svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* Terminal body */
+        .term-body {
+            background: var(--bg);
+            padding: 20px;
+            font-size: 0.82rem;
+            line-height: 1.8;
+        }
+
+        .line {
+            display: flex;
+            gap: 0;
+        }
+
+        .prompt {
+            color: var(--green);
+        }
+
+        .cmd {
+            color: var(--text);
+        }
+
+        .flag {
+            color: var(--cyan);
+        }
+
+        .arg {
+            color: var(--yellow);
+        }
+
+        .comment {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .output {
+            color: var(--text-muted);
+        }
+
+        .success {
+            color: var(--green);
+        }
+
+        .accent {
+            color: var(--pink);
+        }
+
+        .type-label {
+            color: var(--purple);
+        }
+
+        .separator {
+            border: none;
+            border-top: 1px dashed var(--border);
+            margin: 12px 0;
+        }
+
+        /* Drop zone inside terminal */
+        .drop-zone {
+            margin: 16px 0;
+            padding: 24px;
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .drop-zone:hover {
+            border-color: var(--green);
+            background: rgba(80, 250, 123, 0.03);
+        }
+
+        .drop-zone.drag-over {
+            border-color: var(--green);
+            background: rgba(80, 250, 123, 0.08);
+            box-shadow: 0 0 20px rgba(80, 250, 123, 0.1);
+        }
+
+        .drop-zone .dz-text {
+            color: var(--text-muted);
+            font-size: 0.78rem;
+        }
+
+        .drop-zone .dz-text .hl {
+            color: var(--green);
+        }
+
+        /* Cursor blink */
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: var(--green);
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* File type bar */
+        .type-bar {
+            display: flex;
+            gap: 12px;
+            padding: 8px 0;
+            flex-wrap: wrap;
+        }
+
+        .type-bar span {
+            font-size: 0.72rem;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .cursor {
+                animation: none;
+            }
+
+            body::after {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .terminal {
+                width: 95%;
+            }
+
+            .term-body {
+                padding: 16px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="terminal">
+        <div class="titlebar">
+            <div class="traffic-lights">
+                <span class="tl tl-red"></span>
+                <span class="tl tl-yellow"></span>
+                <span class="tl tl-green"></span>
+            </div>
+            <span class="titlebar-title">viewer.io.vn — zsh</span>
+            <div class="titlebar-actions">
+                <button class="ta-btn" title="Theme">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                </button>
+                <button class="ta-btn" title="Fullscreen">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="term-body">
+            <div class="line"><span class="prompt">❯ </span><span class="cmd">viewer </span><span
+                    class="flag">--info</span></div>
+            <div class="line"><span class="output">&nbsp;&nbsp;viewer.io.vn v1.0 — client-side file preview</span></div>
+            <div class="line"><span class="output">&nbsp;&nbsp;</span><span class="success">✓</span><span
+                    class="output"> No server • No upload • No tracking</span></div>
+            <hr class="separator">
+            <div class="line"><span class="prompt">❯ </span><span class="cmd">viewer </span><span
+                    class="flag">--supported</span></div>
+            <div class="type-bar">
+                <span><span class="success">●</span> <span class="type-label">.md</span></span>
+                <span><span class="accent">●</span> <span class="type-label">.json</span></span>
+                <span style="color:var(--orange)">● <span class="type-label">.yaml</span></span>
+                <span style="color:var(--cyan)">● <span class="type-label">.csv</span></span>
+                <span style="color:var(--pink)">● <span class="type-label">.svg</span></span>
+                <span style="color:var(--yellow)">● <span class="type-label">.txt</span></span>
+            </div>
+            <hr class="separator">
+            <div class="line"><span class="prompt">❯ </span><span class="cmd">viewer </span><span
+                    class="flag">--open</span><span class="arg"> &lt;file&gt;</span></div>
+
+            <div class="drop-zone" id="drop-zone">
+                <p class="dz-text">📂 <span class="hl">Kéo thả file</span> vào đây hoặc nhấn để chọn</p>
+            </div>
+
+            <div class="line"><span class="prompt">❯ </span><span class="cursor"></span></div>
+        </div>
+    </div>
+
+    <script>
+        const dz = document.getElementById('drop-zone');
+        ['dragenter', 'dragover'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('drag-over'); }));
+        ['dragleave', 'drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('drag-over'); }));
+    </script>
+</body>
+
+</html>

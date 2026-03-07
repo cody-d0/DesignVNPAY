@@ -7,6 +7,7 @@
   <title>Markdown Viewer</title>
   <meta name="description" content="Drop and view markdown, JSON, YAML, CSV, SVG files instantly in your browser.">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -15,6 +16,7 @@
     var MESH_KEY = 'xpos-docs-mesh';
     function getMode() { var m = localStorage.getItem(THEME_KEY); return m === 'light' || m === 'dark' ? m : 'dark'; }
     function getMesh() { return localStorage.getItem(MESH_KEY) === 'true'; }
+    function getMermaidTheme() { return getMode() === 'dark' ? 'dark' : 'default'; }
     function applyTheme() {
       document.documentElement.setAttribute('data-theme', getMode() + (getMesh() ? '-mesh' : ''));
       var l = document.getElementById('theme-light');
@@ -24,6 +26,22 @@
       if (l) l.setAttribute('aria-pressed', mode === 'light' ? 'true' : 'false');
       if (d) d.setAttribute('aria-pressed', mode === 'dark' ? 'true' : 'false');
       if (m) m.setAttribute('aria-pressed', getMesh() ? 'true' : 'false');
+      // Mermaid theme sync + re-render existing diagrams
+      if (typeof mermaid !== 'undefined') {
+        mermaid.initialize({ startOnLoad: false, theme: getMermaidTheme(), securityLevel: 'strict', fontFamily: "'Inter', sans-serif" });
+        var mv = document.getElementById('markdown-view');
+        if (mv && mv.classList.contains('active')) {
+          var diagrams = mv.querySelectorAll('.mermaid-diagram');
+          if (diagrams.length > 0) {
+            diagrams.forEach(function (dd) {
+              var src = dd.closest('.mermaid-container');
+              var code = src && src.querySelector('.mermaid-source code');
+              if (code) { dd.removeAttribute('data-processed'); dd.innerHTML = code.textContent; }
+            });
+            mermaid.run({ nodes: diagrams }).catch(function () { });
+          }
+        }
+      }
     }
     applyTheme();
   </script>
@@ -780,6 +798,74 @@
       font-weight: 500;
     }
 
+    /* ── Mermaid Diagrams ── */
+    .markdown-body .mermaid-container {
+      margin: var(--spacing-xl) 0;
+      border-radius: 8px;
+      border: 1px solid var(--color-border);
+      overflow: hidden;
+      background: var(--color-surface);
+    }
+
+    .markdown-body .mermaid-diagram {
+      padding: var(--spacing-lg);
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+      min-height: 80px;
+    }
+
+    .markdown-body .mermaid-diagram svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .markdown-body .mermaid-source {
+      border-top: 1px solid var(--color-border);
+    }
+
+    .markdown-body .mermaid-source summary {
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      user-select: none;
+      transition: background var(--transition-fast);
+      list-style: none;
+    }
+
+    .markdown-body .mermaid-source summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .markdown-body .mermaid-source summary:hover {
+      background: var(--color-hover);
+    }
+
+    .markdown-body .mermaid-source pre {
+      margin: 0;
+      border: none;
+      border-radius: 0;
+      font-size: var(--text-xs);
+    }
+
+    .markdown-body .mermaid-error {
+      background: var(--color-hover);
+    }
+
+    .markdown-body .mermaid-error-badge {
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-size: var(--text-xs);
+      color: #f59e0b;
+      font-weight: 500;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    [data-theme="dark"] .mermaid-error-badge,
+    [data-theme="dark-mesh"] .mermaid-error-badge {
+      color: #fbbf24;
+    }
+
     /* JSON preview */
     .json-view-wrap {
       width: 100%;
@@ -1309,7 +1395,31 @@
     // ── Drop & View ──
     document.addEventListener('DOMContentLoaded', function () {
       applyTheme();
-      marked.setOptions({ breaks: true, gfm: true, headerIds: true });
+
+      // ── Mermaid: Custom marked renderer to intercept ```mermaid blocks ──
+      const renderer = new marked.Renderer();
+      const _origCode = renderer.code;
+      renderer.code = function (first, language, escaped) {
+        var text = first, origArg = first;
+        if (typeof first === 'object' && first !== null) { text = first.text || ''; language = first.lang; }
+        else { text = first || ''; }
+        if (language && language.toLowerCase() === 'mermaid') {
+          const id = 'mermaid-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+          const esc = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          return '<div class="mermaid-container">'
+            + '<div class="mermaid-diagram" id="' + id + '">' + esc + '</div>'
+            + '<details class="mermaid-source"><summary>View source</summary>'
+            + '<pre><code class="language-mermaid">' + esc + '</code></pre>'
+            + '</details></div>';
+        }
+        return _origCode.call(this, origArg, language, escaped);
+      };
+      marked.setOptions({ breaks: true, gfm: true, headerIds: true, renderer: renderer });
+
+      // ── Mermaid: Initialize (startOnLoad: false — content injected dynamically) ──
+      if (typeof mermaid !== 'undefined') {
+        mermaid.initialize({ startOnLoad: false, theme: getMermaidTheme(), securityLevel: 'strict', fontFamily: "'Inter', sans-serif" });
+      }
 
       // Pick file button
       const pickBtn = document.getElementById('pick-file-btn');
@@ -1422,7 +1532,7 @@
       document.getElementById('markdown-view').classList.remove('active');
     }
 
-    function renderMarkdownContent(text, fileName, options) {
+    async function renderMarkdownContent(text, fileName, options) {
       options = options || {};
       const fileMap = options.fileMap || null, baseDir = options.baseDir || '';
       if (droppedObjectUrls.length) { droppedObjectUrls.forEach(u => URL.revokeObjectURL(u)); droppedObjectUrls = []; }
@@ -1446,7 +1556,7 @@
         html = html.replace(/<img /gi, '<img loading="lazy" onerror="this.style.display=\'none\';var s=document.createElement(\'span\');s.className=\'img-fallback\';s.textContent=this.alt||\'[Ảnh]\';this.parentNode.appendChild(s);" ');
         const imgs = [];
         html = html.replace(/<img([^>]+)>/gi, (m, attrs) => {
-          const am = attrs.match(/\salt=["']([^"']*)["']/i); imgs.push({ attrs, alt: (am && am[1]) || '[Ảnh]' }); return '<!--IMG: ' + imgs.le   +'-->'
+          const am = attrs.match(/\salt=["']([^"']*)["']/i); imgs.push({ attrs, alt: (am && am[1]) || '[Ảnh]' }); return '<!--IMG: ' + imgs.   +'-->'
         });
         if (imgs.length > 0) {
           const fp = html.indexOf('<!--IMG:0-->');
@@ -1455,6 +1565,27 @@
           html = html.slice(0, fp) + sb + html.slice(fp);
         }
         mv.innerHTML = html;
+
+        // ── Mermaid: Post-render async SVG generation ──
+        if (typeof mermaid !== 'undefined') {
+          const mermaidDivs = mv.querySelectorAll('.mermaid-diagram');
+          if (mermaidDivs.length > 0) {
+            try {
+              await mermaid.run({ nodes: mermaidDivs });
+            } catch (mErr) {
+              console.warn('Mermaid render error:', mErr);
+              mermaidDivs.forEach(div => {
+                if (!div.querySelector('svg')) {
+                  div.classList.add('mermaid-error');
+                  const raw = div.textContent || '';
+                  div.innerHTML = '<div class="mermaid-error-badge">⚠ Diagram syntax error</div>'
+                    + '<pre><code>' + raw.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre>';
+                }
+              });
+            }
+          }
+        }
+
         window.scrollTo(0, 0);
       } catch (err) { mv.innerHTML = '<div class="error"><h2>Lỗi</h2><p>' + err.message + '</p></div>'; }
     }

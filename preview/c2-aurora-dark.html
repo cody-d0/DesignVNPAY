@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C2 — Aurora Dark · viewer.io.vn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #050510;
+            --surface: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.06);
+            --text: #e8e8f0;
+            --text-muted: #6b6b80;
+            --aurora-1: #00c896;
+            --aurora-2: #0088cc;
+            --aurora-3: #7c3aed;
+            --aurora-4: #00e5a0;
+            --font-display: 'JetBrains Mono', monospace;
+            --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
+            --transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        /* Dot grid pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 24px 24px;
+            z-index: 0;
+        }
+
+        /* Aurora lights */
+        .aurora {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60vh;
+            z-index: 0;
+            overflow: hidden;
+            opacity: 0.7;
+        }
+
+        .aurora-band {
+            position: absolute;
+            width: 120%;
+            height: 200px;
+            filter: blur(60px);
+            opacity: 0.5;
+            animation: aurora-flow 10s ease-in-out infinite;
+        }
+
+        .aurora-band:nth-child(1) {
+            top: 5%;
+            left: -10%;
+            background: linear-gradient(90deg, transparent 0%, var(--aurora-1) 20%, var(--aurora-2) 50%, var(--aurora-3) 80%, transparent 100%);
+            animation-duration: 12s;
+        }
+
+        .aurora-band:nth-child(2) {
+            top: 15%;
+            left: -20%;
+            background: linear-gradient(90deg, transparent 0%, var(--aurora-4) 30%, var(--aurora-2) 60%, transparent 100%);
+            animation-duration: 8s;
+            animation-delay: -3s;
+            opacity: 0.35;
+            height: 160px;
+        }
+
+        .aurora-band:nth-child(3) {
+            top: 8%;
+            left: -5%;
+            background: linear-gradient(90deg, transparent 10%, var(--aurora-3) 40%, var(--aurora-1) 70%, transparent 90%);
+            animation-duration: 15s;
+            animation-delay: -7s;
+            opacity: 0.25;
+            height: 250px;
+        }
+
+        @keyframes aurora-flow {
+
+            0%,
+            100% {
+                transform: translateX(0) scaleY(1) rotate(-2deg);
+            }
+
+            25% {
+                transform: translateX(4%) scaleY(1.15) rotate(-1deg);
+            }
+
+            50% {
+                transform: translateX(-3%) scaleY(0.9) rotate(-3deg);
+            }
+
+            75% {
+                transform: translateX(2%) scaleY(1.05) rotate(-1.5deg);
+            }
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 32px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 0.02em;
+        }
+
+        .logo strong {
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .theme-toggles {
+            display: flex;
+            gap: 6px;
+        }
+
+        .theme-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .theme-btn:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            color: var(--text);
+        }
+
+        .theme-btn.active {
+            border-color: var(--aurora-1);
+            color: var(--aurora-1);
+        }
+
+        .theme-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Main */
+        main {
+            position: relative;
+            z-index: 1;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .drop-card {
+            width: 100%;
+            max-width: 480px;
+            padding: 56px 40px 48px;
+            text-align: center;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            transition: var(--transition);
+        }
+
+        .drop-card.drag-over {
+            border-color: var(--aurora-1);
+            box-shadow: 0 0 40px rgba(0, 200, 150, 0.1);
+        }
+
+        .brand {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            background: linear-gradient(135deg, var(--aurora-1), var(--aurora-2), var(--aurora-3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        /* File badges */
+        .file-badges {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+
+        .file-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-family: var(--font-display);
+            font-size: 0.72rem;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: var(--text-muted);
+            transition: var(--transition);
+            cursor: default;
+        }
+
+        .file-badge:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+            color: var(--text);
+        }
+
+        .file-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .file-badge[data-ext="md"] .dot {
+            background: var(--aurora-1);
+        }
+
+        .file-badge[data-ext="json"] .dot {
+            background: #3b82f6;
+        }
+
+        .file-badge[data-ext="yaml"] .dot {
+            background: var(--aurora-3);
+        }
+
+        .file-badge[data-ext="csv"] .dot {
+            background: #f59e0b;
+        }
+
+        .file-badge[data-ext="svg"] .dot {
+            background: #ef4444;
+        }
+
+        /* CTA */
+        .cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 24px;
+            border-radius: 10px;
+            border: 1px solid var(--aurora-1);
+            background: transparent;
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--aurora-1);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .cta:hover {
+            background: rgba(0, 200, 150, 0.08);
+            box-shadow: 0 0 20px rgba(0, 200, 150, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .cta svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Footer hint */
+        .footer-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-family: var(--font-display);
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            opacity: 0.4;
+            letter-spacing: 0.1em;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .brand {
+                font-size: 2rem;
+            }
+
+            .drop-card {
+                padding: 40px 24px 36px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aurora">
+        <div class="aurora-band"></div>
+        <div class="aurora-band"></div>
+        <div class="aurora-band"></div>
+    </div>
+
+    <header>
+        <div class="logo"><strong>viewer</strong>.io.vn</div>
+        <div class="theme-toggles">
+            <button class="theme-btn" aria-label="Sáng">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            </button>
+            <button class="theme-btn active" aria-label="Tối">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+            <button class="theme-btn" aria-label="Mesh">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="drop-card" id="drop-zone">
+            <h1 class="brand">viewer.io</h1>
+            <p class="subtitle">Kéo thả file để xem trước</p>
+            <div class="file-badges">
+                <span class="file-badge" data-ext="md"><span class="dot"></span>.md</span>
+                <span class="file-badge" data-ext="json"><span class="dot"></span>.json</span>
+                <span class="file-badge" data-ext="yaml"><span class="dot"></span>.yaml</span>
+                <span class="file-badge" data-ext="csv"><span class="dot"></span>.csv</span>
+                <span class="file-badge" data-ext="svg"><span class="dot"></span>.svg</span>
+            </div>
+            <button class="cta">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+                Chọn file
+            </button>
+        </div>
+    </main>
+
+    <div class="footer-hint">100% CLIENT-SIDE · KHÔNG CẦN SERVER</div>
+
+    <script>
+        const dz = document.getElementById('drop-zone');
+        ['dragenter', 'dragover'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('drag-over'); }));
+        ['dragleave', 'drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('drag-over'); }));
+    </script>
+</body>
+
+</html>
