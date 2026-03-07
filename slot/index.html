@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo Outline — Reference Template</title>
+  <script src="../assets/demo-kit.js"></script>
+</head>
+
+<body>
+
+  <!-- ════════════════════════════════ -->
+  <!-- 0. SECTION — Intro / Problem    -->
+  <!-- ════════════════════════════════ -->
+  <div class="section" data-title="0. Vấn đề">
+    <h1>😤 Section 0 — Intro / Problem</h1>
+    <p class="sub">Mô tả ngắn, 1-2 dòng context.</p>
+
+    <!-- ── dk-callout: Styled callout blocks ── -->
+    <dk-callout type="warn">
+      ⚠️ <strong>Warning callout</strong> — dùng cho cảnh báo, vấn đề.
+    </dk-callout>
+
+    <dk-callout type="good">
+      ✅ <strong>Good callout</strong> — dùng cho kết luận tích cực, giải pháp.
+    </dk-callout>
+
+    <dk-callout type="tip">
+      💡 <strong>Tip callout</strong> — dùng cho ghi chú, mẹo.
+    </dk-callout>
+
+    <!-- ── dk-grid: Responsive grid layout ── -->
+    <h2>Grid layout (cols=3)</h2>
+    <dk-grid cols="3">
+      <dk-box color="red" title="❌ Problem A">
+        <p style="font-size:.8rem;">Mô tả ngắn vấn đề A.</p>
+      </dk-box>
+      <dk-box color="red" title="❌ Problem B">
+        <p style="font-size:.8rem;">Mô tả ngắn vấn đề B.</p>
+      </dk-box>
+      <dk-box color="red" title="❌ Problem C">
+        <p style="font-size:.8rem;">Mô tả ngắn vấn đề C.</p>
+      </dk-box>
+    </dk-grid>
+
+    <!-- ── dk-counter: Big number display ── -->
+    <dk-counter id="myCounter" value="42" label="items scanned"></dk-counter>
+
+    <!-- ── Interactive file tree ── -->
+    <h2>File Tree (click-to-check)</h2>
+    <dk-panel title="Scan files">
+      <div id="fileTree"></div>
+      <div style="margin-top:.5rem;font-size:.8rem;color:var(--muted);" id="fileStatus">Click files to check...</div>
+    </dk-panel>
+  </div>
+
+  <!-- ════════════════════════════════ -->
+  <!-- 1. SECTION — Concept / Solution -->
+  <!-- ════════════════════════════════ -->
+  <div class="section" data-title="1. Khái niệm">
+    <h1>🗺️ Section 1 — Core Concept</h1>
+    <p class="sub">Giải thích concept chính bằng ví dụ cụ thể.</p>
+
+    <!-- ── dk-code: Code block with syntax highlight ── -->
+    <dk-code label="Relationships">
+      <span class="nt">Button</span> ── uses ──→ <span class="st">primary</span>
+      <span class="nt">Card</span> ── contains ─→ <span class="nt">Button</span>
+      <span class="op">Login</span> ── renders ──→ <span class="nt">Button</span>, <span class="nt">Input</span>
+      <span class="fn">vnpay</span> ── overrides ─→ <span class="st">primary</span>
+    </dk-code>
+
+    <!-- ── dk-grid cols=2: Side-by-side comparison ── -->
+    <h2>So sánh 2 cách</h2>
+    <dk-grid cols="2">
+      <dk-box color="red" title="❌ Cách cũ" border="left">
+        <p style="font-size:.82rem;">
+          • Point 1<br>
+          • Point 2<br>
+          • Point 3
+        </p>
+      </dk-box>
+      <dk-box color="green" title="✅ Cách mới" border="left">
+        <p style="font-size:.82rem;">
+          • Better point 1<br>
+          • Better point 2<br>
+          • Better point 3
+        </p>
+      </dk-box>
+    </dk-grid>
+
+    <!-- ── dk-toggle: Collapsible section ── -->
+    <dk-toggle summary="Click để xem thêm chi tiết">
+      <p style="font-size:.85rem;">Nội dung ẩn — dùng cho thông tin bổ sung không cần xem ngay.</p>
+      <dk-code>
+        <span class="kw">SELECT</span> * <span class="kw">FROM</span> components <span class="kw">WHERE</span> type =
+        <span class="st">'Button'</span>;
+      </dk-code>
+    </dk-toggle>
+  </div>
+
+  <!-- ════════════════════════════════ -->
+  <!-- 2. SECTION — Deep Dive (Panels) -->
+  <!-- ════════════════════════════════ -->
+  <div class="section" data-title="2. Chi tiết">
+    <h1>🔵 Section 2 — Deep Dive with Panels</h1>
+    <p class="sub">Phân loại nội dung bằng button tabs.</p>
+
+    <!-- ── DK.panel: Button-group → result (JS API) ── -->
+    <h3>Panel A — Click tabs to switch content</h3>
+    <div id="panelA"></div>
+
+    <h3>Panel B — Another panel</h3>
+    <div id="panelB"></div>
+
+    <!-- ── Panel + Graph side-by-side ── -->
+    <h2>Data + Visualization cạnh nhau</h2>
+    <dk-panel title="List + Mini Graph">
+      <div class="cmp">
+        <div>
+          <div class="result" id="dataList" style="font-size:.72rem;min-height:200px;max-height:260px;overflow-y:auto;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        <div>
+          <div id="miniGraph" style="height:260px;"></div>
+        </div>
+      </div>
+    </dk-panel>
+  </div>
+
+  <!-- ════════════════════════════════ -->
+  <!-- 3. SECTION — Interactive Graph  -->
+  <!-- ════════════════════════════════ -->
+  <div class="section" data-title="3. Graph sống">
+    <h1>🕸️ Section 3 — Interactive Graph</h1>
+    <p class="sub">Draggable graph + query buttons.</p>
+
+    <!-- Color legend -->
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem;font-size:.72rem;">
+      <span style="color:var(--blue);">🔵 Type A</span>
+      <span style="color:var(--green);">🟢 Type B</span>
+      <span style="color:var(--yellow);">🟡 Type C</span>
+    </div>
+
+    <div id="mainGraph"></div>
+
+    <!-- Query buttons panel -->
+    <dk-panel title="Query the graph">
+      <div class="btn-row" id="queryBtns"></div>
+      <div class="result" id="queryResult"></div>
+    </dk-panel>
+  </div>
+
+  <!-- ════════════════════════════════ -->
+  <!-- 4. SECTION — Step-by-step       -->
+  <!-- ════════════════════════════════ -->
+  <div class="section" data-title="4. Từng bước">
+    <h1>🚶 Section 4 — Step Animation</h1>
+    <p class="sub">Animated steps cho quá trình phức tạp.</p>
+
+    <dk-panel>
+      <div class="btn-row" id="stepBtns"></div>
+      <div id="stepContent"></div>
+    </dk-panel>
+
+    <!-- ── Table: Structured data ── -->
+    <h2>Reference Table</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Level</th>
+          <th>Meaning</th>
+          <th>Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>1</code></td>
+          <td>Direct</td>
+          <td>A → B</td>
+        </tr>
+        <tr>
+          <td><code>2</code></td>
+          <td>Indirect</td>
+          <td>A → B → C</td>
+        </tr>
+        <tr>
+          <td><code>*</code></td>
+          <td>Any depth</td>
+          <td>A → ... → Z</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <dk-callout type="tip">
+      💡 Giải thích thêm về bảng hoặc concept trên.
+    </dk-callout>
+  </div>
+
+  <!-- ════════════════════════════════ -->
+  <!-- 5. SECTION — Comparison         -->
+  <!-- ════════════════════════════════ -->
+  <div class="section" data-title="5. So sánh">
+    <h1>⚔️ Section 5 — Side-by-side Comparison</h1>
+    <p class="sub">So sánh 2 approaches cùng 1 vấn đề.</p>
+
+    <!-- ── Dynamic comparison panel ── -->
+    <dk-panel title="Choose a scenario">
+      <div class="btn-row" id="vsBtns"></div>
+      <div class="cmp" id="vsContent"></div>
+    </dk-panel>
+
+    <!-- ── When to use what ── -->
+    <h2>Khi nào dùng gì?</h2>
+    <dk-grid cols="2">
+      <dk-box color="blue" title="Approach A — Dùng khi:">
+        <p style="font-size:.82rem;">
+          ✅ Use case 1<br>
+          ✅ Use case 2<br>
+          ✅ Use case 3
+        </p>
+      </dk-box>
+      <dk-box color="purple" title="Approach B — Dùng khi:">
+        <p style="font-size:.82rem;">
+          ✅ Use case 1<br>
+          ✅ Use case 2<br>
+          ✅ Use case 3
+        </p>
+      </dk-box>
+    </dk-grid>
+  </div>
+
+  <!-- ════════════════════════════════ -->
+  <!-- 6. SECTION — Patterns / Summary -->
+  <!-- ════════════════════════════════ -->
+  <div class="section" data-title="6. Tóm lại">
+    <h1>🔧 Section 6 — Practical Summary</h1>
+    <p class="sub">Tóm tắt và tool recommendations.</p>
+
+    <!-- ── ASCII diagram inside dk-code ── -->
+    <dk-code label="Architecture">
+      <span class="cm"> ┌──────────────┐</span>
+      <span class="cm"> │ Layer A │</span>
+      <span class="cm"> └──────┬───────┘</span>
+      <span class="cm"> │</span>
+      <span class="cm"> ┌──────▼───────┐</span>
+      <span class="cm"> │ Layer B │</span>
+      <span class="cm"> └──────┬───────┘</span>
+      <span class="cm"> │</span>
+      <span class="cm"> ┌──────▼───────┐</span>
+      <span class="cm"> │ Layer C │</span>
+      <span class="cm"> └──────────────┘</span>
+    </dk-code>
+
+    <!-- ── Tool comparison via dynamic panel ── -->
+    <dk-panel>
+      <div class="btn-row">
+        <button class="btn" onclick="showOption(0)">Option A ✅</button>
+        <button class="btn" onclick="showOption(1)">Option B</button>
+        <button class="btn" onclick="showOption(2)">Option C</button>
+      </div>
+      <div id="optionContent"></div>
+    </dk-panel>
+
+    <!-- ── Mapping table ── -->
+    <h2>Mapping Reference</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Input</th>
+          <th>→ Output Type</th>
+          <th>→ Relations</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>file-a.json</code></td>
+          <td><span style="color:var(--blue);">TypeA:Foo</span></td>
+          <td>USES→Bar, CONTAINS→Baz</td>
+        </tr>
+        <tr>
+          <td><code>file-b.json</code></td>
+          <td><span style="color:var(--green);">TypeB:Qux</span></td>
+          <td>BELONGS_TO→category</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ── Final summary callout ── -->
+    <dk-callout type="good">
+      <strong>Tóm lại:</strong><br><br>
+      • <strong>Point 1</strong> = explanation<br>
+      • <strong>Point 2</strong> = explanation<br>
+      • <strong>Point 3</strong> = explanation<br>
+      • <strong>Point 4</strong> = explanation<br><br>
+      Kết luận cuối cùng.
+    </dk-callout>
+
+    <!-- ── Related Concepts (REQUIRED in every demo) ── -->
+    <h3>🔗 Concept tương tự & Related Topics</h3>
+    <p style="font-size:.82rem;color:var(--muted);">Những concept liên quan bạn nên tìm hiểu tiếp:</p>
+    <dk-grid cols="2">
+      <dk-box color="cyan" title="🔗 Concept Alpha" border="left">
+        <p style="font-size:.82rem;">
+          <strong>Quan hệ:</strong> builds on this — học sau khi master topic hiện tại<br>
+          <strong>Vì sao nên học:</strong> Mở rộng kiến thức, áp dụng trong production<br>
+          <span class="tag" style="background:var(--blue);color:#fff;font-size:.7rem;">📊 same level</span>
+        </p>
+      </dk-box>
+      <dk-box color="cyan" title="🔗 Concept Beta" border="left">
+        <p style="font-size:.82rem;">
+          <strong>Quan hệ:</strong> alternative — cách tiếp cận khác cho cùng vấn đề<br>
+          <strong>Vì sao nên học:</strong> So sánh để chọn đúng tool cho đúng bài toán<br>
+          <span class="tag" style="background:var(--green);color:#fff;font-size:.7rem;">📊 easier</span>
+        </p>
+      </dk-box>
+      <dk-box color="cyan" title="🔗 Concept Gamma" border="left">
+        <p style="font-size:.82rem;">
+          <strong>Quan hệ:</strong> often used together — hay dùng kèm nhau<br>
+          <strong>Vì sao nên học:</strong> Kết hợp tạo ra solution mạnh hơn<br>
+          <span class="tag" style="background:var(--orange);color:#fff;font-size:.7rem;">📊 harder</span>
+        </p>
+      </dk-box>
+      <dk-box color="cyan" title="🔗 Concept Delta" border="left">
+        <p style="font-size:.82rem;">
+          <strong>Quan hệ:</strong> prerequisite — nền tảng cần biết<br>
+          <strong>Vì sao nên học:</strong> Hiểu sâu hơn "tại sao" topic này hoạt động<br>
+          <span class="tag" style="background:var(--blue);color:#fff;font-size:.7rem;">📊 same level</span>
+        </p>
+      </dk-box>
+    </dk-grid>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- JAVASCRIPT                                 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <script>
+    // ══════════════════════════════════
+    // SAMPLE DATA
+    // ══════════════════════════════════
+    var sampleNodes = [
+      { id: 'Foo', type: 'TypeA', x: 200, y: 80, color: '#60a5fa', props: { version: 1, tags: 'core' } },
+      { id: 'Bar', type: 'TypeA', x: 400, y: 80, color: '#60a5fa', props: { version: 2 } },
+      { id: 'Tok1', type: 'TypeB', x: 100, y: 200, color: '#34d399', props: { category: 'colors' } },
+      { id: 'Tok2', type: 'TypeB', x: 300, y: 200, color: '#34d399', props: { category: 'radius' } },
+      { id: 'Cfg', type: 'TypeC', x: 500, y: 200, color: '#fbbf24', props: { dimension: 'brand' } },
+    ];
+
+    var sampleEdges = [
+      { from: 'Foo', to: 'Tok1', label: 'USES' },
+      { from: 'Foo', to: 'Bar', label: 'CONTAINS' },
+      { from: 'Bar', to: 'Tok2', label: 'USES' },
+      { from: 'Cfg', to: 'Tok1', label: 'OVERRIDES' },
+    ];
+
+    // ══════════════════════════════════
+    // S0: File Tree
+    // ══════════════════════════════════
+    DK.fileTree(DK.el('fileTree'), {
+      files: [
+        { path: 'src/components/button.json', match: true, name: 'button' },
+        { path: 'src/components/card.json', match: false, name: 'card' },
+        { path: 'src/components/input.json', match: true, name: 'input' },
+        { path: 'src/tokens/colors.json', match: false, name: 'colors' },
+        { path: 'src/tokens/radius.json', match: true, name: 'radius' },
+      ],
+      onCheck: function (checked, total, matches) {
+        DK.el('myCounter').setAttribute('value', checked + ' / ' + total);
+        DK.el('fileStatus').innerHTML = 'Found <strong style="color:var(--green);">' +
+          matches.length + '</strong> matches: ' + (matches.join(', ') || '...');
+      }
+    });
+
+    // ══════════════════════════════════
+    // S2: Panel A (DK.panel)
+    // ══════════════════════════════════
+    var panelDataA = {
+      Alpha: 'Type: Alpha\nDescription: First type\n\nProperties:\n  • name: "Foo"\n  • version: 1',
+      Beta: 'Type: Beta\nDescription: Second type\n\nProperties:\n  • name: "Tok1"\n  • category: "colors"',
+      Gamma: 'Type: Gamma\nDescription: Third type\n\nProperties:\n  • name: "Cfg"\n  • dimension: "brand"',
+    };
+    DK.panel(DK.el('panelA'), {
+      title: 'TYPES',
+      buttons: ['Alpha', 'Beta', 'Gamma'],
+      render: function (i, r) { r.textContent = panelDataA[['Alpha', 'Beta', 'Gamma'][i]]; }
+    });
+
+    // ══════════════════════════════════
+    // S2: Panel B + Mini Graph
+    // ══════════════════════════════════
+    var edgeData = [
+      '(Foo) —[USES]→ (Tok1)\n\nMeaning: Foo uses token Tok1.\n→ Answer: "Which tokens does Foo use?"',
+      '(Foo) —[CONTAINS]→ (Bar)\n\nMeaning: Foo contains Bar.\n→ Answer: "What does Foo depend on?"',
+      '(Cfg) —[OVERRIDES]→ (Tok1)\n\nMeaning: Config overrides Tok1 value.\n→ Answer: "What does Cfg change?"',
+    ];
+    DK.panel(DK.el('panelB'), {
+      title: 'EDGE TYPES',
+      buttons: ['USES', 'CONTAINS', 'OVERRIDES'],
+      render: function (i, r) { r.textContent = edgeData[i]; }
+    });
+
+    // S2: Mini graph (lazy init)
+    var miniGraphCtrl;
+    DK.onSection(2, function () {
+      var miniNodes = sampleNodes.map(function (n) {
+        return { id: n.id, type: n.type, x: n.x * 0.7 + 10, y: n.y * 0.8 + 10, color: n.color, props: n.props };
+      });
+      miniGraphCtrl = DK.graph(DK.el('miniGraph'), {
+        nodes: miniNodes, edges: sampleEdges, height: 260
+      });
+
+      // Populate data list
+      var listEl = DK.el('dataList');
+      listEl.innerHTML = sampleEdges.map(function (e, i) {
+        return '<div style="padding:2px 0;cursor:pointer;" data-idx="' + i + '">' +
+          '<span style="color:var(--cyan);">(' + e.from + ')</span> —[<span style="color:var(--purple);">' +
+          e.label + '</span>]→ <span style="color:var(--cyan);">(' + e.to + ')</span></div>';
+      }).join('');
+
+      listEl.addEventListener('mouseover', function (ev) {
+        var row = ev.target.closest('[data-idx]');
+        if (!row) return;
+        var e = sampleEdges[parseInt(row.dataset.idx)];
+        miniGraphCtrl.highlight([e.from, e.to]);
+      });
+      listEl.addEventListener('mouseout', function () { miniGraphCtrl.reset(); });
+    });
+
+    // ══════════════════════════════════
+    // S3: Main Graph + Query
+    // ══════════════════════════════════
+    var mainGraphCtrl;
+    var graphQueries = [
+      { q: 'Who uses Tok1?', hl: ['Tok1', 'Foo'], result: '← Tok1 ← USES ← [Foo]\n\n→ 1 component uses Tok1.' },
+      { q: 'What does Foo contain?', hl: ['Foo', 'Bar', 'Tok2'], result: 'Foo —[CONTAINS]→ Bar\nBar —[USES]→ Tok2\n\n→ Foo depends on Bar + Tok2.' },
+      { q: 'Show all', hl: null, result: 'All nodes visible.' },
+    ];
+
+    DK.onSection(3, function () {
+      mainGraphCtrl = DK.graph(DK.el('mainGraph'), {
+        nodes: sampleNodes, edges: sampleEdges, height: 350,
+        onClick: function (n, infoEl) {
+          infoEl.innerHTML = '<strong style="color:' + n.color + ';">' + n.id + '</strong> (' + n.type + ')<br>' +
+            Object.keys(n.props || {}).map(function (k) {
+              return '<span style="color:var(--green);">' + k + ':</span> ' + n.props[k];
+            }).join(' · ');
+          infoEl.style.display = 'block';
+          setTimeout(function () { infoEl.style.display = 'none'; }, 4000);
+        }
+      });
+
+      var btnRow = DK.el('queryBtns');
+      graphQueries.forEach(function (gq) {
+        var btn = document.createElement('button');
+        btn.className = 'btn btn-sm';
+        btn.textContent = gq.q;
+        btn.addEventListener('click', function () {
+          mainGraphCtrl.highlight(gq.hl);
+          DK.el('queryResult').textContent = gq.result;
+        });
+        btnRow.appendChild(btn);
+      });
+    });
+
+    // ══════════════════════════════════
+    // S4: Step Animation (DK.steps)
+    // ══════════════════════════════════
+    var scenarios = [
+      {
+        title: 'Scenario A', steps: [
+          { text: 'Start at node <strong>Tok1</strong>' },
+          { text: 'Follow <strong>USES</strong> edges backward → find consumers' },
+          { text: 'Result: <strong>1 component</strong> affected' },
+        ], result: 'Tok1 ← [Foo]\n\nDepth: 1\nImpact: 1 component'
+      },
+      {
+        title: 'Scenario B', steps: [
+          { text: 'Start at node <strong>Foo</strong>' },
+          { text: 'Follow <strong>CONTAINS</strong> → Bar' },
+          { text: 'Follow <strong>USES</strong> → Tok2' },
+          { text: 'Result: full dependency chain' },
+        ], result: 'Foo → Bar → Tok2\n\nDepth: 2\nDependencies: 1 component, 1 token'
+      },
+    ];
+
+    (function () {
+      var btnRow = DK.el('stepBtns');
+      var stepsEl = DK.el('stepContent');
+      scenarios.forEach(function (t) {
+        var btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.textContent = t.title;
+        btn.addEventListener('click', function () {
+          stepsEl.innerHTML = '';
+          var run = DK.steps(stepsEl, { data: t.steps, result: t.result, delay: 1000 });
+          run();
+        });
+        btnRow.appendChild(btn);
+      });
+    })();
+
+    // ══════════════════════════════════
+    // S5: Comparison (dynamic)
+    // ══════════════════════════════════
+    var vsData = [
+      {
+        left: '<h4 style="color:var(--red);font-size:.75rem;">Approach A</h4><pre class="sql"><span class="kw">SELECT</span> * <span class="kw">FROM</span> foo <span class="kw">JOIN</span> bar...</pre>',
+        right: '<h4 style="color:var(--green);font-size:.75rem;">Approach B</h4><pre class="sql"><span class="kw">MATCH</span> (f)-[:REL]->(b) <span class="kw">RETURN</span> b</pre>',
+        verdict: 'Approach B is simpler for this case.'
+      },
+      {
+        left: '<h4 style="color:var(--red);font-size:.75rem;">Approach A</h4><pre class="sql"><span class="kw">WITH RECURSIVE</span> deps <span class="kw">AS</span> (...)\n<span class="cm">-- Complex recursive query</span></pre>',
+        right: '<h4 style="color:var(--green);font-size:.75rem;">Approach B</h4><pre class="sql"><span class="kw">MATCH</span> (a)-[:REL*1..3]->(b)\n<span class="cm">// One line</span></pre>',
+        verdict: 'Multi-hop: Approach B wins clearly.'
+      },
+    ];
+
+    (function () {
+      var btnRow = DK.el('vsBtns');
+      ['Simple query', 'Multi-hop query'].forEach(function (label, i) {
+        var btn = document.createElement('button');
+        btn.className = 'btn btn-sm';
+        btn.textContent = label;
+        btn.addEventListener('click', function () { showVs(i); });
+        btnRow.appendChild(btn);
+      });
+      showVs(0);
+    })();
+
+    function showVs(i) {
+      var v = vsData[i];
+      DK.el('vsContent').innerHTML =
+        '<div class="box">' + v.left + '</div>' +
+        '<div class="box">' + v.right + '</div>' +
+        '<div style="grid-column:1/3;padding:.3rem;font-size:.82rem;color:var(--muted);text-align:center;">' +
+        '<strong>Verdict:</strong> ' + v.verdict + '</div>';
+    }
+
+    // ══════════════════════════════════
+    // S6: Options panel (inline onclick)
+    // ══════════════════════════════════
+    var options = [
+      '<div class="box fade-in" style="margin:.6rem 0;border-left:3px solid var(--green);"><h4 style="color:var(--green);">Option A (Recommended) ✅</h4><p style="font-size:.82rem;">Description of option A with pros/cons.</p><pre class="sql"><span class="cm">-- Example code</span>\n<span class="kw">CREATE</span> EXTENSION example;</pre><p style="font-size:.82rem;">✅ Pro 1<br>✅ Pro 2<br>✅ Pro 3</p></div>',
+      '<div class="box fade-in" style="margin:.6rem 0;border-left:3px solid var(--purple);"><h4 style="color:var(--purple);">Option B</h4><p style="font-size:.82rem;">Description of option B.</p><p style="font-size:.82rem;">✅ Pro 1<br>❌ Con 1</p></div>',
+      '<div class="box fade-in" style="margin:.6rem 0;border-left:3px solid var(--orange);"><h4 style="color:var(--orange);">Option C</h4><p style="font-size:.82rem;">Description of option C.</p><p style="font-size:.82rem;">✅ Pro 1<br>❌ Con 1<br>❌ Con 2</p></div>',
+    ];
+    function showOption(i) { DK.el('optionContent').innerHTML = options[i]; }
+    showOption(0);
+
+    // ══════════════════════════════════
+    // INIT — Always last
+    // ══════════════════════════════════
+    DK.init();
+  </script>
+</body>
+
+</html>
