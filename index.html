@@ -8,6 +8,7 @@
   <meta name="description" content="Drop and view markdown, JSON, YAML, CSV, SVG files instantly in your browser.">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="markdeep-diagram.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -2654,6 +2655,60 @@
       background: rgba(167, 139, 250, 0.1);
     }
 
+    /* ══════════════════════════════════════════
+       ASCII DIAGRAM — Tier 3: SVG Rendering
+       diagramToSVG() output, theme-adaptive
+       ══════════════════════════════════════════ */
+    .ascii-diagram-container svg {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    /* Dark themes: invert the black-on-transparent SVG to white-on-transparent */
+    [data-theme="dark"] .ascii-diagram-container svg,
+    [data-theme="dark-mesh"] .ascii-diagram-container svg {
+      filter: invert(1) hue-rotate(180deg);
+    }
+
+    /* SVG source collapse — matches Mermaid pattern */
+    .ascii-diagram-source {
+      margin-top: 2px;
+    }
+
+    .ascii-diagram-source summary {
+      font-family: var(--font-family);
+      font-size: 0.72rem;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      padding: 4px 8px;
+      user-select: none;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+
+    .ascii-diagram-source summary:hover {
+      opacity: 1;
+    }
+
+    .ascii-diagram-source pre {
+      font-family: var(--font-mono-diagram);
+      font-size: 0.75rem;
+      line-height: 1.35;
+      padding: 12px 16px;
+      margin: 4px 0 0;
+      background: rgba(0, 0, 0, 0.03);
+      border-radius: 6px;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    [data-theme="dark"] .ascii-diagram-source pre,
+    [data-theme="dark-mesh"] .ascii-diagram-source pre {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
     /* JSON preview */
     .json-view-wrap {
       width: 100%;
@@ -3167,7 +3222,22 @@
         var isDiagram = (lang === 'diagram' || lang === 'ascii' || lang === 'bob' || lang === 'text');
         if (!isDiagram && !lang) { isDiagram = _isAsciiDiagram(text); }
         if (isDiagram) {
-          const esc = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          var esc = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          // Tier 3: SVG rendering via diagramToSVG (from markdeep-diagram.js)
+          if (typeof window.diagramToSVG === 'function') {
+            try {
+              var svgOutput = window.diagramToSVG(text, { spaces: 0 });
+              return '<div class="ascii-diagram-container">'
+                + '<div class="ascii-diagram-badge">diagram</div>'
+                + '<div class="ascii-diagram-svg">' + svgOutput + '</div>'
+                + '<details class="ascii-diagram-source"><summary>View source</summary>'
+                + '<pre>' + esc + '</pre>'
+                + '</details></div>';
+            } catch (e) {
+              // SVG render failed — fall through to Tier 2
+            }
+          }
+          // Tier 2 fallback: CSS-enhanced pre
           return '<div class="ascii-diagram-container">'
             + '<div class="ascii-diagram-badge">diagram</div>'
             + '<pre>' + esc + '</pre>'
