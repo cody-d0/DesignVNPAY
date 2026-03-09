@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xPOS Onboarding - Batch 1 Prototype</title>
+    <meta name="description"
+        content="Interactive prototype for xPOS mobile app onboarding flow: Login, Phone Input, OTP Verification, Password Creation">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ============================================================
+   DESIGN SYSTEM TOKENS — from screen-spec DDL
+   Light + Dark mode, WCAG compliant
+   ============================================================ */
+        :root {
+            /* Base palette - Light */
+            --background: #ffffff;
+            --foreground: #0a0a0a;
+            --primary: #E31837;
+            --primary-foreground: #FFFFFF;
+            --secondary: #F8F9FA;
+            --secondary-foreground: #0a0a0a;
+            --muted: #F8F9FA;
+            --muted-foreground: #737373;
+            --accent: #FFB800;
+            --accent-foreground: #1A1A1A;
+            --destructive: #DC3545;
+            --destructive-foreground: #FFFFFF;
+            --border: #DEE2E6;
+            --ring: #E31837;
+            --card: #ffffff;
+            --card-foreground: #0a0a0a;
+
+            /* Sizing tokens */
+            --input-height: 48px;
+            --button-height: 48px;
+            --touch-target: 44px;
+            --icon-size: 24px;
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+
+            /* Spacing tokens */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-2xl: 48px;
+
+            /* Typography */
+            --font-family: 'Be Vietnam Pro', sans-serif;
+            --text-xs: 12px;
+            --text-sm: 14px;
+            --text-base: 16px;
+            --text-lg: 18px;
+            --text-xl: 20px;
+            --text-2xl: 24px;
+            --text-3xl: 30px;
+
+            /* Animation */
+            --duration-fast: 150ms;
+            --duration-normal: 300ms;
+            --duration-slow: 500ms;
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
+        }
+
+        [data-theme="dark"] {
+            --background: #0a0a0a;
+            --foreground: #fafafa;
+            --primary: #FF4D5A;
+            --primary-foreground: #1A1A1A;
+            --secondary: #1E1E1E;
+            --secondary-foreground: #fafafa;
+            --muted: #1E1E1E;
+            --muted-foreground: #a3a3a3;
+            --accent: #FFC233;
+            --accent-foreground: #1A1A1A;
+            --destructive: #FF4D5A;
+            --destructive-foreground: #FFFFFF;
+            --border: #343A40;
+            --ring: #FF4D5A;
+            --card: #171717;
+            --card-foreground: #fafafa;
+        }
+
+        /* ============================================================
+   RESET & BASE
+   ============================================================ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: #1a1a2e;
+            color: var(--foreground);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-lg);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ============================================================
+   CONTROL BAR — outside phone frame
+   ============================================================ */
+        .prototype-container {
+            display: flex;
+            gap: var(--spacing-xl);
+            align-items: flex-start;
+            max-width: 800px;
+        }
+
+        .control-panel {
+            width: 260px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            color: #e0e0e0;
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: var(--spacing-lg);
+        }
+
+        .control-panel h2 {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .control-section {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .control-section label {
+            display: block;
+            font-size: var(--text-xs);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .control-section select {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-md);
+            color: #fff;
+            font-size: var(--text-sm);
+            font-family: var(--font-family);
+            cursor: pointer;
+            outline: none;
+            transition: border-color var(--duration-fast) ease;
+        }
+
+        .control-section select:focus {
+            border-color: var(--primary);
+        }
+
+        .control-section select option {
+            background: #1a1a2e;
+        }
+
+        .theme-toggle {
+            display: flex;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-sm);
+        }
+
+        .theme-btn {
+            flex: 1;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: var(--text-xs);
+            font-family: var(--font-family);
+            cursor: pointer;
+            transition: all var(--duration-fast) ease;
+        }
+
+        .theme-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        .flow-nav {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-sm);
+        }
+
+        .flow-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-md);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: var(--text-sm);
+            font-family: var(--font-family);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--duration-fast) ease;
+        }
+
+        .flow-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .flow-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .state-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-sm);
+        }
+
+        .state-chip {
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 11px;
+            font-family: var(--font-family);
+            cursor: pointer;
+            transition: all var(--duration-fast) ease;
+        }
+
+        .state-chip.active {
+            background: rgba(227, 24, 55, 0.2);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .state-chip:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .screen-info {
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .screen-info dt {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .screen-info dd {
+            font-size: var(--text-sm);
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        /* ============================================================
+   PHONE FRAME
+   ============================================================ */
+        .phone-wrapper {
+            flex-shrink: 0;
+        }
+
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: var(--background);
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow:
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                0 25px 80px rgba(0, 0, 0, 0.5),
+                inset 0 0 0 2px rgba(255, 255, 255, 0.03);
+            transition: background var(--duration-normal) ease;
+        }
+
+        .status-bar {
+            height: 54px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 0 var(--spacing-xl) 8px;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--foreground);
+        }
+
+        .status-bar-left {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .status-bar-right {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .status-bar-right svg {
+            width: 18px;
+            height: 12px;
+            fill: var(--foreground);
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 34px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        /* ============================================================
+   SCREEN CONTAINERS
+   ============================================================ */
+        .screen {
+            display: none;
+            flex-direction: column;
+            height: calc(100% - 54px);
+            animation: screenSlideIn var(--duration-normal) var(--ease-out) both;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes screenSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ============================================================
+   HEADER BAR (for inner screens)
+   ============================================================ */
+        .header-bar {
+            display: flex;
+            align-items: center;
+            height: 56px;
+            padding: 0 var(--spacing-md);
+            gap: var(--spacing-sm);
+            flex-shrink: 0;
+        }
+
+        .btn-back {
+            width: var(--touch-target);
+            height: var(--touch-target);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            color: var(--foreground);
+            transition: background var(--duration-fast) ease;
+        }
+
+        .btn-back:hover {
+            background: var(--muted);
+        }
+
+        .btn-back svg {
+            width: var(--icon-size);
+            height: var(--icon-size);
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .header-title {
+            font-size: var(--text-base);
+            font-weight: 600;
+            color: var(--foreground);
+        }
+
+        /* ============================================================
+   SCREEN BODY & FOOTER
+   ============================================================ */
+        .screen-body {
+            flex: 1;
+            padding: var(--spacing-lg) var(--spacing-lg);
+            overflow-y: auto;
+        }
+
+        .screen-footer {
+            padding: var(--spacing-md) var(--spacing-lg) var(--spacing-xl);
+            flex-shrink: 0;
+        }
+
+        /* ============================================================
+   COMPONENTS
+   ============================================================ */
+
+        /* Input field */
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--text-sm);
+            font-weight: 500;
+            color: var(--foreground);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .form-input {
+            width: 100%;
+            height: var(--input-height);
+            padding: 0 var(--spacing-md);
+            background: var(--background);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: var(--text-base);
+            font-family: var(--font-family);
+            color: var(--foreground);
+            outline: none;
+            transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+        }
+
+        .form-input::placeholder {
+            color: var(--muted-foreground);
+        }
+
+        .form-input:focus {
+            border-color: var(--ring);
+            box-shadow: 0 0 0 3px rgba(227, 24, 55, 0.12);
+        }
+
+        .form-input.error {
+            border-color: var(--destructive);
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper .form-input {
+            padding-right: 48px;
+        }
+
+        .toggle-pw {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--muted-foreground);
+            border-radius: var(--radius-sm);
+            transition: color var(--duration-fast) ease;
+        }
+
+        .toggle-pw:hover {
+            color: var(--foreground);
+        }
+
+        .toggle-pw svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Error message */
+        .error-msg {
+            display: none;
+            font-size: var(--text-sm);
+            color: var(--destructive);
+            margin-top: var(--spacing-xs);
+            line-height: 1.4;
+        }
+
+        .error-msg.visible {
+            display: block;
+            animation: shakeIn var(--duration-normal) var(--ease-out);
+        }
+
+        @keyframes shakeIn {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-6px);
+            }
+
+            40% {
+                transform: translateX(5px);
+            }
+
+            60% {
+                transform: translateX(-3px);
+            }
+
+            80% {
+                transform: translateX(2px);
+            }
+        }
+
+        /* Primary button */
+        .btn-primary {
+            width: 100%;
+            height: var(--button-height);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            background: var(--primary);
+            color: var(--primary-foreground);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: var(--text-base);
+            font-weight: 600;
+            font-family: var(--font-family);
+            cursor: pointer;
+            transition: all var(--duration-fast) ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0);
+            transition: background var(--duration-fast) ease;
+        }
+
+        .btn-primary:hover::after {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-primary:disabled::after {
+            display: none;
+        }
+
+        .btn-primary.loading {
+            pointer-events: none;
+        }
+
+        /* Secondary / outline button */
+        .btn-secondary {
+            width: 100%;
+            height: var(--button-height);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            border-radius: var(--radius-md);
+            font-size: var(--text-base);
+            font-weight: 600;
+            font-family: var(--font-family);
+            cursor: pointer;
+            transition: all var(--duration-fast) ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(227, 24, 55, 0.06);
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.98);
+        }
+
+        /* Link */
+        .text-link {
+            font-size: var(--text-sm);
+            color: var(--primary);
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: opacity var(--duration-fast) ease;
+        }
+
+        .text-link:hover {
+            opacity: 0.8;
+        }
+
+        .text-link.disabled {
+            color: var(--muted-foreground);
+            pointer-events: none;
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ============================================================
+   SCR-001: Welcome / Login
+   ============================================================ */
+        #scr-001 .welcome-header {
+            text-align: center;
+            padding: var(--spacing-2xl) 0 var(--spacing-xl);
+        }
+
+        #scr-001 .logo-container {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto var(--spacing-md);
+            background: linear-gradient(135deg, var(--primary), #ff6b7a);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(227, 24, 55, 0.25);
+        }
+
+        #scr-001 .logo-container span {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        #scr-001 .tagline {
+            font-size: var(--text-sm);
+            color: var(--muted-foreground);
+            margin-top: var(--spacing-xs);
+        }
+
+        #scr-001 .login-form {
+            margin-top: var(--spacing-lg);
+        }
+
+        #scr-001 .login-footer {
+            text-align: center;
+            padding-top: var(--spacing-md);
+        }
+
+        #scr-001 .forgot-link {
+            display: inline-block;
+            margin-top: var(--spacing-md);
+        }
+
+        /* ============================================================
+   SCR-002: Phone Input
+   ============================================================ */
+        #scr-002 .phone-instruction {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--foreground);
+            margin-bottom: var(--spacing-xs);
+            line-height: 1.2;
+        }
+
+        #scr-002 .phone-subtitle {
+            font-size: var(--text-sm);
+            color: var(--muted-foreground);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        /* ============================================================
+   SCR-003: OTP Verification
+   ============================================================ */
+        #scr-003 .otp-instruction {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        #scr-003 .otp-title {
+            font-size: var(--text-base);
+            color: var(--muted-foreground);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        #scr-003 .otp-phone {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--foreground);
+        }
+
+        .otp-cells {
+            display: flex;
+            gap: var(--spacing-sm);
+            justify-content: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .otp-cell {
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: var(--text-xl);
+            font-weight: 600;
+            font-family: var(--font-family);
+            color: var(--foreground);
+            background: var(--background);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            outline: none;
+            caret-color: var(--primary);
+            transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+        }
+
+        .otp-cell:focus {
+            border-color: var(--ring);
+            box-shadow: 0 0 0 3px rgba(227, 24, 55, 0.12);
+        }
+
+        .otp-cell.filled {
+            border-color: var(--foreground);
+        }
+
+        .otp-cell.error-cell {
+            border-color: var(--destructive);
+            animation: shakeIn var(--duration-normal) var(--ease-out);
+        }
+
+        .otp-resend {
+            text-align: center;
+            margin-top: var(--spacing-md);
+        }
+
+        /* ============================================================
+   SCR-004: Password Creation
+   ============================================================ */
+        .pw-rules {
+            margin-top: var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .pw-rule {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: var(--text-sm);
+            color: var(--muted-foreground);
+            transition: color var(--duration-fast) ease;
+        }
+
+        .pw-rule.pass {
+            color: #22c55e;
+        }
+
+        .pw-rule-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+            background: var(--muted);
+            color: var(--muted-foreground);
+            transition: all var(--duration-fast) ease;
+            flex-shrink: 0;
+        }
+
+        .pw-rule.pass .pw-rule-icon {
+            background: #22c55e;
+            color: #fff;
+        }
+
+        /* ============================================================
+   STAGGER ANIMATION (per-spec: page_load stagger-in)
+   ============================================================ */
+        .stagger-item {
+            opacity: 0;
+            transform: translateY(12px);
+            animation: staggerIn var(--duration-normal) var(--ease-out) forwards;
+        }
+
+        @keyframes staggerIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stagger-item:nth-child(1) {
+            animation-delay: 0ms;
+        }
+
+        .stagger-item:nth-child(2) {
+            animation-delay: 60ms;
+        }
+
+        .stagger-item:nth-child(3) {
+            animation-delay: 120ms;
+        }
+
+        .stagger-item:nth-child(4) {
+            animation-delay: 180ms;
+        }
+
+        .stagger-item:nth-child(5) {
+            animation-delay: 240ms;
+        }
+
+        .stagger-item:nth-child(6) {
+            animation-delay: 300ms;
+        }
+
+        .stagger-item:nth-child(7) {
+            animation-delay: 360ms;
+        }
+
+        .stagger-item:nth-child(8) {
+            animation-delay: 420ms;
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            .stagger-item {
+                animation: none;
+                opacity: 1;
+                transform: none;
+            }
+
+            .screen {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="prototype-container">
+
+        <!-- ==================== CONTROL PANEL ==================== -->
+        <div class="control-panel">
+            <h2>xPOS Prototype</h2>
+
+            <div class="control-section">
+                <label>Screen</label>
+                <select id="screenSelect" onchange="navigateTo(this.value)">
+                    <option value="scr-001">SCR-001 Chào mừng / Đăng nhập</option>
+                    <option value="scr-002">SCR-002 Nhập số điện thoại</option>
+                    <option value="scr-003">SCR-003 Xác minh OTP</option>
+                    <option value="scr-004">SCR-004 Tạo mật khẩu</option>
+                </select>
+            </div>
+
+            <div class="control-section">
+                <label>Theme</label>
+                <div class="theme-toggle">
+                    <button class="theme-btn active" id="lightBtn" onclick="setTheme('light')">Light</button>
+                    <button class="theme-btn" id="darkBtn" onclick="setTheme('dark')">Dark</button>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <label>State</label>
+                <div class="state-chips" id="stateChips">
+                    <button class="state-chip active" data-state="default"
+                        onclick="setState('default')">Default</button>
+                    <button class="state-chip" data-state="filling" onclick="setState('filling')">Filling</button>
+                    <button class="state-chip" data-state="error" onclick="setState('error')">Error</button>
+                    <button class="state-chip" data-state="loading" onclick="setState('loading')">Loading</button>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <label>Navigation</label>
+                <div class="flow-nav">
+                    <button class="flow-btn" id="prevBtn" onclick="flowPrev()">Trước</button>
+                    <button class="flow-btn" id="nextBtn" onclick="flowNext()">Sau</button>
+                </div>
+            </div>
+
+            <dl class="screen-info" id="screenInfo">
+                <dt>Màn hình</dt>
+                <dd id="infoId">SCR-001</dd>
+                <dt>Loại</dt>
+                <dd id="infoType">form</dd>
+                <dt>Luồng</dt>
+                <dd id="infoFlow">Onboarding</dd>
+                <dt>UC</dt>
+                <dd id="infoUC">UC-002</dd>
+            </dl>
+        </div>
+
+        <!-- ==================== PHONE FRAME ==================== -->
+        <div class="phone-wrapper">
+            <div class="phone-frame" id="phoneFrame">
+                <div class="notch"></div>
+
+                <!-- Status Bar -->
+                <div class="status-bar">
+                    <span class="status-bar-left">9:41</span>
+                    <span class="status-bar-right">
+                        <svg viewBox="0 0 18 12">
+                            <rect x="0" y="3" width="4" height="9" rx="1" />
+                            <rect x="5" y="2" width="4" height="10" rx="1" />
+                            <rect x="10" y="0" width="4" height="12" rx="1" />
+                        </svg>
+                        <svg viewBox="0 0 25 12" style="width:25px">
+                            <rect x="0" y="0.5" width="22" height="11" rx="2.5" stroke="currentColor" stroke-width="1"
+                                fill="none" />
+                            <rect x="23" y="3.5" width="2" height="5" rx="1" fill="currentColor" />
+                            <rect x="2" y="2.5" width="16" height="7" rx="1.5" fill="currentColor" />
+                        </svg>
+                    </span>
+                </div>
+
+                <!-- ===== SCR-001: Welcome / Login ===== -->
+                <div class="screen active" id="scr-001" data-type="form" data-flow="Onboarding" data-uc="UC-002">
+
+                    <div class="screen-body">
+                        <div class="welcome-header stagger-item">
+                            <div class="logo-container" role="img" aria-label="Logo xPOS - VNPAY">
+                                <span>xPOS</span>
+                            </div>
+                            <p class="tagline">Giải pháp bán hàng thông minh</p>
+                        </div>
+
+                        <div class="login-form">
+                            <div class="form-group stagger-item">
+                                <label class="form-label" for="loginPhone">Số điện thoại</label>
+                                <input class="form-input" type="tel" id="loginPhone"
+                                    placeholder="Nhập số điện thoại đăng ký" autocomplete="tel" maxlength="12">
+                            </div>
+
+                            <div class="form-group stagger-item">
+                                <label class="form-label" for="loginPw">Mật khẩu</label>
+                                <div class="password-wrapper">
+                                    <input class="form-input" type="password" id="loginPw" placeholder="Nhập mật khẩu"
+                                        autocomplete="current-password">
+                                    <button class="toggle-pw" type="button" onclick="togglePassword('loginPw', this)"
+                                        aria-label="Hiện/Ẩn mật khẩu">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                            <circle cx="12" cy="12" r="3" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="error-msg" id="loginError">Số điện thoại hoặc mật khẩu không đúng. Vui lòng thử
+                                lại.</div>
+                        </div>
+                    </div>
+
+                    <div class="screen-footer">
+                        <button class="btn-primary stagger-item" id="loginBtn" disabled onclick="simulateLogin()">
+                            <span class="btn-text">Đăng nhập</span>
+                        </button>
+                        <div style="height:var(--spacing-sm)"></div>
+                        <button class="btn-secondary stagger-item" onclick="navigateTo('scr-002')">Tạo tài khoản
+                            mới</button>
+                        <div class="login-footer stagger-item">
+                            <a class="text-link forgot-link" onclick="navigateTo('scr-002')">Quên mật khẩu?</a>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ===== SCR-002: Phone Input ===== -->
+                <div class="screen" id="scr-002" data-type="form" data-flow="Onboarding" data-uc="UC-001">
+
+                    <div class="header-bar">
+                        <button class="btn-back" onclick="navigateTo('scr-001')" aria-label="Quay lại">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <span class="header-title">Đăng ký</span>
+                    </div>
+
+                    <div class="screen-body">
+                        <h1 class="phone-instruction stagger-item">Nhập số điện thoại</h1>
+                        <p class="phone-subtitle stagger-item">Chúng tôi sẽ gửi mã xác minh đến số này để bảo vệ tài
+                            khoản của bạn</p>
+
+                        <div class="form-group stagger-item">
+                            <label class="form-label" for="phoneInput">Số điện thoại</label>
+                            <input class="form-input" type="tel" id="phoneInput" placeholder="Nhập số điện thoại"
+                                autocomplete="tel" maxlength="12" oninput="formatPhone(this)">
+                        </div>
+                        <div class="error-msg" id="phoneError">Số điện thoại không hợp lệ. Vui lòng nhập đúng 10 chữ số.
+                        </div>
+                    </div>
+
+                    <div class="screen-footer">
+                        <button class="btn-primary stagger-item" id="phoneBtn" disabled onclick="simulatePhoneCheck()">
+                            <span class="btn-text">Tiếp tục</span>
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- ===== SCR-003: OTP Verification ===== -->
+                <div class="screen" id="scr-003" data-type="async" data-flow="Onboarding" data-uc="UC-001">
+
+                    <div class="header-bar">
+                        <button class="btn-back" onclick="navigateTo('scr-002')" aria-label="Quay lại">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <span class="header-title">Xác minh OTP</span>
+                    </div>
+
+                    <div class="screen-body">
+                        <div class="otp-instruction stagger-item">
+                            <p class="otp-title">Mã xác minh đã được gửi đến</p>
+                            <p class="otp-phone" id="otpPhoneDisplay">0912 345 678</p>
+                        </div>
+
+                        <div class="otp-cells stagger-item" id="otpContainer">
+                            <input class="otp-cell" type="tel" maxlength="1" data-idx="0" oninput="handleOtpInput(this)"
+                                onkeydown="handleOtpKey(event, this)" autofocus>
+                            <input class="otp-cell" type="tel" maxlength="1" data-idx="1" oninput="handleOtpInput(this)"
+                                onkeydown="handleOtpKey(event, this)">
+                            <input class="otp-cell" type="tel" maxlength="1" data-idx="2" oninput="handleOtpInput(this)"
+                                onkeydown="handleOtpKey(event, this)">
+                            <input class="otp-cell" type="tel" maxlength="1" data-idx="3" oninput="handleOtpInput(this)"
+                                onkeydown="handleOtpKey(event, this)">
+                            <input class="otp-cell" type="tel" maxlength="1" data-idx="4" oninput="handleOtpInput(this)"
+                                onkeydown="handleOtpKey(event, this)">
+                            <input class="otp-cell" type="tel" maxlength="1" data-idx="5" oninput="handleOtpInput(this)"
+                                onkeydown="handleOtpKey(event, this)">
+                        </div>
+
+                        <div class="error-msg" id="otpError" style="text-align:center">Mã OTP không đúng. Vui lòng kiểm
+                            tra lại.</div>
+
+                        <div class="otp-resend stagger-item">
+                            <a class="text-link disabled" id="resendLink" onclick="resendOtp()">Gửi lại mã (<span
+                                    id="countdown">45</span>s)</a>
+                        </div>
+                    </div>
+
+                    <div class="screen-footer">
+                        <button class="btn-primary stagger-item" id="otpBtn" disabled onclick="simulateOtpVerify()">
+                            <span class="btn-text">Xác minh</span>
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- ===== SCR-004: Password Creation ===== -->
+                <div class="screen" id="scr-004" data-type="form" data-flow="Onboarding" data-uc="UC-001">
+
+                    <div class="header-bar">
+                        <button class="btn-back" onclick="navigateTo('scr-003')" aria-label="Quay lại">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <span class="header-title">Tạo mật khẩu</span>
+                    </div>
+
+                    <div class="screen-body">
+                        <div class="form-group stagger-item">
+                            <label class="form-label" for="newPw">Mật khẩu mới</label>
+                            <div class="password-wrapper">
+                                <input class="form-input" type="password" id="newPw" placeholder="Nhập mật khẩu mới"
+                                    oninput="checkPasswordRules()">
+                                <button class="toggle-pw" type="button" onclick="togglePassword('newPw', this)"
+                                    aria-label="Hiện/Ẩn mật khẩu">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                        <circle cx="12" cy="12" r="3" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group stagger-item">
+                            <label class="form-label" for="confirmPw">Xác nhận mật khẩu</label>
+                            <div class="password-wrapper">
+                                <input class="form-input" type="password" id="confirmPw" placeholder="Nhập lại mật khẩu"
+                                    oninput="checkPasswordMatch()">
+                                <button class="toggle-pw" type="button" onclick="togglePassword('confirmPw', this)"
+                                    aria-label="Hien/An mat khau">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                        <circle cx="12" cy="12" r="3" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="error-msg" id="confirmError">Mật khẩu không khớp. Vui lòng nhập lại.</div>
+                        </div>
+
+                        <div class="pw-rules stagger-item">
+                            <div class="pw-rule" id="rule-length">
+                                <span class="pw-rule-icon">-</span>
+                                <span>Ít nhất 8 ký tự</span>
+                            </div>
+                            <div class="pw-rule" id="rule-case">
+                                <span class="pw-rule-icon">-</span>
+                                <span>Chữ hoa và chữ thường</span>
+                            </div>
+                            <div class="pw-rule" id="rule-number">
+                                <span class="pw-rule-icon">-</span>
+                                <span>Có ít nhất 1 chữ số</span>
+                            </div>
+                            <div class="pw-rule" id="rule-special">
+                                <span class="pw-rule-icon">-</span>
+                                <span>Có ký tự đặc biệt (!@#$...)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="screen-footer">
+                        <button class="btn-primary stagger-item" id="pwBtn" disabled onclick="simulatePasswordSubmit()">
+                            <span class="btn-text">Tiếp tục</span>
+                        </button>
+                    </div>
+
+                </div>
+
+            </div><!-- /phone-frame -->
+        </div>
+
+    </div>
+
+    <script>
+        /* ============================================================
+           STATE MANAGEMENT
+           ============================================================ */
+        const SCREENS = ['scr-001', 'scr-002', 'scr-003', 'scr-004'];
+        const SCREEN_META = {
+            'scr-001': { id: 'SCR-001', type: 'form', flow: 'Onboarding', uc: 'UC-002', states: ['default', 'filling', 'error', 'loading'] },
+            'scr-002': { id: 'SCR-002', type: 'form', flow: 'Onboarding', uc: 'UC-001', states: ['default', 'filling', 'error', 'loading'] },
+            'scr-003': { id: 'SCR-003', type: 'async', flow: 'Onboarding', uc: 'UC-001', states: ['default', 'filling', 'error', 'loading', 'cooldown'] },
+            'scr-004': { id: 'SCR-004', type: 'form', flow: 'Onboarding', uc: 'UC-001', states: ['default', 'filling', 'error', 'loading'] },
+        };
+
+        let currentScreen = 'scr-001';
+        let currentState = 'default';
+        let countdownInterval = null;
+
+        /* ============================================================
+           NAVIGATION
+           ============================================================ */
+        function navigateTo(screenId) {
+            if (!SCREENS.includes(screenId)) return;
+
+            // Hide current
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+            // Show target
+            const target = document.getElementById(screenId);
+            target.classList.add('active');
+
+            // Reset stagger
+            target.querySelectorAll('.stagger-item').forEach((el, i) => {
+                el.style.animation = 'none';
+                void el.offsetHeight; // reflow
+                el.style.animation = '';
+            });
+
+            currentScreen = screenId;
+            document.getElementById('screenSelect').value = screenId;
+            updateControlPanel();
+            resetScreenState();
+
+            // Start OTP countdown if entering SCR-003
+            if (screenId === 'scr-003') startCountdown();
+        }
+
+        function flowPrev() {
+            const idx = SCREENS.indexOf(currentScreen);
+            if (idx > 0) navigateTo(SCREENS[idx - 1]);
+        }
+
+        function flowNext() {
+            const idx = SCREENS.indexOf(currentScreen);
+            if (idx < SCREENS.length - 1) navigateTo(SCREENS[idx + 1]);
+        }
+
+        function updateControlPanel() {
+            const meta = SCREEN_META[currentScreen];
+            const idx = SCREENS.indexOf(currentScreen);
+
+            document.getElementById('infoId').textContent = meta.id;
+            document.getElementById('infoType').textContent = meta.type;
+            document.getElementById('infoFlow').textContent = meta.flow;
+            document.getElementById('infoUC').textContent = meta.uc;
+
+            document.getElementById('prevBtn').disabled = idx === 0;
+            document.getElementById('nextBtn').disabled = idx === SCREENS.length - 1;
+
+            // Update state chips
+            const chipsContainer = document.getElementById('stateChips');
+            chipsContainer.innerHTML = '';
+            meta.states.forEach(state => {
+                const chip = document.createElement('button');
+                chip.className = 'state-chip' + (state === 'default' ? ' active' : '');
+                chip.dataset.state = state;
+                chip.textContent = state.charAt(0).toUpperCase() + state.slice(1);
+                chip.onclick = () => setState(state);
+                chipsContainer.appendChild(chip);
+            });
+        }
+
+        /* ============================================================
+           THEME
+           ============================================================ */
+        function setTheme(theme) {
+            const frame = document.getElementById('phoneFrame');
+            if (theme === 'dark') {
+                frame.setAttribute('data-theme', 'dark');
+                document.getElementById('darkBtn').classList.add('active');
+                document.getElementById('lightBtn').classList.remove('active');
+            } else {
+                frame.removeAttribute('data-theme');
+                document.getElementById('lightBtn').classList.add('active');
+                document.getElementById('darkBtn').classList.remove('active');
+            }
+        }
+
+        /* ============================================================
+           STATE SIMULATION
+           ============================================================ */
+        function setState(state) {
+            currentState = state;
+
+            document.querySelectorAll('.state-chip').forEach(c => c.classList.remove('active'));
+            const activeChip = document.querySelector(`.state-chip[data-state="${state}"]`);
+            if (activeChip) activeChip.classList.add('active');
+
+            resetScreenState();
+            applyState(state);
+        }
+
+        function resetScreenState() {
+            // Reset all error messages
+            document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('visible'));
+            document.querySelectorAll('.form-input').forEach(i => i.classList.remove('error'));
+            document.querySelectorAll('.otp-cell').forEach(c => { c.classList.remove('error-cell', 'filled'); c.value = ''; });
+            document.querySelectorAll('.btn-primary .spinner')?.forEach(s => s.remove());
+            document.querySelectorAll('.btn-primary').forEach(b => { b.classList.remove('loading'); b.disabled = true; });
+            document.querySelectorAll('.btn-primary .btn-text').forEach(t => t.style.display = '');
+        }
+
+        function applyState(state) {
+            switch (state) {
+                case 'filling':
+                    applyFillingState();
+                    break;
+                case 'error':
+                    applyErrorState();
+                    break;
+                case 'loading':
+                    applyLoadingState();
+                    break;
+                case 'cooldown':
+                    // OTP specific
+                    break;
+            }
+        }
+
+        function applyFillingState() {
+            if (currentScreen === 'scr-001') {
+                document.getElementById('loginPhone').value = '0912 345 678';
+                document.getElementById('loginPw').value = 'password123';
+                document.getElementById('loginBtn').disabled = false;
+            } else if (currentScreen === 'scr-002') {
+                document.getElementById('phoneInput').value = '0912 345 678';
+                document.getElementById('phoneBtn').disabled = false;
+            } else if (currentScreen === 'scr-003') {
+                const cells = document.querySelectorAll('.otp-cell');
+                '123456'.split('').forEach((d, i) => { cells[i].value = d; cells[i].classList.add('filled'); });
+                document.getElementById('otpBtn').disabled = false;
+            } else if (currentScreen === 'scr-004') {
+                document.getElementById('newPw').value = 'Abc@1234';
+                document.getElementById('confirmPw').value = 'Abc@1234';
+                checkPasswordRules();
+                checkPasswordMatch();
+            }
+        }
+
+        function applyErrorState() {
+            applyFillingState();
+            if (currentScreen === 'scr-001') {
+                document.getElementById('loginError').classList.add('visible');
+                document.getElementById('loginPw').classList.add('error');
+            } else if (currentScreen === 'scr-002') {
+                document.getElementById('phoneError').classList.add('visible');
+                document.getElementById('phoneInput').classList.add('error');
+            } else if (currentScreen === 'scr-003') {
+                document.getElementById('otpError').classList.add('visible');
+                document.querySelectorAll('.otp-cell').forEach(c => c.classList.add('error-cell'));
+            } else if (currentScreen === 'scr-004') {
+                document.getElementById('confirmError').classList.add('visible');
+                document.getElementById('confirmPw').classList.add('error');
+            }
+        }
+
+        function applyLoadingState() {
+            applyFillingState();
+            const btn = document.querySelector(`#${currentScreen} .btn-primary`);
+            if (btn) {
+                btn.classList.add('loading');
+                btn.disabled = true;
+                const text = btn.querySelector('.btn-text');
+                if (text) text.style.display = 'none';
+                const spinner = document.createElement('div');
+                spinner.className = 'spinner';
+                btn.appendChild(spinner);
+            }
+        }
+
+        /* ============================================================
+           INTERACTIONS
+           ============================================================ */
+        // Login
+        document.getElementById('loginPhone').addEventListener('input', function () {
+            formatPhone(this);
+            checkLoginFields();
+        });
+        document.getElementById('loginPw').addEventListener('input', checkLoginFields);
+
+        function checkLoginFields() {
+            const phone = document.getElementById('loginPhone').value.replace(/\s/g, '');
+            const pw = document.getElementById('loginPw').value;
+            document.getElementById('loginBtn').disabled = !(phone.length >= 10 && pw.length > 0);
+        }
+
+        function simulateLogin() {
+            applyLoadingState();
+            setTimeout(() => {
+                resetScreenState();
+                // Simulate success -> would navigate to main hub
+                navigateTo('scr-002'); // For demo, go to next screen
+            }, 1500);
+        }
+
+        // Phone format
+        function formatPhone(input) {
+            let val = input.value.replace(/\D/g, '');
+            if (val.length > 10) val = val.slice(0, 10);
+            if (val.length > 7) val = val.slice(0, 4) + ' ' + val.slice(4, 7) + ' ' + val.slice(7);
+            else if (val.length > 4) val = val.slice(0, 4) + ' ' + val.slice(4);
+            input.value = val;
+
+            const raw = val.replace(/\s/g, '');
+            document.getElementById('phoneBtn').disabled = raw.length < 10;
+        }
+
+        function simulatePhoneCheck() {
+            applyLoadingState();
+            setTimeout(() => {
+                resetScreenState();
+                document.getElementById('otpPhoneDisplay').textContent = document.getElementById('phoneInput').value || '0912 345 678';
+                navigateTo('scr-003');
+            }, 1200);
+        }
+
+        // OTP
+        function handleOtpInput(cell) {
+            const val = cell.value.replace(/\D/g, '');
+            cell.value = val ? val[val.length - 1] : '';
+
+            if (cell.value) {
+                cell.classList.add('filled');
+                const idx = parseInt(cell.dataset.idx);
+                if (idx < 5) {
+                    const next = document.querySelector(`.otp-cell[data-idx="${idx + 1}"]`);
+                    if (next) next.focus();
+                }
+            } else {
+                cell.classList.remove('filled');
+            }
+
+            // Check if all filled
+            const cells = document.querySelectorAll('.otp-cell');
+            const allFilled = Array.from(cells).every(c => c.value.length === 1);
+            document.getElementById('otpBtn').disabled = !allFilled;
+        }
+
+        function handleOtpKey(e, cell) {
+            if (e.key === 'Backspace' && !cell.value) {
+                const idx = parseInt(cell.dataset.idx);
+                if (idx > 0) {
+                    const prev = document.querySelector(`.otp-cell[data-idx="${idx - 1}"]`);
+                    if (prev) { prev.focus(); prev.value = ''; prev.classList.remove('filled'); }
+                }
+            }
+        }
+
+        // Handle paste for OTP
+        document.getElementById('otpContainer')?.addEventListener('paste', function (e) {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
+            const cells = document.querySelectorAll('.otp-cell');
+            text.split('').forEach((digit, i) => {
+                if (cells[i]) {
+                    cells[i].value = digit;
+                    cells[i].classList.add('filled');
+                }
+            });
+            if (text.length === 6) {
+                cells[5].focus();
+                document.getElementById('otpBtn').disabled = false;
+            }
+        });
+
+        let countdownValue = 45;
+        function startCountdown() {
+            clearInterval(countdownInterval);
+            countdownValue = 45;
+            const link = document.getElementById('resendLink');
+            const display = document.getElementById('countdown');
+            link.classList.add('disabled');
+
+            countdownInterval = setInterval(() => {
+                countdownValue--;
+                display.textContent = countdownValue;
+                if (countdownValue <= 0) {
+                    clearInterval(countdownInterval);
+                    link.classList.remove('disabled');
+                    link.innerHTML = 'Gửi lại mã';
+                }
+            }, 1000);
+        }
+
+        function resendOtp() {
+            startCountdown();
+            const link = document.getElementById('resendLink');
+            link.innerHTML = 'Gửi lại mã (<span id="countdown">45</span>s)';
+        }
+
+        function simulateOtpVerify() {
+            applyLoadingState();
+            setTimeout(() => {
+                resetScreenState();
+                navigateTo('scr-004');
+            }, 1500);
+        }
+
+        // Password rules
+        function checkPasswordRules() {
+            const pw = document.getElementById('newPw').value;
+
+            const rules = {
+                'rule-length': pw.length >= 8,
+                'rule-case': /[a-z]/.test(pw) && /[A-Z]/.test(pw),
+                'rule-number': /\d/.test(pw),
+                'rule-special': /[!@#$%^&*(),.?":{}|<>_\-+=/\\[\]~`]/.test(pw),
+            };
+
+            let allPass = true;
+            for (const [id, pass] of Object.entries(rules)) {
+                const el = document.getElementById(id);
+                if (pass) {
+                    el.classList.add('pass');
+                    el.querySelector('.pw-rule-icon').textContent = '\u2713';
+                } else {
+                    el.classList.remove('pass');
+                    el.querySelector('.pw-rule-icon').textContent = '-';
+                    allPass = false;
+                }
+            }
+
+            checkPasswordMatch();
+            return allPass;
+        }
+
+        function checkPasswordMatch() {
+            const pw = document.getElementById('newPw').value;
+            const confirm = document.getElementById('confirmPw').value;
+            const match = pw && confirm && pw === confirm;
+            const allRulesPass = checkPasswordRulesOnly();
+
+            document.getElementById('pwBtn').disabled = !(match && allRulesPass);
+
+            if (confirm && !match) {
+                document.getElementById('confirmError').classList.add('visible');
+                document.getElementById('confirmPw').classList.add('error');
+            } else {
+                document.getElementById('confirmError').classList.remove('visible');
+                document.getElementById('confirmPw').classList.remove('error');
+            }
+        }
+
+        function checkPasswordRulesOnly() {
+            const pw = document.getElementById('newPw').value;
+            return pw.length >= 8
+                && /[a-z]/.test(pw) && /[A-Z]/.test(pw)
+                && /\d/.test(pw)
+                && /[!@#$%^&*(),.?":{}|<>_\-+=/\\[\]~`]/.test(pw);
+        }
+
+        function simulatePasswordSubmit() {
+            applyLoadingState();
+            setTimeout(() => {
+                resetScreenState();
+                // Would navigate to SCR-005 (Store Setup)
+                alert('Tạo mật khẩu thành công! Chuyển sang thiết lập cửa hàng (SCR-005)');
+            }, 1200);
+        }
+
+        // Toggle password visibility
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+            btn.querySelector('svg').innerHTML = isPassword
+                ? '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+                : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+        }
+
+        // Init
+        updateControlPanel();
+    </script>
+
+</body>
+
+</html>

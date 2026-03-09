@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xPOS Onboarding Batch 2 - SCR-005, SCR-006, SCR-007</title>
+    <meta name="description" content="Interactive prototype: Thiết lập cửa hàng, Quên mật khẩu, Đặt mật khẩu mới">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ============================================================
+           DESIGN SYSTEM TOKENS
+           ============================================================ */
+        :root {
+            --background: #ffffff;
+            --foreground: #0a0a0a;
+            --primary: #E31837;
+            --primary-foreground: #FFFFFF;
+            --secondary: #F8F9FA;
+            --secondary-foreground: #0a0a0a;
+            --muted: #F8F9FA;
+            --muted-foreground: #737373;
+            --accent: #FFB800;
+            --accent-foreground: #1A1A1A;
+            --destructive: #DC3545;
+            --destructive-foreground: #FFFFFF;
+            --success: #22c55e;
+            --success-bg: rgba(34, 197, 94, 0.08);
+            --border: #DEE2E6;
+            --ring: #E31837;
+            --card: #ffffff;
+            --card-foreground: #0a0a0a;
+
+            --input-height: 48px;
+            --button-height: 48px;
+            --touch-target: 44px;
+            --icon-size: 24px;
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-2xl: 48px;
+
+            --font-family: 'Be Vietnam Pro', sans-serif;
+            --text-xs: 12px;
+            --text-sm: 14px;
+            --text-base: 16px;
+            --text-lg: 18px;
+            --text-xl: 20px;
+            --text-2xl: 24px;
+
+            --duration-fast: 150ms;
+            --duration-normal: 300ms;
+            --duration-slow: 500ms;
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        [data-theme="dark"] {
+            --background: #0a0a0a;
+            --foreground: #fafafa;
+            --primary: #FF4D5A;
+            --primary-foreground: #1A1A1A;
+            --secondary: #1E1E1E;
+            --secondary-foreground: #fafafa;
+            --muted: #1E1E1E;
+            --muted-foreground: #a3a3a3;
+            --accent: #FFC233;
+            --accent-foreground: #1A1A1A;
+            --destructive: #FF4D5A;
+            --destructive-foreground: #FFFFFF;
+            --success: #4ade80;
+            --success-bg: rgba(74, 222, 128, 0.1);
+            --border: #343A40;
+            --ring: #FF4D5A;
+            --card: #171717;
+            --card-foreground: #fafafa;
+        }
+
+        /* ============================================================
+           RESET & BASE
+           ============================================================ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: #1a1a2e;
+            color: var(--foreground);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-lg);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ============================================================
+           CONTROL PANEL
+           ============================================================ */
+        .prototype-container {
+            display: flex;
+            gap: var(--spacing-xl);
+            align-items: flex-start;
+            max-width: 800px;
+        }
+
+        .control-panel {
+            width: 260px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            color: #e0e0e0;
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: var(--spacing-lg);
+        }
+
+        .control-panel h2 {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .control-section {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .control-section label {
+            display: block;
+            font-size: var(--text-xs);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .control-section select {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-md);
+            color: #fff;
+            font-size: var(--text-sm);
+            font-family: var(--font-family);
+            cursor: pointer;
+            outline: none;
+            transition: border-color var(--duration-fast) ease;
+        }
+
+        .control-section select:focus {
+            border-color: var(--primary);
+        }
+
+        .control-section select option {
+            background: #1a1a2e;
+        }
+
+        .theme-toggle {
+            display: flex;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-sm);
+        }
+
+        .theme-btn {
+            flex: 1;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: var(--text-xs);
+            font-family: var(--font-family);
+            cursor: pointer;
+            transition: all var(--duration-fast) ease;
+        }
+
+        .theme-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        .flow-nav {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-sm);
+        }
+
+        .flow-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-md);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: var(--text-sm);
+            font-family: var(--font-family);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--duration-fast) ease;
+        }
+
+        .flow-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .flow-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .state-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-sm);
+        }
+
+        .state-chip {
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 11px;
+            font-family: var(--font-family);
+            cursor: pointer;
+            transition: all var(--duration-fast) ease;
+        }
+
+        .state-chip.active {
+            background: rgba(227, 24, 55, 0.2);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .state-chip:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .screen-info {
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .screen-info dt {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .screen-info dd {
+            font-size: var(--text-sm);
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        /* ============================================================
+           PHONE FRAME
+           ============================================================ */
+        .phone-wrapper {
+            flex-shrink: 0;
+        }
+
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: var(--background);
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow:
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                0 25px 80px rgba(0, 0, 0, 0.5),
+                inset 0 0 0 2px rgba(255, 255, 255, 0.03);
+            transition: background var(--duration-normal) ease;
+        }
+
+        .status-bar {
+            height: 54px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 0 var(--spacing-xl) 8px;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--foreground);
+        }
+
+        .status-bar-right {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .status-bar-right svg {
+            width: 18px;
+            height: 12px;
+            fill: var(--foreground);
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 34px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        /* ============================================================
+           SCREEN CONTAINERS
+           ============================================================ */
+        .screen {
+            display: none;
+            flex-direction: column;
+            height: calc(100% - 54px);
+            animation: screenSlideIn var(--duration-normal) var(--ease-out) both;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes screenSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ============================================================
+           HEADER BAR
+           ============================================================ */
+        .header-bar {
+            display: flex;
+            align-items: center;
+            height: 56px;
+            padding: 0 var(--spacing-md);
+            gap: var(--spacing-sm);
+            flex-shrink: 0;
+        }
+
+        .btn-back {
+            width: var(--touch-target);
+            height: var(--touch-target);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            color: var(--foreground);
+            transition: background var(--duration-fast) ease;
+        }
+
+        .btn-back:hover {
+            background: var(--muted);
+        }
+
+        .btn-back svg {
+            width: var(--icon-size);
+            height: var(--icon-size);
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .header-title {
+            font-size: var(--text-base);
+            font-weight: 600;
+            color: var(--foreground);
+        }
+
+        /* ============================================================
+           SCREEN BODY & FOOTER
+           ============================================================ */
+        .screen-body {
+            flex: 1;
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+        }
+
+        .screen-footer {
+            padding: var(--spacing-md) var(--spacing-lg) var(--spacing-xl);
+            flex-shrink: 0;
+        }
+
+        /* ============================================================
+           COMPONENTS
+           ============================================================ */
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--text-sm);
+            font-weight: 500;
+            color: var(--foreground);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .form-label .required {
+            color: var(--destructive);
+            margin-left: 2px;
+        }
+
+        .form-input {
+            width: 100%;
+            height: var(--input-height);
+            padding: 0 var(--spacing-md);
+            background: var(--background);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: var(--text-base);
+            font-family: var(--font-family);
+            color: var(--foreground);
+            outline: none;
+            transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+        }
+
+        .form-input::placeholder {
+            color: var(--muted-foreground);
+        }
+
+        .form-input:focus {
+            border-color: var(--ring);
+            box-shadow: 0 0 0 3px rgba(227, 24, 55, 0.12);
+        }
+
+        .form-input.error {
+            border-color: var(--destructive);
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+        }
+
+        .form-input.success {
+            border-color: var(--success);
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper .form-input {
+            padding-right: 48px;
+        }
+
+        .toggle-pw {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--muted-foreground);
+            border-radius: var(--radius-sm);
+            transition: color var(--duration-fast) ease;
+        }
+
+        .toggle-pw:hover {
+            color: var(--foreground);
+        }
+
+        .toggle-pw svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Helper / Error / Success text */
+        .field-msg {
+            display: none;
+            font-size: var(--text-sm);
+            margin-top: var(--spacing-xs);
+            line-height: 1.4;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .field-msg.visible {
+            display: flex;
+        }
+
+        .field-msg.error-msg {
+            color: var(--destructive);
+        }
+
+        .field-msg.success-msg {
+            color: var(--success);
+        }
+
+        .field-msg.loading-msg {
+            color: var(--muted-foreground);
+        }
+
+        .field-msg.error-msg.visible {
+            animation: shakeIn var(--duration-normal) var(--ease-out);
+        }
+
+        @keyframes shakeIn {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-6px);
+            }
+
+            40% {
+                transform: translateX(5px);
+            }
+
+            60% {
+                transform: translateX(-3px);
+            }
+
+            80% {
+                transform: translateX(2px);
+            }
+        }
+
+        /* MST status indicator */
+        .mst-status-icon {
+            width: 18px;
+            height: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .mst-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Primary button */
+        .btn-primary {
+            width: 100%;
+            height: var(--button-height);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            background: var(--primary);
+            color: var(--primary-foreground);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: var(--text-base);
+            font-weight: 600;
+            font-family: var(--font-family);
+            cursor: pointer;
+            transition: all var(--duration-fast) ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0);
+            transition: background var(--duration-fast) ease;
+        }
+
+        .btn-primary:hover::after {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-primary:disabled::after {
+            display: none;
+        }
+
+        .btn-primary.loading {
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        /* Dropdown / Select */
+        .form-select {
+            width: 100%;
+            height: var(--input-height);
+            padding: 0 var(--spacing-md);
+            background: var(--background);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: var(--text-base);
+            font-family: var(--font-family);
+            color: var(--foreground);
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23737373' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            transition: border-color var(--duration-fast) ease;
+        }
+
+        .form-select:focus {
+            border-color: var(--ring);
+            box-shadow: 0 0 0 3px rgba(227, 24, 55, 0.12);
+        }
+
+        /* Password rules */
+        .pw-rules {
+            margin-top: var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .pw-rule {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: var(--text-sm);
+            color: var(--muted-foreground);
+            transition: color var(--duration-fast) ease;
+        }
+
+        .pw-rule.pass {
+            color: var(--success);
+        }
+
+        .pw-rule-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+            background: var(--muted);
+            color: var(--muted-foreground);
+            transition: all var(--duration-fast) ease;
+            flex-shrink: 0;
+        }
+
+        .pw-rule.pass .pw-rule-icon {
+            background: var(--success);
+            color: #fff;
+        }
+
+        /* Instruction heading */
+        .screen-instruction {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--foreground);
+            margin-bottom: var(--spacing-xs);
+            line-height: 1.2;
+        }
+
+        .screen-subtitle {
+            font-size: var(--text-sm);
+            color: var(--muted-foreground);
+            margin-bottom: var(--spacing-xl);
+            line-height: 1.5;
+        }
+
+        /* Optional badge */
+        .optional-badge {
+            font-size: var(--text-xs);
+            color: var(--muted-foreground);
+            font-weight: 400;
+            margin-left: 6px;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--foreground);
+            color: var(--background);
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all var(--duration-normal) var(--ease-out);
+            z-index: 100;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Stagger */
+        .stagger-item {
+            opacity: 0;
+            transform: translateY(12px);
+            animation: staggerIn var(--duration-normal) var(--ease-out) forwards;
+        }
+
+        @keyframes staggerIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stagger-item:nth-child(1) {
+            animation-delay: 0ms;
+        }
+
+        .stagger-item:nth-child(2) {
+            animation-delay: 60ms;
+        }
+
+        .stagger-item:nth-child(3) {
+            animation-delay: 120ms;
+        }
+
+        .stagger-item:nth-child(4) {
+            animation-delay: 180ms;
+        }
+
+        .stagger-item:nth-child(5) {
+            animation-delay: 240ms;
+        }
+
+        .stagger-item:nth-child(6) {
+            animation-delay: 300ms;
+        }
+
+        .stagger-item:nth-child(7) {
+            animation-delay: 360ms;
+        }
+
+        .stagger-item:nth-child(8) {
+            animation-delay: 420ms;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .stagger-item {
+                animation: none;
+                opacity: 1;
+                transform: none;
+            }
+
+            .screen {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="prototype-container">
+
+        <!-- CONTROL PANEL -->
+        <div class="control-panel">
+            <h2>xPOS Batch 2</h2>
+
+            <div class="control-section">
+                <label>Màn hình</label>
+                <select id="screenSelect" onchange="navigateTo(this.value)">
+                    <option value="scr-005">SCR-005 Thiết lập cửa hàng</option>
+                    <option value="scr-006">SCR-006 Quên mật khẩu</option>
+                    <option value="scr-007">SCR-007 Đặt mật khẩu mới</option>
+                </select>
+            </div>
+
+            <div class="control-section">
+                <label>Giao diện</label>
+                <div class="theme-toggle">
+                    <button class="theme-btn active" id="lightBtn" onclick="setTheme('light')">Sáng</button>
+                    <button class="theme-btn" id="darkBtn" onclick="setTheme('dark')">Tối</button>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <label>Trạng thái</label>
+                <div class="state-chips" id="stateChips"></div>
+            </div>
+
+            <div class="control-section">
+                <label>Di chuyển</label>
+                <div class="flow-nav">
+                    <button class="flow-btn" id="prevBtn" onclick="flowPrev()">Trước</button>
+                    <button class="flow-btn" id="nextBtn" onclick="flowNext()">Sau</button>
+                </div>
+            </div>
+
+            <dl class="screen-info">
+                <dt>Màn hình</dt>
+                <dd id="infoId">SCR-005</dd>
+                <dt>Loại</dt>
+                <dd id="infoType">form</dd>
+                <dt>Luồng</dt>
+                <dd id="infoFlow">Onboarding</dd>
+                <dt>UC</dt>
+                <dd id="infoUC">UC-001</dd>
+            </dl>
+        </div>
+
+        <!-- PHONE FRAME -->
+        <div class="phone-wrapper">
+            <div class="phone-frame" id="phoneFrame">
+                <div class="notch"></div>
+
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <span class="status-bar-right">
+                        <svg viewBox="0 0 18 12">
+                            <rect x="0" y="3" width="4" height="9" rx="1" />
+                            <rect x="5" y="2" width="4" height="10" rx="1" />
+                            <rect x="10" y="0" width="4" height="12" rx="1" />
+                        </svg>
+                        <svg viewBox="0 0 25 12" style="width:25px">
+                            <rect x="0" y="0.5" width="22" height="11" rx="2.5" stroke="currentColor" stroke-width="1"
+                                fill="none" />
+                            <rect x="23" y="3.5" width="2" height="5" rx="1" fill="currentColor" />
+                            <rect x="2" y="2.5" width="16" height="7" rx="1.5" fill="currentColor" />
+                        </svg>
+                    </span>
+                </div>
+
+                <!-- ===== SCR-005: Thiet lap cua hang ===== -->
+                <div class="screen active" id="scr-005" data-type="form" data-flow="Onboarding" data-uc="UC-001">
+
+                    <div class="header-bar">
+                        <button class="btn-back" aria-label="Quay lại">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <span class="header-title">Thiết lập cửa hàng</span>
+                    </div>
+
+                    <div class="screen-body">
+                        <div class="form-group stagger-item">
+                            <label class="form-label" for="storeName">Tên cửa hàng <span
+                                    class="required">*</span></label>
+                            <input class="form-input" type="text" id="storeName" placeholder="Ví dụ: Quán Phở 24h"
+                                oninput="checkStoreForm()">
+                        </div>
+
+                        <div class="form-group stagger-item">
+                            <label class="form-label" for="taxCode">Mã số thuế <span class="required">*</span></label>
+                            <input class="form-input" type="text" id="taxCode"
+                                placeholder="Nhập mã số thuế (10 hoặc 13 chữ số)" maxlength="14"
+                                oninput="handleTaxInput(this)">
+                            <div class="field-msg loading-msg" id="taxLoading">
+                                <span class="mst-status-icon"><span class="mst-spinner"></span></span>
+                                <span>Đang kiểm tra mã số thuế...</span>
+                            </div>
+                            <div class="field-msg success-msg" id="taxSuccess">
+                                <span class="mst-status-icon"><svg viewBox="0 0 24 24" width="16" height="16"
+                                        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M20 6L9 17l-5-5" />
+                                    </svg></span>
+                                <span>Mã số thuế hợp lệ</span>
+                            </div>
+                            <div class="field-msg error-msg" id="taxError">
+                                <span>Mã số thuế không hợp lệ hoặc không tồn tại</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group stagger-item">
+                            <label class="form-label" for="storeAddress">Địa chỉ <span class="required">*</span></label>
+                            <input class="form-input" type="text" id="storeAddress" placeholder="Nhập địa chỉ cửa hàng"
+                                oninput="checkStoreForm()">
+                        </div>
+
+                        <div class="form-group stagger-item">
+                            <label class="form-label" for="storeType">Ngành nghề <span class="optional-badge">Không bắt
+                                    buộc</span></label>
+                            <select class="form-select" id="storeType" onchange="checkStoreForm()">
+                                <option value="">Chọn ngành nghề</option>
+                                <option value="fb">Ăn uống (F&B)</option>
+                                <option value="retail">Bán lẻ</option>
+                                <option value="fashion">Thời trang</option>
+                                <option value="beauty">Làm đẹp</option>
+                                <option value="grocery">Tạp hoá</option>
+                                <option value="pharmacy">Dược phẩm</option>
+                                <option value="service">Dịch vụ</option>
+                                <option value="other">Khác</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="screen-footer">
+                        <button class="btn-primary stagger-item" id="storeBtn" disabled onclick="simulateStoreSubmit()">
+                            <span class="btn-text">Hoàn tất đăng ký</span>
+                        </button>
+                    </div>
+
+                    <div class="toast" id="storeToast">Chúc mừng! Cửa hàng đã được tạo thành công</div>
+                </div>
+
+                <!-- ===== SCR-006: Quen mat khau ===== -->
+                <div class="screen" id="scr-006" data-type="form" data-flow="Onboarding" data-uc="UC-003">
+
+                    <div class="header-bar">
+                        <button class="btn-back" onclick="navigateTo('scr-005')" aria-label="Quay lại">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <span class="header-title">Quên mật khẩu</span>
+                    </div>
+
+                    <div class="screen-body">
+                        <h1 class="screen-instruction stagger-item">Nhập số điện thoại</h1>
+                        <p class="screen-subtitle stagger-item">Nhập số điện thoại đã đăng ký để nhận mã xác minh và đặt
+                            lại mật khẩu</p>
+
+                        <div class="form-group stagger-item">
+                            <label class="form-label" for="forgotPhone">Số điện thoại</label>
+                            <input class="form-input" type="tel" id="forgotPhone" placeholder="Nhập số điện thoại"
+                                autocomplete="tel" maxlength="12" oninput="formatForgotPhone(this)">
+                        </div>
+                        <div class="field-msg error-msg" id="forgotPhoneError">Số điện thoại chưa được đăng ký trong hệ
+                            thống</div>
+                        <div class="field-msg error-msg" id="forgotPhoneFormat">Số điện thoại không hợp lệ. Vui lòng
+                            nhập đúng 10 chữ số.</div>
+                    </div>
+
+                    <div class="screen-footer">
+                        <button class="btn-primary stagger-item" id="forgotBtn" disabled
+                            onclick="simulateForgotSubmit()">
+                            <span class="btn-text">Gửi mã xác minh</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== SCR-007: Dat mat khau moi ===== -->
+                <div class="screen" id="scr-007" data-type="form" data-flow="Onboarding" data-uc="UC-003">
+
+                    <div class="header-bar">
+                        <button class="btn-back" onclick="navigateTo('scr-006')" aria-label="Quay lại">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <span class="header-title">Đặt mật khẩu mới</span>
+                    </div>
+
+                    <div class="screen-body">
+                        <div class="form-group stagger-item">
+                            <label class="form-label" for="resetPw">Mật khẩu mới</label>
+                            <div class="password-wrapper">
+                                <input class="form-input" type="password" id="resetPw" placeholder="Nhập mật khẩu mới"
+                                    oninput="checkResetRules()">
+                                <button class="toggle-pw" type="button" onclick="togglePw('resetPw', this)"
+                                    aria-label="Hiện/Ẩn mật khẩu">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                        <circle cx="12" cy="12" r="3" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group stagger-item">
+                            <label class="form-label" for="resetConfirm">Xác nhận mật khẩu</label>
+                            <div class="password-wrapper">
+                                <input class="form-input" type="password" id="resetConfirm"
+                                    placeholder="Nhập lại mật khẩu" oninput="checkResetMatch()">
+                                <button class="toggle-pw" type="button" onclick="togglePw('resetConfirm', this)"
+                                    aria-label="Hiện/Ẩn mật khẩu">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                        <circle cx="12" cy="12" r="3" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="field-msg error-msg" id="resetConfirmError">Mật khẩu không khớp. Vui lòng nhập
+                                lại.</div>
+                        </div>
+
+                        <div class="pw-rules stagger-item">
+                            <div class="pw-rule" id="r-length"><span class="pw-rule-icon">-</span><span>Ít nhất 8 ký
+                                    tự</span></div>
+                            <div class="pw-rule" id="r-case"><span class="pw-rule-icon">-</span><span>Chữ hoa và chữ
+                                    thường</span></div>
+                            <div class="pw-rule" id="r-number"><span class="pw-rule-icon">-</span><span>Có ít nhất 1 chữ
+                                    số</span></div>
+                            <div class="pw-rule" id="r-special"><span class="pw-rule-icon">-</span><span>Có ký tự đặc
+                                    biệt (!@#$...)</span></div>
+                        </div>
+                    </div>
+
+                    <div class="screen-footer">
+                        <button class="btn-primary stagger-item" id="resetBtn" disabled onclick="simulateResetSubmit()">
+                            <span class="btn-text">Xác nhận</span>
+                        </button>
+                    </div>
+
+                    <div class="toast" id="resetToast">Mật khẩu đã được đặt lại thành công</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ============================================================
+           STATE
+           ============================================================ */
+        const SCREENS = ['scr-005', 'scr-006', 'scr-007'];
+        const SCREEN_META = {
+            'scr-005': { id: 'SCR-005', type: 'form', flow: 'Onboarding', uc: 'UC-001', states: ['default', 'filling', 'mst-validating', 'mst-valid', 'mst-invalid', 'loading'] },
+            'scr-006': { id: 'SCR-006', type: 'form', flow: 'Onboarding', uc: 'UC-003', states: ['default', 'filling', 'error-format', 'error-not-found', 'loading'] },
+            'scr-007': { id: 'SCR-007', type: 'form', flow: 'Onboarding', uc: 'UC-003', states: ['default', 'filling', 'mismatch', 'loading'] },
+        };
+
+        let currentScreen = 'scr-005';
+        let currentState = 'default';
+        let taxValid = false;
+
+        /* ============================================================
+           NAVIGATION
+           ============================================================ */
+        function navigateTo(screenId) {
+            if (!SCREENS.includes(screenId)) return;
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById(screenId);
+            target.classList.add('active');
+            target.querySelectorAll('.stagger-item').forEach(el => {
+                el.style.animation = 'none';
+                void el.offsetHeight;
+                el.style.animation = '';
+            });
+            currentScreen = screenId;
+            document.getElementById('screenSelect').value = screenId;
+            updateControlPanel();
+            resetScreenState();
+        }
+
+        function flowPrev() { const i = SCREENS.indexOf(currentScreen); if (i > 0) navigateTo(SCREENS[i - 1]); }
+        function flowNext() { const i = SCREENS.indexOf(currentScreen); if (i < SCREENS.length - 1) navigateTo(SCREENS[i + 1]); }
+
+        function updateControlPanel() {
+            const meta = SCREEN_META[currentScreen];
+            const idx = SCREENS.indexOf(currentScreen);
+            document.getElementById('infoId').textContent = meta.id;
+            document.getElementById('infoType').textContent = meta.type;
+            document.getElementById('infoFlow').textContent = meta.flow;
+            document.getElementById('infoUC').textContent = meta.uc;
+            document.getElementById('prevBtn').disabled = idx === 0;
+            document.getElementById('nextBtn').disabled = idx === SCREENS.length - 1;
+
+            const chips = document.getElementById('stateChips');
+            chips.innerHTML = '';
+            meta.states.forEach(state => {
+                const btn = document.createElement('button');
+                btn.className = 'state-chip' + (state === 'default' ? ' active' : '');
+                btn.dataset.state = state;
+                btn.textContent = state.charAt(0).toUpperCase() + state.slice(1);
+                btn.onclick = () => setState(state);
+                chips.appendChild(btn);
+            });
+        }
+
+        /* ============================================================
+           THEME
+           ============================================================ */
+        function setTheme(t) {
+            const f = document.getElementById('phoneFrame');
+            if (t === 'dark') { f.setAttribute('data-theme', 'dark'); document.getElementById('darkBtn').classList.add('active'); document.getElementById('lightBtn').classList.remove('active'); }
+            else { f.removeAttribute('data-theme'); document.getElementById('lightBtn').classList.add('active'); document.getElementById('darkBtn').classList.remove('active'); }
+        }
+
+        /* ============================================================
+           STATE SIMULATION
+           ============================================================ */
+        function setState(state) {
+            currentState = state;
+            document.querySelectorAll('.state-chip').forEach(c => c.classList.remove('active'));
+            const ac = document.querySelector(`.state-chip[data-state="${state}"]`);
+            if (ac) ac.classList.add('active');
+            resetScreenState();
+            applyState(state);
+        }
+
+        function resetScreenState() {
+            document.querySelectorAll('.field-msg').forEach(e => e.classList.remove('visible'));
+            document.querySelectorAll('.form-input').forEach(i => i.classList.remove('error', 'success'));
+            document.querySelectorAll('.btn-primary .spinner')?.forEach(s => s.remove());
+            document.querySelectorAll('.btn-primary').forEach(b => { b.classList.remove('loading'); b.disabled = true; });
+            document.querySelectorAll('.btn-primary .btn-text').forEach(t => t.style.display = '');
+            document.querySelectorAll('.pw-rule').forEach(r => { r.classList.remove('pass'); r.querySelector('.pw-rule-icon').textContent = '-'; });
+            taxValid = false;
+        }
+
+        function applyState(state) {
+            switch (state) {
+                case 'filling':
+                    if (currentScreen === 'scr-005') {
+                        document.getElementById('storeName').value = 'Quan Pho 24h';
+                        document.getElementById('taxCode').value = '0312345678';
+                        document.getElementById('storeAddress').value = '123 Nguyen Hue, Q.1, TP.HCM';
+                        document.getElementById('storeType').value = 'fb';
+                        taxValid = true;
+                        document.getElementById('taxCode').classList.add('success');
+                        document.getElementById('taxSuccess').classList.add('visible');
+                        document.getElementById('storeBtn').disabled = false;
+                    } else if (currentScreen === 'scr-006') {
+                        document.getElementById('forgotPhone').value = '0912 345 678';
+                        document.getElementById('forgotBtn').disabled = false;
+                    } else if (currentScreen === 'scr-007') {
+                        document.getElementById('resetPw').value = 'Abc@1234';
+                        document.getElementById('resetConfirm').value = 'Abc@1234';
+                        applyResetRules(true);
+                        document.getElementById('resetBtn').disabled = false;
+                    }
+                    break;
+                case 'mst-validating':
+                    document.getElementById('storeName').value = 'Quan Pho 24h';
+                    document.getElementById('taxCode').value = '0312345678';
+                    document.getElementById('storeAddress').value = '123 Nguyen Hue, Q.1, TP.HCM';
+                    document.getElementById('taxLoading').classList.add('visible');
+                    break;
+                case 'mst-valid':
+                    document.getElementById('storeName').value = 'Quan Pho 24h';
+                    document.getElementById('taxCode').value = '0312345678';
+                    document.getElementById('storeAddress').value = '123 Nguyen Hue, Q.1, TP.HCM';
+                    document.getElementById('storeType').value = 'fb';
+                    taxValid = true;
+                    document.getElementById('taxCode').classList.add('success');
+                    document.getElementById('taxSuccess').classList.add('visible');
+                    document.getElementById('storeBtn').disabled = false;
+                    break;
+                case 'mst-invalid':
+                    document.getElementById('storeName').value = 'Quan Pho 24h';
+                    document.getElementById('taxCode').value = '9999999999';
+                    document.getElementById('storeAddress').value = '123 Nguyen Hue, Q.1, TP.HCM';
+                    document.getElementById('taxCode').classList.add('error');
+                    document.getElementById('taxError').classList.add('visible');
+                    break;
+                case 'error-format':
+                    document.getElementById('forgotPhone').value = '091';
+                    document.getElementById('forgotPhone').classList.add('error');
+                    document.getElementById('forgotPhoneFormat').classList.add('visible');
+                    break;
+                case 'error-not-found':
+                    document.getElementById('forgotPhone').value = '0999 888 777';
+                    document.getElementById('forgotPhone').classList.add('error');
+                    document.getElementById('forgotPhoneError').classList.add('visible');
+                    break;
+                case 'mismatch':
+                    document.getElementById('resetPw').value = 'Abc@1234';
+                    document.getElementById('resetConfirm').value = 'Xyz@5678';
+                    applyResetRules(true);
+                    document.getElementById('resetConfirm').classList.add('error');
+                    document.getElementById('resetConfirmError').classList.add('visible');
+                    break;
+                case 'loading':
+                    applyState('filling');
+                    const btn = document.querySelector(`#${currentScreen} .btn-primary`);
+                    if (btn) {
+                        btn.classList.add('loading');
+                        btn.disabled = true;
+                        const text = btn.querySelector('.btn-text');
+                        if (text) text.style.display = 'none';
+                        const sp = document.createElement('div');
+                        sp.className = 'spinner';
+                        btn.appendChild(sp);
+                    }
+                    break;
+            }
+        }
+
+        function applyResetRules(allPass) {
+            ['r-length', 'r-case', 'r-number', 'r-special'].forEach(id => {
+                const el = document.getElementById(id);
+                if (allPass) { el.classList.add('pass'); el.querySelector('.pw-rule-icon').textContent = '\u2713'; }
+            });
+        }
+
+        /* ============================================================
+           SCR-005 INTERACTIONS
+           ============================================================ */
+        function handleTaxInput(input) {
+            let v = input.value.replace(/[^0-9-]/g, '');
+            if (v.length > 14) v = v.slice(0, 14);
+            input.value = v;
+
+            document.getElementById('taxLoading').classList.remove('visible');
+            document.getElementById('taxSuccess').classList.remove('visible');
+            document.getElementById('taxError').classList.remove('visible');
+            input.classList.remove('error', 'success');
+            taxValid = false;
+
+            const digits = v.replace(/-/g, '');
+            if (digits.length === 10 || digits.length === 13) {
+                document.getElementById('taxLoading').classList.add('visible');
+                setTimeout(() => {
+                    document.getElementById('taxLoading').classList.remove('visible');
+                    taxValid = true;
+                    input.classList.add('success');
+                    document.getElementById('taxSuccess').classList.add('visible');
+                    checkStoreForm();
+                }, 1200);
+            }
+            checkStoreForm();
+        }
+
+        function checkStoreForm() {
+            const name = document.getElementById('storeName').value.trim();
+            const addr = document.getElementById('storeAddress').value.trim();
+            document.getElementById('storeBtn').disabled = !(name && addr && taxValid);
+        }
+
+        function simulateStoreSubmit() {
+            applyState('loading');
+            setTimeout(() => {
+                resetScreenState();
+                showToast('storeToast');
+            }, 1500);
+        }
+
+        /* ============================================================
+           SCR-006 INTERACTIONS
+           ============================================================ */
+        function formatForgotPhone(input) {
+            let v = input.value.replace(/\D/g, '');
+            if (v.length > 10) v = v.slice(0, 10);
+            if (v.length > 7) v = v.slice(0, 4) + ' ' + v.slice(4, 7) + ' ' + v.slice(7);
+            else if (v.length > 4) v = v.slice(0, 4) + ' ' + v.slice(4);
+            input.value = v;
+            const raw = v.replace(/\s/g, '');
+            document.getElementById('forgotBtn').disabled = raw.length < 10;
+            document.getElementById('forgotPhoneFormat').classList.remove('visible');
+            document.getElementById('forgotPhoneError').classList.remove('visible');
+            input.classList.remove('error');
+        }
+
+        function simulateForgotSubmit() {
+            applyState('loading');
+            setTimeout(() => {
+                resetScreenState();
+                navigateTo('scr-007');
+            }, 1200);
+        }
+
+        /* ============================================================
+           SCR-007 INTERACTIONS
+           ============================================================ */
+        function checkResetRules() {
+            const pw = document.getElementById('resetPw').value;
+            const rules = {
+                'r-length': pw.length >= 8,
+                'r-case': /[a-z]/.test(pw) && /[A-Z]/.test(pw),
+                'r-number': /\d/.test(pw),
+                'r-special': /[!@#$%^&*(),.?":{}|<>_\-+=\/\\[\]~`]/.test(pw),
+            };
+            for (const [id, pass] of Object.entries(rules)) {
+                const el = document.getElementById(id);
+                if (pass) { el.classList.add('pass'); el.querySelector('.pw-rule-icon').textContent = '\u2713'; }
+                else { el.classList.remove('pass'); el.querySelector('.pw-rule-icon').textContent = '-'; }
+            }
+            checkResetMatch();
+        }
+
+        function checkResetMatch() {
+            const pw = document.getElementById('resetPw').value;
+            const c = document.getElementById('resetConfirm').value;
+            const match = pw && c && pw === c;
+            const allOk = pw.length >= 8 && /[a-z]/.test(pw) && /[A-Z]/.test(pw) && /\d/.test(pw) && /[!@#$%^&*(),.?":{}|<>_\-+=\/\\[\]~`]/.test(pw);
+            document.getElementById('resetBtn').disabled = !(match && allOk);
+            if (c && !match) {
+                document.getElementById('resetConfirmError').classList.add('visible');
+                document.getElementById('resetConfirm').classList.add('error');
+            } else {
+                document.getElementById('resetConfirmError').classList.remove('visible');
+                document.getElementById('resetConfirm').classList.remove('error');
+            }
+        }
+
+        function simulateResetSubmit() {
+            applyState('loading');
+            setTimeout(() => {
+                resetScreenState();
+                showToast('resetToast');
+            }, 1200);
+        }
+
+        function togglePw(id, btn) {
+            const input = document.getElementById(id);
+            const isP = input.type === 'password';
+            input.type = isP ? 'text' : 'password';
+            btn.querySelector('svg').innerHTML = isP
+                ? '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+                : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+        }
+
+        function showToast(id) {
+            const t = document.getElementById(id);
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // Init
+        updateControlPanel();
+    </script>
+</body>
+
+</html>

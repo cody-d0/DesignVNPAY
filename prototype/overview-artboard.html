@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xPOS Prototype Overview — All Batches</title>
+    <meta name="description"
+        content="Overview of all xPOS prototype batches with direct links to each interactive prototype">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0d0d1a;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --bg-card-hover: rgba(255, 255, 255, 0.08);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.18);
+            --text-primary: #f0f0f5;
+            --text-secondary: rgba(255, 255, 255, 0.55);
+            --text-muted: rgba(255, 255, 255, 0.35);
+            --accent-red: #E31837;
+            --accent-red-glow: rgba(227, 24, 55, 0.25);
+            --accent-gold: #FFB800;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --font: 'Be Vietnam Pro', system-ui, sans-serif;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Ambient background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -40%;
+            left: -20%;
+            width: 80vw;
+            height: 80vw;
+            background: radial-gradient(circle, rgba(227, 24, 55, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -30%;
+            right: -20%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(255, 184, 0, 0.04) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .page {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .hero {
+            text-align: center;
+            padding: 80px 24px 48px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            background: rgba(227, 24, 55, 0.12);
+            border: 1px solid rgba(227, 24, 55, 0.25);
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-red);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-red);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(0.8);
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #fff 20%, rgba(255, 255, 255, 0.6) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            margin-top: 16px;
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 32px;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .hero-stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-top: 4px;
+        }
+
+        /* Grid */
+        .grid-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px 80px;
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            padding-left: 4px;
+        }
+
+        .batch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        /* Cards */
+        .batch-card {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            padding: 28px 24px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .batch-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--card-accent, var(--accent-red)), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .batch-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+        }
+
+        .batch-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .card-batch-num {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 100px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .card-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 16px;
+            flex: 1;
+        }
+
+        .card-screens {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .screen-tag {
+            padding: 3px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+
+        .card-arrow {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-subtle);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent-red);
+            transition: gap 0.3s ease;
+        }
+
+        .batch-card:hover .card-arrow {
+            gap: 10px;
+        }
+
+        .card-arrow svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Color accents per batch */
+        .batch-card[data-batch="1"] .card-icon {
+            background: rgba(227, 24, 55, 0.15);
+        }
+
+        .batch-card[data-batch="2"] .card-icon {
+            background: rgba(255, 107, 50, 0.15);
+        }
+
+        .batch-card[data-batch="3"] .card-icon {
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        .batch-card[data-batch="4"] .card-icon {
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        .batch-card[data-batch="5"] .card-icon {
+            background: rgba(255, 184, 0, 0.15);
+        }
+
+        .batch-card[data-batch="6a"] .card-icon {
+            background: rgba(139, 92, 246, 0.15);
+        }
+
+        .batch-card[data-batch="6b"] .card-icon {
+            background: rgba(236, 72, 153, 0.15);
+        }
+
+        .batch-card[data-batch="6c"] .card-icon {
+            background: rgba(6, 182, 212, 0.15);
+        }
+
+        .batch-card[data-batch="7"] .card-icon {
+            background: rgba(99, 102, 241, 0.15);
+        }
+
+        .batch-card[data-batch="1"] {
+            --card-accent: #E31837;
+        }
+
+        .batch-card[data-batch="2"] {
+            --card-accent: #FF6B32;
+        }
+
+        .batch-card[data-batch="3"] {
+            --card-accent: #3B82F6;
+        }
+
+        .batch-card[data-batch="4"] {
+            --card-accent: #10B981;
+        }
+
+        .batch-card[data-batch="5"] {
+            --card-accent: #FFB800;
+        }
+
+        .batch-card[data-batch="6a"] {
+            --card-accent: #8B5CF6;
+        }
+
+        .batch-card[data-batch="6b"] {
+            --card-accent: #EC4899;
+        }
+
+        .batch-card[data-batch="6c"] {
+            --card-accent: #06B6D4;
+        }
+
+        .batch-card[data-batch="7"] {
+            --card-accent: #6366F1;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px 24px;
+            border-top: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 680px) {
+            .hero {
+                padding: 48px 20px 32px;
+            }
+
+            .batch-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-stats {
+                gap: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <!-- Hero -->
+        <header class="hero">
+            <div class="hero-badge">Prototype Hub</div>
+            <h1>xPOS Interactive<br>Prototypes</h1>
+            <p>Toàn bộ luồng giao diện xPOS — từ Onboarding đến Backoffice. Click vào từng batch để trải nghiệm
+                prototype tương tác.</p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-value">9</div>
+                    <div class="hero-stat-label">Prototypes</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">25+</div>
+                    <div class="hero-stat-label">Screens</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">2</div>
+                    <div class="hero-stat-label">Themes</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Grid -->
+        <main class="grid-container">
+
+            <!-- Mobile Prototypes -->
+            <div class="section-label">📱 Mobile App — Onboarding</div>
+            <div class="batch-grid">
+
+                <a href="batch-1-onboarding.html" class="batch-card" data-batch="1">
+                    <div class="card-header">
+                        <div class="card-icon">🔐</div>
+                        <span class="card-batch-num">Batch 1</span>
+                    </div>
+                    <div class="card-title">Onboarding — Login & OTP</div>
+                    <div class="card-desc">Login, nhập SĐT, xác thực OTP, tạo mật khẩu mới</div>
+                    <div class="card-screens">
+                        <span class="screen-tag">SCR-001</span>
+                        <span class="screen-tag">SCR-002</span>
+                        <span class="screen-tag">SCR-003</span>
+                        <span class="screen-tag">SCR-004</span>
+                    </div>
+                    <div class="card-arrow">
+                        Mở prototype
+                        <svg>
+                            <line x1="4" y1="12" x2="20" y2="12" />
+                            <polyline points="14 6 20 12 14 18" />
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="batch-2-onboarding.html" class="batch-card" data-batch="2">
+                    <div class="card-header">
+                        <div class="card-icon">🏪</div>
+                        <span class="card-batch-num">Batch 2</span>
+                    </div>
+                    <div class="card-title">Onboarding — Thiết lập cửa hàng</div>
+                    <div class="card-desc">Thiết lập cửa hàng, quên mật khẩu, đặt mật khẩu mới</div>
+                    <div class="card-screens">
+                        <span class="screen-tag">SCR-005</span>
+                        <span class="screen-tag">SCR-006</span>
+                        <span class="screen-tag">SCR-007</span>
+                    </div>
+                    <div class="card-arrow">
+                        Mở prototype
+                        <svg>
+                            <line x1="4" y1="12" x2="20" y2="12" />
+                            <polyline points="14 6 20 12 14 18" />
+                        </svg>
+                    </div>
+                </a>
+
+            </div>
+
+            <!-- Core Navigation -->
+            <div class="section-label">🧭 Mobile App — Core</div>
+            <div class="batch-grid">
+
+                <a href="batch-3-core-nav.html" class="batch-card" data-batch="3">
+                    <div class="card-header">
+                        <div class="card-icon">🏠</div>
+                        <span class="card-batch-num">Batch 3</span>
+                    </div>
+                    <div class="card-title">Core Navigation — Dashboard</div>
+                    <div class="card-desc">Trang chính (Dashboard) và Trung tâm thông báo</div>
+                    <div class="card-screens">
+                        <span class="screen-tag">SCR-008</span>
+                        <span class="screen-tag">SCR-NAV</span>
+                    </div>
+                    <div class="card-arrow">
+                        Mở prototype
+                        <svg>
+                            <line x1="4" y1="12" x2="20" y2="12" />
+                            <polyline points="14 6 20 12 14 18" />
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="batch-4-product-mgmt.html" class="batch-card" data-batch="4">
+                    <div class="card-header">
+                        <div class="card-icon">📦</div>
+                        <span class="card-batch-num">Batch 4</span>
+                    </div>
+                    <div class="card-title">Quản lý hàng hoá</div>
+                    <div class="card-desc">Danh sách hàng hoá và Form thêm/sửa hàng hoá</div>
+                    <div class="card-screens">
+                        <span class="screen-tag">SCR-009</span>
+                        <span class="screen-tag">SCR-009a</span>
+                    </div>
+                    <div class="card-arrow">
+                        Mở prototype
+                        <svg>
+                            <line x1="4" y1="12" x2="20" y2="12" />
+                            <polyline points="14 6 20 12 14 18" />
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="batch-5-sales-payment.html" class="batch-card" data-batch="5">
+                    <div class="card-header">
+                        <div class="card-icon">💳</div>
+                        <span class="card-batch-num">Batch 5</span>
+                    </div>
+                    <div class="card-title">Bán hàng & Thanh toán</div>
+                    <div class="card-desc">Luồng bán hàng và thanh toán hoàn chỉnh</div>
+                    <div class="card-screens">
+                        <span class="screen-tag">SCR-010</span>
+                        <span class="screen-tag">SCR-011</span>
+                        <span class="screen-tag">SCR-012</span>
+                        <span class="screen-tag">SCR-013</span>
+                        <span class="screen-tag">SCR-014</span>
+                    </div>
+                    <div class="card-arrow">
+                        Mở prototype
+                        <svg>
+                            <line x1="4" y1="12" x2="20" y2="12" />
+                            <polyline points="14 6 20 12 14 18" />
+                        </svg>
+                    </div>
+                </a>
+
+            </div>
+
+            <!-- System & Settings -->
+            <div class="section-label">⚙️ Mobile App — System & Settings</div>
+            <div class="batch-grid">
+
+                <a href="batch-6a-system.html" class="batch-card" data-batch="6a">
+                    <div class="card-header">
+                        <div class="card-icon">🔧</div>
+                        <span class="card-batch-num">Batch 6A</span>
+                    </div>
+                    <div class="card-title">Hệ thống</div>
+                    <div class="card-desc">Cấu hình VNPAY QR, Offline, Sync</div>
+                    <div class="card-screens">
+                        <span class="screen-tag">SCR-015</span>
+                        <span class="screen-tag">SCR-016</span>
+                        <span class="screen-tag">SCR-017</span>
+                    </div>
+                    <div class="card-arrow">
+                        Mở prototype
+                        <svg>
+                            <line x1="4" y1="12" x2="20" y2="12" />
+                            <polyline points="14 6 20 12 14 18" />
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="batch-6b-reports.html" class="batch-card" data-batch="6b">
+                    <div class="card-header">
+                        <div class="card-icon">📊</div>
+                        <span class="card-batch-num">Batch 6B</span>
+                    </div>
+                    <div class="card-title">Báo cáo & Đơn hàng</div>
+                    <div class="card-desc">Báo cáo doanh thu, danh sách đơn hàng, chi tiết đơn</div>
+                    <div class="card-screens">
+                        <span class="screen-tag">SCR-018</span>
+                        <span class="screen-tag">SCR-019</span>
+                        <span class="screen-tag">SCR-020</span>
+                    </div>
+                    <div class="card-arrow">
+                        Mở prototype
+                        <svg>
+                            <line x1="4" y1="12" x2="20" y2="12" />
+                            <polyline points="14 6 20 12 14 18" />
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="batch-6c-settings.html" class="batch-card" data-batch="6c">
+                    <div class="card-header">
+                        <div class="card-icon">⚙️</div>
+                        <span class="card-batch-num">Batch 6C</span>
+                    </div>
+                    <div class="card-title">Cài đặt</div>
+                    <div class="card-desc">Đổi mật khẩu, cửa hàng, cài đặt hub, pháp lý</div>
+                    <div class="card-screens">
+                        <span class="screen-tag">SCR-022</span>
+                        <span class="screen-tag">SCR-023</span>
+                        <span class="screen-tag">SCR-024</span>
+                        <span class="screen-tag">SCR-025</span>
+                    </div>
+                    <div class="card-arrow">
+                        Mở prototype
+                        <svg>
+                            <line x1="4" y1="12" x2="20" y2="12" />
+                            <polyline points="14 6 20 12 14 18" />
+                        </svg>
+                    </div>
+                </a>
+
+            </div>
+
+            <!-- Desktop -->
+            <div class="section-label">🖥️ Desktop — Backoffice</div>
+            <div class="batch-grid">
+
+                <a href="batch-7-backoffice.html" class="batch-card" data-batch="7">
+                    <div class="card-header">
+                        <div class="card-icon">🖥️</div>
+                        <span class="card-batch-num">Batch 7</span>
+                    </div>
+                    <div class="card-title">Backoffice Desktop</div>
+                    <div class="card-desc">Quản trị hệ thống xPOS trên Desktop — quản lý cửa hàng, nhân viên, báo cáo
+                        tổng quan</div>
+                    <div class="card-screens">
+                        <span class="screen-tag">SCR-BO-001</span>
+                        <span class="screen-tag">…</span>
+                        <span class="screen-tag">SCR-BO-007</span>
+                    </div>
+                    <div class="card-arrow">
+                        Mở prototype
+                        <svg>
+                            <line x1="4" y1="12" x2="20" y2="12" />
+                            <polyline points="14 6 20 12 14 18" />
+                        </svg>
+                    </div>
+                </a>
+
+            </div>
+
+        </main>
+
+        <footer class="footer">
+            <p>xPOS Design System &middot; VNPAY &middot; <a href="../">← Viewer Home</a></p>
+        </footer>
+    </div>
+</body>
+
+</html>
