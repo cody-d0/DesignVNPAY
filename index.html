@@ -3223,10 +3223,32 @@
         if (!isDiagram && !lang) { isDiagram = _isAsciiDiagram(text); }
         if (isDiagram) {
           var esc = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+          // Normalize Unicode box-drawing chars → ASCII for markdeep SVG engine.
+          // markdeep only understands ASCII: + (corners/junctions), - (horizontal), | (vertical)
+          // Unicode ┌┐└┘├┤┬┴┼ etc are unknown to its path-finding algorithm.
+          function normalizeBoxDrawing(s) {
+            return s
+              // Horizontal lines: ─ ━ ═ → -
+              .replace(/[─━]/g, '-')
+              .replace(/═/g, '=')
+              // Vertical lines: │ ┃ ║ → |
+              .replace(/[│┃]/g, '|')
+              .replace(/║/g, '|')
+              // All corners and junctions → +
+              // Corners: ┌┍┎┏ ┐┑┒┓ └┕┖┗ ┘┙┚┛
+              // T-junctions: ├┝┞┟┠┡┢┣ ┤┥┦┧┨┩┪┫ ┬┭┮┯┰┱┲┳ ┴┵┶┷┸┹┺┻
+              // Cross: ┼┽┾┿╀╁╂╃╄╅╆╇╈╉╊╋
+              // Double corners: ╔╗╚╝ ╠╣╦╩╬
+              // Rounded: ╭╮╯╰
+              .replace(/[┌┍┎┏┐┑┒┓└┕┖┗┘┙┚┛├┝┞┟┠┡┢┣┤┥┦┧┨┩┪┫┬┭┮┯┰┱┲┳┴┵┶┷┸┹┺┻┼┽┾┿╀╁╂╃╄╅╆╇╈╉╊╋╔╗╚╝╠╣╦╩╬╭╮╯╰]/g, '+');
+          }
+
           // Tier 3: SVG rendering via diagramToSVG (from markdeep-diagram.js)
           if (typeof window.diagramToSVG === 'function') {
             try {
-              var svgOutput = window.diagramToSVG(text, { spaces: 0 });
+              var normalizedText = normalizeBoxDrawing(text);
+              var svgOutput = window.diagramToSVG(normalizedText, { spaces: 0 });
               return '<div class="ascii-diagram-container">'
                 + '<div class="ascii-diagram-badge">diagram</div>'
                 + '<div class="ascii-diagram-svg">' + svgOutput + '</div>'
