@@ -3430,6 +3430,65 @@
       renderMarkdownContent(text, 'Pasted content', {});
     }
 
+    // Pre-process markdown: auto-wrap bare ASCII diagram blocks in code fences
+    // so that marked's renderer.code hook (diagram detection) fires correctly.
+    // Without this, box-drawing chars render as proportional-font paragraphs.
+    function autoFenceAsciiBlocks(text) {
+      var lines = text.split('\n');
+      var result = [];
+      var buf = [];
+      var inFence = false;
+      var boxRe = /[─│┌┐└┘├┤┬┴┼═║╔╗╚╝╠╣╦╩╬┃┏┓┗┛▼▲►◄▶◀↑↓←→]/;
+      var asciiBoxRe = /[+][\-=]{2,}[+]/;
+      var treeRe = /[├└│]──/;
+
+      function isDiagramLine(l) {
+        return boxRe.test(l) || asciiBoxRe.test(l) || treeRe.test(l);
+      }
+
+      function flushBuf() {
+        if (buf.length === 0) return;
+        // Count diagram-like lines
+        var dc = 0;
+        for (var j = 0; j < buf.length; j++) {
+          if (isDiagramLine(buf[j])) dc++;
+        }
+        // Wrap if >=2 diagram lines and >=30% of buffer
+        if (dc >= 2 && dc / buf.length >= 0.3) {
+          result.push('```');
+          for (var j = 0; j < buf.length; j++) result.push(buf[j]);
+          result.push('```');
+        } else {
+          for (var j = 0; j < buf.length; j++) result.push(buf[j]);
+        }
+        buf = [];
+      }
+
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        // Track existing code fences — don't touch content inside them
+        if (/^\s*```/.test(line)) {
+          flushBuf();
+          inFence = !inFence;
+          result.push(line);
+          continue;
+        }
+        if (inFence) { result.push(line); continue; }
+        // Accumulate diagram-like lines (including content lines between borders)
+        if (isDiagramLine(line)) {
+          buf.push(line);
+        } else if (buf.length > 0 && (line.trim() === '' || /^\s*[|│]/.test(line))) {
+          // Allow empty lines and pipe-prefixed lines within a diagram block
+          buf.push(line);
+        } else {
+          flushBuf();
+          result.push(line);
+        }
+      }
+      flushBuf();
+      return result.join('\n');
+    }
+
     async function renderMarkdownContent(text, fileName, options) {
       options = options || {};
       const fileMap = options.fileMap || null, baseDir = options.baseDir || '';
@@ -3447,7 +3506,9 @@
           }
           return path;
         }
-        const md = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, p) => '![' + alt + '](' + resolveImg(p) + ')');
+        var md = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, p) => '![' + alt + '](' + resolveImg(p) + ')');
+        // Pre-process: auto-fence bare ASCII diagram blocks
+        md = autoFenceAsciiBlocks(md);
         let html = marked.parse(md);
         html = addHeadingIds(html);
         html = html.replace(/<img([^>]*)\ssrc=["']([^"']+)["']([^>]*)>/gi, (m, b, s, a) => '<img' + b + ' src="' + resolveImg(s) + '"' + a + '>');
