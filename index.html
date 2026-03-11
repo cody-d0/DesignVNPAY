@@ -3264,6 +3264,37 @@
         });
       }
 
+      // Paste button — clipboard API
+      const pasteBtn = document.getElementById('paste-btn');
+      if (pasteBtn) {
+        pasteBtn.addEventListener('click', async function () {
+          try {
+            const text = await navigator.clipboard.readText();
+            if (text && text.trim()) handlePastedText(text);
+          } catch (err) {
+            // Clipboard API denied — show hint
+            console.warn('Clipboard read denied:', err);
+            pasteBtn.textContent = '⌘V to paste';
+            setTimeout(() => { pasteBtn.textContent = '⌘V Paste'; }, 2000);
+          }
+        });
+      }
+
+      // Global paste (Cmd+V / Ctrl+V) — works when no input is focused
+      document.addEventListener('paste', function (e) {
+        // Don't intercept paste inside input/textarea elements
+        const tag = (e.target.tagName || '').toLowerCase();
+        if (tag === 'input' || tag === 'textarea' || e.target.isContentEditable) return;
+        e.preventDefault();
+        // Prefer plain text; fall back to HTML→text stripping
+        var text = e.clipboardData.getData('text/plain');
+        if (!text) {
+          var html = e.clipboardData.getData('text/html');
+          if (html) text = stripHtmlToText(html);
+        }
+        if (text && text.trim()) handlePastedText(text);
+      });
+
       // Back button
       document.addEventListener('click', e => { if (e.target.closest('.back-button')) { e.preventDefault(); showDropZone(); } });
 
@@ -3361,6 +3392,42 @@
       document.title = 'viewer.io.vn — File Preview';
       document.getElementById('drop-zone-view').style.display = 'block';
       document.getElementById('markdown-view').classList.remove('active');
+    }
+
+    // ── Paste support utilities ──
+
+    // Strip HTML tags to recover plain text — preserves box-drawing, line breaks
+    function stripHtmlToText(html) {
+      // Replace <br>, <br/>, <br /> with newlines
+      var text = html.replace(/<br\s*\/?>/gi, '\n');
+      // Replace block-level closing tags with newlines
+      text = text.replace(/<\/(p|div|li|tr|h[1-6])>/gi, '\n');
+      // Remove all remaining HTML tags
+      text = text.replace(/<[^>]+>/g, '');
+      // Decode HTML entities
+      text = text.replace(/&amp;/g, '&')
+                 .replace(/&lt;/g, '<')
+                 .replace(/&gt;/g, '>')
+                 .replace(/&quot;/g, '"')
+                 .replace(/&#39;/g, "'")
+                 .replace(/&nbsp;/g, ' ');
+      // Collapse excessive blank lines (>2 in a row) but keep structure
+      text = text.replace(/\n{3,}/g, '\n\n');
+      return text.trim();
+    }
+
+    // Handle pasted text — auto-detect type and render
+    function handlePastedText(text) {
+      // Try JSON
+      if (/^\s*[\[{]/.test(text)) {
+        try {
+          var data = JSON.parse(text);
+          renderJsonContent(data, 'Pasted JSON');
+          return;
+        } catch (e) { /* not JSON — continue */ }
+      }
+      // Default: render as markdown
+      renderMarkdownContent(text, 'Pasted content', {});
     }
 
     async function renderMarkdownContent(text, fileName, options) {
