@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UX Audit — Co-opBank · Danh bạ thụ hưởng</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-base: #0a0e1a;
+  --bg-surface: #111827;
+  --bg-card: #1a2235;
+  --bg-card-hover: #1f2a40;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent-gold: #f59e0b;
+  --accent-purple: #8b5cf6;
+  --accent-blue: #3b82f6;
+  --severity-critical: #ef4444;
+  --severity-major: #f97316;
+  --severity-minor: #eab308;
+  --severity-pass: #22c55e;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg-base);color:var(--text-primary);line-height:1.6}
+
+/* Layout */
+.container{max-width:1100px;margin:0 auto;padding:0 2rem}
+section{padding:4rem 0;opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+section.visible{opacity:1;transform:translateY(0)}
+
+/* Header */
+.hero{padding:5rem 0 3rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 50% 30%,rgba(139,92,246,.08) 0%,transparent 60%);pointer-events:none}
+.hero .overline{font-family:'IBM Plex Mono',monospace;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-purple);margin-bottom:1rem}
+.hero h1{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;line-height:1.15;margin-bottom:.75rem;background:linear-gradient(135deg,var(--text-primary) 30%,var(--accent-gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .subtitle{font-size:1.05rem;color:var(--text-secondary);max-width:580px;margin:0 auto 2rem}
+
+/* Stats Grid */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:2rem 0}
+.stat-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.25rem;text-align:center;transition:transform .25s,box-shadow .25s}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.stat-value{font-family:'IBM Plex Mono',monospace;font-size:2rem;font-weight:700;line-height:1.1}
+.stat-value.score{color:var(--accent-gold)}
+.stat-value.screens{color:var(--accent-blue)}
+.stat-value.checks{color:var(--accent-purple)}
+.stat-value.findings{color:var(--severity-critical)}
+.stat-label{font-size:.75rem;color:var(--text-muted);margin-top:.25rem;text-transform:uppercase;letter-spacing:.06em}
+
+/* Section Headers */
+.section-header{margin-bottom:2rem}
+.section-header .section-num{font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--accent-gold);letter-spacing:.1em}
+.section-header h2{font-family:'Playfair Display',serif;font-size:1.8rem;margin-top:.25rem}
+.section-header p{color:var(--text-secondary);margin-top:.5rem;max-width:600px}
+
+/* Methodology */
+.method-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.method-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.5rem;transition:transform .25s}
+.method-card:hover{transform:translateY(-2px)}
+.method-icon{font-size:1.5rem;margin-bottom:.5rem}
+.method-card h3{font-size:1rem;margin-bottom:.35rem}
+.method-card p{font-size:.85rem;color:var(--text-secondary)}
+
+/* Finding Cards */
+.finding-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;margin-bottom:1.5rem;transition:transform .25s,box-shadow .25s}
+.finding-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.35)}
+.finding-accent{height:4px}
+.finding-accent.critical{background:linear-gradient(90deg,var(--severity-critical),#dc2626)}
+.finding-accent.major{background:linear-gradient(90deg,var(--severity-major),#ea580c)}
+.finding-accent.minor{background:linear-gradient(90deg,var(--severity-minor),#ca8a04)}
+.card-layout{display:grid;grid-template-columns:2fr 3fr;gap:0}
+.card-visual{padding:1.5rem;display:flex;align-items:flex-start;justify-content:center;background:rgba(0,0,0,.15)}
+.phone-frame{position:relative;width:180px;border:3px solid rgba(255,255,255,.12);border-radius:24px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.phone-frame img{width:100%;display:block}
+.shot-overlay{position:absolute;bottom:0;left:0;right:0;padding:6px;background:linear-gradient(transparent,rgba(0,0,0,.7));font-size:.65rem;text-align:center;color:rgba(255,255,255,.8)}
+.card-info{padding:1.5rem 1.75rem}
+.card-top{display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem}
+.card-id{font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:var(--text-muted)}
+.badge{font-size:.65rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em}
+.badge.critical{background:rgba(239,68,68,.15);color:#fca5a5}
+.badge.major{background:rgba(249,115,22,.15);color:#fdba74}
+.badge.minor{background:rgba(234,179,8,.15);color:#fde047}
+.card-info h3{font-size:1.05rem;margin-bottom:.75rem;line-height:1.35}
+.finding-section{margin-bottom:.75rem}
+.finding-section h4{font-size:.75rem;color:var(--accent-gold);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem}
+.finding-section p,.finding-section li{font-size:.85rem;color:var(--text-secondary);line-height:1.5}
+.finding-section ul{padding-left:1.1rem;list-style:disc}
+.finding-section li{margin-bottom:.2rem}
+.proposed-box{background:rgba(34,197,94,.06);border-left:3px solid var(--severity-pass);padding:.75rem 1rem;border-radius:0 8px 8px 0;margin-top:.35rem}
+.proposed-box h5{font-size:.8rem;color:var(--severity-pass);margin-bottom:.25rem}
+.proposed-box ul{padding-left:1rem;list-style:disc}
+.proposed-box li{font-size:.82rem;color:var(--text-secondary)}
+.finding-tags{display:flex;gap:.4rem;margin:.75rem 0 .5rem;flex-wrap:wrap}
+.card-tag{font-size:.65rem;background:rgba(59,130,246,.12);color:var(--accent-blue);padding:2px 8px;border-radius:12px}
+details{margin-top:.5rem}
+details summary{font-size:.75rem;color:var(--accent-purple);cursor:pointer;transition:color .2s}
+details summary:hover{color:var(--text-primary)}
+.detail-content{font-size:.78rem;color:var(--text-muted);padding:.5rem 0;line-height:1.6}
+
+/* Scorecard */
+.scorecard-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.score-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.25rem;text-align:center}
+.score-ring{margin:0 auto .75rem}
+.score-ring circle{stroke-linecap:round}
+.score-ring .bg{stroke:rgba(255,255,255,.06);fill:none}
+.score-ring .fg{fill:none;transition:stroke-dashoffset 1.5s ease}
+.score-label{font-family:'IBM Plex Mono',monospace;font-size:.9rem;font-weight:600}
+.score-title{font-size:.8rem;color:var(--text-secondary);margin-top:.25rem}
+.score-detail{font-size:.7rem;color:var(--text-muted)}
+
+/* Action Plan */
+.sprint-table{width:100%;border-collapse:separate;border-spacing:0;background:var(--bg-card);border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
+.sprint-table th{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);padding:.75rem 1rem;text-align:left;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(255,255,255,.06)}
+.sprint-table td{padding:.75rem 1rem;font-size:.85rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.03)}
+.sprint-table tr:last-child td{border-bottom:none}
+.sprint-badge{display:inline-block;font-size:.6rem;font-weight:600;padding:2px 8px;border-radius:10px}
+
+/* Nav */
+.deck-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,14,26,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06);padding:0 2rem;height:56px;display:flex;align-items:center;gap:1.5rem}
+.deck-nav .logo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--accent-gold);letter-spacing:.5px}
+.deck-nav a{color:var(--text-secondary);text-decoration:none;font-size:.8rem;font-weight:500;transition:color .2s}
+.deck-nav a:hover{color:var(--text-primary)}
+
+/* Footer */
+footer{padding:2rem 0;text-align:center;border-top:1px solid rgba(255,255,255,.06)}
+footer p{font-size:.7rem;color:var(--text-muted)}
+
+/* Responsive */
+@media(max-width:768px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .method-grid{grid-template-columns:1fr}
+  .card-layout{grid-template-columns:1fr}
+  .scorecard-grid{grid-template-columns:repeat(2,1fr)}
+  .hero h1{font-size:2rem}
+  .phone-frame{width:140px}
+}
+@media(prefers-reduced-motion:reduce){
+  section{transition-duration:.01ms!important}
+  .score-ring .fg{transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="deck-nav">
+  <span class="logo">UX Audit</span>
+  <a href="#exec">Tổng quan</a>
+  <a href="#method">Phương pháp</a>
+  <a href="#findings">Phát hiện</a>
+  <a href="#scorecard">Scorecard</a>
+  <a href="#action">Hành động</a>
+</nav>
+
+<!-- ═══ 1. EXECUTIVE SUMMARY ═══ -->
+<section class="hero visible" id="exec" style="padding-top:6rem">
+<div class="container">
+  <p class="overline">UX Audit Report</p>
+  <h1>Danh bạ thụ hưởng</h1>
+  <p class="subtitle">Đánh giá trải nghiệm người dùng cho chức năng quản lý danh bạ thụ hưởng — Co-opBank Mobile Banking</p>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-value score" data-target="83">0</div><div class="stat-label">UX Score</div></div>
+    <div class="stat-card"><div class="stat-value screens" data-target="4">0</div><div class="stat-label">Màn hình</div></div>
+    <div class="stat-card"><div class="stat-value checks" data-target="53">0</div><div class="stat-label">Checks</div></div>
+    <div class="stat-card"><div class="stat-value findings" data-target="8">0</div><div class="stat-label">Findings</div></div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ 2. METHODOLOGY ═══ -->
+<section id="method">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2>Phương pháp đánh giá</h2>
+    <p>Kết hợp 4 phương pháp phân tích song song cho độ phủ tối đa</p>
+  </div>
+  <div class="method-grid">
+    <div class="method-card"><div class="method-icon">🔍</div><h3>Heuristic Evaluation</h3><p>Đánh giá theo 10 nguyên tắc Nielsen Norman Group, cross-reference 99 quy tắc UX Guidelines từ Design Data Layer.</p></div>
+    <div class="method-card"><div class="method-icon">⚙️</div><h3>Component Spec Analysis</h3><p>So sánh thiết kế với component specs DDL: text-input, empty-state, app-header — kiểm tra state coverage và token compliance.</p></div>
+    <div class="method-card"><div class="method-icon">👁️</div><h3>Vision Inspection</h3><p>Agent vision phân tích 15 ảnh wireframe trực tiếp — phát hiện text truncation, overlap, layout issues, icon-only buttons.</p></div>
+    <div class="method-card"><div class="method-icon">📐</div><h3>UX Law Cross-Reference</h3><p>Auto-trigger 60 UX Laws (Fitts's, Hick's, Peak-End Rule...) theo context cụ thể của từng màn hình.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ 3. DETAILED FINDINGS ═══ -->
+<section id="findings">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2>Chi tiết phát hiện</h2>
+    <p>8 vấn đề được xác định, sắp xếp theo mức độ ảnh hưởng</p>
+  </div>
+
+  <!-- UXP-001 Critical -->
+  <div class="finding-card">
+    <div class="finding-accent critical"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/contact.png" alt="Màn hình danh sách với toast thông báo không có nút đóng">
+          <div class="shot-overlay">⚠️ Toast không dismiss được</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-001</span><span class="badge critical">Critical</span></div>
+        <h3>Toast hướng dẫn xóa thiếu khả năng dismiss và có lỗi chính tả</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Toast "Chọn danh bạ mà Quý khách muốn xóa" hiện cố định, không có nút đóng (×) hay swipe-to-dismiss. Ngoài ra có lỗi chính tả "Qúy" (dấu sắc sai vị trí).</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul>
+            <li>Toast che khuất thanh tìm kiếm, gây khó thao tác</li>
+            <li>Lỗi chính tả giảm sự tin cậy trong ứng dụng ngân hàng</li>
+          </ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>User Control &amp; Freedom</strong> (Nielsen #3) — Người dùng không có cách tắt thông báo, mất kiểm soát giao diện.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Cải thiện toast component</h5>
+            <ul>
+              <li>Thêm nút đóng (×) bên phải toast</li>
+              <li>Auto-dismiss sau 5 giây</li>
+              <li>Sửa lỗi chính tả "Qúy" → "Quý"</li>
+            </ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Danh sách</span><span class="card-tag">Toast</span><span class="card-tag">Chính tả</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-10 (Dismissible Notifications), UXG-78 (Content Quality)<br>UX Law: Fitts's Law — dismiss target cần tồn tại và đủ lớn</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-002 Critical -->
+  <div class="finding-card">
+    <div class="finding-accent critical"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/contact-details.png" alt="Màn hình chi tiết danh bạ với text bị chồng lấp">
+          <div class="shot-overlay">⚠️ Text bị chồng lấp</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-002</span><span class="badge critical">Critical</span></div>
+        <h3>Label và giá trị bị chồng text trên màn hình chi tiết danh bạ</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Label "Loại chuyển tiền" bị cắt ngắn, chồng lên với giá trị "Chuyển tiền nhanh 24/7 qua tài khoản" trên cùng hàng, khiến nội dung không đọc được.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul>
+            <li>Không xác minh được loại giao dịch → rủi ro chuyển nhầm</li>
+            <li>Giảm tín nhiệm ứng dụng ngân hàng khi thông tin hiển thị lỗi</li>
+          </ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Aesthetic &amp; Minimalist Design</strong> (Nielsen #8) — Text chồng lấp phá vỡ tính dễ đọc và thẩm mỹ giao diện.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Chuyển layout thông tin</h5>
+            <ul>
+              <li>Sử dụng layout 2 dòng: label trên, giá trị dưới (stacked)</li>
+              <li>Full text "Loại chuyển tiền" — không cắt ngắn</li>
+            </ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Chi tiết</span><span class="card-tag">Layout</span><span class="card-tag">Text Readability</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-165 (Text Legibility)<br>UX Law: Peak-End Rule — chi tiết là điểm cuối trước giao dịch, ấn tượng xấu ảnh hưởng quyết định</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-003 Major -->
+  <div class="finding-card">
+    <div class="finding-accent major"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/add-new-3.png" alt="Form thêm mới với lỗi validation thiếu viền đỏ">
+          <div class="shot-overlay">⚠️ Error state chưa đầy đủ</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-003</span><span class="badge major">Major</span></div>
+        <h3>Trạng thái lỗi validation chưa đầy đủ theo component spec</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Thông báo lỗi "Số tài khoản/Số thẻ không tồn tại" hiện chữ đỏ nhưng viền ô nhập liệu vẫn màu mặc định. Thiếu icon cảnh báo bên cạnh thông báo lỗi.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul>
+            <li>Người dùng có thể bỏ lỡ thông báo lỗi vì thiếu tín hiệu thị giác</li>
+            <li>Nhập liệu sai nhiều lần → tăng tải hệ thống call center</li>
+          </ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Error Prevention</strong> (Nielsen #5) — Phản hồi lỗi thiếu nổi bật khiến người dùng không nhận ra vấn đề.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Hoàn thiện error state</h5>
+            <ul>
+              <li>Viền ô nhập chuyển sang màu đỏ khi có lỗi</li>
+              <li>Thêm icon ⚠️ trước thông báo lỗi</li>
+              <li>Vô hiệu hóa nút "Thêm mới" khi form chưa hợp lệ</li>
+            </ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Form</span><span class="card-tag">Validation</span><span class="card-tag">Error State</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-243 (Error Feedback), COMP:text-input-1 errorBorderColor: {base.destructive}<br>UX Law: Doherty Threshold — phản hồi lỗi phải rõ ràng trong 400ms</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-004 Major -->
+  <div class="finding-card">
+    <div class="finding-accent major"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/search-3.png" alt="Màn hình tìm kiếm với empty state đơn giản">
+          <div class="shot-overlay">⚠️ Empty state thiếu hướng dẫn</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-004</span><span class="badge major">Major</span></div>
+        <h3>Empty state không tuân thủ component spec — thiếu icon và nút hành động</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Khi chưa có danh bạ nào, màn hình chỉ hiển thị 1 dòng text. Theo DDL component spec empty-state-1: cần icon 48px, tiêu đề, mô tả, và nút hành động tùy chọn.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul>
+            <li>Người dùng mới không biết phải làm gì → mất cơ hội chuyển đổi</li>
+            <li>Empty state nhạt nhẽo → trải nghiệm thiếu chuyên nghiệp</li>
+          </ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Help &amp; Documentation</strong> (Nielsen #10) — Empty state cần hướng dẫn rõ ràng cho bước tiếp theo.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Thiết kế empty state hoàn chỉnh</h5>
+            <ul>
+              <li>Thêm icon minh họa danh bạ (48×48 pixel)</li>
+              <li>Tiêu đề: "Chưa có danh bạ thụ hưởng"</li>
+              <li>Mô tả: "Thêm người thụ hưởng để chuyển tiền nhanh hơn"</li>
+              <li>Nút hành động: "Thêm mới" → chuyển đến form thêm</li>
+            </ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Tìm kiếm</span><span class="card-tag">Empty State</span><span class="card-tag">Onboarding</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: COMP:empty-state-1 requires icon (48px) + ctaLabel + description</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-005 Major -->
+  <div class="finding-card">
+    <div class="finding-accent major"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/contact-details-2.png" alt="Chi tiết danh bạ ở chế độ chỉnh sửa thiếu nút hủy">
+          <div class="shot-overlay">⚠️ Thiếu nút hủy chỉnh sửa</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-005</span><span class="badge major">Major</span></div>
+        <h3>Chế độ chỉnh sửa chi tiết danh bạ thiếu tùy chọn hủy</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Khi chỉnh sửa tên gợi nhớ, chỉ có 1 nút "Cập nhật". Không có nút "Hủy" hoặc xác nhận khi nhấn quay lại với thay đổi chưa lưu.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul>
+            <li>Lo lắng khi vô tình sửa nhầm — không có cách hoàn tác</li>
+            <li>Phải thoát và quay lại để hủy — tăng số bước thao tác</li>
+          </ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>User Control &amp; Freedom</strong> (Nielsen #3) — Cần cung cấp "lối thoát khẩn cấp" rõ ràng cho mọi hành động chỉnh sửa.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Thêm khả năng hủy chỉnh sửa</h5>
+            <ul>
+              <li>Thêm nút "Hủy" (viền outline) bên trái nút "Cập nhật"</li>
+              <li>Hiện hộp thoại xác nhận khi nhấn quay lại với thay đổi chưa lưu</li>
+            </ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Chi tiết</span><span class="card-tag">Edit Mode</span><span class="card-tag">Navigation</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-4 (Undo/Cancel Support)</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-006 Minor -->
+  <div class="finding-card">
+    <div class="finding-accent minor"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/contact-2.png" alt="Danh sách dài không có section header cố định">
+          <div class="shot-overlay">⚠️ Không có section cố định</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-006</span><span class="badge minor">Minor</span></div>
+        <h3>Danh sách dài thiếu section headers cố định khi cuộn</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Khi mở rộng tất cả các nhóm, danh sách dài hơn 1200 pixel. Không có tiêu đề nhóm cố định (sticky) khi cuộn xuống.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul><li>Mất phương hướng — không biết đang xem nhóm nào khi cuộn</li></ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Recognition Rather Than Recall</strong> (Nielsen #6) — Section context bị mất khi cuộn.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Sticky section headers</h5>
+            <ul><li>Tiêu đề nhóm cố định khi cuộn qua section đó</li><li>Mặc định thu gọn sections, chỉ mở khi người dùng chạm</li></ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Danh sách</span><span class="card-tag">Navigation</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-52 (Long List Orientation), Hick's Law</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-007 Minor -->
+  <div class="finding-card">
+    <div class="finding-accent minor"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/add-new-2.png" alt="Form với tên tự động điền viết hoa toàn bộ">
+          <div class="shot-overlay">⚠️ Tên viết hoa toàn bộ, thiếu label</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-007</span><span class="badge minor">Minor</span></div>
+        <h3>Tên chủ tài khoản tự động điền thiếu nhãn và không nhất quán kiểu chữ</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>"NGUYEN HOANG HIEU" hiện viết hoa toàn bộ không có nhãn giải thích. Bên dưới "Nguyen Hoang Hieu" có nhãn "Tên gợi nhớ" — 2 cách viết tên khác nhau gây nhầm lẫn.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul><li>Nhầm lẫn giữa tên chủ tài khoản và tên gợi nhớ</li></ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Consistency &amp; Standards</strong> (Nielsen #4) — Cùng loại dữ liệu phải thống nhất kiểu hiển thị.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Thống nhất hiển thị tên</h5>
+            <ul><li>Thêm label "Tên chủ tài khoản" phía trên tên tự động điền</li><li>Thêm ghi chú "(theo ngân hàng)" nếu cần giữ chữ hoa</li></ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Form</span><span class="card-tag">Typography</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-88 (Consistent Text Formatting)</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-008 Minor -->
+  <div class="finding-card">
+    <div class="finding-accent minor"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/contact-3.png" alt="Nút thêm mới lơ lửng chồng lên thanh điều hướng">
+          <div class="shot-overlay">⚠️ Nút thêm chồng thanh điều hướng</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-008</span><span class="badge minor">Minor</span></div>
+        <h3>Nút hành động nổi chồng lên thanh điều hướng dưới cùng</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Nút hành động nổi (+) ở góc phải dưới nằm sát thanh điều hướng — 2 vùng chạm chồng lấp nhau.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul><li>Có thể chạm nhầm giữa nút thêm và thanh điều hướng</li></ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Error Prevention</strong> (Nielsen #5) — Khoảng cách vùng chạm cần tối thiểu 8px để tránh chạm nhầm.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Tăng khoảng cách</h5>
+            <ul><li>Nâng nút hành động nổi lên 16 pixel phía trên thanh điều hướng</li></ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Danh sách</span><span class="card-tag">Touch Target</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-32 (Touch Target Spacing), Fitts's Law</div></details>
+      </div>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- ═══ 4. HEURISTIC SCORECARD ═══ -->
+<section id="scorecard">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2>Heuristic Scorecard</h2>
+    <p>Điểm số theo từng màn hình — được xác minh bởi công cụ tự động</p>
+  </div>
+  <div class="scorecard-grid">
+    <div class="score-card">
+      <svg class="score-ring" width="84" height="84" viewBox="0 0 84 84">
+        <circle class="bg" cx="42" cy="42" r="38" stroke-width="5"/>
+        <circle class="fg" cx="42" cy="42" r="38" stroke-width="5" stroke="var(--accent-gold)" stroke-dasharray="239" stroke-dashoffset="239" data-score="81" transform="rotate(-90 42 42)"/>
+      </svg>
+      <div class="score-label" style="color:var(--accent-gold)">81%</div>
+      <div class="score-title">Danh sách</div>
+      <div class="score-detail">13 pass · 3 gap</div>
+    </div>
+    <div class="score-card">
+      <svg class="score-ring" width="84" height="84" viewBox="0 0 84 84">
+        <circle class="bg" cx="42" cy="42" r="38" stroke-width="5"/>
+        <circle class="fg" cx="42" cy="42" r="38" stroke-width="5" stroke="var(--severity-pass)" stroke-dasharray="239" stroke-dashoffset="239" data-score="92" transform="rotate(-90 42 42)"/>
+      </svg>
+      <div class="score-label" style="color:var(--severity-pass)">92%</div>
+      <div class="score-title">Tìm kiếm</div>
+      <div class="score-detail">11 pass · 1 gap</div>
+    </div>
+    <div class="score-card">
+      <svg class="score-ring" width="84" height="84" viewBox="0 0 84 84">
+        <circle class="bg" cx="42" cy="42" r="38" stroke-width="5"/>
+        <circle class="fg" cx="42" cy="42" r="38" stroke-width="5" stroke="var(--accent-gold)" stroke-dasharray="239" stroke-dashoffset="239" data-score="83" transform="rotate(-90 42 42)"/>
+      </svg>
+      <div class="score-label" style="color:var(--accent-gold)">83%</div>
+      <div class="score-title">Chi tiết</div>
+      <div class="score-detail">10 pass · 2 gap</div>
+    </div>
+    <div class="score-card">
+      <svg class="score-ring" width="84" height="84" viewBox="0 0 84 84">
+        <circle class="bg" cx="42" cy="42" r="38" stroke-width="5"/>
+        <circle class="fg" cx="42" cy="42" r="38" stroke-width="5" stroke="var(--accent-gold)" stroke-dasharray="239" stroke-dashoffset="239" data-score="77" transform="rotate(-90 42 42)"/>
+      </svg>
+      <div class="score-label" style="color:var(--accent-gold)">77%</div>
+      <div class="score-title">Form thêm mới</div>
+      <div class="score-detail">10 pass · 2 gap · 1 unv.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ 5. ACTION PLAN ═══ -->
+<section id="action">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2>Kế hoạch hành động</h2>
+    <p>Lộ trình triển khai theo mức độ ưu tiên — Sprint 1 xử lý Critical &amp; Major</p>
+  </div>
+  <table class="sprint-table">
+    <thead>
+      <tr><th>Sprint</th><th>ID</th><th>Vấn đề</th><th>Mức độ</th><th>Effort</th></tr>
+    </thead>
+    <tbody>
+      <tr><td rowspan="2"><strong>Sprint 1</strong><br><span style="font-size:.7rem;color:var(--text-muted)">Tuần 1-2</span></td>
+        <td>UXP-001</td><td>Toast không dismiss được + lỗi chính tả</td>
+        <td><span class="sprint-badge" style="background:rgba(239,68,68,.15);color:#fca5a5">Critical</span></td><td>S</td></tr>
+      <tr><td>UXP-002</td><td>Text chồng lấp trên chi tiết danh bạ</td>
+        <td><span class="sprint-badge" style="background:rgba(239,68,68,.15);color:#fca5a5">Critical</span></td><td>M</td></tr>
+      <tr><td rowspan="3"><strong>Sprint 2</strong><br><span style="font-size:.7rem;color:var(--text-muted)">Tuần 3-4</span></td>
+        <td>UXP-003</td><td>Error state form chưa đầy đủ</td>
+        <td><span class="sprint-badge" style="background:rgba(249,115,22,.15);color:#fdba74">Major</span></td><td>S</td></tr>
+      <tr><td>UXP-004</td><td>Empty state thiếu icon và nút hành động</td>
+        <td><span class="sprint-badge" style="background:rgba(249,115,22,.15);color:#fdba74">Major</span></td><td>M</td></tr>
+      <tr><td>UXP-005</td><td>Thiếu nút hủy khi chỉnh sửa</td>
+        <td><span class="sprint-badge" style="background:rgba(249,115,22,.15);color:#fdba74">Major</span></td><td>S</td></tr>
+      <tr><td rowspan="3"><strong>Backlog</strong><br><span style="font-size:.7rem;color:var(--text-muted)">Khi có bandwidth</span></td>
+        <td>UXP-006</td><td>Sticky section headers cho danh sách dài</td>
+        <td><span class="sprint-badge" style="background:rgba(234,179,8,.15);color:#fde047">Minor</span></td><td>M</td></tr>
+      <tr><td>UXP-007</td><td>Tên tự động điền thiếu nhãn</td>
+        <td><span class="sprint-badge" style="background:rgba(234,179,8,.15);color:#fde047">Minor</span></td><td>S</td></tr>
+      <tr><td>UXP-008</td><td>Nút hành động nổi chồng thanh điều hướng</td>
+        <td><span class="sprint-badge" style="background:rgba(234,179,8,.15);color:#fde047">Minor</span></td><td>S</td></tr>
+    </tbody>
+  </table>
+</div>
+</section>
+
+<footer>
+<div class="container">
+  <p>Co-opBank KHCN · Danh bạ thụ hưởng · Powered by Design Data Layer</p>
+</div>
+</footer>
+
+<script>
+// IntersectionObserver for scroll-reveal
+const io=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}})},{threshold:.12});
+document.querySelectorAll('section:not(.visible)').forEach(s=>io.observe(s));
+
+// Counter animation
+function animateCounter(el,target,duration=1200){
+  const start=performance.now();
+  const isPercent=el.closest('.stat-card')?.querySelector('.stat-label')?.textContent==='UX Score';
+  function update(now){
+    const p=Math.min((now-start)/duration,1);
+    const ease=1-Math.pow(1-p,3);
+    const val=Math.round(ease*target);
+    el.textContent=isPercent?val+'%':val;
+    if(p<1)requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+const counterIO=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){const t=parseInt(e.target.dataset.target);animateCounter(e.target,t);counterIO.unobserve(e.target)}})},{threshold:.5});
+document.querySelectorAll('.stat-value[data-target]').forEach(el=>counterIO.observe(el));
+
+// Score ring animation
+const ringIO=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){const score=parseInt(e.target.dataset.score);const c=239;e.target.style.strokeDashoffset=c*(1-score/100);ringIO.unobserve(e.target)}})},{threshold:.3});
+document.querySelectorAll('.score-ring .fg').forEach(el=>ringIO.observe(el));
+</script>
+</body>
+</html>

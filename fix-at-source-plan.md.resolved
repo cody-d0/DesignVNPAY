@@ -1,0 +1,359 @@
+# Pipeline Warning Strategy
+## BA → Design Input · Quality Enforcement
+
+> **Version:** 1.0 · **Date:** 2026-03-08
+> **Scope:** 51 warnings across 33 enriched screen specs (`data/new1/`)
+> **Status:** Plan approved — ready to implement
+
+---
+
+## 1. Problem Statement
+
+Pipeline BA → Design Input chạy thành công (0 fails) nhưng tích lũy **51 warnings** không ai fix.
+
+```
+Phase 1 (ba-to-raw-specs):   gate_b_warns = 47
+Phase 4 (validate-final):    gate4_warns  = 20
+```
+
+### Tại sao warnings không được fix?
+
+Pipeline có 2 exit codes cho Gate B:
+
+| Exit | Meaning | Action |
+|:---:|:---|:---|
+| 1 | Has **errors** | Self-correct loop (agent fix → re-run, max 3) |
+| 2 | Has **warnings** only | **CONTINUE** — log and proceed |
+
+Mọi warning rule đều có `"actionability": { "owner": "agent_fixable" }` nhưng không có step nào trong pipeline đọc tag này và trigger fix loop.
+
+> **`BP-026`** Freedom Mismatch
+> <details>
+> <summary>Chi tiết</summary>
+> Pattern: "Text ≠ enforcement"
+> Connections: BP-022, BP-025, BP-023, BP-017, BP-015, BP-010, BP-021
+> Cluster: E (Meta-Governance) · Degree: 14
+> </details>
+
+**Text nói "agent_fixable" nhưng không enforce → warnings tích lũy.**
+
+---
+
+## 2. Warning Inventory
+
+Simulation trên `data/new1/` (33 files):
+
+| # | Warning | Rule | Count | Thực sự cần fix? |
+|:-:|:---|:---|:---:|:---|
+| 1 | Emoji ngoài Layout | R-B21 | 15 files | ✅ Yes — format violation |
+| 2 | Button disabled state | R-B24 | 14 files | ⚠️ ~8 yes, ~6 false positive |
+| 3 | Nav refs non-standard | R-B22 | 11 files (17 refs) | ✅ Yes — cần chuẩn hóa format |
+| 4 | BA process tags | CHECK 5 | 18 tags | ✅ Yes — pipeline metadata |
+| 5 | Image loading state | R-B26 | 4 files | ⚠️ Partial — logo/icon ≠ content image |
+| 6 | TextField states | R-B25 | 4 files | ⚠️ Partial — check per case |
+| 7 | Sub-screens empty | — | 0 files | ✅ Already OK |
+
+**Thực tế: ~35-40 cần fix, ~11-16 là false positive do gate rule quá ngây thơ.**
+
+---
+
+## 3. Approaches Evaluated
+
+### 3a. ❌ spec-doctor.js (Patch Layer — rejected)
+
+Thêm script mới chèn vào Pipe 2 step 2.5. Đọc raw specs → fix 7 warnings → ghi lại.
+
+**Tại sao reject:**
+
+| Vấn đề | Chi tiết |
+|:---|:---|
+| Anti-pattern | Patch Layer — không giải quyết root cause |
+| Permanent band-aid | Mỗi pipeline run phải chạy lại spec-doctor |
+| Semantic loss | Nav refs `SCR-009 (mode=add)` bị strip mất params |
+| State filler | Inject generic "Validation chưa đủ" cho mọi Button — noise, không quality |
+| Maintenance | +1 script, +300 LOC, +1 dependency |
+
+### 3b. ⚠️ Fix-at-Source v1 (Over-engineered — revised)
+
+4 changes: promote severity + nav format + BA strip + state injection trong enrich-indexer.js.
+
+**Tại sao revise:**
+
+| Vấn đề | Chi tiết |
+|:---|:---|
+| State injection = spec-doctor tên khác | Cùng logic (check → inject), khác file |
+| Generic states = filler | "Btn Đăng ký disabled" — nhưng nút này luôn clickable |
+| Warning budget conflicting | "10 warns OK" vs "emoji phải 0" → mâu thuẫn |
+| Gate seeding = text instruction | SKILL.md nói "đọc grading.json" ≠ enforce đọc |
+
+### 3c. ✅ Fix-at-Source v2 (Final — approved)
+
+**Nguyên tắc:**
+```
+Enforce at source, don't patch downstream.
+Tighten rules to reduce false positives.
+Don't inject filler content for coverage metrics.
+```
+
+---
+
+## 4. Final Solution: 5 Changes, 3 Files
+
+### Overview
+
+```
+Pipe 1 (ba-to-raw-specs):
+  ├── pipeline-gates.json   → 2 changes (severity + pattern)
+  └── SKILL.md              → 1 change (nav format guide)
+
+Pipe 2 (ba-spec-enrich):
+  ├── enrich-indexer.js      → 1 change (BA tag strip)
+  └── validate-enrichment.sh → 1 change (warn → fail)
+```
+
+### Change 1: R-B21 Emoji — `warning` → `error`
+
+**File:** `data/.agents/skills/ba-to-raw-specs/scripts/pipeline-gates.json`
+
+```diff
+ {
+   "id": "R-B21",
+   "name": "No emoji outside Layout",
+-  "severity": "warning",
++  "severity": "error",
+   "message": "Emoji nên chỉ dùng trong Layout wireframe, không trong tables"
+ }
+```
+
+**Effect:**
+- Gate B exit 1 (fail) khi có emoji → agent self-correct
+- Agent đọc failure → sửa spec → re-run (max 3 retries)
+- Lần chạy pipeline sau: agent đã "học", viết đúng từ đầu
+
+**Tại sao chỉ R-B21?**
+
+State rules (R-B24, R-B25, R-B26) KHÔNG promote vì:
+- Là reasoning issues, không phải format violations
+- Gate rule hiện tại quá ngây thơ (check keyword anywhere) → false positive cao
+- Fix đúng = tighten rule (Change 2), không phải force agent guess
+
+### Change 2: R-B24 Button Disabled — Tighten Rule
+
+**File:** `data/.agents/skills/ba-to-raw-specs/scripts/pipeline-gates.json`
+
+```diff
+ {
+   "id": "R-B24",
+   "name": "MA-1: Button has disabled state",
+   "type": "component_state_check",
+   "component_type": "Button",
++  "exclude_patterns": ["Navigate", "Link", "Đăng ký", "Quên"],
+   "expected_states": ["disabled"],
+   "severity": "warning"
+ }
+```
+
+**Tại sao exclude?**
+- Navigation-only buttons (Đăng ký → SCR-002, Quên MK → SCR-006) luôn clickable
+- Chúng tạo false positive: "Button without disabled" nhưng disabled không có nghĩa
+- Chỉ CTA buttons (Đăng nhập, Thanh toán, Lưu) cần disabled state
+
+**Expected reduction:** 14 warnings → ~6-8 (loại bỏ ~6 false positive)
+
+**Note:** `gate-runner.js` cần implement `exclude_patterns` logic nếu chưa có.
+
+### Change 3: R-B22 Nav Refs — Expand Format
+
+**File:** `data/.agents/skills/ba-to-raw-specs/scripts/pipeline-gates.json`
+
+```diff
+ {
+   "id": "R-B22",
+   "name": "Navigation SCR refs format",
+-  "pattern": "^(SCR-(?:BO-)?\\d{3}|Previous screen|WebView.*|Native handler|—)$",
++  "pattern": "^(SCR-(?:BO-)?\\d{3}(\\[.+\\])?|Previous screen|Dismiss|WebView.*|Native handler|—)$",
+   "severity": "warning"
+ }
+```
+
+**File:** `data/.agents/skills/ba-to-raw-specs/SKILL.md` (Navigation Target Guard table)
+
+```diff
+ | `Previous screen` | ✅ Ghi nguyên | Hợp lệ cho overlay/modal (type=dismiss) |
++| `SCR-NNN(context)` | Reformat → `SCR-NNN[key=value]` | Params trong [], VD: `SCR-009[mode=add]` |
++| `Dismiss`          | ✅ Ghi nguyên | Overlay/modal close action |
+ | Free-text khác | ⛔ STOP → hỏi PO | Agent KHÔNG được tự đoán |
+```
+
+**Format mới cho nav refs kèm params:**
+```
+SCR-009[mode=add]          → navigate đến SCR-009 với mode=add
+SCR-013[variant=success]   → navigate đến SCR-013, hiển thị success variant
+SCR-012[regenerate]        → navigate đến SCR-012 để re-generate
+```
+
+**Tại sao `[]` thay vì `()`?**
+- `()` dễ nhầm markdown formatting/regex groups
+- `[]` rõ ràng là metadata — giống query params
+- Parse regex: `SCR-(\d{3})(\[(.+)\])?` — tách ID và params
+
+### Change 4: BA Tag Strip — `enrich-indexer.js`
+
+**File:** `data/.agents/skills/ba-spec-enrich/scripts/enrich-indexer.js`
+
+```javascript
+// Khi đọc raw spec content — thêm 1 dòng:
+function loadRawSpec(filePath) {
+  let content = fs.readFileSync(filePath, 'utf8');
+
+  // Strip pipeline-internal tags at consumer boundary
+  content = content.replace(/\s*\[(CONFIRMED|AGENT_PROPOSED|ASSUMPTION)\]/g, '');
+
+  return parseSpec(content);
+}
+```
+
+**Giữ `[INFERRED]`** — tag này có traceability value cho consumer (biết module được suy luận, không phải BA gốc).
+
+**Tại sao trong enrich-indexer.js?**
+- Script này ĐANG đọc raw specs → thêm 1 dòng, không thay đổi flow
+- Đây là ranh giới Pipe 1 → Pipe 2 (consumer boundary)
+- Tags là metadata nội bộ pipeline, enriched output không cần
+
+### Change 5: Hard Gates — `validate-enrichment.sh`
+
+**File:** `data/.agents/skills/ba-spec-enrich/scripts/validate-enrichment.sh`
+
+```diff
+ # CHECK 5: Content Quality
+-if [ "$EMOJI_COUNT" -gt 0 ]; then
+-  warn "$EMOJI_COUNT lines with emoji literals found"
+-fi
++if [ "$EMOJI_COUNT" -gt 0 ]; then
++  fail "$EMOJI_COUNT lines with emoji literals — MUST be 0 in enriched output"
++fi
+
+-if [ "$BA_TAGS" -gt 0 ]; then
+-  warn "$BA_TAGS BA process tags found (should be removed)"
+-fi
++if [ "$BA_TAGS" -gt 0 ]; then
++  fail "$BA_TAGS BA process tags found — MUST be stripped by enrich-indexer"
++fi
+```
+
+**Tại sao hard gate ở đây nữa?**
+
+Defense-in-depth pattern:
+```
+Layer 1 (Pipe 1): Gate B R-B21 error → agent self-correct → emoji = 0 in raw specs
+Layer 2 (Pipe 2): validate-enrichment fail → nếu emoji vẫn lọt (edge case) → catch
+```
+
+Hai layers không conflict vì mục đích khác:
+- Pipe 1 gate: **prevent** agent viết emoji
+- Pipe 2 gate: **verify** output không có emoji (safety net)
+
+---
+
+## 5. Expected Outcome
+
+### Warning Reduction
+
+```
+Before:
+  Gate B:    973 pass · 51 warn · 0 fail
+  Validate:  261 pass · 20 warn · 0 fail
+  Total: 71 warnings
+
+After (Change 1-5):
+  Gate B:    ~1010 pass · ~8 warn · 0 fail
+    R-B21 (emoji):    0 (was 15) — now error → agent fixes
+    R-B22 (nav refs): ~4 (was 11) — format expanded, some edge cases remain
+    R-B24 (button):   ~6 (was 14) — false positives excluded
+    R-B25 (textfield): 4 (unchanged — kept as advisory)
+    R-B26 (image):     4 (unchanged — kept as advisory)
+    R-B28 (loading UX): 2 (unchanged — pipe2 covers)
+  Validate:  261 pass · ~2 warn · 0 fail
+    Emoji: 0 (hard gate + Pipe 1 fixed)
+    BA tags: 0 (hard gate + enrich-indexer strips)
+    Remaining: sizing notes, sub-screens empty (low priority)
+  Total: ~10 warnings (86% reduction)
+```
+
+### Future Runs
+
+```
+Pipeline run N+1:
+  Agent viết spec
+  → Gate B: R-B21 = error → agent viết KHÔNG emoji từ đầu
+  → Gate B: R-B22 = agent dùng SCR-NNN[params] format
+  → Gate B: R-B24 = chỉ flag CTA buttons, skip nav buttons
+  → Pipe 2: enrich-indexer strips BA tags
+  → validate-enrichment: emoji = 0 ✅, BA tags = 0 ✅
+  → Warnings còn lại: ~4-6 genuine advisories
+```
+
+---
+
+## 6. Implementation Checklist
+
+| # | Change | File | LOC | Priority |
+|:-:|:---|:---|:---:|:---:|
+| 1 | R-B21 severity → error | `pipeline-gates.json` | 1 | P0 |
+| 2 | R-B24 exclude_patterns | `pipeline-gates.json` + `gate-runner.js` | ~15 | P1 |
+| 3 | R-B22 pattern expand | `pipeline-gates.json` + `SKILL.md` | ~5 | P1 |
+| 4 | BA tag strip | `enrich-indexer.js` | 1 | P0 |
+| 5 | Hard gates | `validate-enrichment.sh` | ~3 | P0 |
+| | **Total** | **4 files** | **~25** | |
+
+**Execution order:** P0 first (1 → 4 → 5), then P1 (2 → 3)
+
+---
+
+## 7. Decision Log
+
+| Decision | Rationale |
+|:---|:---|
+| ❌ Reject spec-doctor.js | Anti-pattern: Patch Layer, permanent band-aid, semantic loss |
+| ❌ Reject state injection | Same anti-pattern embedded differently; generic filler ≠ quality |
+| ❌ Reject warning budget | Conflicting with hard gates; over-engineering for current scale |
+| ❌ Reject SKILL.md seeding | Text ≠ enforcement (BP-026) |
+| ✅ Promote emoji → error | Clear format violation, agent self-corrects |
+| ✅ Tighten R-B24 | Reduce false positive, don't force; nav buttons ≠ CTA buttons |
+| ✅ Expand R-B22 pattern | Preserve semantic params, standardize format |
+| ✅ BA strip in enricher | 1 line, correct boundary, existing I/O point |
+| ✅ Hard gates validate | Defense-in-depth, catch edge cases |
+| ✅ Keep R-B25/26 as warning | Reasoning issues → advisory, not enforcement |
+
+---
+
+## 8. Relation to Existing Gates
+
+```
+                    ┌─────────────────────────────────┐
+                    │  Pipeline Quality Gate Topology  │
+                    └─────────────────────────────────┘
+
+Pipe 1 ─────────────────────────────────────────────────────
+  Gate A (Index)     → error-only    → ba-indexer output
+  Gate B Tier 1      → error+warning → raw specs (format)
+    R-B21 emoji        ← CHANGE: warning → error
+    R-B22 nav refs     ← CHANGE: expand pattern
+    R-B24 button       ← CHANGE: tighten (exclude_patterns)
+    R-B25/26           ← KEEP: warning (advisory)
+  Gate B Tier 2      → agent semantic → raw specs (meaning)
+  Gate C             → error-only    → proposed screens
+
+Gap Discovery ──────────────────────────────────────────────
+  (No format gates — inherits Gate B via R-C6)
+
+Pipe 2 ─────────────────────────────────────────────────────
+  enrich-indexer.js  → BA tag strip   ← CHANGE: add strip
+  validate-enrichment → error+warning → enriched specs
+    CHECK 5 emoji      ← CHANGE: warn → fail
+    CHECK 5 BA tags    ← CHANGE: warn → fail
+
+Bridge Spec ────────────────────────────────────────────────
+  validate-specs.js  → error+warning → JSON specs (new, session trước)
+    G2 emoji           ← error (đã implement)
+```

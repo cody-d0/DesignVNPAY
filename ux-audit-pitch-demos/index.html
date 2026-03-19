@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UX Audit Pitch Deck — Co-op Bank KHCN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN TOKENS
+   ═══════════════════════════════════════════════ */
+:root {
+  --bg-base: #0a0e1a;
+  --bg-surface: #111827;
+  --bg-card: #1a2235;
+  --bg-card-hover: #1f2a40;
+  --bg-highlight: rgba(245,158,11,.06);
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --accent-gold: #f59e0b;
+  --accent-purple: #8b5cf6;
+  --accent-blue: #3b82f6;
+  --accent-teal: #14b8a6;
+
+  --severity-critical: #ef4444;
+  --severity-major: #f97316;
+  --severity-minor: #eab308;
+  --severity-pass: #22c55e;
+  --severity-unverifiable: #6b7280;
+
+  --radius: 12px;
+  --radius-sm: 8px;
+  --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-display: 'Playfair Display', serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  --transition: 0.25s cubic-bezier(.4,0,.2,1);
+}
+
+/* ═══════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+a { color: var(--accent-gold); text-decoration: none; }
+button { cursor: pointer; font-family: inherit; }
+
+/* ═══════════════════════════════════════════════
+   CONCEPT SWITCHER (Top Nav)
+   ═══════════════════════════════════════════════ */
+.concept-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(10,14,26,.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(245,158,11,.15);
+  padding: 0 1.5rem;
+  display: flex; align-items: center; gap: 0;
+  height: 56px;
+}
+.concept-nav .logo {
+  font-family: var(--font-display);
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--accent-gold);
+  margin-right: 2rem;
+  white-space: nowrap;
+}
+.concept-nav .tabs {
+  display: flex; gap: 0; overflow-x: auto;
+  scrollbar-width: none;
+}
+.concept-nav .tabs::-webkit-scrollbar { display: none; }
+.concept-tab {
+  background: none; border: none;
+  color: var(--text-muted);
+  font-size: .82rem; font-weight: 500;
+  padding: .75rem 1rem;
+  white-space: nowrap;
+  position: relative;
+  transition: color var(--transition);
+}
+.concept-tab:hover { color: var(--text-secondary); }
+.concept-tab.active {
+  color: var(--accent-gold);
+}
+.concept-tab.active::after {
+  content: '';
+  position: absolute; bottom: 0; left: .5rem; right: .5rem;
+  height: 2px;
+  background: var(--accent-gold);
+  border-radius: 2px;
+}
+
+/* ═══════════════════════════════════════════════
+   CONCEPT PANELS
+   ═══════════════════════════════════════════════ */
+.concept-panel {
+  display: none;
+  padding-top: 56px;
+  min-height: 100vh;
+}
+.concept-panel.active { display: block; }
+
+/* ═══════════════════════════════════════════════
+   SHARED COMPONENTS
+   ═══════════════════════════════════════════════ */
+.section-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+/* Score Ring */
+.score-ring {
+  position: relative; display: inline-flex;
+  align-items: center; justify-content: center;
+}
+.score-ring svg { transform: rotate(-90deg); }
+.score-ring circle {
+  fill: none; stroke-width: 6;
+}
+.score-ring .bg { stroke: rgba(255,255,255,.08); }
+.score-ring .progress {
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1);
+}
+.score-ring .value {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 1.6rem; font-weight: 700;
+}
+.score-ring .label {
+  position: absolute; bottom: -1.5rem;
+  font-size: .75rem; color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Severity Badge */
+.badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .2rem .65rem;
+  border-radius: 20px;
+  font-size: .72rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .03em;
+}
+.badge.critical { background: rgba(239,68,68,.15); color: #fca5a5; }
+.badge.major { background: rgba(249,115,22,.15); color: #fdba74; }
+.badge.minor { background: rgba(234,179,8,.15); color: #fde047; }
+.badge.pass { background: rgba(34,197,94,.15); color: #86efac; }
+
+/* Card */
+.audit-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  transition: all var(--transition);
+}
+.audit-card:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(245,158,11,.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,.3);
+}
+
+/* ═══════════════════════════════════════════════
+   CONCEPT 1 — SCROLL NARRATIVE
+   ═══════════════════════════════════════════════ */
+#scroll-narrative .hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+#scroll-narrative .hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 600px 400px at 30% 20%, rgba(139,92,246,.12), transparent),
+    radial-gradient(ellipse 500px 300px at 70% 80%, rgba(245,158,11,.08), transparent);
+  pointer-events: none;
+}
+#scroll-narrative .hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 800; line-height: 1.15;
+  margin-bottom: 1rem;
+}
+#scroll-narrative .hero h1 span { color: var(--accent-gold); }
+#scroll-narrative .hero .subtitle {
+  font-size: 1.1rem; color: var(--text-secondary);
+  max-width: 520px; margin-bottom: 2.5rem;
+}
+#scroll-narrative .hero .meta-row {
+  display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center;
+}
+#scroll-narrative .hero .meta-item {
+  text-align: center;
+}
+#scroll-narrative .hero .meta-item .num {
+  font-family: var(--font-mono);
+  font-size: 2rem; font-weight: 700;
+}
+#scroll-narrative .hero .meta-item .lbl {
+  font-size: .75rem; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: .08em;
+}
+
+/* Scroll Progress Bar */
+.scroll-progress {
+  position: fixed; top: 56px; left: 0; right: 0;
+  height: 3px; z-index: 999;
+  background: rgba(255,255,255,.05);
+}
+.scroll-progress .bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-purple), var(--accent-gold));
+  width: 0%;
+  transition: width 0.1s linear;
+}
+
+/* Scroll Sections */
+.scroll-section {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.scroll-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Findings List */
+.finding-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border-left: 3px solid transparent;
+}
+.finding-item.critical { border-left-color: var(--severity-critical); }
+.finding-item.major { border-left-color: var(--severity-major); }
+.finding-item.minor { border-left-color: var(--severity-minor); }
+
+.finding-item .finding-id {
+  font-family: var(--font-mono);
+  font-size: .8rem; font-weight: 500;
+  color: var(--text-muted);
+}
+.finding-item h4 { font-size: .95rem; font-weight: 600; margin-bottom: .4rem; }
+.finding-item p { font-size: .85rem; color: var(--text-secondary); }
+
+.finding-item details summary {
+  cursor: pointer; font-size: .8rem;
+  color: var(--accent-gold);
+  margin-top: .5rem;
+}
+.finding-item details[open] summary { margin-bottom: .5rem; }
+.finding-item details .detail-content {
+  font-size: .82rem; color: var(--text-secondary);
+  padding: .75rem;
+  background: rgba(255,255,255,.03);
+  border-radius: var(--radius-sm);
+}
+
+/* Screen Score Section */
+.screen-scores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+.screen-score-card {
+  text-align: center;
+  padding: 2rem 1.5rem;
+}
+.screen-score-card h3 {
+  font-size: .95rem; font-weight: 600;
+  margin-top: 2rem; margin-bottom: .5rem;
+}
+.screen-score-card .stats {
+  display: flex; gap: .75rem; justify-content: center;
+  margin-top: .75rem;
+}
+
+/* ═══════════════════════════════════════════════
+   CONCEPT 2 — DASHBOARD
+   ═══════════════════════════════════════════════ */
+#dashboard .dash-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+#dashboard .stat-card {
+  padding: 1.25rem;
+}
+#dashboard .stat-card .stat-num {
+  font-family: var(--font-mono);
+  font-size: 2rem; font-weight: 700;
+}
+#dashboard .stat-card .stat-label {
+  font-size: .78rem; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: .06em;
+}
+
+#dashboard .severity-matrix {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .75rem;
+  margin-top: 1.5rem;
+}
+#dashboard .severity-cell {
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+#dashboard .severity-cell .sev-count {
+  font-family: var(--font-mono);
+  font-size: 2.5rem; font-weight: 700;
+}
+#dashboard .severity-cell .sev-label {
+  font-size: .75rem; text-transform: uppercase; letter-spacing: .06em;
+}
+#dashboard .severity-cell.critical-cell { background: rgba(239,68,68,.1); color: #fca5a5; }
+#dashboard .severity-cell.major-cell { background: rgba(249,115,22,.1); color: #fdba74; }
+#dashboard .severity-cell.minor-cell { background: rgba(234,179,8,.1); color: #fde047; }
+
+/* Findings Table */
+#dashboard .findings-table {
+  width: 100%; border-collapse: collapse;
+  margin-top: 1.5rem; font-size: .85rem;
+}
+#dashboard .findings-table th {
+  text-align: left; padding: .75rem 1rem;
+  font-size: .72rem; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--text-muted);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+#dashboard .findings-table td {
+  padding: .75rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  vertical-align: top;
+}
+#dashboard .findings-table tr:hover td {
+  background: rgba(245,158,11,.04);
+}
+
+/* ═══════════════════════════════════════════════
+   CONCEPT 3 — CARD EXPLORER
+   ═══════════════════════════════════════════════ */
+#card-explorer .filter-bar {
+  display: flex; gap: .5rem; flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.filter-btn {
+  background: var(--bg-card);
+  border: 1px solid rgba(255,255,255,.08);
+  color: var(--text-secondary);
+  padding: .45rem 1rem;
+  border-radius: 20px;
+  font-size: .8rem; font-weight: 500;
+  transition: all var(--transition);
+}
+.filter-btn:hover { border-color: rgba(245,158,11,.3); color: var(--text-primary); }
+.filter-btn.active {
+  background: rgba(245,158,11,.12);
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+#card-explorer .cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+}
+.explorer-card {
+  padding: 0;
+  overflow: hidden;
+}
+.explorer-card .card-header {
+  padding: 1rem 1.25rem;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.explorer-card .card-header .card-id {
+  font-family: var(--font-mono);
+  font-size: .78rem; color: var(--text-muted);
+}
+.explorer-card .card-body {
+  padding: 1.25rem;
+}
+.explorer-card .card-body h4 {
+  font-size: .9rem; font-weight: 600; margin-bottom: .5rem;
+}
+.explorer-card .card-body p {
+  font-size: .82rem; color: var(--text-secondary); line-height: 1.55;
+}
+.explorer-card .card-footer {
+  padding: .75rem 1.25rem;
+  background: rgba(255,255,255,.02);
+  display: flex; gap: .5rem; flex-wrap: wrap;
+}
+.card-tag {
+  font-size: .7rem; padding: .15rem .5rem;
+  border-radius: 4px;
+  background: rgba(59,130,246,.1);
+  color: #93c5fd;
+}
+
+/* ═══════════════════════════════════════════════
+   CONCEPT 4 — SCORE CARDS (Animated)
+   ═══════════════════════════════════════════════ */
+#score-cards .scores-hero {
+  text-align: center;
+  padding: 4rem 1.5rem;
+}
+#score-cards .scores-hero h2 {
+  font-family: var(--font-display);
+  font-size: 2.4rem; font-weight: 800;
+  margin-bottom: .5rem;
+}
+#score-cards .big-score {
+  position: relative;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  margin: 2rem 0;
+}
+#score-cards .big-score svg { transform: rotate(-90deg); }
+#score-cards .big-score .big-value {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 3.5rem; font-weight: 700;
+}
+#score-cards .big-score .big-pct {
+  position: absolute;
+  font-size: 1.2rem; color: var(--text-muted);
+  bottom: 2.2rem;
+}
+
+#score-cards .heuristic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.heuristic-card {
+  text-align: center;
+  padding: 1.5rem 1rem;
+}
+.heuristic-card .h-label {
+  font-size: .82rem; font-weight: 500;
+  margin-top: 1.5rem;
+}
+.heuristic-card .h-detail {
+  font-size: .75rem; color: var(--text-muted);
+  margin-top: .25rem;
+}
+
+/* ═══════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes countUp { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,.2); }
+  50% { box-shadow: 0 0 20px 4px rgba(245,158,11,.15); }
+}
+
+.animate-in {
+  animation: fadeInUp .7s ease forwards;
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  #dashboard .dash-grid { grid-template-columns: repeat(2, 1fr); }
+  #dashboard .severity-matrix { grid-template-columns: 1fr; }
+  .concept-nav .logo { font-size: .9rem; margin-right: 1rem; }
+  .concept-tab { font-size: .75rem; padding: .75rem .65rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     CONCEPT SWITCHER NAV
+     ═══════════════════════════════════════════════ -->
+<nav class="concept-nav">
+  <div class="logo">UX Audit Deck</div>
+  <div class="tabs">
+    <button class="concept-tab active" data-target="scroll-narrative">① Scroll Narrative</button>
+    <button class="concept-tab" data-target="dashboard">② Dashboard</button>
+    <button class="concept-tab" data-target="card-explorer">③ Card Explorer</button>
+    <button class="concept-tab" data-target="score-cards">④ Score Cards</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     CONCEPT 1 — SCROLL-DRIVEN NARRATIVE
+     ═══════════════════════════════════════════════ -->
+<div id="scroll-narrative" class="concept-panel active">
+  <div class="scroll-progress"><div class="bar" id="progressBar"></div></div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div style="position:relative;z-index:1">
+      <p style="font-size:.8rem;color:var(--accent-gold);text-transform:uppercase;letter-spacing:.15em;margin-bottom:.75rem;">UX Review Report</p>
+      <h1>Chuyển tiền nội bộ<br><span>cùng chủ</span></h1>
+      <p class="subtitle">Co-op Bank KHCN — Đánh giá trải nghiệm người dùng cho luồng chuyển tiền giữa các tài khoản cùng chủ sở hữu</p>
+      <div class="meta-row">
+        <div class="meta-item">
+          <div class="num" style="color:var(--severity-major)">58%</div>
+          <div class="lbl">UX Score</div>
+        </div>
+        <div class="meta-item">
+          <div class="num">3</div>
+          <div class="lbl">Màn hình</div>
+        </div>
+        <div class="meta-item">
+          <div class="num">13</div>
+          <div class="lbl">Findings</div>
+        </div>
+        <div class="meta-item">
+          <div class="num" style="color:var(--severity-critical)">3</div>
+          <div class="lbl">Critical</div>
+        </div>
+      </div>
+      <div style="margin-top:3rem;color:var(--text-muted);font-size:.8rem;">↓ Scroll to explore</div>
+    </div>
+  </section>
+
+  <!-- Screen Scores -->
+  <section class="section-container scroll-section">
+    <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;margin-bottom:2rem;">Score theo màn hình</h2>
+    <div class="screen-scores">
+      <div class="audit-card screen-score-card">
+        <div class="score-ring">
+          <svg width="100" height="100"><circle class="bg" cx="50" cy="50" r="42"/><circle class="progress" cx="50" cy="50" r="42" stroke="var(--severity-major)" stroke-dasharray="264" stroke-dashoffset="132" /></svg>
+          <span class="value" style="color:var(--severity-major)">50%</span>
+        </div>
+        <h3>Form nhập thông tin</h3>
+        <div class="stats">
+          <span class="badge pass">9 Pass</span>
+          <span class="badge critical">9 Gap</span>
+        </div>
+      </div>
+      <div class="audit-card screen-score-card">
+        <div class="score-ring">
+          <svg width="100" height="100"><circle class="bg" cx="50" cy="50" r="42"/><circle class="progress" cx="50" cy="50" r="42" stroke="var(--severity-major)" stroke-dasharray="264" stroke-dashoffset="132" /></svg>
+          <span class="value" style="color:var(--severity-major)">50%</span>
+        </div>
+        <h3>Xác nhận giao dịch</h3>
+        <div class="stats">
+          <span class="badge pass">5 Pass</span>
+          <span class="badge critical">5 Gap</span>
+        </div>
+      </div>
+      <div class="audit-card screen-score-card">
+        <div class="score-ring">
+          <svg width="100" height="100"><circle class="bg" cx="50" cy="50" r="42"/><circle class="progress" cx="50" cy="50" r="42" stroke="var(--severity-pass)" stroke-dasharray="264" stroke-dashoffset="53" /></svg>
+          <span class="value" style="color:var(--severity-pass)">80%</span>
+        </div>
+        <h3>Kết quả giao dịch</h3>
+        <div class="stats">
+          <span class="badge pass">8 Pass</span>
+          <span class="badge minor">2 Gap</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Findings -->
+  <section class="section-container scroll-section">
+    <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;margin-bottom:.5rem;">Findings</h2>
+    <p style="color:var(--text-secondary);margin-bottom:2rem;">13 phát hiện được phân loại theo mức độ nghiêm trọng</p>
+
+    <div style="display:flex;flex-direction:column;gap:1rem;">
+      <!-- Critical -->
+      <div class="audit-card finding-item critical">
+        <div><span class="finding-id">UXP-001</span><br><span class="badge critical" style="margin-top:.35rem;">Critical</span></div>
+        <div>
+          <h4>Thiếu loading state khi tải danh sách tài khoản & validate</h4>
+          <p>Flow không mô tả trạng thái chờ khi load danh sách TK hoặc form đang validate.</p>
+          <details>
+            <summary>Xem đề xuất & DDL reference →</summary>
+            <div class="detail-content">
+              <strong>Đề xuất:</strong> Thêm skeleton loading 2 dòng placeholder cho block TK nguồn; spinner overlay trên CTA "Tiếp tục" khi validate.<br><br>
+              <strong>DDL:</strong> ux-guidelines#10 (Loading States), #78 (Loading Indicators)<br>
+              <strong>UX Law:</strong> Doherty Threshold (&lt;400ms feedback)
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="audit-card finding-item critical">
+        <div><span class="finding-id">UXP-002</span><br><span class="badge critical" style="margin-top:.35rem;">Critical</span></div>
+        <div>
+          <h4>Thiếu flow xử lý khi API Xác nhận thất bại</h4>
+          <p>Flow chỉ mô tả Xác nhận → Kết quả thành công; không có luồng khi API trả lỗi.</p>
+          <details>
+            <summary>Xem đề xuất & DDL reference →</summary>
+            <div class="detail-content">
+              <strong>Đề xuất:</strong> Thêm luồng 1.3 — Lỗi API: modal "Giao dịch không thành công" với "Thử lại" + "Quay lại".<br><br>
+              <strong>DDL:</strong> ux-guidelines#33 (Error Feedback), #80 (Error Recovery)<br>
+              <strong>UX Law:</strong> Nielsen Error Recovery
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="audit-card finding-item critical">
+        <div><span class="finding-id">UXP-003</span><br><span class="badge critical" style="margin-top:.35rem;">Critical</span></div>
+        <div>
+          <h4>Thiếu xử lý lỗi Số tiền > Số dư khả dụng</h4>
+          <p>BR nêu ràng buộc "Số tiền ≤ số dư" nhưng không có flow, AC, hoặc wireframe mô tả khi vi phạm.</p>
+          <details>
+            <summary>Xem đề xuất & DDL reference →</summary>
+            <div class="detail-content">
+              <strong>Đề xuất:</strong> Inline error dưới ô "Số tiền" + disable CTA "Tiếp tục" cho đến khi sửa.<br><br>
+              <strong>DDL:</strong> ux-guidelines#33, web-interface#15 (Inline Errors)<br>
+              <strong>UX Law:</strong> Nielsen Error Prevention
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- Major -->
+      <div class="audit-card finding-item major">
+        <div><span class="finding-id">UXP-004</span><br><span class="badge major" style="margin-top:.35rem;">Major</span></div>
+        <div>
+          <h4>Thiếu empty state cho danh sách tài khoản</h4>
+          <p>Không có mô tả khi khách hàng chưa có tài khoản cùng chủ hoặc danh sách trống.</p>
+        </div>
+      </div>
+      <div class="audit-card finding-item major">
+        <div><span class="finding-id">UXP-005</span><br><span class="badge major" style="margin-top:.35rem;">Major</span></div>
+        <div>
+          <h4>Thiếu trạng thái error & focused cho input fields</h4>
+          <p>Wireframe chỉ mô tả state mặc định. Không có spec cho border đỏ khi lỗi, focus ring khi active.</p>
+        </div>
+      </div>
+      <div class="audit-card finding-item major">
+        <div><span class="finding-id">UXP-006</span><br><span class="badge major" style="margin-top:.35rem;">Major</span></div>
+        <div>
+          <h4>Thiếu loading & chống double-submit cho CTA "Xác nhận"</h4>
+          <p>NFR đề cập "disable sau khi chạm" nhưng wireframe và AC không mô tả visual state.</p>
+        </div>
+      </div>
+      <div class="audit-card finding-item major">
+        <div><span class="finding-id">UXP-007</span><br><span class="badge major" style="margin-top:.35rem;">Major</span></div>
+        <div><h4>NFR yêu cầu mask số TK nhưng wireframe hiển thị đầy đủ</h4><p>Gap giữa NFR và wireframe về chính sách ẩn số tài khoản.</p></div>
+      </div>
+      <div class="audit-card finding-item major">
+        <div><span class="finding-id">UXP-008</span><br><span class="badge major" style="margin-top:.35rem;">Major</span></div>
+        <div><h4>Thiếu chỉ dấu required cho các trường bắt buộc</h4><p>Form có nhiều trường nhưng không spec trường nào required, asterisk hay label "bắt buộc".</p></div>
+      </div>
+      <div class="audit-card finding-item major">
+        <div><span class="finding-id">UXP-009</span><br><span class="badge major" style="margin-top:.35rem;">Major</span></div>
+        <div><h4>Switch "Đặt lịch" thiếu accessible label</h4><p>Không spec aria-label hoặc accessibility cho screen reader.</p></div>
+      </div>
+
+      <!-- Minor -->
+      <div class="audit-card finding-item minor">
+        <div><span class="finding-id">UXP-010</span><br><span class="badge minor" style="margin-top:.35rem;">Minor</span></div>
+        <div><h4>Thời gian đặt lịch mâu thuẫn với ngày bắt đầu</h4><p>"15/02/2020 22:00" vs "15/05/2023" — chênh 3 năm.</p></div>
+      </div>
+      <div class="audit-card finding-item minor">
+        <div><span class="finding-id">UXP-011</span><br><span class="badge minor" style="margin-top:.35rem;">Minor</span></div>
+        <div><h4>Số tài khoản không nhất quán giữa các màn</h4><p>Dữ liệu mẫu khác nhau gây nhầm lẫn khi review.</p></div>
+      </div>
+      <div class="audit-card finding-item minor">
+        <div><span class="finding-id">UXP-012</span><br><span class="badge minor" style="margin-top:.35rem;">Minor</span></div>
+        <div><h4>Thiếu xử lý lỗi khi Chia sẻ/Lưu ảnh thất bại</h4><p>Không có flow cho trường hợp native share hoặc save thất bại.</p></div>
+      </div>
+      <div class="audit-card finding-item minor">
+        <div><span class="finding-id">UXP-013</span><br><span class="badge minor" style="margin-top:.35rem;">Minor</span></div>
+        <div><h4>Không đề cập prefers-reduced-motion</h4><p>Switch toggle, modal animation không có spec cho motion sensitivity.</p></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     CONCEPT 2 — DASHBOARD
+     ═══════════════════════════════════════════════ -->
+<div id="dashboard" class="concept-panel">
+  <div class="section-container">
+    <h2 style="font-family:var(--font-display);font-size:2rem;font-weight:800;margin-bottom:2rem;">Dashboard Overview</h2>
+
+    <!-- Stats Row -->
+    <div class="dash-grid">
+      <div class="audit-card stat-card"><div class="stat-num" style="color:var(--severity-major)">58%</div><div class="stat-label">UX Score</div></div>
+      <div class="audit-card stat-card"><div class="stat-num">38</div><div class="stat-label">Total Checks</div></div>
+      <div class="audit-card stat-card"><div class="stat-num" style="color:var(--severity-pass)">22</div><div class="stat-label">Pass</div></div>
+      <div class="audit-card stat-card"><div class="stat-num" style="color:var(--severity-critical)">16</div><div class="stat-label">Gaps</div></div>
+    </div>
+
+    <!-- Severity Matrix -->
+    <h3 style="margin-top:2.5rem;margin-bottom:.5rem;font-size:1rem;font-weight:600;">Severity Distribution</h3>
+    <div class="severity-matrix">
+      <div class="severity-cell critical-cell"><div class="sev-count">3</div><div class="sev-label">Critical</div></div>
+      <div class="severity-cell major-cell"><div class="sev-count">6</div><div class="sev-label">Major</div></div>
+      <div class="severity-cell minor-cell"><div class="sev-count">4</div><div class="sev-label">Minor</div></div>
+    </div>
+
+    <!-- Findings Table -->
+    <h3 style="margin-top:2.5rem;margin-bottom:.5rem;font-size:1rem;font-weight:600;">All Findings</h3>
+    <div style="overflow-x:auto;">
+    <table class="findings-table">
+      <thead><tr><th>ID</th><th>Severity</th><th>Screen</th><th>Issue</th><th>UX Law</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:var(--font-mono);font-size:.8rem;">UXP-001</td><td><span class="badge critical">Critical</span></td><td>Form nhập</td><td>Thiếu loading state</td><td>Doherty</td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:.8rem;">UXP-002</td><td><span class="badge critical">Critical</span></td><td>Xác nhận</td><td>Thiếu error flow API</td><td>NNG Recovery</td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:.8rem;">UXP-003</td><td><span class="badge critical">Critical</span></td><td>Form nhập</td><td>Lỗi Số tiền > Số dư</td><td>NNG Prevention</td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:.8rem;">UXP-004</td><td><span class="badge major">Major</span></td><td>Form nhập</td><td>Thiếu empty state</td><td>NNG Visibility</td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:.8rem;">UXP-005</td><td><span class="badge major">Major</span></td><td>Form nhập</td><td>Thiếu error/focused state</td><td>NNG Visibility</td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:.8rem;">UXP-006</td><td><span class="badge major">Major</span></td><td>Xác nhận</td><td>Thiếu loading CTA</td><td>Doherty</td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:.8rem;">UXP-007</td><td><span class="badge major">Major</span></td><td>Xác nhận</td><td>Mask TK mâu thuẫn</td><td>—</td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:.8rem;">UXP-008</td><td><span class="badge major">Major</span></td><td>Form nhập</td><td>Thiếu required indicator</td><td>NNG Prevention</td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:.8rem;">UXP-009</td><td><span class="badge major">Major</span></td><td>Form nhập</td><td>Switch thiếu aria-label</td><td>WCAG</td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:.8rem;">UXP-010</td><td><span class="badge minor">Minor</span></td><td>Kết quả</td><td>Ngày mâu thuẫn</td><td>—</td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:.8rem;">UXP-011</td><td><span class="badge minor">Minor</span></td><td>Cross-screen</td><td>Số TK không nhất quán</td><td>NNG Consistency</td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:.8rem;">UXP-012</td><td><span class="badge minor">Minor</span></td><td>Kết quả</td><td>Thiếu error share/save</td><td>NNG Recovery</td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:.8rem;">UXP-013</td><td><span class="badge minor">Minor</span></td><td>Form nhập</td><td>Thiếu reduced-motion</td><td>—</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     CONCEPT 3 — CARD EXPLORER
+     ═══════════════════════════════════════════════ -->
+<div id="card-explorer" class="concept-panel">
+  <div class="section-container">
+    <h2 style="font-family:var(--font-display);font-size:2rem;font-weight:800;margin-bottom:.5rem;">Finding Explorer</h2>
+    <p style="color:var(--text-secondary);margin-bottom:1.5rem;">Lọc theo severity hoặc màn hình — click card để xem chi tiết</p>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all">All (13)</button>
+      <button class="filter-btn" data-filter="critical">Critical (3)</button>
+      <button class="filter-btn" data-filter="major">Major (6)</button>
+      <button class="filter-btn" data-filter="minor">Minor (4)</button>
+      <button class="filter-btn" data-filter="form">Form nhập</button>
+      <button class="filter-btn" data-filter="confirm">Xác nhận</button>
+      <button class="filter-btn" data-filter="result">Kết quả</button>
+    </div>
+
+    <div class="cards-grid" id="explorerGrid">
+      <!-- Cards generated by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     CONCEPT 4 — ANIMATED SCORE CARDS
+     ═══════════════════════════════════════════════ -->
+<div id="score-cards" class="concept-panel">
+  <div class="scores-hero">
+    <p style="font-size:.8rem;color:var(--accent-gold);text-transform:uppercase;letter-spacing:.15em;margin-bottom:.5rem;">Overall Assessment</p>
+    <h2>UX Health Score</h2>
+    <div class="big-score">
+      <svg width="200" height="200">
+        <circle fill="none" stroke="rgba(255,255,255,.06)" stroke-width="10" cx="100" cy="100" r="85"/>
+        <circle id="bigRing" fill="none" stroke="var(--severity-major)" stroke-width="10" cx="100" cy="100" r="85"
+          stroke-dasharray="534" stroke-dashoffset="534" stroke-linecap="round"
+          style="transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 2s cubic-bezier(.4,0,.2,1)"/>
+      </svg>
+      <span class="big-value" id="bigValue">0</span>
+      <span class="big-pct" style="bottom:70px;font-size:.9rem;color:var(--text-muted);">/ 100</span>
+    </div>
+    <p style="color:var(--text-secondary);max-width:500px;margin:0 auto;">Tổng hợp từ 38 kiểm tra trên 3 màn hình — 22 pass, 16 gap, 8 unverifiable</p>
+  </div>
+
+  <div class="section-container">
+    <h3 style="font-size:1.1rem;font-weight:600;margin-bottom:1.5rem;text-align:center;">Score theo heuristic</h3>
+    <div class="heuristic-grid">
+      <div class="audit-card heuristic-card">
+        <div class="score-ring">
+          <svg width="80" height="80"><circle class="bg" cx="40" cy="40" r="32"/><circle class="progress heur-ring" cx="40" cy="40" r="32" stroke="var(--severity-pass)" stroke-dasharray="201" stroke-dashoffset="201" data-target="40"/></svg>
+          <span class="value" style="font-size:1.1rem;color:var(--severity-pass)">80%</span>
+        </div>
+        <div class="h-label">User Flow</div>
+        <div class="h-detail">Happy path, back nav</div>
+      </div>
+      <div class="audit-card heuristic-card">
+        <div class="score-ring">
+          <svg width="80" height="80"><circle class="bg" cx="40" cy="40" r="32"/><circle class="progress heur-ring" cx="40" cy="40" r="32" stroke="var(--severity-critical)" stroke-dasharray="201" stroke-dashoffset="201" data-target="141"/></svg>
+          <span class="value" style="font-size:1.1rem;color:var(--severity-critical)">30%</span>
+        </div>
+        <div class="h-label">Error Handling</div>
+        <div class="h-detail">API errors, validation</div>
+      </div>
+      <div class="audit-card heuristic-card">
+        <div class="score-ring">
+          <svg width="80" height="80"><circle class="bg" cx="40" cy="40" r="32"/><circle class="progress heur-ring" cx="40" cy="40" r="32" stroke="var(--severity-major)" stroke-dasharray="201" stroke-dashoffset="201" data-target="121"/></svg>
+          <span class="value" style="font-size:1.1rem;color:var(--severity-major)">40%</span>
+        </div>
+        <div class="h-label">Loading States</div>
+        <div class="h-detail">Skeleton, spinner, CTA</div>
+      </div>
+      <div class="audit-card heuristic-card">
+        <div class="score-ring">
+          <svg width="80" height="80"><circle class="bg" cx="40" cy="40" r="32"/><circle class="progress heur-ring" cx="40" cy="40" r="32" stroke="var(--severity-pass)" stroke-dasharray="201" stroke-dashoffset="201" data-target="20"/></svg>
+          <span class="value" style="font-size:1.1rem;color:var(--severity-pass)">90%</span>
+        </div>
+        <div class="h-label">Touch & Target</div>
+        <div class="h-detail">44pt touch targets</div>
+      </div>
+      <div class="audit-card heuristic-card">
+        <div class="score-ring">
+          <svg width="80" height="80"><circle class="bg" cx="40" cy="40" r="32"/><circle class="progress heur-ring" cx="40" cy="40" r="32" stroke="var(--severity-major)" stroke-dasharray="201" stroke-dashoffset="201" data-target="101"/></svg>
+          <span class="value" style="font-size:1.1rem;color:var(--severity-major)">50%</span>
+        </div>
+        <div class="h-label">Accessibility</div>
+        <div class="h-detail">ARIA, focus, motion</div>
+      </div>
+      <div class="audit-card heuristic-card">
+        <div class="score-ring">
+          <svg width="80" height="80"><circle class="bg" cx="40" cy="40" r="32"/><circle class="progress heur-ring" cx="40" cy="40" r="32" stroke="var(--severity-minor)" stroke-dasharray="201" stroke-dashoffset="201" data-target="81"/></svg>
+          <span class="value" style="font-size:1.1rem;color:var(--severity-minor)">60%</span>
+        </div>
+        <div class="h-label">Consistency</div>
+        <div class="h-detail">Data, masking, dates</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════════ -->
+<script>
+// ── Concept Switcher ──
+document.querySelectorAll('.concept-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.concept-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.concept-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.target).classList.add('active');
+    window.scrollTo(0, 0);
+    if (tab.dataset.target === 'score-cards') animateScoreCards();
+  });
+});
+
+// ── Scroll Progress (Concept 1) ──
+window.addEventListener('scroll', () => {
+  if (!document.getElementById('scroll-narrative').classList.contains('active')) return;
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = h > 0 ? (window.scrollY / h) * 100 : 0;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// ── Scroll Reveal (Concept 1) ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.scroll-section').forEach(s => observer.observe(s));
+
+// ── Card Explorer Data (Concept 3) ──
+const findings = [
+  { id:'UXP-001', sev:'critical', screen:'form', title:'Thiếu loading state khi tải TK & validate', desc:'Flow không mô tả trạng thái chờ khi load danh sách TK.', tags:['Loading States','Doherty','ux-guidelines#10'] },
+  { id:'UXP-002', sev:'critical', screen:'confirm', title:'Thiếu flow xử lý khi API thất bại', desc:'Không có luồng error khi API Xác nhận trả lỗi.', tags:['Error Recovery','NNG','ux-guidelines#33'] },
+  { id:'UXP-003', sev:'critical', screen:'form', title:'Thiếu xử lý lỗi Số tiền > Số dư', desc:'BR nêu ràng buộc nhưng không có error flow/AC.', tags:['Error Prevention','Inline Error','ux-guidelines#33'] },
+  { id:'UXP-004', sev:'major', screen:'form', title:'Thiếu empty state danh sách TK', desc:'Không mô tả khi 0 tài khoản cùng chủ.', tags:['Empty States','NNG Visibility','ux-guidelines#79'] },
+  { id:'UXP-005', sev:'major', screen:'form', title:'Thiếu error & focused state cho input', desc:'Wireframe chỉ mô tả state mặc định.', tags:['Focus States','Inline Validation','web-interface#7'] },
+  { id:'UXP-006', sev:'major', screen:'confirm', title:'Thiếu loading & double-submit prevention', desc:'NFR đề cập nhưng wireframe không spec.', tags:['Loading Button','Doherty','web-interface#14'] },
+  { id:'UXP-007', sev:'major', screen:'confirm', title:'Mask số TK mâu thuẫn NFR vs wireframe', desc:'NFR ghi mask nhưng wireframe hiển thị đầy đủ.', tags:['Security','NFR Gap'] },
+  { id:'UXP-008', sev:'major', screen:'form', title:'Thiếu chỉ dấu required', desc:'Không spec trường nào required, thiếu asterisk.', tags:['Required Indicator','ux-guidelines#59'] },
+  { id:'UXP-009', sev:'major', screen:'form', title:'Switch thiếu accessible label', desc:'Không có aria-label cho screen reader.', tags:['ARIA','WCAG','web-interface#1'] },
+  { id:'UXP-010', sev:'minor', screen:'result', title:'Thời gian đặt lịch mâu thuẫn', desc:'"15/02/2020" vs "15/05/2023" — chênh 3 năm.', tags:['Date Format','ux-guidelines#85'] },
+  { id:'UXP-011', sev:'minor', screen:'form', title:'Số TK không nhất quán cross-screen', desc:'Dữ liệu mẫu khác nhau giữa 3 màn.', tags:['Consistency','NNG Standards'] },
+  { id:'UXP-012', sev:'minor', screen:'result', title:'Thiếu error khi Share/Save thất bại', desc:'Không có flow cho native share/save fail.', tags:['Toast','Error Recovery','ux-guidelines#82'] },
+  { id:'UXP-013', sev:'minor', screen:'form', title:'Thiếu prefers-reduced-motion', desc:'Switch, modal animation không spec motion sensitivity.', tags:['Reduced Motion','ux-guidelines#9'] },
+];
+
+function renderCards(filter) {
+  const grid = document.getElementById('explorerGrid');
+  const filtered = filter === 'all' ? findings :
+    ['critical','major','minor'].includes(filter) ? findings.filter(f => f.sev === filter) :
+    filter === 'form' ? findings.filter(f => f.screen === 'form') :
+    filter === 'confirm' ? findings.filter(f => f.screen === 'confirm') :
+    findings.filter(f => f.screen === 'result');
+
+  grid.innerHTML = filtered.map(f => `
+    <div class="audit-card explorer-card" style="animation:fadeInUp .5s ease forwards;">
+      <div class="card-header">
+        <span class="card-id">${f.id}</span>
+        <span class="badge ${f.sev}">${f.sev}</span>
+      </div>
+      <div class="card-body">
+        <h4>${f.title}</h4>
+        <p>${f.desc}</p>
+      </div>
+      <div class="card-footer">
+        ${f.tags.map(t => `<span class="card-tag">${t}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+renderCards('all');
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderCards(btn.dataset.filter);
+  });
+});
+
+// ── Animated Score Cards (Concept 4) ──
+function animateScoreCards() {
+  // Big ring
+  const bigRing = document.getElementById('bigRing');
+  const targetOffset = 534 - (534 * 0.58); // 58%
+  setTimeout(() => { bigRing.style.strokeDashoffset = targetOffset; }, 200);
+
+  // Counter
+  const bigVal = document.getElementById('bigValue');
+  let current = 0;
+  const target = 58;
+  const step = () => {
+    current += 1;
+    bigVal.textContent = current;
+    if (current < target) requestAnimationFrame(step);
+  };
+  setTimeout(step, 400);
+
+  // Heuristic rings
+  document.querySelectorAll('.heur-ring').forEach(ring => {
+    setTimeout(() => {
+      ring.style.transition = 'stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1)';
+      ring.style.strokeDashoffset = ring.dataset.target;
+    }, 600);
+  });
+}
+</script>
+</body>
+</html>

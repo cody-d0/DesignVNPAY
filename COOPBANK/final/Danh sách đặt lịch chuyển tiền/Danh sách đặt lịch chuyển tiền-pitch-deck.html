@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UX Audit — Co-opBank · Danh sách đặt lịch chuyển tiền</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-base: #0a0e1a;
+  --bg-surface: #111827;
+  --bg-card: #1a2235;
+  --bg-card-hover: #1f2a40;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent-gold: #f59e0b;
+  --accent-purple: #8b5cf6;
+  --accent-blue: #3b82f6;
+  --severity-critical: #ef4444;
+  --severity-major: #f97316;
+  --severity-minor: #eab308;
+  --severity-pass: #22c55e;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg-base);color:var(--text-primary);line-height:1.6}
+
+/* Layout */
+.container{max-width:1100px;margin:0 auto;padding:0 2rem}
+section{padding:4rem 0;opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+section.visible{opacity:1;transform:translateY(0)}
+
+/* Header */
+.hero{padding:5rem 0 3rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 50% 30%,rgba(139,92,246,.08) 0%,transparent 60%);pointer-events:none}
+.hero .overline{font-family:'IBM Plex Mono',monospace;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-purple);margin-bottom:1rem}
+.hero h1{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;line-height:1.15;margin-bottom:.75rem;background:linear-gradient(135deg,var(--text-primary) 30%,var(--accent-gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .subtitle{font-size:1.05rem;color:var(--text-secondary);max-width:580px;margin:0 auto 2rem}
+
+/* Stats Grid */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:2rem 0}
+.stat-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.25rem;text-align:center;transition:transform .25s,box-shadow .25s}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.stat-value{font-family:'IBM Plex Mono',monospace;font-size:2rem;font-weight:700;line-height:1.1}
+.stat-value.score{color:var(--accent-gold)}
+.stat-value.screens{color:var(--accent-blue)}
+.stat-value.checks{color:var(--accent-purple)}
+.stat-value.findings{color:var(--severity-critical)}
+.stat-label{font-size:.75rem;color:var(--text-muted);margin-top:.25rem;text-transform:uppercase;letter-spacing:.06em}
+
+/* Section Headers */
+.section-header{margin-bottom:2rem}
+.section-header .section-num{font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--accent-gold);letter-spacing:.1em}
+.section-header h2{font-family:'Playfair Display',serif;font-size:1.8rem;margin-top:.25rem}
+.section-header p{color:var(--text-secondary);margin-top:.5rem;max-width:600px}
+
+/* Methodology */
+.method-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.method-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.5rem;transition:transform .25s}
+.method-card:hover{transform:translateY(-2px)}
+.method-icon{font-size:1.5rem;margin-bottom:.5rem}
+.method-card h3{font-size:1rem;margin-bottom:.35rem}
+.method-card p{font-size:.85rem;color:var(--text-secondary)}
+
+/* Finding Cards */
+.finding-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;margin-bottom:1.5rem;transition:transform .25s,box-shadow .25s}
+.finding-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.35)}
+.finding-accent{height:4px}
+.finding-accent.critical{background:linear-gradient(90deg,var(--severity-critical),#dc2626)}
+.finding-accent.major{background:linear-gradient(90deg,var(--severity-major),#ea580c)}
+.finding-accent.minor{background:linear-gradient(90deg,var(--severity-minor),#ca8a04)}
+.card-layout{display:grid;grid-template-columns:2fr 3fr;gap:0}
+.card-visual{padding:1.5rem;display:flex;align-items:flex-start;justify-content:center;background:rgba(0,0,0,.15)}
+.phone-frame{position:relative;width:180px;border:3px solid rgba(255,255,255,.12);border-radius:24px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.phone-frame img{width:100%;display:block}
+.shot-overlay{position:absolute;bottom:0;left:0;right:0;padding:6px;background:linear-gradient(transparent,rgba(0,0,0,.7));font-size:.65rem;text-align:center;color:rgba(255,255,255,.8)}
+.card-info{padding:1.5rem 1.75rem}
+.card-top{display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem}
+.card-id{font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:var(--text-muted)}
+.badge{font-size:.65rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em}
+.badge.critical{background:rgba(239,68,68,.15);color:#fca5a5}
+.badge.major{background:rgba(249,115,22,.15);color:#fdba74}
+.badge.minor{background:rgba(234,179,8,.15);color:#fde047}
+.card-info h3{font-size:1.05rem;margin-bottom:.75rem;line-height:1.35}
+.finding-section{margin-bottom:.75rem}
+.finding-section h4{font-size:.75rem;color:var(--accent-gold);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem}
+.finding-section p,.finding-section li{font-size:.85rem;color:var(--text-secondary);line-height:1.5}
+.finding-section ul{padding-left:1.1rem;list-style:disc}
+.finding-section li{margin-bottom:.2rem}
+.proposed-box{background:rgba(34,197,94,.06);border-left:3px solid var(--severity-pass);padding:.75rem 1rem;border-radius:0 8px 8px 0;margin-top:.35rem}
+.proposed-box h5{font-size:.8rem;color:var(--severity-pass);margin-bottom:.25rem}
+.proposed-box ul{padding-left:1rem;list-style:disc}
+.proposed-box li{font-size:.82rem;color:var(--text-secondary)}
+.finding-tags{display:flex;gap:.4rem;margin:.75rem 0 .5rem;flex-wrap:wrap}
+.card-tag{font-size:.65rem;background:rgba(59,130,246,.12);color:var(--accent-blue);padding:2px 8px;border-radius:12px}
+details{margin-top:.5rem}
+details summary{font-size:.75rem;color:var(--accent-purple);cursor:pointer;transition:color .2s}
+details summary:hover{color:var(--text-primary)}
+.detail-content{font-size:.78rem;color:var(--text-muted);padding:.5rem 0;line-height:1.6}
+
+/* Scorecard */
+.scorecard-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.score-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.25rem;text-align:center}
+.score-ring{margin:0 auto .75rem}
+.score-ring circle{stroke-linecap:round}
+.score-ring .bg{stroke:rgba(255,255,255,.06);fill:none}
+.score-ring .fg{fill:none;transition:stroke-dashoffset 1.5s ease}
+.score-label{font-family:'IBM Plex Mono',monospace;font-size:.9rem;font-weight:600}
+.score-title{font-size:.8rem;color:var(--text-secondary);margin-top:.25rem}
+.score-detail{font-size:.7rem;color:var(--text-muted)}
+
+/* Action Plan */
+.sprint-table{width:100%;border-collapse:separate;border-spacing:0;background:var(--bg-card);border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
+.sprint-table th{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);padding:.75rem 1rem;text-align:left;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(255,255,255,.06)}
+.sprint-table td{padding:.75rem 1rem;font-size:.85rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.03)}
+.sprint-table tr:last-child td{border-bottom:none}
+.sprint-badge{display:inline-block;font-size:.6rem;font-weight:600;padding:2px 8px;border-radius:10px}
+
+/* Nav */
+.deck-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,14,26,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06);padding:0 2rem;height:56px;display:flex;align-items:center;gap:1.5rem}
+.deck-nav .logo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--accent-gold);letter-spacing:.5px}
+.deck-nav a{color:var(--text-secondary);text-decoration:none;font-size:.8rem;font-weight:500;transition:color .2s}
+.deck-nav a:hover{color:var(--text-primary)}
+
+/* Footer */
+footer{padding:2rem 0;text-align:center;border-top:1px solid rgba(255,255,255,.06)}
+footer p{font-size:.7rem;color:var(--text-muted)}
+
+/* Responsive */
+@media(max-width:768px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .method-grid{grid-template-columns:1fr}
+  .card-layout{grid-template-columns:1fr}
+  .scorecard-grid{grid-template-columns:repeat(2,1fr)}
+  .hero h1{font-size:2rem}
+  .phone-frame{width:140px}
+}
+@media(prefers-reduced-motion:reduce){
+  section{transition-duration:.01ms!important}
+  .score-ring .fg{transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="deck-nav">
+  <span class="logo">UX Audit</span>
+  <a href="#exec">Tổng quan</a>
+  <a href="#method">Phương pháp</a>
+  <a href="#findings">Phát hiện</a>
+  <a href="#scorecard">Scorecard</a>
+  <a href="#action">Hành động</a>
+</nav>
+
+<!-- ═══ 1. EXECUTIVE SUMMARY ═══ -->
+<section class="hero visible" id="exec" style="padding-top:6rem">
+<div class="container">
+  <p class="overline">UX Audit Report</p>
+  <h1>Danh sách đặt lịch chuyển tiền</h1>
+  <p class="subtitle">Đánh giá trải nghiệm người dùng cho chức năng quản lý lịch chuyển tiền định kỳ — Co-opBank Mobile Banking</p>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-value score" data-target="70">0</div><div class="stat-label">UX Score</div></div>
+    <div class="stat-card"><div class="stat-value screens" data-target="4">0</div><div class="stat-label">Màn hình</div></div>
+    <div class="stat-card"><div class="stat-value checks" data-target="40">0</div><div class="stat-label">Checks</div></div>
+    <div class="stat-card"><div class="stat-value findings" data-target="8">0</div><div class="stat-label">Findings</div></div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ 2. METHODOLOGY ═══ -->
+<section id="method">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2>Phương pháp đánh giá</h2>
+    <p>Kết hợp 4 phương pháp phân tích song song cho độ phủ tối đa</p>
+  </div>
+  <div class="method-grid">
+    <div class="method-card"><div class="method-icon">🔍</div><h3>Heuristic Evaluation</h3><p>Đánh giá theo 10 nguyên tắc Nielsen Norman Group, cross-reference 39 quy tắc UX Guidelines mức cao từ Design Data Layer.</p></div>
+    <div class="method-card"><div class="method-icon">⚙️</div><h3>Component Spec Analysis</h3><p>So sánh thiết kế với component specs DDL: card, bottom-sheet, filter, popup, OTP input — kiểm tra state coverage và token compliance.</p></div>
+    <div class="method-card"><div class="method-icon">👁️</div><h3>Vision Inspection</h3><p>Agent vision phân tích 15 ảnh wireframe trực tiếp — phát hiện color-only status, overlay consistency, empty state quality.</p></div>
+    <div class="method-card"><div class="method-icon">📐</div><h3>UX Law Cross-Reference</h3><p>Auto-trigger 60 UX Laws (Fitts's, Hick's, Peak-End Rule...) theo context cụ thể của từng màn hình đặt lịch chuyển tiền.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ 3. DETAILED FINDINGS ═══ -->
+<section id="findings">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2>Chi tiết phát hiện</h2>
+    <p>8 vấn đề được xác định, sắp xếp theo mức độ ảnh hưởng</p>
+  </div>
+
+  <!-- UXP-001 Critical -->
+  <div class="finding-card">
+    <div class="finding-accent critical"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/calendar.png" alt="Danh sách đặt lịch chuyển tiền với trạng thái chỉ phân biệt bằng màu">
+          <div class="shot-overlay">⚠️ Trạng thái chỉ dùng màu</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-001</span><span class="badge critical">Critical</span></div>
+        <h3>Trạng thái giao dịch chỉ phân biệt bằng màu chữ, thiếu biểu tượng hỗ trợ</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Bốn trạng thái giao dịch (Hoạt động, Đã hủy, Hết hạn, Tạm dừng) chỉ được phân biệt bằng màu chữ mà không có biểu tượng hoặc badge kèm theo. Người dùng có rối loạn nhận biến màu sắc sẽ không phân biệt được.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul>
+            <li>Người dùng dalto không phân biệt được Hoạt động (xanh lá) với Tạm dừng (cam) hoặc Đã hủy (đỏ)</li>
+            <li>Vi phạm WCAG 2.1 AA — Tiêu chuẩn Sử dụng Màu sắc (1.4.1)</li>
+            <li>Rủi ro: thao tác nhầm trên giao dịch đã hủy hoặc hết hạn</li>
+          </ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Visibility of System Status</strong> (Nielsen #1) — Trạng thái hệ thống cần hiển thị rõ ràng với nhiều kênh thị giác, không chỉ dựa vào một tín hiệu duy nhất.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Thêm biểu tượng trước trạng thái</h5>
+            <ul>
+              <li>Hoạt động: biểu tượng ✓ xanh lá + badge nền nhạt</li>
+              <li>Tạm dừng: biểu tượng ⏸ cam + badge nền nhạt</li>
+              <li>Đã hủy: biểu tượng ✕ đỏ + badge nền nhạt</li>
+              <li>Hết hạn: biểu tượng ⏰ xám + badge nền nhạt</li>
+            </ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Danh sách</span><span class="card-tag">Accessibility</span><span class="card-tag">Color Only</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-180 (Color Only — Don't convey information by color alone)<br>WCAG 2.1 AA: 1.4.1 Use of Color</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-002 Critical -->
+  <div class="finding-card">
+    <div class="finding-accent critical"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/popup.png" alt="Hộp thoại xác nhận tạm dừng thiếu thông tin giao dịch">
+          <div class="shot-overlay">⚠️ Xác nhận thiếu context</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-002</span><span class="badge critical">Critical</span></div>
+        <h3>Hộp thoại xác nhận tạm dừng thiếu thông tin giao dịch cụ thể</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Hộp thoại "Thông báo" chỉ hỏi "Quý khách có muốn Tạm dừng giao dịch đặt lịch chuyển tiền không?" mà không hiển thị mã đặt lịch, tên người thụ hưởng hay số tiền. Người dùng dễ xác nhận nhầm khi quản lý nhiều giao dịch.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul>
+            <li>Xác nhận nhầm → tạm dừng hoặc hủy giao dịch sai</li>
+            <li>Giao dịch tài chính → trễ lịch chuyển tiền, ảnh hưởng tài chính</li>
+            <li>Đặc thù ngân hàng: hộp thoại xác nhận phải cung cấp đủ ngữ cảnh</li>
+          </ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Error Prevention</strong> (Nielsen #5) — Hệ thống cần giúp người dùng tránh sai lầm bằng cách hiển thị đủ thông tin trước hành động không thể hoàn tác.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Bổ sung thông tin giao dịch vào hộp thoại</h5>
+            <ul>
+              <li>Hiển thị: Tên thụ hưởng + Số tiền + Mã đặt lịch</li>
+              <li>Thêm cảnh báo "Hành động này không thể hoàn tác" cho luồng Hủy</li>
+              <li>Phân biệt rõ nút Không (viền) và Đồng ý (nền đặc)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Chi tiết</span><span class="card-tag">Confirmation</span><span class="card-tag">Error Prevention</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-35 (Confirmation Dialogs — Confirm before destructive actions)<br>UX Law: Peak-End Rule — xác nhận là điểm cuối flow, ấn tượng quyết định trải nghiệm tổng thể</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-003 Major -->
+  <div class="finding-card">
+    <div class="finding-accent major"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/popup-2.png" alt="Màn hình xác thực giao dịch Soft OTP thiếu ngữ cảnh hành động">
+          <div class="shot-overlay">⚠️ OTP thiếu ngữ cảnh hành động</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-003</span><span class="badge major">Major</span></div>
+        <h3>Màn hình xác thực Soft OTP không ghi rõ hành động đang xác nhận</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Bottom sheet "Xác thực giao dịch" chỉ hiển thị "Quý khách vui lòng nhập mã PIN của Soft OTP để xác thực giao dịch" mà không nêu rõ đang xác nhận Tạm dừng hay Hủy.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul>
+            <li>Nhầm lẫn: người dùng không biết OTP xác nhận hành động nào</li>
+            <li>Nếu nhập sai 5 lần → khóa Soft OTP, tổn hại trải nghiệm nghiêm trọng</li>
+          </ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Visibility of System Status</strong> (Nielsen #1) — Người dùng phải biết rõ hệ thống đang xử lý gì trước khi xác nhận.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Cung cấp ngữ cảnh trong OTP</h5>
+            <ul>
+              <li>Tiêu đề: "Xác thực Tạm dừng giao dịch" hoặc "Xác thực Hủy giao dịch"</li>
+              <li>Hiển thị mã đặt lịch và số tiền bên dưới tiêu đề</li>
+            </ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Chi tiết</span><span class="card-tag">OTP</span><span class="card-tag">Context</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-33 (Error Feedback — Clear error messages near problem)<br>Banking security best practice: OTP context must match action</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-004 Major -->
+  <div class="finding-card">
+    <div class="finding-accent major"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/manage-2.png" alt="Trạng thái trống thiếu minh họa và nút hành động">
+          <div class="shot-overlay">⚠️ Trạng thái trống thiếu hướng dẫn</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-004</span><span class="badge major">Major</span></div>
+        <h3>Trạng thái trống thiếu hình minh họa và nút hành động trực tiếp</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Khi không có giao dịch Hoạt động, màn hình chỉ hiển thị một đoạn văn bản dài centered: "Quý khách không có giao dịch đặt lịch chuyển tiền nào đang Hoạt động. Vui lòng sử dụng bộ lọc...". Không có hình minh họa, không có nút hành động trực tiếp.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul>
+            <li>Người dùng không biết phải làm gì tiếp theo (thiếu nút hành động rõ ràng)</li>
+            <li>Văn bản dài căn giữa khó đọc trên điện thoại</li>
+            <li>Trạng thái trống thiếu hình minh họa → cảm giác lỗi hoặc trống rỗng</li>
+          </ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Help &amp; Documentation</strong> (Nielsen #10) — Trạng thái trống cần hướng dẫn rõ ràng cho bước tiếp theo, không chỉ giải thích tại sao trống.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Thiết kế trạng thái trống hoàn chỉnh</h5>
+            <ul>
+              <li>Thêm hình minh họa lịch hoặc biểu tượng 48×48 pixel</li>
+              <li>Rút ngắn văn bản, tách tiêu đề và mô tả</li>
+              <li>Thêm nút hành động "Mở bộ lọc" để người dùng thao tác trực tiếp</li>
+            </ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Quản lý</span><span class="card-tag">Empty State</span><span class="card-tag">Onboarding</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-19 (Content Jumping — Reserve space for content)<br>Component Spec: empty-state requires icon + title + description + optional CTA</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-005 Major -->
+  <div class="finding-card">
+    <div class="finding-accent major"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/filter-2.png" alt="Bộ lọc theo thời gian với trường ngày trống và thiếu kiểm tra">
+          <div class="shot-overlay">⚠️ Bộ lọc thiếu giá trị mặc định</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-005</span><span class="badge major">Major</span></div>
+        <h3>Bộ lọc theo thời gian thiếu giá trị mặc định và kiểm tra hợp lệ</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Chế độ lọc "Theo thời gian" có 2 trường chọn ngày (Từ ngày, Đến ngày) nhưng để trống mặc định. Không có kiểm tra hợp lệ khi Từ ngày lớn hơn Đến ngày. Chú thích giải thích logic truy vấn có cỡ chữ nhỏ, khó đọc.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul>
+            <li>Người dùng có thể chọn khoảng thời gian không hợp lệ → lỗi từ máy chủ</li>
+            <li>Chú thích nhỏ → người dùng bỏ qua → truy vấn sai kỳ vọng</li>
+            <li>Trường ngày trống → không biết bắt đầu từ đâu</li>
+          </ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Error Prevention</strong> (Nielsen #5) — Hệ thống cần ngăn ngừa lỗi trước khi xảy ra thông qua giá trị mặc định và kiểm tra đầu vào.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Bổ sung giá trị mặc định và kiểm tra</h5>
+            <ul>
+              <li>Giá trị mặc định: Từ ngày = 30 ngày trước, Đến ngày = hôm nay</li>
+              <li>Kiểm tra inline khi Từ ngày lớn hơn Đến ngày</li>
+              <li>Tăng cỡ chữ chú thích hoặc dùng biểu tượng thông tin (i)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Bộ lọc</span><span class="card-tag">Validation</span><span class="card-tag">Date Picker</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-33 (Error Feedback), UXG-43 (Form Labels)<br>UX Law: Doherty Threshold — phản hồi kiểm tra phải rõ ràng trong 400 mili giây</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-006 Minor -->
+  <div class="finding-card">
+    <div class="finding-accent minor"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/calendar.png" alt="Biểu tượng lọc trên header có kích thước nhỏ">
+          <div class="shot-overlay">⚠️ Vùng chạm biểu tượng nhỏ</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-006</span><span class="badge minor">Minor</span></div>
+        <h3>Biểu tượng lọc trên thanh header có vùng chạm nhỏ hơn chuẩn</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Biểu tượng lọc ở góc phải header chỉ 24×24 pixel, vùng chạm có thể nhỏ hơn chuẩn 44×44 pixel tối thiểu cho thiết bị di động.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul><li>Khó chạm trên điện thoại, đặc biệt người dùng lớn tuổi (đối tượng mục tiêu ngân hàng)</li></ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Flexibility &amp; Efficiency of Use</strong> (Nielsen #7) — Vùng chạm cần đủ lớn cho mọi nhóm người dùng.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Tăng vùng chạm</h5>
+            <ul><li>Thêm padding cho biểu tượng lọc lên tối thiểu 44×44 pixel (giữ kích thước trực quan 24×24)</li></ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Danh sách</span><span class="card-tag">Touch Target</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-22 (Touch Target Size — Minimum 44×44px)<br>UX Law: Fitts's Law — kích thước mục tiêu tỉ lệ thuận với tốc độ thao tác</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-007 Minor -->
+  <div class="finding-card">
+    <div class="finding-accent minor"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/manage.png" alt="Hộp thoại thành công thiếu thông tin giao dịch đã thay đổi">
+          <div class="shot-overlay">⚠️ Phản hồi thành công thiếu chi tiết</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-007</span><span class="badge minor">Minor</span></div>
+        <h3>Hộp thoại thành công không hiển thị thông tin giao dịch đã thay đổi</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Sau khi hoàn tất xác thực OTP, hộp thoại thành công chỉ hiện "Tạm dừng lệnh chuyển tiền thành công" mà không nêu giao dịch cụ thể nào (mã đặt lịch, tên người thụ hưởng).</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul><li>Không xác nhận được đúng giao dịch nào đã bị tạm dừng khi có nhiều giao dịch</li></ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Visibility of System Status</strong> (Nielsen #1) — Phản hồi thành công cần cụ thể, giúp người dùng xác nhận hành động đã thực hiện đúng.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Bổ sung thông tin vào phản hồi thành công</h5>
+            <ul>
+              <li>Hiển thị: Mã đặt lịch + Tên thụ hưởng + Trạng thái mới</li>
+              <li>Duy trì thời gian hiển thị đủ để đọc (tối thiểu 3 giây)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Quản lý</span><span class="card-tag">Success Feedback</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-34 (Success Feedback — Confirm successful actions to users)</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-008 Minor -->
+  <div class="finding-card">
+    <div class="finding-accent minor"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/list.png" alt="Danh sách giao dịch đã thực hiện với dữ liệu thiếu nhất quán">
+          <div class="shot-overlay">⚠️ Dữ liệu lịch sử thiếu nhất quán</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-008</span><span class="badge minor">Minor</span></div>
+        <h3>Danh sách giao dịch đã thực hiện hiển thị dữ liệu không nhất quán giữa các trạng thái</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Các mục "Thành công" hiển thị đầy đủ (ngày, mã giao dịch, phí); trong khi "Không thành công", "Tạm dừng", "Hủy" chỉ hiện ngày và trạng thái — thiếu mã giao dịch và phí.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul><li>Thiếu mã giao dịch khi tra cứu giao dịch thất bại để liên hệ tổng đài</li></ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Consistency &amp; Standards</strong> (Nielsen #4) — Cùng loại dữ liệu phải hiển thị cấu trúc nhất quán bất kể trạng thái.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Thống nhất cấu trúc hiển thị</h5>
+            <ul>
+              <li>Hiển thị mã giao dịch cho tất cả mục (nếu không có → hiện "—")</li>
+              <li>Thống nhất cấu trúc: ngày, trạng thái, mã giao dịch, phí (nếu có)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Chi tiết</span><span class="card-tag">Consistency</span><span class="card-tag">Data Display</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-19 (Content Jumping — Reserve space for content)<br>Banking UX: transaction references critical for support calls</div></details>
+      </div>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- ═══ 4. HEURISTIC SCORECARD ═══ -->
+<section id="scorecard">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2>Heuristic Scorecard</h2>
+    <p>Điểm số theo từng màn hình — được xác minh bởi công cụ tự động</p>
+  </div>
+  <div class="scorecard-grid">
+    <div class="score-card">
+      <svg class="score-ring" width="84" height="84" viewBox="0 0 84 84">
+        <circle class="bg" cx="42" cy="42" r="38" stroke-width="5"/>
+        <circle class="fg" cx="42" cy="42" r="38" stroke-width="5" stroke="var(--accent-gold)" stroke-dasharray="239" stroke-dashoffset="239" data-score="70" transform="rotate(-90 42 42)"/>
+      </svg>
+      <div class="score-label" style="color:var(--accent-gold)">70%</div>
+      <div class="score-title">Danh sách</div>
+      <div class="score-detail">7 pass · 2 gap · 1 unv.</div>
+    </div>
+    <div class="score-card">
+      <svg class="score-ring" width="84" height="84" viewBox="0 0 84 84">
+        <circle class="bg" cx="42" cy="42" r="38" stroke-width="5"/>
+        <circle class="fg" cx="42" cy="42" r="38" stroke-width="5" stroke="var(--severity-pass)" stroke-dasharray="239" stroke-dashoffset="239" data-score="80" transform="rotate(-90 42 42)"/>
+      </svg>
+      <div class="score-label" style="color:var(--severity-pass)">80%</div>
+      <div class="score-title">Quản lý</div>
+      <div class="score-detail">8 pass · 2 gap</div>
+    </div>
+    <div class="score-card">
+      <svg class="score-ring" width="84" height="84" viewBox="0 0 84 84">
+        <circle class="bg" cx="42" cy="42" r="38" stroke-width="5"/>
+        <circle class="fg" cx="42" cy="42" r="38" stroke-width="5" stroke="var(--accent-gold)" stroke-dasharray="239" stroke-dashoffset="239" data-score="70" transform="rotate(-90 42 42)"/>
+      </svg>
+      <div class="score-label" style="color:var(--accent-gold)">70%</div>
+      <div class="score-title">Bộ lọc</div>
+      <div class="score-detail">7 pass · 2 gap · 1 unv.</div>
+    </div>
+    <div class="score-card">
+      <svg class="score-ring" width="84" height="84" viewBox="0 0 84 84">
+        <circle class="bg" cx="42" cy="42" r="38" stroke-width="5"/>
+        <circle class="fg" cx="42" cy="42" r="38" stroke-width="5" stroke="var(--severity-major)" stroke-dasharray="239" stroke-dashoffset="239" data-score="60" transform="rotate(-90 42 42)"/>
+      </svg>
+      <div class="score-label" style="color:var(--severity-major)">60%</div>
+      <div class="score-title">Chi tiết</div>
+      <div class="score-detail">6 pass · 4 gap</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ 5. ACTION PLAN ═══ -->
+<section id="action">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2>Kế hoạch hành động</h2>
+    <p>Lộ trình triển khai theo mức độ ưu tiên — Sprint 1 xử lý Critical &amp; Major</p>
+  </div>
+  <table class="sprint-table">
+    <thead>
+      <tr><th>Sprint</th><th>ID</th><th>Vấn đề</th><th>Mức độ</th><th>Effort</th></tr>
+    </thead>
+    <tbody>
+      <tr><td rowspan="2"><strong>Sprint 1</strong><br><span style="font-size:.7rem;color:var(--text-muted)">Tuần 1-2</span></td>
+        <td>UXP-001</td><td>Trạng thái chỉ phân biệt bằng màu, thiếu biểu tượng</td>
+        <td><span class="sprint-badge" style="background:rgba(239,68,68,.15);color:#fca5a5">Critical</span></td><td>S</td></tr>
+      <tr><td>UXP-002</td><td>Hộp thoại xác nhận thiếu thông tin giao dịch</td>
+        <td><span class="sprint-badge" style="background:rgba(239,68,68,.15);color:#fca5a5">Critical</span></td><td>S</td></tr>
+      <tr><td rowspan="3"><strong>Sprint 2</strong><br><span style="font-size:.7rem;color:var(--text-muted)">Tuần 3-4</span></td>
+        <td>UXP-003</td><td>OTP thiếu ngữ cảnh hành động</td>
+        <td><span class="sprint-badge" style="background:rgba(249,115,22,.15);color:#fdba74">Major</span></td><td>S</td></tr>
+      <tr><td>UXP-004</td><td>Trạng thái trống thiếu hình minh họa và nút hành động</td>
+        <td><span class="sprint-badge" style="background:rgba(249,115,22,.15);color:#fdba74">Major</span></td><td>M</td></tr>
+      <tr><td>UXP-005</td><td>Bộ lọc thiếu giá trị mặc định và kiểm tra</td>
+        <td><span class="sprint-badge" style="background:rgba(249,115,22,.15);color:#fdba74">Major</span></td><td>S</td></tr>
+      <tr><td rowspan="3"><strong>Backlog</strong><br><span style="font-size:.7rem;color:var(--text-muted)">Khi có bandwidth</span></td>
+        <td>UXP-006</td><td>Vùng chạm biểu tượng lọc nhỏ hơn chuẩn</td>
+        <td><span class="sprint-badge" style="background:rgba(234,179,8,.15);color:#fde047">Minor</span></td><td>S</td></tr>
+      <tr><td>UXP-007</td><td>Phản hồi thành công thiếu thông tin giao dịch</td>
+        <td><span class="sprint-badge" style="background:rgba(234,179,8,.15);color:#fde047">Minor</span></td><td>S</td></tr>
+      <tr><td>UXP-008</td><td>Danh sách giao dịch hiển thị dữ liệu không nhất quán</td>
+        <td><span class="sprint-badge" style="background:rgba(234,179,8,.15);color:#fde047">Minor</span></td><td>S</td></tr>
+    </tbody>
+  </table>
+</div>
+</section>
+
+<footer>
+<div class="container">
+  <p>Co-opBank KHCN · Danh sách đặt lịch chuyển tiền · Powered by Design Data Layer</p>
+</div>
+</footer>
+
+<script>
+// IntersectionObserver for scroll-reveal
+const io=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}})},{threshold:.12});
+document.querySelectorAll('section:not(.visible)').forEach(s=>io.observe(s));
+
+// Counter animation
+function animateCounter(el,target,duration=1200){
+  const start=performance.now();
+  const isPercent=el.closest('.stat-card')?.querySelector('.stat-label')?.textContent==='UX Score';
+  function update(now){
+    const p=Math.min((now-start)/duration,1);
+    const ease=1-Math.pow(1-p,3);
+    const val=Math.round(ease*target);
+    el.textContent=isPercent?val+'%':val;
+    if(p<1)requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+const counterIO=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){const t=parseInt(e.target.dataset.target);animateCounter(e.target,t);counterIO.unobserve(e.target)}})},{threshold:.5});
+document.querySelectorAll('.stat-value[data-target]').forEach(el=>counterIO.observe(el));
+
+// Score ring animation
+const ringIO=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){const score=parseInt(e.target.dataset.score);const c=239;e.target.style.strokeDashoffset=c*(1-score/100);ringIO.unobserve(e.target)}})},{threshold:.3});
+document.querySelectorAll('.score-ring .fg').forEach(el=>ringIO.observe(el));
+</script>
+</body>
+</html>

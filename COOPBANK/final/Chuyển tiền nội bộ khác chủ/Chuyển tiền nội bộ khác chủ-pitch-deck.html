@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UX Audit — Co-opBank · Chuyển tiền nội bộ khác chủ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-base: #0a0e1a;
+  --bg-surface: #111827;
+  --bg-card: #1a2235;
+  --bg-card-hover: #1f2a40;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent-gold: #f59e0b;
+  --accent-purple: #8b5cf6;
+  --accent-blue: #3b82f6;
+  --severity-critical: #ef4444;
+  --severity-major: #f97316;
+  --severity-minor: #eab308;
+  --severity-pass: #22c55e;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg-base);color:var(--text-primary);line-height:1.6}
+
+/* Layout */
+.container{max-width:1100px;margin:0 auto;padding:0 2rem}
+section{padding:4rem 0;opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+section.visible{opacity:1;transform:translateY(0)}
+
+/* Header */
+.hero{padding:5rem 0 3rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 50% 30%,rgba(139,92,246,.08) 0%,transparent 60%);pointer-events:none}
+.hero .overline{font-family:'IBM Plex Mono',monospace;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-purple);margin-bottom:1rem}
+.hero h1{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;line-height:1.15;margin-bottom:.75rem;background:linear-gradient(135deg,var(--text-primary) 30%,var(--accent-gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .subtitle{font-size:1.05rem;color:var(--text-secondary);max-width:580px;margin:0 auto 2rem}
+
+/* Stats Grid */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:2rem 0}
+.stat-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.25rem;text-align:center;transition:transform .25s,box-shadow .25s}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.stat-value{font-family:'IBM Plex Mono',monospace;font-size:2rem;font-weight:700;line-height:1.1}
+.stat-value.score{color:var(--accent-gold)}
+.stat-value.screens{color:var(--accent-blue)}
+.stat-value.checks{color:var(--accent-purple)}
+.stat-value.findings{color:var(--severity-critical)}
+.stat-label{font-size:.75rem;color:var(--text-muted);margin-top:.25rem;text-transform:uppercase;letter-spacing:.06em}
+
+/* Section Headers */
+.section-header{margin-bottom:2rem}
+.section-header .section-num{font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--accent-gold);letter-spacing:.1em}
+.section-header h2{font-family:'Playfair Display',serif;font-size:1.8rem;margin-top:.25rem}
+.section-header p{color:var(--text-secondary);margin-top:.5rem;max-width:600px}
+
+/* Methodology */
+.method-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.method-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.5rem;transition:transform .25s}
+.method-card:hover{transform:translateY(-2px)}
+.method-icon{font-size:1.5rem;margin-bottom:.5rem}
+.method-card h3{font-size:1rem;margin-bottom:.35rem}
+.method-card p{font-size:.85rem;color:var(--text-secondary)}
+
+/* Finding Cards */
+.finding-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;margin-bottom:1.5rem;transition:transform .25s,box-shadow .25s}
+.finding-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.35)}
+.finding-accent{height:4px}
+.finding-accent.critical{background:linear-gradient(90deg,var(--severity-critical),#dc2626)}
+.finding-accent.major{background:linear-gradient(90deg,var(--severity-major),#ea580c)}
+.finding-accent.minor{background:linear-gradient(90deg,var(--severity-minor),#ca8a04)}
+.card-layout{display:grid;grid-template-columns:2fr 3fr;gap:0}
+.card-visual{padding:1.5rem;display:flex;align-items:flex-start;justify-content:center;background:rgba(0,0,0,.15)}
+.phone-frame{position:relative;width:180px;border:3px solid rgba(255,255,255,.12);border-radius:24px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.phone-frame img{width:100%;display:block}
+.shot-overlay{position:absolute;bottom:0;left:0;right:0;padding:6px;background:linear-gradient(transparent,rgba(0,0,0,.7));font-size:.65rem;text-align:center;color:rgba(255,255,255,.8)}
+.card-info{padding:1.5rem 1.75rem}
+.card-top{display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem}
+.card-id{font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:var(--text-muted)}
+.badge{font-size:.65rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em}
+.badge.critical{background:rgba(239,68,68,.15);color:#fca5a5}
+.badge.major{background:rgba(249,115,22,.15);color:#fdba74}
+.badge.minor{background:rgba(234,179,8,.15);color:#fde047}
+.card-info h3{font-size:1.05rem;margin-bottom:.75rem;line-height:1.35}
+.finding-section{margin-bottom:.75rem}
+.finding-section h4{font-size:.75rem;color:var(--accent-gold);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem}
+.finding-section p,.finding-section li{font-size:.85rem;color:var(--text-secondary);line-height:1.5}
+.finding-section ul{padding-left:1.1rem;list-style:disc}
+.finding-section li{margin-bottom:.2rem}
+.proposed-box{background:rgba(34,197,94,.06);border-left:3px solid var(--severity-pass);padding:.75rem 1rem;border-radius:0 8px 8px 0;margin-top:.35rem}
+.proposed-box h5{font-size:.8rem;color:var(--severity-pass);margin-bottom:.25rem}
+.proposed-box ul{padding-left:1rem;list-style:disc}
+.proposed-box li{font-size:.82rem;color:var(--text-secondary)}
+.finding-tags{display:flex;gap:.4rem;margin:.75rem 0 .5rem;flex-wrap:wrap}
+.card-tag{font-size:.65rem;background:rgba(59,130,246,.12);color:var(--accent-blue);padding:2px 8px;border-radius:12px}
+details{margin-top:.5rem}
+details summary{font-size:.75rem;color:var(--accent-purple);cursor:pointer;transition:color .2s}
+details summary:hover{color:var(--text-primary)}
+.detail-content{font-size:.78rem;color:var(--text-muted);padding:.5rem 0;line-height:1.6}
+
+/* Scorecard */
+.scorecard-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.score-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.25rem;text-align:center}
+.score-ring{margin:0 auto .75rem}
+.score-ring circle{stroke-linecap:round}
+.score-ring .bg{stroke:rgba(255,255,255,.06);fill:none}
+.score-ring .fg{fill:none;transition:stroke-dashoffset 1.5s ease}
+.score-label{font-family:'IBM Plex Mono',monospace;font-size:.9rem;font-weight:600}
+.score-title{font-size:.8rem;color:var(--text-secondary);margin-top:.25rem}
+.score-detail{font-size:.7rem;color:var(--text-muted)}
+
+/* Action Plan */
+.sprint-table{width:100%;border-collapse:separate;border-spacing:0;background:var(--bg-card);border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
+.sprint-table th{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);padding:.75rem 1rem;text-align:left;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(255,255,255,.06)}
+.sprint-table td{padding:.75rem 1rem;font-size:.85rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.03)}
+.sprint-table tr:last-child td{border-bottom:none}
+.sprint-badge{display:inline-block;font-size:.6rem;font-weight:600;padding:2px 8px;border-radius:10px}
+
+/* Nav */
+.deck-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,14,26,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06);padding:0 2rem;height:56px;display:flex;align-items:center;gap:1.5rem}
+.deck-nav .logo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--accent-gold);letter-spacing:.5px}
+.deck-nav a{color:var(--text-secondary);text-decoration:none;font-size:.8rem;font-weight:500;transition:color .2s}
+.deck-nav a:hover{color:var(--text-primary)}
+
+/* Footer */
+footer{padding:2rem 0;text-align:center;border-top:1px solid rgba(255,255,255,.06)}
+footer p{font-size:.7rem;color:var(--text-muted)}
+
+/* Responsive */
+@media(max-width:768px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .method-grid{grid-template-columns:1fr}
+  .card-layout{grid-template-columns:1fr}
+  .scorecard-grid{grid-template-columns:repeat(2,1fr)}
+  .hero h1{font-size:2rem}
+  .phone-frame{width:140px}
+}
+@media(prefers-reduced-motion:reduce){
+  section{transition-duration:.01ms!important}
+  .score-ring .fg{transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="deck-nav">
+  <span class="logo">UX Audit</span>
+  <a href="#exec">Tổng quan</a>
+  <a href="#method">Phương pháp</a>
+  <a href="#findings">Phát hiện</a>
+  <a href="#scorecard">Scorecard</a>
+  <a href="#action">Hành động</a>
+</nav>
+
+<!-- ═══ 1. EXECUTIVE SUMMARY ═══ -->
+<section class="hero visible" id="exec" style="padding-top:6rem">
+<div class="container">
+  <p class="overline">UX Audit Report</p>
+  <h1>Chuyển tiền nội bộ khác chủ</h1>
+  <p class="subtitle">Đánh giá trải nghiệm người dùng cho tính năng chuyển tiền nội bộ khác chủ tài khoản — Co-opBank Mobile Banking</p>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-value score" data-target="78">0</div><div class="stat-label">UX Score</div></div>
+    <div class="stat-card"><div class="stat-value screens" data-target="3">0</div><div class="stat-label">Màn hình</div></div>
+    <div class="stat-card"><div class="stat-value checks" data-target="50">0</div><div class="stat-label">Checks</div></div>
+    <div class="stat-card"><div class="stat-value findings" data-target="8">0</div><div class="stat-label">Findings</div></div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ 2. METHODOLOGY ═══ -->
+<section id="method">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2>Phương pháp đánh giá</h2>
+    <p>Kết hợp 4 phương pháp phân tích song song, cross-reference với Design Data Layer (DDL) gồm 69 guidelines và 60 UX Laws.</p>
+  </div>
+  <div class="method-grid">
+    <div class="method-card"><div class="method-icon">🔍</div><h3>Heuristic Evaluation</h3><p>Đánh giá theo 10 heuristics của Nielsen Norman Group. Kiểm tra visibility, consistency, error prevention, recognition.</p></div>
+    <div class="method-card"><div class="method-icon">⚙️</div><h3>Component Spec Analysis</h3><p>Cross-reference với DDL component specs (OTP input, text input, receipt preview). Kiểm tra state coverage và missing states.</p></div>
+    <div class="method-card"><div class="method-icon">👁️</div><h3>Vision Inspection</h3><p>Phân tích trực tiếp wireframe screenshots. Phát hiện inconsistency, truncation, contrast, spacing issues.</p></div>
+    <div class="method-card"><div class="method-icon">📐</div><h3>UX Law Cross-Reference</h3><p>Áp dụng Fitts's Law, Hick's Law, Peak-End Rule. 7 auto-triggered laws trên 3 màn hình.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ 3. DETAILED FINDINGS ═══ -->
+<section id="findings">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2>Chi tiết phát hiện</h2>
+    <p>8 vấn đề được xác định — 2 Critical · 3 Major · 3 Minor</p>
+  </div>
+
+  <!-- UXP-001 Critical -->
+  <div class="finding-card">
+    <div class="finding-accent critical"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/internal-transaction-6.png" alt="Màn hình xác thực giao dịch với OTP bottom sheet">
+          <div class="shot-overlay">⚠️ Thiếu nút gửi lại mã OTP</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-001</span><span class="badge critical">Critical</span></div>
+        <h3>Thiếu nút gửi lại mã OTP và đếm ngược thời gian</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Giao diện xác thực OTP chỉ hiển thị 6 ô nhập tĩnh và nút "Xác nhận". Không có nút "Gửi lại mã" hay bộ đếm ngược — vi phạm component spec OTP tiêu chuẩn.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul>
+            <li>Nếu mã OTP không đến (chậm mạng, SMS nghẽn), người dùng bị kẹt và phải thoát ứng dụng làm lại từ đầu</li>
+            <li>Tỷ lệ bỏ dở giao dịch tại bước xác thực tăng cao</li>
+          </ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>User Control &amp; Freedom</strong> (Nielsen #3) — Người dùng không có lối thoát khi OTP không đến. <strong>Error Recovery</strong> (Nielsen #9) — Không có cơ chế khắc phục khi xảy ra lỗi gửi mã.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Bổ sung cơ chế gửi lại OTP</h5>
+            <ul>
+              <li>Thêm nút "Gửi lại mã OTP" (tắt trong 60 giây đầu)</li>
+              <li>Thêm bộ đếm ngược "Gửi lại sau 00:45"</li>
+              <li>Highlight ô đang nhập với viền focus</li>
+            </ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Xác nhận giao dịch</span><span class="card-tag">OTP</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: COMP:otp-input-1 (states: canResend, timeLeft, activeIndex)<br>UX Law: Doherty Threshold — phản hồi trong 400ms<br>UXG-184: Keyboard Navigation</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-002 Critical -->
+  <div class="finding-card">
+    <div class="finding-accent critical"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/internal-transaction-2.png" alt="Màn hình form nhập thông tin chuyển tiền đã điền">
+          <div class="shot-overlay">⚠️ Thiếu số tiền bằng chữ</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-002</span><span class="badge critical">Critical</span></div>
+        <h3>Thiếu hiển thị số tiền bằng chữ trên form nhập liệu</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Trường "Số tiền" trên form chỉ hiển thị giá trị số (300,000) và đơn vị tiền tệ (VND). Không có dòng chữ viết thể hiện số tiền. Dòng chữ viết chỉ xuất hiện ở màn Xác nhận ("Hai mươi triệu đồng").</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul>
+            <li>Người dùng có thể nhập sai số tiền (nhầm số 0) mà không phát hiện sớm</li>
+            <li>Giao dịch sai số tiền dẫn đến yêu cầu hoàn tiền, khiếu nại</li>
+          </ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Error Prevention</strong> (Nielsen #5) — Không có cơ chế xác nhận trực quan để ngăn lỗi nhập sai số tiền tại thời điểm nhập.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Thêm dòng chữ viết số tiền theo thời gian thực</h5>
+            <ul>
+              <li>Hiển thị dòng "Ba trăm nghìn đồng" ngay dưới ô nhập số tiền</li>
+              <li>Cập nhật real-time khi người dùng thay đổi con số</li>
+            </ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Form nhập thông tin</span><span class="card-tag">Số tiền</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-165 (Input Validation — real-time feedback)<br>UXG-243 (Amount confirmation)<br>Banking best practice: amount text representation</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-003 Major -->
+  <div class="finding-card">
+    <div class="finding-accent major"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/internal-transaction-2.png" alt="Màn hình form dài với nút Tiếp tục bị đẩy xuống">
+          <div class="shot-overlay">⚠️ Nút hành động bị ẩn</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-003</span><span class="badge major">Major</span></div>
+        <h3>Nút "Tiếp tục" bị đẩy khỏi vùng hiển thị khi bật đặt lịch</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Khi person dùng bật chế độ đặt lịch, form mở rộng xuống 1098px (vượt viewport thiết bị 812px). Nút "Tiếp tục" bị đẩy ra khỏi màn hình — người dùng phải cuộn xuống để tìm.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul>
+            <li>Người dùng điền xong thông tin nhưng không thấy nút hành động → hoang mang, bỏ dở</li>
+            <li>Giảm tỷ lệ hoàn thành giao dịch</li>
+          </ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Visibility of System Status</strong> (Nielsen #1) — Nút hành động chính không nằm trong vùng nhìn thấy. <strong>Fitts's Law</strong> — Khoảng cách đến mục tiêu quá xa.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Cố định nút hành động ở cuối màn hình</h5>
+            <ul>
+              <li>Chuyển nút "Tiếp tục" sang sticky footer — luôn hiển thị dù cuộn form</li>
+              <li>Thêm bóng đổ phía trên để phân tách với nội dung</li>
+            </ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Form nhập thông tin</span><span class="card-tag">Đặt lịch</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-180 (CTA visibility)<br>UX Law: Fitts's Law — touch targets &amp; distance<br>Artboard 59:20803 height=1098px vs viewport 812px</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-004 Major -->
+  <div class="finding-card">
+    <div class="finding-accent major"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/internal-transaction-7.png" alt="Màn hình kết quả giao dịch với số tiền không khớp">
+          <div class="shot-overlay">⚠️ Số tiền không nhất quán</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-004</span><span class="badge major">Major</span></div>
+        <h3>Số tiền trên tiêu đề và chi tiết trong biên nhận không khớp</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Phần tiêu đề thẻ biên nhận hiển thị "50,000 VND" nhưng phần chi tiết bên dưới ghi "Số tiền: 20,000,000 VND". Hai con số mâu thuẫn gây hoang mang.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul>
+            <li>Người dùng không biết số tiền thực tế là bao nhiêu → mất niềm tin vào hệ thống</li>
+            <li>Ấn tượng cuối cùng (Peak-End Rule) tiêu cực</li>
+          </ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Consistency &amp; Standards</strong> (Nielsen #4) — Cùng một thuộc tính (số tiền) hiển thị hai giá trị khác nhau trên cùng màn hình.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Đồng bộ dữ liệu số tiền</h5>
+            <ul>
+              <li>Số tiền tiêu đề phải lấy cùng nguồn với chi tiết</li>
+              <li>Thêm dòng chữ viết dưới số tiền tiêu đề</li>
+            </ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Kết quả giao dịch</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-165 (Data consistency)<br>UX Law: Peak-End Rule — negative final impression</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-005 Major -->
+  <div class="finding-card">
+    <div class="finding-accent major"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/internal-transaction-5.png" alt="Màn hình xác nhận giao dịch với dropdown xác thực">
+          <div class="shot-overlay">⚠️ Dropdown 1 lựa chọn</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-005</span><span class="badge major">Major</span></div>
+        <h3>Dropdown phương thức xác thực chỉ có một lựa chọn duy nhất</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Dropdown "Chọn phương thức xác thực" hiển thị "SMS OTP" là lựa chọn duy nhất. Giao diện dropdown gợi ý có nhiều tùy chọn nhưng thực tế chỉ có một.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul>
+            <li>Người dùng nhấn vào dropdown mong đợi có nhiều lựa chọn → thất vọng khi chỉ thấy một</li>
+            <li>Thêm một bước tương tác không cần thiết → tăng thời gian hoàn thành</li>
+          </ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Aesthetic &amp; Minimalist Design</strong> (Nielsen #8) — Hiển thị dropdown khi không có lựa chọn thực sự. <strong>Hick's Law</strong> — Điểm quyết định không cần thiết.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Hiển thị tĩnh khi chỉ có một phương thức</h5>
+            <ul>
+              <li>Nếu chỉ 1 phương thức: hiển thị dạng text tĩnh "Xác thực bằng SMS OTP"</li>
+              <li>Nếu có từ 2 phương thức trở lên: giữ dropdown</li>
+            </ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Xác nhận giao dịch</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-183 (ARIA Labels)<br>UX Law: Hick's Law — unnecessary decision point</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-006 Minor -->
+  <div class="finding-card">
+    <div class="finding-accent minor"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/internal-transaction-5.png" alt="Màn hình xác nhận với lỗi chính tả banner">
+          <div class="shot-overlay">⚠️ Lỗi chính tả</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-006</span><span class="badge minor">Minor</span></div>
+        <h3>Lỗi chính tả trên banner hướng dẫn</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Banner thông tin ghi "Qúy khách" thay vì "Quý khách" — lỗi dấu thanh tiếng Việt.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul>
+            <li>Giảm cảm nhận chuyên nghiệp của ứng dụng</li>
+            <li>Người dùng Việt Nam nhạy cảm với lỗi chính tả</li>
+          </ul>
+        </div>
+        <div class="finding-section"><h4>Heuristic vi phạm</h4><p><strong>Consistency &amp; Standards</strong> (Nielsen #4) — Lỗi nội dung ảnh hưởng đến uy tín thương hiệu.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Sửa chính tả</h5>
+            <ul><li>Sửa "Qúy khách" → "Quý khách"</li></ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Xác nhận giao dịch</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-165 (Content accuracy)</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-007 Minor -->
+  <div class="finding-card">
+    <div class="finding-accent minor"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/internal-transaction.png" alt="Màn hình form với nội dung auto-fill không dấu">
+          <div class="shot-overlay">⚠️ Nội dung tự điền</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-007</span><span class="badge minor">Minor</span></div>
+        <h3>Nội dung giao dịch tự điền thiếu nhãn gợi ý</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Nội dung giao dịch được tự điền dạng không dấu: "NGUYEN HOANG KHAI chuyen tien". Người dùng có thể không nhận ra đây là giá trị tự tạo và có thể chỉnh sửa.</p></div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Thêm nhãn "[Tự động]"</h5>
+            <ul><li>Gắn nhãn gợi ý người dùng biết nội dung có thể chỉnh sửa</li></ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Form nhập thông tin</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-181 (Alt Text — meaningful labels)</div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- UXP-008 Minor -->
+  <div class="finding-card">
+    <div class="finding-accent minor"></div>
+    <div class="card-layout">
+      <div class="card-visual">
+        <div class="phone-frame">
+          <img src="ui/internal-transaction-7.png" alt="Màn hình kết quả thiếu thông tin phí">
+          <div class="shot-overlay">⚠️ Thiếu thông tin phí</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><span class="card-id">UXP-008</span><span class="badge minor">Minor</span></div>
+        <h3>Biên nhận giao dịch không hiển thị phí và thuế</h3>
+        <div class="finding-section"><h4>Hiện trạng</h4><p>Biên nhận kết quả giao dịch không hiển thị phí giao dịch cụ thể và thuế giá trị gia tăng. Người dùng chỉ được thông báo "Phí theo quy định" ở form nhập mà không biết con số cụ thể.</p></div>
+        <div class="finding-section"><h4>Tác động đến người dùng</h4>
+          <ul>
+            <li>Thiếu minh bạch về chi phí → giảm niềm tin</li>
+            <li>Người dùng phải kiểm tra lại qua kênh khác</li>
+          </ul>
+        </div>
+        <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+          <div class="proposed-box"><h5>Hiển thị thông tin phí trên biên nhận</h5>
+            <ul>
+              <li>Thêm dòng "Phí giao dịch: X VND" và "Thuế giá trị gia tăng: Y VND"</li>
+              <li>Đảm bảo dữ liệu mẫu nhất quán về thời gian</li>
+            </ul>
+          </div>
+        </div>
+        <div class="finding-tags"><span class="card-tag">Kết quả giao dịch</span></div>
+        <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL: UXG-235 (Disclaimer/Transparency)<br>UX Law: Peak-End Rule</div></details>
+      </div>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- ═══ 4. HEURISTIC SCORECARD ═══ -->
+<section id="scorecard">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2>Heuristic Scorecard</h2>
+    <p>Điểm số theo từng màn hình — được xác minh bởi công cụ tự động</p>
+  </div>
+  <div class="scorecard-grid">
+    <div class="score-card">
+      <svg class="score-ring" width="84" height="84" viewBox="0 0 84 84">
+        <circle class="bg" cx="42" cy="42" r="38" stroke-width="5"/>
+        <circle class="fg" cx="42" cy="42" r="38" stroke-width="5" stroke="var(--severity-pass)" stroke-dasharray="239" stroke-dashoffset="239" data-score="85" transform="rotate(-90 42 42)"/>
+      </svg>
+      <div class="score-label" style="color:var(--severity-pass)">85%</div>
+      <div class="score-title">Form nhập thông tin</div>
+      <div class="score-detail">17 pass · 3 gap</div>
+    </div>
+    <div class="score-card">
+      <svg class="score-ring" width="84" height="84" viewBox="0 0 84 84">
+        <circle class="bg" cx="42" cy="42" r="38" stroke-width="5"/>
+        <circle class="fg" cx="42" cy="42" r="38" stroke-width="5" stroke="var(--accent-gold)" stroke-dasharray="239" stroke-dashoffset="239" data-score="71" transform="rotate(-90 42 42)"/>
+      </svg>
+      <div class="score-label" style="color:var(--accent-gold)">71%</div>
+      <div class="score-title">Xác nhận giao dịch</div>
+      <div class="score-detail">10 pass · 4 gap</div>
+    </div>
+    <div class="score-card">
+      <svg class="score-ring" width="84" height="84" viewBox="0 0 84 84">
+        <circle class="bg" cx="42" cy="42" r="38" stroke-width="5"/>
+        <circle class="fg" cx="42" cy="42" r="38" stroke-width="5" stroke="var(--accent-gold)" stroke-dasharray="239" stroke-dashoffset="239" data-score="77" transform="rotate(-90 42 42)"/>
+      </svg>
+      <div class="score-label" style="color:var(--accent-gold)">77%</div>
+      <div class="score-title">Kết quả giao dịch</div>
+      <div class="score-detail">10 pass · 3 gap</div>
+    </div>
+    <div class="score-card">
+      <svg class="score-ring" width="84" height="84" viewBox="0 0 84 84">
+        <circle class="bg" cx="42" cy="42" r="38" stroke-width="5"/>
+        <circle class="fg" cx="42" cy="42" r="38" stroke-width="5" stroke="var(--accent-gold)" stroke-dasharray="239" stroke-dashoffset="239" data-score="78" transform="rotate(-90 42 42)"/>
+      </svg>
+      <div class="score-label" style="color:var(--accent-gold)">78%</div>
+      <div class="score-title">Tổng thể UX Score</div>
+      <div class="score-detail">37 pass · 10 gap · 3 unv.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ 5. ACTION PLAN ═══ -->
+<section id="action">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2>Kế hoạch hành động</h2>
+    <p>Lộ trình triển khai theo mức độ ưu tiên — Sprint 1 xử lý Critical &amp; Major</p>
+  </div>
+  <table class="sprint-table">
+    <thead>
+      <tr><th>Sprint</th><th>ID</th><th>Vấn đề</th><th>Mức độ</th><th>Effort</th></tr>
+    </thead>
+    <tbody>
+      <tr><td rowspan="2"><strong>Sprint 1</strong><br><span style="font-size:.7rem;color:var(--text-muted)">Tuần 1-2</span></td>
+        <td>UXP-001</td><td>Bổ sung nút gửi lại OTP + bộ đếm ngược</td>
+        <td><span class="sprint-badge" style="background:rgba(239,68,68,.15);color:#fca5a5">Critical</span></td><td>M</td></tr>
+      <tr><td>UXP-002</td><td>Thêm hiển thị số tiền bằng chữ real-time trên form</td>
+        <td><span class="sprint-badge" style="background:rgba(239,68,68,.15);color:#fca5a5">Critical</span></td><td>S</td></tr>
+      <tr><td rowspan="3"><strong>Sprint 2</strong><br><span style="font-size:.7rem;color:var(--text-muted)">Tuần 3-4</span></td>
+        <td>UXP-003</td><td>Chuyển nút "Tiếp tục" sang sticky footer</td>
+        <td><span class="sprint-badge" style="background:rgba(249,115,22,.15);color:#fdba74">Major</span></td><td>S</td></tr>
+      <tr><td>UXP-004</td><td>Đồng bộ số tiền giữa tiêu đề và chi tiết biên nhận</td>
+        <td><span class="sprint-badge" style="background:rgba(249,115,22,.15);color:#fdba74">Major</span></td><td>S</td></tr>
+      <tr><td>UXP-005</td><td>Hiển thị tĩnh phương thức xác thực khi chỉ có 1 lựa chọn</td>
+        <td><span class="sprint-badge" style="background:rgba(249,115,22,.15);color:#fdba74">Major</span></td><td>S</td></tr>
+      <tr><td rowspan="3"><strong>Backlog</strong><br><span style="font-size:.7rem;color:var(--text-muted)">Khi có bandwidth</span></td>
+        <td>UXP-006</td><td>Sửa lỗi chính tả "Qúy khách" → "Quý khách"</td>
+        <td><span class="sprint-badge" style="background:rgba(234,179,8,.15);color:#fde047">Minor</span></td><td>S</td></tr>
+      <tr><td>UXP-007</td><td>Thêm nhãn "[Tự động]" cho nội dung giao dịch tự điền</td>
+        <td><span class="sprint-badge" style="background:rgba(234,179,8,.15);color:#fde047">Minor</span></td><td>S</td></tr>
+      <tr><td>UXP-008</td><td>Hiển thị phí giao dịch và thuế trên biên nhận kết quả</td>
+        <td><span class="sprint-badge" style="background:rgba(234,179,8,.15);color:#fde047">Minor</span></td><td>S</td></tr>
+    </tbody>
+  </table>
+</div>
+</section>
+
+<footer>
+<div class="container">
+  <p>Co-opBank KHCN · Chuyển tiền nội bộ khác chủ tài khoản · Powered by Design Data Layer</p>
+</div>
+</footer>
+
+<script>
+// IntersectionObserver for scroll-reveal
+const io=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}})},{threshold:.12});
+document.querySelectorAll('section:not(.visible)').forEach(s=>io.observe(s));
+
+// Counter animation
+function animateCounter(el,target,duration=1200){
+  const start=performance.now();
+  const isPercent=el.closest('.stat-card')?.querySelector('.stat-label')?.textContent==='UX Score';
+  function update(now){
+    const p=Math.min((now-start)/duration,1);
+    const ease=1-Math.pow(1-p,3);
+    const val=Math.round(ease*target);
+    el.textContent=isPercent?val+'%':val;
+    if(p<1)requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+const counterIO=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){const t=parseInt(e.target.dataset.target);animateCounter(e.target,t);counterIO.unobserve(e.target)}})},{threshold:.5});
+document.querySelectorAll('.stat-value[data-target]').forEach(el=>counterIO.observe(el));
+
+// Score ring animation
+const ringIO=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){const score=parseInt(e.target.dataset.score);const c=239;e.target.style.strokeDashoffset=c*(1-score/100);ringIO.unobserve(e.target)}})},{threshold:.3});
+document.querySelectorAll('.score-ring .fg').forEach(el=>ringIO.observe(el));
+</script>
+</body>
+</html>

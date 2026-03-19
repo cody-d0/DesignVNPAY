@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xPOS Core Navigation - Batch 3 Prototype</title>
+    <meta name="description" content="Prototype: Trang chính (Dashboard) và Trung tâm thông báo">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ============================================================
+           DESIGN TOKENS
+           ============================================================ */
+        :root {
+            --background: #ffffff;
+            --foreground: #0a0a0a;
+            --primary: #E31837;
+            --primary-foreground: #FFFFFF;
+            --secondary: #F8F9FA;
+            --secondary-foreground: #0a0a0a;
+            --muted: #F8F9FA;
+            --muted-foreground: #737373;
+            --accent: #FFB800;
+            --accent-foreground: #1A1A1A;
+            --destructive: #DC3545;
+            --destructive-foreground: #FFFFFF;
+            --success: #22c55e;
+            --border: #DEE2E6;
+            --ring: #E31837;
+            --card: #ffffff;
+            --card-foreground: #0a0a0a;
+
+            --input-height: 48px;
+            --button-height: 48px;
+            --touch-target: 44px;
+            --icon-size: 24px;
+            --tab-height: 56px;
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+
+            --font-family: 'Be Vietnam Pro', sans-serif;
+            --text-xs: 12px;
+            --text-sm: 14px;
+            --text-base: 16px;
+            --text-lg: 18px;
+            --text-xl: 20px;
+            --text-2xl: 24px;
+            --text-3xl: 30px;
+
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+
+            --duration-fast: 150ms;
+            --duration-normal: 300ms;
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        [data-theme="dark"] {
+            --background: #0a0a0a;
+            --foreground: #fafafa;
+            --primary: #FF4D5A;
+            --primary-foreground: #1A1A1A;
+            --secondary: #1E1E1E;
+            --secondary-foreground: #fafafa;
+            --muted: #1E1E1E;
+            --muted-foreground: #a3a3a3;
+            --accent: #FFC233;
+            --accent-foreground: #1A1A1A;
+            --destructive: #FF4D5A;
+            --destructive-foreground: #FFFFFF;
+            --success: #4ade80;
+            --border: #343A40;
+            --ring: #FF4D5A;
+            --card: #171717;
+            --card-foreground: #fafafa;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ============================================================
+           RESET & BASE
+           ============================================================ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: #1a1a2e;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-lg);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ============================================================
+           CONTROL PANEL
+           ============================================================ */
+        .prototype-container {
+            display: flex;
+            gap: var(--spacing-xl);
+            align-items: flex-start;
+            max-width: 800px;
+        }
+
+        .control-panel {
+            width: 260px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            color: #e0e0e0;
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: var(--spacing-lg);
+        }
+
+        .control-panel h2 {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .control-section {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .control-section label {
+            display: block;
+            font-size: var(--text-xs);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .control-section select {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-md);
+            color: #fff;
+            font-size: var(--text-sm);
+            font-family: var(--font-family);
+            cursor: pointer;
+            outline: none;
+        }
+
+        .control-section select:focus {
+            border-color: var(--primary);
+        }
+
+        .control-section select option {
+            background: #1a1a2e;
+        }
+
+        .theme-toggle {
+            display: flex;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-sm);
+        }
+
+        .theme-btn {
+            flex: 1;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: var(--text-xs);
+            font-family: var(--font-family);
+            cursor: pointer;
+            transition: all var(--duration-fast) ease;
+        }
+
+        .theme-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        .flow-nav {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-sm);
+        }
+
+        .flow-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-md);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: var(--text-sm);
+            font-family: var(--font-family);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--duration-fast) ease;
+        }
+
+        .flow-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .flow-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .state-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-sm);
+        }
+
+        .state-chip {
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 11px;
+            font-family: var(--font-family);
+            cursor: pointer;
+            transition: all var(--duration-fast) ease;
+        }
+
+        .state-chip.active {
+            background: rgba(227, 24, 55, 0.2);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .screen-info {
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .screen-info dt {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .screen-info dd {
+            font-size: var(--text-sm);
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        /* ============================================================
+           PHONE FRAME
+           ============================================================ */
+        .phone-wrapper {
+            flex-shrink: 0;
+        }
+
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: var(--background);
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 25px 80px rgba(0, 0, 0, 0.5), inset 0 0 0 2px rgba(255, 255, 255, 0.03);
+            transition: background var(--duration-normal) ease;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 34px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        .status-bar {
+            height: 54px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 0 var(--spacing-xl) 8px;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--foreground);
+        }
+
+        .status-bar-right {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .status-bar-right svg {
+            width: 18px;
+            height: 12px;
+            fill: var(--foreground);
+        }
+
+        /* ============================================================
+           SCREENS
+           ============================================================ */
+        .screen {
+            display: none;
+            flex-direction: column;
+            height: calc(100% - 54px);
+        }
+
+        .screen.active {
+            display: flex;
+            animation: screenIn var(--duration-normal) var(--ease-out) both;
+        }
+
+        @keyframes screenIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .screen-body {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* Stagger */
+        .stagger-item {
+            opacity: 0;
+            transform: translateY(12px);
+            animation: staggerIn var(--duration-normal) var(--ease-out) forwards;
+        }
+
+        @keyframes staggerIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stagger-item:nth-child(1) {
+            animation-delay: 0ms;
+        }
+
+        .stagger-item:nth-child(2) {
+            animation-delay: 60ms;
+        }
+
+        .stagger-item:nth-child(3) {
+            animation-delay: 120ms;
+        }
+
+        .stagger-item:nth-child(4) {
+            animation-delay: 180ms;
+        }
+
+        .stagger-item:nth-child(5) {
+            animation-delay: 240ms;
+        }
+
+        .stagger-item:nth-child(6) {
+            animation-delay: 300ms;
+        }
+
+        .stagger-item:nth-child(7) {
+            animation-delay: 360ms;
+        }
+
+        .stagger-item:nth-child(8) {
+            animation-delay: 420ms;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .stagger-item {
+                animation: none;
+                opacity: 1;
+                transform: none;
+            }
+
+            .screen {
+                animation: none;
+            }
+        }
+
+        /* ============================================================
+           SCR-021: TRANG CHINH (DASHBOARD)
+           ============================================================ */
+        .dash-header {
+            padding: var(--spacing-md) var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .dash-header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .dash-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #ff6b7a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: var(--text-base);
+            flex-shrink: 0;
+        }
+
+        .dash-greeting {
+            font-size: var(--text-sm);
+            color: var(--muted-foreground);
+        }
+
+        .dash-store-name {
+            font-size: var(--text-lg);
+            font-weight: 700;
+            color: var(--foreground);
+        }
+
+        .dash-header-right {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .icon-btn {
+            width: var(--touch-target);
+            height: var(--touch-target);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            color: var(--foreground);
+            position: relative;
+            transition: background var(--duration-fast) ease;
+        }
+
+        .icon-btn:hover {
+            background: var(--muted);
+        }
+
+        .icon-btn svg {
+            width: var(--icon-size);
+            height: var(--icon-size);
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .badge--counter {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--primary);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            border-radius: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            border: 2px solid var(--background);
+        }
+
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-md);
+            padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-sm);
+        }
+
+        .kpi-grid .kpi-card:last-child {
+            grid-column: 1 / -1;
+        }
+
+        .kpi-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .kpi-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .kpi-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
+        .kpi-icon.revenue {
+            background: rgba(227, 24, 55, 0.08);
+        }
+
+        .kpi-icon.revenue svg {
+            stroke: var(--primary);
+        }
+
+        .kpi-icon.orders {
+            background: rgba(34, 197, 94, 0.08);
+        }
+
+        .kpi-icon.orders svg {
+            stroke: var(--success);
+        }
+
+        .kpi-icon.products {
+            background: rgba(255, 184, 0, 0.08);
+        }
+
+        .kpi-icon.products svg {
+            stroke: var(--accent);
+        }
+
+        .kpi-value {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--foreground);
+            margin-bottom: 2px;
+        }
+
+        .kpi-label {
+            font-size: var(--text-xs);
+            color: var(--muted-foreground);
+            font-weight: 500;
+        }
+
+        /* ============ VNPAY QR Status Widget ============ */
+        .vnpay-status-widget {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0 var(--spacing-lg) var(--spacing-md);
+            padding: 12px 16px;
+            background: linear-gradient(135deg, rgba(0, 122, 82, 0.06) 0%, rgba(34, 197, 94, 0.04) 100%);
+            border: 1px solid rgba(0, 122, 82, 0.15);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--duration-fast) ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vnpay-status-widget::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 122, 82, 0.03) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .vnpay-status-widget:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 122, 82, 0.12);
+            border-color: rgba(0, 122, 82, 0.25);
+        }
+
+        [data-theme="dark"] .vnpay-status-widget {
+            background: linear-gradient(135deg, rgba(0, 122, 82, 0.12) 0%, rgba(34, 197, 94, 0.06) 100%);
+            border-color: rgba(0, 122, 82, 0.2);
+        }
+
+        [data-theme="dark"] .vnpay-status-widget:hover {
+            box-shadow: 0 4px 16px rgba(0, 122, 82, 0.2);
+        }
+
+        .vnpay-icon-wrap {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #007A52 0%, #00A86B 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0, 122, 82, 0.3);
+        }
+
+        .vnpay-icon-wrap svg {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: #fff;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .vnpay-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .vnpay-brand {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--foreground);
+            letter-spacing: 0.02em;
+            line-height: 1.2;
+        }
+
+        .vnpay-sublabel {
+            font-size: 11px;
+            color: var(--muted-foreground);
+            font-weight: 500;
+            margin-top: 1px;
+        }
+
+        .vnpay-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .vnpay-status-badge.active {
+            background: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+        }
+
+        [data-theme="dark"] .vnpay-status-badge.active {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+        }
+
+        .vnpay-status-badge.inactive {
+            background: rgba(156, 163, 175, 0.1);
+            color: var(--muted-foreground);
+        }
+
+        .vnpay-pulse {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #22c55e;
+            position: relative;
+        }
+
+        .vnpay-pulse::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(34, 197, 94, 0.3);
+            animation: vnpay-pulse-ring 2s ease-out infinite;
+        }
+
+        @keyframes vnpay-pulse-ring {
+            0% {
+                transform: scale(0.5);
+                opacity: 1;
+            }
+
+            70% {
+                transform: scale(1.2);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        .vnpay-chevron {
+            width: 16px;
+            height: 16px;
+            color: var(--muted-foreground);
+            flex-shrink: 0;
+            opacity: 0.5;
+        }
+
+        .vnpay-chevron svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            padding: 0 var(--spacing-lg) var(--spacing-md);
+        }
+
+        .quick-actions-title {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--foreground);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--spacing-md);
+        }
+
+        .quick-action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-xs);
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: var(--spacing-sm) 0;
+        }
+
+        .quick-action-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            background: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform var(--duration-fast) ease;
+        }
+
+        .quick-action-item:hover .quick-action-icon {
+            transform: scale(1.05);
+        }
+
+        .quick-action-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--foreground);
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .quick-action-label {
+            font-size: 11px;
+            color: var(--muted-foreground);
+            font-weight: 500;
+            font-family: var(--font-family);
+            text-align: center;
+        }
+
+        /* Bottom Tab Bar */
+        .tab-bar {
+            display: flex;
+            height: var(--tab-height);
+            border-top: 1px solid var(--border);
+            background: var(--background);
+            flex-shrink: 0;
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--muted-foreground);
+            font-family: var(--font-family);
+            transition: color var(--duration-fast) ease;
+            padding: 4px 0;
+        }
+
+        .tab-item.active {
+            color: var(--primary);
+        }
+
+        .tab-item svg {
+            width: 22px;
+            height: 22px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .tab-item span {
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        /* ============================================================
+           SCR-026: TRUNG TAM THONG BAO
+           ============================================================ */
+        .header-bar {
+            display: flex;
+            align-items: center;
+            height: 56px;
+            padding: 0 var(--spacing-md);
+            gap: var(--spacing-sm);
+            flex-shrink: 0;
+        }
+
+        .btn-back {
+            width: var(--touch-target);
+            height: var(--touch-target);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            color: var(--foreground);
+            transition: background var(--duration-fast) ease;
+        }
+
+        .btn-back:hover {
+            background: var(--muted);
+        }
+
+        .btn-back svg {
+            width: var(--icon-size);
+            height: var(--icon-size);
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .header-title {
+            font-size: var(--text-base);
+            font-weight: 600;
+            color: var(--foreground);
+            flex: 1;
+        }
+
+        .header-action {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: var(--text-sm);
+            color: var(--primary);
+            font-family: var(--font-family);
+            font-weight: 500;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-sm);
+            transition: background var(--duration-fast) ease;
+        }
+
+        .header-action:hover {
+            background: rgba(227, 24, 55, 0.06);
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .filter-tab {
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: var(--text-sm);
+            font-weight: 500;
+            font-family: var(--font-family);
+            color: var(--muted-foreground);
+            border-radius: 100px;
+            transition: all var(--duration-fast) ease;
+        }
+
+        .filter-tab.active {
+            background: var(--primary);
+            color: var(--primary-foreground);
+        }
+
+        .filter-tab:not(.active):hover {
+            background: var(--muted);
+        }
+
+        /* Notification Cards */
+        .noti-list {
+            padding: var(--spacing-md) var(--spacing-lg);
+        }
+
+        .noti-card {
+            display: flex;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-md);
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: transform var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+        }
+
+        .noti-card:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .noti-card.unread {
+            border-left: 3px solid var(--primary);
+        }
+
+        .noti-icon-wrap {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .noti-icon-wrap.payment {
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .noti-icon-wrap.payment svg {
+            stroke: var(--success);
+        }
+
+        .noti-icon-wrap.system {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .noti-icon-wrap.system svg {
+            stroke: #6366f1;
+        }
+
+        .noti-icon-wrap.alert {
+            background: rgba(255, 184, 0, 0.1);
+        }
+
+        .noti-icon-wrap.alert svg {
+            stroke: var(--accent);
+        }
+
+        .noti-icon-wrap svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .noti-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .noti-title {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--foreground);
+            margin-bottom: 2px;
+        }
+
+        .noti-desc {
+            font-size: var(--text-xs);
+            color: var(--muted-foreground);
+            margin-bottom: var(--spacing-xs);
+            line-height: 1.4;
+        }
+
+        .noti-time {
+            font-size: 11px;
+            color: var(--muted-foreground);
+            opacity: 0.7;
+        }
+
+        .noti-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary);
+            flex-shrink: 0;
+            margin-top: 6px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-xl) var(--spacing-lg);
+            text-align: center;
+            height: 100%;
+        }
+
+        .empty-state.visible {
+            display: flex;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .empty-icon svg {
+            width: 36px;
+            height: 36px;
+            stroke: var(--muted-foreground);
+            fill: none;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .empty-title {
+            font-size: var(--text-base);
+            font-weight: 600;
+            color: var(--foreground);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .empty-desc {
+            font-size: var(--text-sm);
+            color: var(--muted-foreground);
+        }
+
+        /* Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, var(--muted) 25%, rgba(200, 200, 200, 0.15) 50%, var(--muted) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: var(--radius-sm);
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .skeleton-card {
+            height: 100px;
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .skeleton-text {
+            height: 14px;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .skeleton-text.w60 {
+            width: 60%;
+        }
+
+        .skeleton-text.w40 {
+            width: 40%;
+        }
+
+        .skeleton-text.w80 {
+            width: 80%;
+        }
+
+        .skeleton-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="prototype-container">
+
+        <!-- CONTROL PANEL -->
+        <div class="control-panel">
+            <h2>xPOS Batch 3</h2>
+
+            <div class="control-section">
+                <label>Màn hình</label>
+                <select id="screenSelect" onchange="navigateTo(this.value)">
+                    <option value="scr-021">SCR-021 Trang chính</option>
+                    <option value="scr-026">SCR-026 Trung tâm thông báo</option>
+                </select>
+            </div>
+
+            <div class="control-section">
+                <label>Giao diện</label>
+                <div class="theme-toggle">
+                    <button class="theme-btn active" id="lightBtn" onclick="setTheme('light')">Sáng</button>
+                    <button class="theme-btn" id="darkBtn" onclick="setTheme('dark')">Tối</button>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <label>Trạng thái</label>
+                <div class="state-chips" id="stateChips"></div>
+            </div>
+
+            <div class="control-section">
+                <label>Di chuyển</label>
+                <div class="flow-nav">
+                    <button class="flow-btn" id="prevBtn" onclick="flowPrev()">Trước</button>
+                    <button class="flow-btn" id="nextBtn" onclick="flowNext()">Sau</button>
+                </div>
+            </div>
+
+            <dl class="screen-info">
+                <dt>Màn hình</dt>
+                <dd id="infoId">SCR-021</dd>
+                <dt>Loại</dt>
+                <dd id="infoType">dashboard</dd>
+                <dt>Luồng</dt>
+                <dd id="infoFlow">Core Navigation</dd>
+                <dt>UC</dt>
+                <dd id="infoUC">UC-001, UC-002</dd>
+            </dl>
+        </div>
+
+        <!-- PHONE FRAME -->
+        <div class="phone-wrapper">
+            <div class="phone-frame" id="phoneFrame">
+                <div class="notch"></div>
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <span class="status-bar-right">
+                        <svg viewBox="0 0 18 12">
+                            <rect x="0" y="3" width="4" height="9" rx="1" />
+                            <rect x="5" y="2" width="4" height="10" rx="1" />
+                            <rect x="10" y="0" width="4" height="12" rx="1" />
+                        </svg>
+                        <svg viewBox="0 0 25 12" style="width:25px">
+                            <rect x="0" y="0.5" width="22" height="11" rx="2.5" stroke="currentColor" stroke-width="1"
+                                fill="none" />
+                            <rect x="23" y="3.5" width="2" height="5" rx="1" fill="currentColor" />
+                            <rect x="2" y="2.5" width="16" height="7" rx="1.5" fill="currentColor" />
+                        </svg>
+                    </span>
+                </div>
+
+                <!-- ===== SCR-021: Trang chính ===== -->
+                <div class="screen active" id="scr-021" data-type="dashboard" data-flow="Core Navigation"
+                    data-uc="UC-001, UC-002">
+
+                    <div class="screen-body">
+                        <!-- Header -->
+                        <div class="dash-header stagger-item">
+                            <div class="dash-header-left">
+                                <div class="dash-avatar">QP</div>
+                                <div>
+                                    <div class="dash-greeting">Xin chào</div>
+                                    <div class="dash-store-name">Quán Phở 24h</div>
+                                </div>
+                            </div>
+                            <div class="dash-header-right">
+                                <button class="icon-btn" id="bellBtn" onclick="navigateTo('scr-026')"
+                                    aria-label="Thông báo">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                                        <path d="M13.73 21a2 2 0 01-3.46 0" />
+                                    </svg>
+                                    <span class="badge--counter" id="notiBadge">3</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- KPI Cards -->
+                        <div class="kpi-grid" id="kpiGrid">
+                            <div class="kpi-card stagger-item">
+                                <div class="kpi-icon revenue">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+                                    </svg>
+                                </div>
+                                <div class="kpi-value">2.5M</div>
+                                <div class="kpi-label">Doanh thu hôm nay</div>
+                            </div>
+                            <div class="kpi-card stagger-item">
+                                <div class="kpi-icon orders">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+                                        <rect x="9" y="3" width="6" height="4" rx="1" />
+                                    </svg>
+                                </div>
+                                <div class="kpi-value">12</div>
+                                <div class="kpi-label">Đơn hôm nay</div>
+                            </div>
+                            <div class="kpi-card stagger-item">
+                                <div class="kpi-icon products">
+                                    <svg viewBox="0 0 24 24">
+                                        <path
+                                            d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" />
+                                        <circle cx="7" cy="7" r="1" />
+                                    </svg>
+                                </div>
+                                <div class="kpi-value">45</div>
+                                <div class="kpi-label">Sản phẩm đang bán</div>
+                            </div>
+                        </div>
+
+                        <!-- VNPAY QR Status Widget -->
+                        <div class="vnpay-status-widget stagger-item" id="vnpayWidget">
+                            <div class="vnpay-icon-wrap">
+                                <svg viewBox="0 0 24 24">
+                                    <rect x="3" y="3" width="7" height="7" rx="1" />
+                                    <rect x="14" y="3" width="7" height="7" rx="1" />
+                                    <rect x="3" y="14" width="7" height="7" rx="1" />
+                                    <rect x="14" y="14" width="3" height="3" rx="0.5" />
+                                    <rect x="18" y="14" width="3" height="3" rx="0.5" />
+                                    <rect x="14" y="18" width="3" height="3" rx="0.5" />
+                                    <rect x="18" y="18" width="3" height="3" rx="0.5" />
+                                </svg>
+                            </div>
+                            <div class="vnpay-info">
+                                <div class="vnpay-brand">VNPAY QR</div>
+                                <div class="vnpay-sublabel">Cổng thanh toán</div>
+                            </div>
+                            <div class="vnpay-status-badge active">
+                                <span class="vnpay-pulse"></span>
+                                Đang hoạt động
+                            </div>
+                            <div class="vnpay-chevron">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M9 18l6-6-6-6" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="quick-actions stagger-item">
+                            <div class="quick-actions-title">Truy cập nhanh</div>
+                            <div class="quick-actions-grid">
+                                <button class="quick-action-item">
+                                    <div class="quick-action-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <circle cx="9" cy="21" r="1" />
+                                            <circle cx="20" cy="21" r="1" />
+                                            <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
+                                        </svg>
+                                    </div>
+                                    <span class="quick-action-label">Bán hàng</span>
+                                </button>
+                                <button class="quick-action-item">
+                                    <div class="quick-action-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path
+                                                d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" />
+                                            <circle cx="7" cy="7" r="1" />
+                                        </svg>
+                                    </div>
+                                    <span class="quick-action-label">Hàng hoá</span>
+                                </button>
+                                <button class="quick-action-item">
+                                    <div class="quick-action-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                                            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+                                        </svg>
+                                    </div>
+                                    <span class="quick-action-label">Đơn hàng</span>
+                                </button>
+                                <button class="quick-action-item">
+                                    <div class="quick-action-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M18 20V10M12 20V4M6 20v-6" />
+                                        </svg>
+                                    </div>
+                                    <span class="quick-action-label">Báo cáo</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab Bar -->
+                    <div class="tab-bar">
+                        <button class="tab-item active">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                                <path d="M9 22V12h6v10" />
+                            </svg>
+                            <span>Trang chính</span>
+                        </button>
+                        <button class="tab-item">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="9" cy="21" r="1" />
+                                <circle cx="20" cy="21" r="1" />
+                                <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
+                            </svg>
+                            <span>Bán hàng</span>
+                        </button>
+                        <button class="tab-item">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                                <path d="M14 2v6h6" />
+                            </svg>
+                            <span>Đơn hàng</span>
+                        </button>
+                        <button class="tab-item">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M18 20V10M12 20V4M6 20v-6" />
+                            </svg>
+                            <span>Báo cáo</span>
+                        </button>
+                        <button class="tab-item">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="3" />
+                                <path
+                                    d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                            </svg>
+                            <span>Cài đặt</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== SCR-026: Trung tâm thông báo ===== -->
+                <div class="screen" id="scr-026" data-type="list" data-flow="Core Navigation" data-uc="UC-009, UC-012">
+
+                    <div class="header-bar">
+                        <button class="btn-back" onclick="navigateTo('scr-021')" aria-label="Quay lại">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <span class="header-title">Thông báo</span>
+                        <button class="header-action" id="markAllBtn" onclick="markAllRead()">Đọc tất cả</button>
+                    </div>
+
+                    <div class="filter-tabs" id="filterTabs">
+                        <button class="filter-tab active" data-filter="all" onclick="filterNotis('all', this)">Tất
+                            cả</button>
+                        <button class="filter-tab" data-filter="payment" onclick="filterNotis('payment', this)">Thanh
+                            toán</button>
+                        <button class="filter-tab" data-filter="system" onclick="filterNotis('system', this)">Hệ
+                            thống</button>
+                    </div>
+
+                    <div class="screen-body">
+                        <div class="noti-list" id="notiList">
+                            <!-- Payment notification 1 -->
+                            <div class="noti-card unread stagger-item" data-type="payment">
+                                <div class="noti-icon-wrap payment">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                                        <path d="M22 4L12 14.01l-3-3" />
+                                    </svg>
+                                </div>
+                                <div class="noti-content">
+                                    <div class="noti-title">Thanh toán QR thành công</div>
+                                    <div class="noti-desc">Đơn #ORD-1042 -- 95.000 VND</div>
+                                    <div class="noti-time">5 phút trước</div>
+                                </div>
+                                <div class="noti-dot"></div>
+                            </div>
+
+                            <!-- System notification -->
+                            <div class="noti-card unread stagger-item" data-type="system">
+                                <div class="noti-icon-wrap system">
+                                    <svg viewBox="0 0 24 24">
+                                        <path
+                                            d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
+                                    </svg>
+                                </div>
+                                <div class="noti-content">
+                                    <div class="noti-title">Đồng bộ hoàn tất</div>
+                                    <div class="noti-desc">3 đơn hàng đã được cập nhật lên hệ thống</div>
+                                    <div class="noti-time">15 phút trước</div>
+                                </div>
+                                <div class="noti-dot"></div>
+                            </div>
+
+                            <!-- Payment notification 2 -->
+                            <div class="noti-card stagger-item" data-type="payment">
+                                <div class="noti-icon-wrap payment">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                                        <path d="M22 4L12 14.01l-3-3" />
+                                    </svg>
+                                </div>
+                                <div class="noti-content">
+                                    <div class="noti-title">Thanh toán tiền mặt</div>
+                                    <div class="noti-desc">Đơn #ORD-1041 -- 150.000 VND</div>
+                                    <div class="noti-time">1 giờ trước</div>
+                                </div>
+                            </div>
+
+                            <!-- System notification 2 -->
+                            <div class="noti-card unread stagger-item" data-type="system">
+                                <div class="noti-icon-wrap alert">
+                                    <svg viewBox="0 0 24 24">
+                                        <path
+                                            d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                                        <line x1="12" y1="9" x2="12" y2="13" />
+                                        <line x1="12" y1="17" x2="12.01" y2="17" />
+                                    </svg>
+                                </div>
+                                <div class="noti-content">
+                                    <div class="noti-title">Cập nhật phiên bản</div>
+                                    <div class="noti-desc">Phiên bản mới v2.1.0 đã sẵn sàng. Cập nhật để trải nghiệm
+                                        tính năng mới.</div>
+                                    <div class="noti-time">3 giờ trước</div>
+                                </div>
+                                <div class="noti-dot"></div>
+                            </div>
+
+                            <!-- Payment notification 3 -->
+                            <div class="noti-card stagger-item" data-type="payment">
+                                <div class="noti-icon-wrap payment">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                                        <path d="M22 4L12 14.01l-3-3" />
+                                    </svg>
+                                </div>
+                                <div class="noti-content">
+                                    <div class="noti-title">Thanh toán QR thành công</div>
+                                    <div class="noti-desc">Đơn #ORD-1040 -- 280.000 VND</div>
+                                    <div class="noti-time">Hôm qua, 18:30</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div class="empty-state" id="emptyState">
+                            <div class="empty-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                                    <path d="M13.73 21a2 2 0 01-3.46 0" />
+                                    <line x1="1" y1="1" x2="23" y2="23" />
+                                </svg>
+                            </div>
+                            <div class="empty-title">Chưa có thông báo nào</div>
+                            <div class="empty-desc">Các thông báo về thanh toán, đồng bộ và hệ thống sẽ hiện ở đây</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ============================================================ */
+        const SCREENS = ['scr-021', 'scr-026'];
+        const SCREEN_META = {
+            'scr-021': { id: 'SCR-021', type: 'dashboard', flow: 'Core Navigation', uc: 'UC-001, UC-002', states: ['loaded', 'loading', 'offline'] },
+            'scr-026': { id: 'SCR-026', type: 'list', flow: 'Core Navigation', uc: 'UC-009, UC-012', states: ['loaded', 'loading', 'empty', 'filtered'] },
+        };
+
+        let currentScreen = 'scr-021';
+
+        function navigateTo(id) {
+            if (!SCREENS.includes(id)) return;
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const t = document.getElementById(id);
+            t.classList.add('active');
+            t.querySelectorAll('.stagger-item').forEach(el => { el.style.animation = 'none'; void el.offsetHeight; el.style.animation = ''; });
+            currentScreen = id;
+            document.getElementById('screenSelect').value = id;
+            updateControlPanel();
+        }
+
+        function flowPrev() { const i = SCREENS.indexOf(currentScreen); if (i > 0) navigateTo(SCREENS[i - 1]); }
+        function flowNext() { const i = SCREENS.indexOf(currentScreen); if (i < SCREENS.length - 1) navigateTo(SCREENS[i + 1]); }
+
+        function updateControlPanel() {
+            const m = SCREEN_META[currentScreen];
+            const i = SCREENS.indexOf(currentScreen);
+            document.getElementById('infoId').textContent = m.id;
+            document.getElementById('infoType').textContent = m.type;
+            document.getElementById('infoFlow').textContent = m.flow;
+            document.getElementById('infoUC').textContent = m.uc;
+            document.getElementById('prevBtn').disabled = i === 0;
+            document.getElementById('nextBtn').disabled = i === SCREENS.length - 1;
+
+            const chips = document.getElementById('stateChips');
+            chips.innerHTML = '';
+            m.states.forEach((s, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'state-chip' + (idx === 0 ? ' active' : '');
+                btn.dataset.state = s;
+                btn.textContent = s.charAt(0).toUpperCase() + s.slice(1);
+                btn.onclick = () => setState(s);
+                chips.appendChild(btn);
+            });
+        }
+
+        function setTheme(t) {
+            const f = document.getElementById('phoneFrame');
+            if (t === 'dark') { f.setAttribute('data-theme', 'dark'); document.getElementById('darkBtn').classList.add('active'); document.getElementById('lightBtn').classList.remove('active'); }
+            else { f.removeAttribute('data-theme'); document.getElementById('lightBtn').classList.add('active'); document.getElementById('darkBtn').classList.remove('active'); }
+        }
+
+        // Save original HTML for state reset
+        const kpiOriginal = document.getElementById('kpiGrid').innerHTML;
+        const notiOriginal = document.getElementById('notiList').innerHTML;
+
+        function setState(state) {
+            document.querySelectorAll('.state-chip').forEach(c => c.classList.remove('active'));
+            const ac = document.querySelector(`.state-chip[data-state="${state}"]`);
+            if (ac) ac.classList.add('active');
+
+            if (currentScreen === 'scr-021') {
+                const grid = document.getElementById('kpiGrid');
+                if (state === 'loading') {
+                    grid.innerHTML = `
+                        <div class="skeleton skeleton-card"></div>
+                        <div class="skeleton skeleton-card"></div>
+                        <div class="skeleton skeleton-card"></div>
+                        <div class="skeleton skeleton-card"></div>
+                    `;
+                } else if (state === 'offline') {
+                    grid.innerHTML = kpiOriginal;
+                    // Show offline banner concept
+                } else {
+                    grid.innerHTML = kpiOriginal;
+                }
+            } else if (currentScreen === 'scr-026') {
+                const list = document.getElementById('notiList');
+                const empty = document.getElementById('emptyState');
+
+                if (state === 'empty') {
+                    list.style.display = 'none';
+                    empty.classList.add('visible');
+                } else if (state === 'loading') {
+                    list.innerHTML = `
+                        <div class="skeleton skeleton-card" style="height:80px"></div>
+                        <div class="skeleton skeleton-card" style="height:80px"></div>
+                        <div class="skeleton skeleton-card" style="height:80px"></div>
+                    `;
+                    list.style.display = '';
+                    empty.classList.remove('visible');
+                } else if (state === 'filtered') {
+                    list.innerHTML = notiOriginal;
+                    list.style.display = '';
+                    empty.classList.remove('visible');
+                    filterNotis('payment', document.querySelector('.filter-tab[data-filter="payment"]'));
+                } else {
+                    // loaded
+                    list.innerHTML = notiOriginal;
+                    list.style.display = '';
+                    empty.classList.remove('visible');
+                    document.querySelectorAll('.noti-card').forEach(c => c.style.display = '');
+                    // Reset filter to "all"
+                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelector('.filter-tab[data-filter="all"]').classList.add('active');
+                }
+            }
+        }
+
+        /* SCR-026 Interactions */
+        function filterNotis(type, btn) {
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('.noti-card').forEach(card => {
+                card.style.display = (type === 'all' || card.dataset.type === type) ? '' : 'none';
+            });
+
+            document.getElementById('notiList').style.display = '';
+            document.getElementById('emptyState').classList.remove('visible');
+        }
+
+        function markAllRead() {
+            document.querySelectorAll('.noti-card.unread').forEach(card => {
+                card.classList.remove('unread');
+                const dot = card.querySelector('.noti-dot');
+                if (dot) dot.style.display = 'none';
+            });
+            document.getElementById('notiBadge').style.display = 'none';
+        }
+
+        updateControlPanel();
+    </script>
+</body>
+
+</html>

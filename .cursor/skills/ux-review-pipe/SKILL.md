@@ -186,29 +186,29 @@ Agent vision + DDL de phat hien van de ma 2 report chua noi den:
 
 Moi phat hien → query DDL (ux-guidelines.csv, web-interface.csv) de lay can cu.
 
-**Buoc 4 — Sinh de xuat cai tien CU THE:**
-Moi gap hoac phat hien → 1 de xuat:
+**Buoc 4 — Sinh de xuat cai tien CU THE (Case Study Format):**
+Moi gap hoac phat hien → 1 de xuat theo format 3 section:
 
 ```
 {
   proposal_id: "UXP-NNN",
-  screen_id: string,
-  category: string,
+  display_name_vi: string,    // "{main} › {sub}" — tieng Viet co dau
+  screen_id: string,          // "SCR-TK-001" — internal only
   severity: "Critical"|"Major"|"Minor",
-  problem_vi: string,
-  ddl_ref: string,
-  ux_law_ref: string|null,
-  proposal_vi: string,       // CU THE: copy, component, vi tri
-  evidence_image: string|null,
-  evidence_note: string
+  ddl_refs: [string],         // array: ["UXG-10", "UXG-78"]
+  ux_law_refs: [string|null], // array: ["doherty"]
+  // 3 sections BAT BUOC:
+  current_state_vi: string,   // 🔍 Hien trang — mo ta data/evidence hien co
+  consequences_vi: string,    // ⚠️ Hau qua — user impact + business impact + violation
+  solution_vi: string,        // ✅ Giai phap — CU THE: component, copy, vi tri, token
+  evidence_images: [string],  // array anh lien quan
 }
 ```
 
-De xuat **KHONG generic**. Phai cu the:
-- **Noi dung copy** (vd: "Khong the tai danh ba. Vui long thu lai.")
-- **Component** (vd: "Skeleton loading gom 3 row placeholder")
-- **Vi tri** (vd: "Thay the noi dung danh sach khi loading; overlay khi error")
-- **DDL can cu** (vd: ux-guidelines.csv#10 + ux-laws.csv fitts)
+De xuat **KHONG generic**. 3 sections phai CU THE:
+- **🔍 Hien trang**: Cite evidence (Flow X.Y, Wireframe row N, OCR text, DDL spec)
+- **⚠️ Hau qua**: Impact len user (frustration, task failure) + business (conversion loss, support cost) + violation (DDL/UX Law)
+- **✅ Giai phap**: Table voi cot: Component, De xuat cu the (copy text, pixel values), Vi tri (trong man hinh)
 
 ---
 
@@ -223,25 +223,56 @@ Ghi tai `{prd_folder}/ux-review-report.md`. Cau truc:
 - Folder: {prd_folder}
 - So man hinh: N | Tong check: X
 - Pass: Y | Gap: Z | Unverifiable: W
-- UX Score: XX%
+- UX Score (Simple): XX% (Y/X)
+- UX Score (Weighted): XX%
 
 ## De xuat cai tien (Priority)
 
-### Critical
-- [UXP-NNN] ...
+### 🔴 Critical
 
-### Major
-- [UXP-NNN] Screen: ... | Van de: ... | De xuat: ... | DDL: ... | Evidence: ...
+#### UXP-001 · 🔴 Critical
 
-### Minor
-- ...
+| Thuoc tinh | Chi tiet |
+|:---|:---|
+| **Man hinh** | {display_name_vi} |
+| **Muc do** | 🔴 Critical |
+| **DDL** | {ddl_refs joined with " · "} |
+| **UX Law** | {ux_law_refs joined} |
+
+**🔍 Hien trang**
+
+{current_state_vi}
+
+> Evidence: {cite PRD section, wireframe, OCR, DDL spec}
+
+**⚠️ Hau qua**
+
+- **User impact:** {frustration, task failure, confusion}
+- **Business impact:** {conversion loss, support cost, churn}
+- **Violation:** {DDL rule + UX Law violated}
+
+**✅ Giai phap de xuat**
+
+| # | Component | De xuat | Vi tri |
+|---|:---|:---|:---|
+| 1 | {component} | {cu the: copy, pixel, token} | {block/area trong man hinh} |
+
+---
+
+### 🟡 Major
+(same format per UXP)
+
+### ⚪ Minor
+(same format per UXP)
 
 ---
 
 ## Chi tiet theo man hinh
 
-### {screen_name_vi}
-**Score: XX% | Pass: Y | Gap: Z | Images: ...**
+### 1. {display_name_vi}
+> `{screen_id}` · {screen_type} · {N} artboards
+>
+> **Score: XX% | Pass: Y | Gap: Z | Unverifiable: W | Images: ...**
 
 | # | Check | Source | DDL | Verdict | Evidence |
 |---|-------|--------|-----|---------|----------|
@@ -256,6 +287,33 @@ Ghi tai `{prd_folder}/ux-review-report.md`. Cau truc:
 |---------|------|--------|---------|
 | ... |
 ```
+
+### ⛔ Tool-Verified Scoring (MANDATORY)
+
+**Sau khi ghi `ux-review-report.md`, BAT BUOC chay:**
+
+```bash
+node ux-score-calculator.js run --json {prd_folder}/ux-review-report.md
+```
+
+**Quy trinh:**
+1. Chay `run` → tool parse toan bo markdown tables, count pass/gap/unverifiable tu verdict column.
+2. So sanh claimed values (trong overview + per-screen headers) voi actual counted values.
+3. Neu co discrepancies → chay `run --fix` → verify lai.
+4. Chi report metrics tu output cua tool — KHONG dung con so tu viet bang tay.
+
+**Scoring model:**
+- **Simple Score** = pass / total_checks × 100
+- **Weighted Score** = (1 − weighted_gap_penalty / max_possible_penalty) × 100
+  - Critical gap = 3.0 penalty
+  - Major gap = 2.0 penalty
+  - Minor gap = 1.0 penalty
+  - Unverifiable = excluded (no penalty, no credit)
+
+**Anti-pattern (KHONG DUOC lap lai):**
+- ❌ Viet overview header truoc khi viet per-screen tables → count lech
+- ❌ Count pass/gap bang uoc chung
+- ❌ Report UX Score chua qua tool verification
 
 ---
 

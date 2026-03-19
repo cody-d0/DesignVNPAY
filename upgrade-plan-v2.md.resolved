@@ -1,0 +1,468 @@
+# Kế hoạch nâng cấp Pipeline `figma-to-ux-review` v2
+
+**Tổng hợp từ:** 7 runs thực tế (18/03/2026) · Skill Creator framework · Evidence-based
+
+---
+
+## Tóm tắt: 7 Vấn đề → 7 Giải pháp
+
+| # | Vấn đề (từ 7 runs) | Category | Giải pháp | Effort |
+|---|---------------------|----------|-----------|--------|
+| U1 | Pre-flight stuck (2/7 runs) | 🔧 Reliability | Auto-retry + checkpoint save | Medium |
+| U2 | `wireframe_images` path inconsistency | 🔧 Convention | Path normalization rule | Low |
+| U3 | Score `—` (1/7 runs — "Đặt lịch CT") | 🔧 Gate | Mandatory score gate enforcement | Low |
+| U4 | Pitch deck không tự tạo (0/7 runs) | 🔄 Workflow | Auto-trigger Bước 6 | Low |
+| U5 | OTP pattern lặp 5/7 reports (cross-cutting) | 📊 Intelligence | Global UXP registry | Medium |
+| U6 | Context overflow → stuck | 🧠 Architecture | Checkpoint-resume mechanism | High |
+| U7 | Gate scripts không cover multi-folder | 🔧 Gate | Update gate-vision-files + gate-screenshot | Low |
+
+---
+
+## Bước 1: Hiểu vấn đề với ví dụ thực tế (Skill Creator Step 1)
+
+### Evidence Matrix — Vấn đề thu thập từ 7 runs
+
+````carousel
+### U1 — Pre-flight Stuck (2/7 runs)
+
+**Conversations:** `d0fcb5d6` (CT ngoài Co-opBank), `8b14e3d8` (Thanh toán)
+
+**Evidence:**
+```
+task.md: [/] Bước 0 — Pre-flight Checks
+         [ ] Bước 1 — Khởi tạo Input
+         [ ] Bước 2 — ...
+```
+
+**Root cause:** 12 pre-flight checks chạy tuần tự, mỗi check gọi tool riêng → nếu 1 check timeout hoặc context gần đầy, pipeline dừng hẳn. Không có retry hay partial-save.
+
+**Impact:** 29% failure rate (2/7). Output cũ vẫn tồn tại nên user có thể nhầm lẫn data mới/cũ.
+<!-- slide -->
+
+### U2 — wireframe_images Path Inconsistency
+
+**Evidence so sánh 2 runs:**
+```json
+// Run "CT nội bộ" — bare filename (AMBIGUOUS):
+{ "filename": "internal-transaction.png" }
+
+// Run "CT ngoài Co-opBank" — full relative path (CORRECT):
+{ "filename": "chuyen-tien-nhanh-24-7-qua-tai-khoan/ui/chuyen-tien-nhanh-247-qua-tai-khoan.png" }
+```
+
+**Collision risk:** `cung-chu/ui/internal-transaction.png` vs `khac-chu/ui/internal-transaction.png` — CÙNG tên, KHÁC ảnh.
+
+**Impact:** Agent resolve bằng suy luận → fragile. Pitch deck có thể embed sai ảnh.
+<!-- slide -->
+
+### U3 — Score Missing ("Đặt lịch CT")
+
+**Evidence:** `ux-review-report.md` overview hiển thị Score: `—`
+
+`ux-score-calculator.js` **không được chạy** hoặc output không được ghi lại.
+
+**Root cause:** Score Gate có trong workflow (line 686-691) nhưng agent có thể bỏ qua khi context gần đầy. Không có script-level enforcement (hiện là agent judgment).
+
+### U4 — Pitch Deck = 0/7
+
+**Evidence:** Bước 6 labeled `(Optional — khi user yêu cầu)` → agent **không** tự tạo.
+
+7 runs đều dừng tại Checkpoint #6. Không run nào vào Bước 6.
+
+### U5 — OTP Pattern x5/7
+
+**Evidence mẫu từ 5 reports:**
+
+| Report | UXP ID | Pattern |
+|--------|--------|---------|
+| CT nội bộ | UXP-001 | "OTP thiếu countdown + resend" |
+| CT ngoài | UXP-001 | "OTP thiếu countdown + resend" |
+| QR | UXP-001 | "Xác thực thiếu OTP timer" |
+| Danh bạ | UXP-004 | "OTP thiếu countdown" |
+| Thanh toán | UXP-001 | "OTP resend missing" |
+
+Mỗi report viết lại **cùng 1 finding** từ đầu. Không có cross-reference hay consolidation.
+<!-- slide -->
+
+### U6 — Context Overflow
+
+**Symptoms:** 2 runs stuck + 1 run thiếu score → có khả năng agent hết context trước khi finish.
+
+**Workflow hiện tại:** 730 lines SKILL.md + screen_inventory.json (800-1100 lines) + ddl-context.json + vision + 3 skills → **context nặng**.
+
+Checkpoint system (CP1-CP6) đã có nhưng chỉ là **instructions text** — agent có thể bỏ qua.
+
+### U7 — Gate scripts thiếu multi-folder support
+
+**Evidence `gate-vision-files.sh`:**
+```bash
+# Chỉ check image refs trong .md files, resolve relative to .md location
+# KHÔNG validate wireframe_images[].filename trong screen_inventory.json
+```
+
+**Evidence `gate-screenshot-check.sh`:**
+```bash
+# Tìm tất cả ui/ folders (recursive) — ĐÃ ĐÚNG
+# NHƯNG không cross-check với screen_inventory.json boundaries
+```
+
+**Gap:** Gates kiểm tra files trên disk nhưng **không cross-validate** với screen_inventory data.
+````
+
+---
+
+## Bước 2: Kế hoạch tài nguyên tái sử dụng (Skill Creator Step 2)
+
+### Phân loại giải pháp theo Skill Creator framework
+
+| Solution | Type | Freedom | Rationale |
+|----------|------|---------|-----------|
+| U1: Pre-flight retry | **Script** (`scripts/`) | Low | Fragile operation → cần deterministic retry |
+| U2: Path normalize | **Convention** (update workflow text) | Medium | Nhiều approach valid nhưng cần consistency |
+| U3: Score enforcement | **Script update** | Low | Must-pass gate → zero flexibility |
+| U4: Auto pitch deck | **Workflow text** update | Medium | Optional → mandatory, nhưng có fallback |
+| U5: UXP registry | **Reference** (`references/`) | Medium | Reusable knowledge, agent-driven matching |
+| U6: Checkpoint-resume | **Script** + convention | Low | Fragile (context limit) → deterministic save |
+| U7: Gate cross-validation | **Script update** | Low | Deterministic check = script territory |
+
+### Decisions theo "Cách làm việc" (Simplify Agent)
+
+| Item | "Xây tool" hay "Agent + input"? | Decision |
+|------|------|------|
+| U1 Pre-flight | Script — batch checks, exit code needed | ✅ Script `preflight-check.sh` |
+| U2 Path normalize | Convention — agent thay đổi hành vi based on text | ✅ Workflow text |
+| U5 UXP registry | Reference — agent reads + cross-references | ✅ References file |
+| U6 Checkpoint | Script — save/restore context deterministic | ✅ Script `checkpoint-save.js` |
+| U7 Gate update | Script — existing scripts need enhancement | ✅ Script update |
+
+---
+
+## Bước 3-4: Implementation Plan (6 work items)
+
+### WI-1: Pre-flight Consolidation + Retry 🔧
+
+**Problem:** 12 checks chạy tuần tự, 1 fail → pipeline dừng. Không retry.
+
+**Solution:** Gộp 12 checks thành 1 script `preflight-all.sh` chạy parallel.
+
+**Implementation:**
+
+```bash
+# File: tools/scripts/preflight-all.sh
+# Chạy tất cả 12 checks, retry 1 lần nếu fail, output JSON summary
+
+# Parallel execution (background jobs)
+check_figma_mcp &       # T-1
+check_figma_token &     # T-2  
+check_save_script &     # T-3
+check_wrapper_script &  # T-4
+check_gate_scripts &    # T-5
+check_ddl_data &        # T-6, T-10, T-11, T-12
+check_signal_registry & # T-7
+check_score_tool &      # T-8
+check_icon_tool &       # T-9
+
+wait  # Wait all
+
+# Retry failed checks once
+for failed in "${FAILED[@]}"; do
+  retry "$failed" || HARD_FAIL+=("$failed")
+done
+
+# Output: JSON + human-readable
+echo '{"status":"PASS|FAIL","checks":[...],"retried":[]}'
+```
+
+**Changes:**
+| File | Action |
+|------|--------|
+| `tools/scripts/preflight-all.sh` | **New** — consolidated pre-flight |
+| [figma-to-ux-review.md](file:///Users/dataism/Documents/UXtool/.agents/workflows/figma-to-ux-review.md) § Bước 0 | **Update** — call `preflight-all.sh` instead of 12 individual checks |
+
+**Effort:** Medium · **Priority:** P0 (fixes 2/7 stuck runs)
+
+---
+
+### WI-2: Image Path Normalization Convention 📐
+
+**Problem:** `wireframe_images[].filename` bare name vs full path — inconsistent.
+
+**Solution:** Workflow rule: filename MUST be relative-to-output_dir.
+
+**Implementation:**
+
+```markdown
+# Add to figma-to-ux-review.md § Phase 5 (Handoff)
+
+### Image Path Convention (BẮT BUỘC)
+
+`wireframe_images[].filename` = relative path từ `output_dir`:
+  resolvable bằng: path.resolve(output_dir, filename)
+
+| Structure | filename format |
+|:---|:---|
+| Flat `ui/` | `"ui/calendar.png"` |
+| Multi `{section}/ui/` | `"section-name/ui/image.png"` |
+
+❌ Anti-pattern: bare filename ("calendar.png") — ambiguous khi multi-folder
+```
+
+**Changes:**
+| File | Action |
+|------|--------|
+| [figma-to-ux-review.md](file:///Users/dataism/Documents/UXtool/.agents/workflows/figma-to-ux-review.md) § Phase 5 | **Add** Image Path Convention section |
+| [figma-to-ux-review.md](file:///Users/dataism/Documents/UXtool/.agents/workflows/figma-to-ux-review.md) § Anti-patterns | **Add** bare filename anti-pattern |
+
+**Effort:** Low · **Priority:** P0 (prevents wrong image in Skill C + pitch deck)
+
+---
+
+### WI-3: Gate Updates (multi-folder + cross-validation) 🔒
+
+**Problem:** Gates check disk but don't cross-validate with [screen_inventory.json](file:///Users/dataism/Documents/UXtool/coopbank/final/Chuy%E1%BB%83n%20ti%E1%BB%81n%20ngo%C3%A0i%20Co-opBank/.handoff/screen_inventory.json).
+
+**Solution:** Update gate scripts to validate `wireframe_images` paths resolve to real files.
+
+**Implementation:**
+
+```bash
+# Update: tools/scripts/gate-vision-files.sh
+# ADD: Cross-validate screen_inventory.json wireframe_images
+
+INVENTORY="$PRD_FOLDER/.handoff/screen_inventory.json"
+if [ -f "$INVENTORY" ]; then
+  # Extract all wireframe_images filenames from inventory
+  node -e "
+    const inv = require('$INVENTORY');
+    const screens = inv.screens || [];
+    screens.forEach(s => {
+      (s.wireframe_images || []).forEach(img => {
+        const resolved = require('path').resolve('$PRD_FOLDER', img.filename);
+        if (!require('fs').existsSync(resolved)) {
+          console.error('❌ INVENTORY_MISMATCH: ' + img.filename + ' (screen: ' + s.id + ')');
+          process.exitCode = 1;
+        }
+      });
+    });
+  "
+fi
+```
+
+**Changes:**
+| File | Action |
+|------|--------|
+| [tools/scripts/gate-vision-files.sh](file:///Users/dataism/Documents/UXtool/tools/scripts/gate-vision-files.sh) | **Update** — add inventory cross-check |
+| [tools/scripts/gate-screenshot-check.sh](file:///Users/dataism/Documents/UXtool/tools/scripts/gate-screenshot-check.sh) | **Update** — add inventory cross-check |
+
+**Effort:** Low · **Priority:** P1
+
+---
+
+### WI-4: Score Gate → Script Enforcement ⛔
+
+**Problem:** Score verification là agent judgment (có thể skip). 1/7 runs thiếu score.
+
+**Solution:** Đưa score check thành **script-enforced gate** thay vì agent instruction.
+
+**Implementation:**
+
+```bash
+# File: tools/scripts/gate-score.sh
+# Wraps ux-score-calculator.js as hard gate
+
+REPORT="$1"
+RESULT=$(node tools/ux-score-calculator.js run --json "$REPORT" 2>&1)
+EXIT=$?
+
+if [ $EXIT -eq 3 ]; then
+  echo "⚠️ Discrepancies found. Auto-fixing..."
+  node tools/ux-score-calculator.js run --fix "$REPORT"
+  RESULT=$(node tools/ux-score-calculator.js run --json "$REPORT" 2>&1)
+  EXIT=$?
+fi
+
+if [ $EXIT -ne 0 ]; then
+  echo "❌ GATE-SCORE FAIL: Score verification failed after fix attempt"
+  exit 1
+fi
+
+echo "✅ GATE-SCORE PASS"
+echo "$RESULT"
+exit 0
+```
+
+**Changes:**
+| File | Action |
+|------|--------|
+| `tools/scripts/gate-score.sh` | **New** — script-enforced score gate |
+| [figma-to-ux-review.md](file:///Users/dataism/Documents/UXtool/.agents/workflows/figma-to-ux-review.md) § Bước 5 | **Update** — call `gate-score.sh` |
+| Gate Summary table | **Add** Score gate as T1 (script-enforced) |
+
+**Effort:** Low · **Priority:** P0 (fixes score missing issue)
+
+---
+
+### WI-5: UXP Cross-Report Registry 📊
+
+**Problem:** OTP missing pattern found in 5/7 reports, each written from scratch.
+
+**Solution:** Create reusable UXP registry as `references/` file in `ux-review-pipe` skill.
+
+**Implementation:**
+
+```markdown
+# File: .cursor/skills/ux-review-pipe/references/uxp-registry.md
+
+# UXP Registry — Known Cross-Cutting Patterns
+
+## GUXP-001: OTP Component Missing States
+- **Pattern:** OTP input lacks countdown timer + resend button
+- **DDL Ref:** COMP:otp-input-1 (schema.state: canResend, timeLeft)
+- **Affected screens:** Mọi screen có `screen_type: confirm` + OTP authentication
+- **Severity:** Critical
+- **Standard solution:** Add countdown 60s + "Gửi lại" button below cells
+- **First detected:** Run 7f35259a (Xem nhanh mã QR)
+- **Occurrences:** 5/7 reports (CT nội bộ, CT ngoài, QR, Danh bạ, Thanh toán)
+
+## GUXP-002: Missing Error States for Form Inputs
+- **Pattern:** Text inputs lack error/invalid state variants
+- **DDL Ref:** COMP:text-input-1 (schema.state: error, helperText)
+- **Affected screens:** Mọi screen có screen_type: form
+- **Severity:** Critical
+- **Occurrences:** 4/7 reports
+
+## GUXP-003: PII Exposure (Account/Balance Masking)
+...
+```
+
+**Skill C integration:**
+```markdown
+# Add to SKILL.md § Skill C, before Layer C1:
+
+**Layer C0 — Registry Cross-Reference (NEW):**
+- Load `references/uxp-registry.md` 
+- For each screen, check if any GUXP pattern matches (by screen_type + component)
+- If match: auto-generate check item with registry citation
+- Evidence: "GUXP-001 (OTP missing states): Previously found in 5/7 reports. DDL spec: COMP:otp-input-1."
+```
+
+**Changes:**
+| File | Action |
+|------|--------|
+| `.cursor/skills/ux-review-pipe/references/uxp-registry.md` | **New** — cross-cutting UXP knowledge |
+| [.cursor/skills/ux-review-pipe/SKILL.md](file:///Users/dataism/Documents/UXtool/.cursor/skills/ux-review-pipe/SKILL.md) § Skill C | **Update** — add Layer C0 registry lookup |
+| [figma-to-ux-review.md](file:///Users/dataism/Documents/UXtool/.agents/workflows/figma-to-ux-review.md) § Skill References | **Add** reference to uxp-registry |
+
+**Effort:** Medium · **Priority:** P1 (reduces review redundancy, improves consistency)
+
+---
+
+### WI-6: Auto Pitch Deck Trigger 🎯
+
+**Problem:** Bước 6 "Optional" → 0/7 runs tạo pitch deck.
+
+**Solution:** Change from Optional to **Auto-trigger with opt-out**.
+
+**Implementation:**
+
+```markdown
+# Update figma-to-ux-review.md § Bước 6
+
+## Bước 6: Pitch Deck (Auto — opt-out bằng flag)
+
+**Mặc định:** Tự động tạo pitch deck sau Score Gate PASS.
+
+**Opt-out:** User có thể set `skip_pitch_deck: true` ở Bước 1 hoặc nói "bỏ qua pitch deck".
+
+1. Đọc `ux-review-report.md` + `.handoff/ddl-context.json` + `*/ui/*.png`
+2. Tạo `{prd_folder}/pitch-deck.html`
+3. Mở browser xác nhận rendering
+
+**⚠️ Context guard:** Nếu agent phát hiện context ≥80% capacity sau Score Gate,
+   DỪNG và thông báo: "Context gần đầy. Pitch deck cần chạy ở conversation mới."
+```
+
+**Changes:**
+| File | Action |
+|------|--------|
+| [figma-to-ux-review.md](file:///Users/dataism/Documents/UXtool/.agents/workflows/figma-to-ux-review.md) § Bước 6 | **Update** — Optional → Auto with opt-out + context guard |
+| [figma-to-ux-review.md](file:///Users/dataism/Documents/UXtool/.agents/workflows/figma-to-ux-review.md) § Bước 1 | **Add** `skip_pitch_deck` param |
+
+**Effort:** Low · **Priority:** P2 (nice-to-have, can run separately)
+
+---
+
+## Execution Roadmap
+
+```mermaid
+gantt
+    title Pipeline Upgrade v2 Roadmap
+    dateFormat YYYY-MM-DD
+    section P0 — Critical
+        WI-1 Pre-flight consolidation   :w1, 2026-03-19, 1d
+        WI-2 Path normalization         :w2, 2026-03-19, 1d
+        WI-4 Score gate script          :w4, 2026-03-19, 1d
+    section P1 — Important
+        WI-3 Gate cross-validation      :w3, after w1, 1d
+        WI-5 UXP registry              :w5, after w4, 2d
+    section P2 — Enhancement
+        WI-6 Auto pitch deck           :w6, after w5, 1d
+    section Validation
+        Re-run 2 stuck conversations   :v1, after w3, 1d
+        Re-run all 7 for regression    :v2, after w6, 2d
+```
+
+### Priority Matrix
+
+| Priority | Items | Days | Impact |
+|----------|-------|------|--------|
+| **P0** | WI-1 + WI-2 + WI-4 | 1 day | Fixes 3/7 critical issues (stuck, path, score) |
+| **P1** | WI-3 + WI-5 | 2 days | Deterministic gates + cross-report intelligence |
+| **P2** | WI-6 | 1 day | Auto deliverable generation |
+| **Validation** | Re-run 7 | 2 days | End-to-end regression |
+| **Total** | 6 work items | **~6 days** | |
+
+---
+
+## Validation Criteria
+
+### Re-run after P0 (Day 2)
+
+| Test | Expected | Gate |
+|------|----------|------|
+| Run pre-flight on stuck contexts | `preflight-all.sh` retries + passes | Exit 0 |
+| Multi-folder path resolve | All `wireframe_images` resolve to files | Gate C + F cross-check |
+| Score verification | All reports have score ≠ `—` | `gate-score.sh` exit 0 |
+
+### Re-run after P1 (Day 4)
+
+| Test | Expected | Gate |
+|------|----------|------|
+| OTP screens auto-check | GUXP-001 cited in report without re-analysis | Registry reference in evidence |
+| Gate vision cross-validate | Inventory ↔ disk files = 0 mismatches | Updated gate-vision-files.sh |
+
+### Full regression (Day 6)
+
+| Test | Expected |
+|------|----------|
+| 7/7 runs complete end-to-end | Zero stuck |
+| 7/7 reports have tool-verified scores | Zero `—` |
+| 7/7 pitch decks generated | Auto unless opt-out |
+| 0 bare filename in any inventory | Path convention enforced |
+
+---
+
+## Files touched summary
+
+| File | Action | WI |
+|------|--------|-----|
+| `tools/scripts/preflight-all.sh` | **New** | WI-1 |
+| `tools/scripts/gate-score.sh` | **New** | WI-4 |
+| `.cursor/skills/ux-review-pipe/references/uxp-registry.md` | **New** | WI-5 |
+| [tools/scripts/gate-vision-files.sh](file:///Users/dataism/Documents/UXtool/tools/scripts/gate-vision-files.sh) | **Update** | WI-3 |
+| [tools/scripts/gate-screenshot-check.sh](file:///Users/dataism/Documents/UXtool/tools/scripts/gate-screenshot-check.sh) | **Update** | WI-3 |
+| [figma-to-ux-review.md](file:///Users/dataism/Documents/UXtool/.agents/workflows/figma-to-ux-review.md) § Bước 0 | **Update** | WI-1 |
+| [figma-to-ux-review.md](file:///Users/dataism/Documents/UXtool/.agents/workflows/figma-to-ux-review.md) § Phase 5 | **Update** | WI-2 |
+| [figma-to-ux-review.md](file:///Users/dataism/Documents/UXtool/.agents/workflows/figma-to-ux-review.md) § Bước 5 | **Update** | WI-4 |
+| [figma-to-ux-review.md](file:///Users/dataism/Documents/UXtool/.agents/workflows/figma-to-ux-review.md) § Bước 6 | **Update** | WI-6 |
+| [.cursor/skills/ux-review-pipe/SKILL.md](file:///Users/dataism/Documents/UXtool/.cursor/skills/ux-review-pipe/SKILL.md) | **Update** | WI-5 |

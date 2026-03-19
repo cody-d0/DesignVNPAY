@@ -1,0 +1,553 @@
+# 📘 UX Audit Pitch Deck Playbook — HTML Controllable
+
+> **Mục đích**: Document reusable ngoài workspace. Chứa toàn bộ research, concept architectures, design system, building blocks, và working HTML prototype có thể adapt cho bất kỳ UX Audit nào.
+
+> **Tạo**: 2026-03-16 | **Dựa trên**: UX Review Report — Co-op Bank KHCN (Chuyển tiền nội bộ cùng chủ)
+
+---
+
+## Mục lục
+
+1. [Tại sao HTML Pitch Deck?](#1-tại-sao-html-pitch-deck)
+2. [4 Concept Architectures](#2-4-concept-architectures)
+3. [Design System (Tokens)](#3-design-system-tokens)
+4. [Building Blocks Reference](#4-building-blocks-reference)
+5. [Data Schema cho Findings](#5-data-schema-cho-findings)
+6. [Hướng dẫn Adapt cho project khác](#6-hướng-dẫn-adapt)
+7. [Research Insights (Đa ngôn ngữ)](#7-research-insights)
+8. [Case Studies](#8-case-studies)
+9. [Working Prototype (Full HTML)](#9-working-prototype)
+
+---
+
+## 1. Tại sao HTML Pitch Deck?
+
+| Tiêu chí | PDF/PPT | HTML Pitch Deck |
+|----------|---------|-----------------|
+| Interactivity | ❌ Static | ✅ Click, scroll, hover, drag |
+| Real-time update | ❌ Re-export | ✅ Edit & refresh |
+| Data visualization | ❌ Static charts | ✅ Animated SVG scores |
+| Before/After demo | ❌ Side-by-side | ✅ Drag slider comparison |
+| Responsive | ❌ Fixed ratio | ✅ Any device |
+| Shareability | 📎 File attached | 🔗 URL link |
+| Version control | ❌ Manual | ✅ Git-trackable |
+| Branding control | ⚠️ Template-limited | ✅ Pixel-perfect CSS |
+| **Zero dependencies** | N/A | ✅ Single HTML file, opens offline |
+
+---
+
+## 2. 4 Concept Architectures
+
+### Concept ① Scroll-Driven Narrative (Recommended)
+
+Toàn bộ audit = 1 long-scroll page, mỗi section trigger animation khi user scroll đến.
+
+```
+┌──────────────────────────────────┐
+│ HERO: Project Name + Score       │ ← fade-in on load
+├──────────────────────────────────┤
+│ SCORE PER SCREEN                 │ ← SVG ring animation
+│ ┌─────────┐ ┌─────────┐ ┌───┐  │
+│ │ Ring 50% │ │ Ring 50% │ │80%│  │
+│ └─────────┘ └─────────┘ └───┘  │
+├──────────────────────────────────┤
+│ FINDINGS (severity-grouped)      │ ← scroll-reveal cards
+│ ├── Critical (red border-left)   │
+│ ├── Major (orange border-left)   │
+│ └── Minor (amber border-left)   │
+│     └── <details> for DDL refs   │ ← progressive disclosure
+├──────────────────────────────────┤
+│ RECOMMENDATIONS / CTA            │
+└──────────────────────────────────┘
+```
+
+**Tech stack**: CSS `IntersectionObserver`, SVG `stroke-dashoffset`, HTML `<details>`, scroll progress bar.
+
+**Best for**: Executive presentation, client-facing deliverable, story-driven narrative.
+
+### Concept ② Dashboard Report
+
+Single-page dashboard — metrics, severity matrix, findings table — dense information at glance.
+
+```
+┌──────────────────────────────────┐
+│ STAT GRID (4 cards)              │
+│ [58% Score] [38 Check] [22✓] [16✗]│
+├──────────────────────────────────┤
+│ SEVERITY MATRIX                  │
+│ [3 Critical] [6 Major] [4 Minor]│
+├──────────────────────────────────┤
+│ FINDINGS TABLE (sortable)        │
+│ ID | Severity | Screen | Issue   │
+└──────────────────────────────────┘
+```
+
+**Tech stack**: CSS Grid, table with hover highlight.
+
+**Best for**: Technical team, product managers, data-heavy reviews.
+
+### Concept ③ Card Explorer (Non-Linear)
+
+Filterable card grid — user chọn xem theo severity hoặc screen — non-sequential.
+
+```
+┌──────────────────────────────────┐
+│ FILTER BAR                       │
+│ [All] [Critical] [Major] [Minor] │
+│ [Form nhập] [Xác nhận] [Kết quả]│
+├──────────────────────────────────┤
+│ CARDS GRID (auto-fill)           │
+│ ┌────────┐ ┌────────┐ ┌────────┐│
+│ │UXP-001 │ │UXP-002 │ │UXP-003 ││
+│ │Critical│ │Critical│ │Critical││
+│ │  ...   │ │  ...   │ │  ...   ││
+│ │[tags]  │ │[tags]  │ │[tags]  ││
+│ └────────┘ └────────┘ └────────┘│
+└──────────────────────────────────┘
+```
+
+**Tech stack**: JS filter + DOM render, CSS Grid `auto-fill`, animated entry.
+
+**Best for**: Large audits with diverse stakeholders, self-paced exploration.
+
+### Concept ④ Animated Score Cards
+
+Focus vào scoring — animated radial/donut charts cho từng heuristic category.
+
+```
+┌──────────────────────────────────┐
+│ BIG RING: 58/100 (animated)      │
+│         ╭───╮                    │
+│         │58 │ counter animation  │
+│         ╰───╯                    │
+├──────────────────────────────────┤
+│ HEURISTIC GRID (6 rings)         │
+│ [Flow 80%] [Error 30%] [Load 40%]│
+│ [Touch 90%] [A11y 50%] [Con. 60%]│
+└──────────────────────────────────┘
+```
+
+**Tech stack**: SVG donut `stroke-dashoffset`, `requestAnimationFrame` counter, IntersectionObserver trigger.
+
+**Best for**: Periodic audit comparison, KPI dashboard, gamified reporting.
+
+---
+
+## 3. Design System (Tokens)
+
+### Color Tokens
+
+```css
+:root {
+  /* Backgrounds — Dark OLED Theme */
+  --bg-base: #0a0e1a;
+  --bg-surface: #111827;
+  --bg-card: #1a2235;
+  --bg-card-hover: #1f2a40;
+
+  /* Text */
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  /* Accents */
+  --accent-gold: #f59e0b;      /* Trust, fintech */
+  --accent-purple: #8b5cf6;    /* Tech, premium */
+  --accent-blue: #3b82f6;      /* Info, links */
+
+  /* Severity (UX Audit specific) */
+  --severity-critical: #ef4444;    /* Red */
+  --severity-major: #f97316;       /* Orange */
+  --severity-minor: #eab308;       /* Amber */
+  --severity-pass: #22c55e;        /* Green */
+  --severity-unverifiable: #6b7280; /* Gray */
+}
+```
+
+### Typography
+
+```css
+/* Fonts (Google Fonts) */
+--font-sans: 'IBM Plex Sans', system-ui, sans-serif;    /* Body — financial, trustworthy */
+--font-display: 'Playfair Display', serif;                /* Headings — editorial, premium */
+--font-mono: 'IBM Plex Mono', monospace;                  /* Scores, IDs — data feel */
+
+/* Scale */
+Hero h1:    clamp(2.2rem, 5vw, 3.8rem) / font-weight: 800
+Section h2: 1.8rem / font-weight: 800
+Card h4:    0.95rem / font-weight: 600
+Body:       0.85rem / line-height: 1.6
+Badge:      0.72rem / font-weight: 600 / uppercase
+ID mono:    0.8rem / font-weight: 500
+```
+
+**Google Fonts import:**
+```html
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+```
+
+### Motion Guidelines
+
+| Element | Duration | Easing | Trigger |
+|---------|----------|--------|---------|
+| Score rings | 1.5s | `cubic-bezier(.4,0,.2,1)` | IntersectionObserver |
+| Counter animation | ~1.2s | `requestAnimationFrame` | Tab switch / scroll |
+| Scroll-reveal sections | 0.7s | ease | IntersectionObserver (threshold: 0.12) |
+| Card hover | 0.25s | `cubic-bezier(.4,0,.2,1)` | hover |
+| Progress bar | 0.1s | linear | scroll event |
+| **Reduced motion** | 0.01ms | — | `prefers-reduced-motion: reduce` |
+
+---
+
+## 4. Building Blocks Reference
+
+### 4.1 Score Ring (SVG)
+
+```html
+<div class="score-ring">
+  <svg width="100" height="100">
+    <circle class="bg" cx="50" cy="50" r="42"
+      fill="none" stroke="rgba(255,255,255,.08)" stroke-width="6"/>
+    <circle class="progress" cx="50" cy="50" r="42"
+      fill="none" stroke="var(--severity-pass)" stroke-width="6"
+      stroke-dasharray="264"
+      stroke-dashoffset="53"  <!-- 264 - (264 * percentage) -->
+      stroke-linecap="round"
+      style="transform:rotate(-90deg);transform-origin:center"/>
+  </svg>
+  <span class="value">80%</span>
+</div>
+```
+
+**Công thức**: `stroke-dashoffset = circumference - (circumference × percentage)`
+- `circumference = 2 × π × r = 2 × 3.14159 × 42 ≈ 264`
+- 80% → `264 - (264 × 0.80) = 264 - 211.2 ≈ 53`
+
+### 4.2 Severity Badge
+
+```html
+<span class="badge critical">Critical</span>
+<span class="badge major">Major</span>
+<span class="badge minor">Minor</span>
+<span class="badge pass">Pass</span>
+```
+
+```css
+.badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .2rem .65rem; border-radius: 20px;
+  font-size: .72rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .03em;
+}
+.badge.critical { background: rgba(239,68,68,.15); color: #fca5a5; }
+.badge.major    { background: rgba(249,115,22,.15); color: #fdba74; }
+.badge.minor    { background: rgba(234,179,8,.15);  color: #fde047; }
+.badge.pass     { background: rgba(34,197,94,.15);  color: #86efac; }
+```
+
+### 4.3 Progressive Disclosure (Native HTML)
+
+```html
+<details>
+  <summary>Xem đề xuất & DDL reference →</summary>
+  <div class="detail-content">
+    <strong>Đề xuất:</strong> ...
+    <strong>DDL:</strong> ...
+    <strong>UX Law:</strong> ...
+  </div>
+</details>
+```
+
+Zero JS, fully accessible, print-friendly. Executives xem summary, designers expand detail.
+
+### 4.4 Scroll Progress Bar
+
+```html
+<div class="scroll-progress"><div class="bar" id="progressBar"></div></div>
+```
+
+```css
+.scroll-progress {
+  position: fixed; top: 56px; left: 0; right: 0;
+  height: 3px; z-index: 999;
+  background: rgba(255,255,255,.05);
+}
+.scroll-progress .bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-purple), var(--accent-gold));
+  width: 0%;
+}
+```
+
+```js
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = h > 0 ? (window.scrollY / h) * 100 : 0;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+```
+
+### 4.5 Scroll-Reveal Animation
+
+```js
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.scroll-section').forEach(s => observer.observe(s));
+```
+
+```css
+.scroll-section {
+  opacity: 0; transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.scroll-section.visible { opacity: 1; transform: translateY(0); }
+```
+
+### 4.6 Animated Counter
+
+```js
+function animateCounter(element, target, duration = 1200) {
+  let start = null;
+  const step = (timestamp) => {
+    if (!start) start = timestamp;
+    const progress = Math.min((timestamp - start) / duration, 1);
+    element.textContent = Math.floor(progress * target);
+    if (progress < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+```
+
+### 4.7 Card Filter (JS)
+
+```js
+const findings = [ /* array of finding objects */ ];
+
+function renderCards(filter) {
+  const filtered = filter === 'all' ? findings :
+    findings.filter(f => f.sev === filter || f.screen === filter);
+  
+  grid.innerHTML = filtered.map(f => `
+    <div class="audit-card explorer-card">
+      <div class="card-header">
+        <span class="card-id">${f.id}</span>
+        <span class="badge ${f.sev}">${f.sev}</span>
+      </div>
+      <div class="card-body">
+        <h4>${f.title}</h4>
+        <p>${f.desc}</p>
+      </div>
+      <div class="card-footer">
+        ${f.tags.map(t => `<span class="card-tag">${t}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+```
+
+---
+
+## 5. Data Schema cho Findings
+
+Mỗi finding cần có structure sau để render vào bất kỳ concept nào:
+
+```js
+{
+  id: "UXP-001",           // Unique finding ID
+  sev: "critical",         // "critical" | "major" | "minor"
+  screen: "form",          // Screen identifier for filtering
+  screenLabel: "Form nhập thông tin",
+  title: "Thiếu loading state khi tải danh sách TK",
+  desc: "Flow không mô tả trạng thái chờ khi load danh sách TK.",
+  recommendation: "Thêm skeleton loading 2 dòng placeholder...",
+  ddlRefs: ["ux-guidelines#10", "ux-guidelines#78"],
+  uxLaw: "Doherty Threshold (<400ms feedback)",
+  tags: ["Loading States", "Doherty", "ux-guidelines#10"]
+}
+```
+
+### Score Data Schema
+
+```js
+{
+  overall: { score: 58, total: 38, pass: 22, gap: 16, unverifiable: 8 },
+  screens: [
+    { name: "Form nhập thông tin", score: 50, pass: 9, gap: 9 },
+    { name: "Xác nhận giao dịch", score: 50, pass: 5, gap: 5 },
+    { name: "Kết quả giao dịch", score: 80, pass: 8, gap: 2 }
+  ],
+  heuristics: [
+    { name: "User Flow", score: 80, detail: "Happy path, back nav" },
+    { name: "Error Handling", score: 30, detail: "API errors, validation" },
+    { name: "Loading States", score: 40, detail: "Skeleton, spinner, CTA" },
+    { name: "Touch & Target", score: 90, detail: "44pt touch targets" },
+    { name: "Accessibility", score: 50, detail: "ARIA, focus, motion" },
+    { name: "Consistency", score: 60, detail: "Data, masking, dates" }
+  ]
+}
+```
+
+---
+
+## 6. Hướng dẫn Adapt cho project khác
+
+### Bước 1: Chuẩn bị data
+
+1. Đọc UX Review Report nguồn
+2. Extract findings theo schema Section 5
+3. Tính score per screen và per heuristic
+4. Xác định severity counts
+
+### Bước 2: Customize design tokens
+
+Thay đổi trong `:root {}`:
+- `--accent-gold` → brand color chính
+- `--accent-purple` → brand color phụ
+- `--font-display` → brand heading font
+- `--font-sans` → brand body font
+
+### Bước 3: Update content
+
+1. **Hero section**: Thay project name, subtitle, meta stats
+2. **Screen scores**: Thay tên screens, update SVG `stroke-dashoffset`
+3. **Findings**: Cập nhật JS `findings` array
+4. **Heuristic rings**: Cập nhật scores và `data-target` values
+
+### Bước 4: Chọn concepts
+
+- Xóa concepts không cần → bỏ `concept-panel` div + tab tương ứng
+- Giữ 1 concept → bỏ concept-nav, set panel trực tiếp `display: block`
+
+### SVG Score Ring Calculator
+
+```
+circumference = 2 × π × radius
+
+Cho r=42 (small ring):  circumference = 264
+Cho r=32 (heuristic):   circumference = 201
+Cho r=85 (big ring):    circumference = 534
+
+stroke-dashoffset = circumference × (1 - score/100)
+```
+
+| Score | r=42 offset | r=32 offset | r=85 offset |
+|-------|-------------|-------------|-------------|
+| 30%   | 185         | 141         | 374         |
+| 40%   | 158         | 121         | 320         |
+| 50%   | 132         | 101         | 267         |
+| 58%   | 111         | 84          | 224         |
+| 60%   | 106         | 81          | 214         |
+| 80%   | 53          | 40          | 107         |
+| 90%   | 26          | 20          | 53          |
+| 100%  | 0           | 0           | 0           |
+
+---
+
+## 7. Research Insights (Đa ngôn ngữ)
+
+### Universal Patterns (10 ngôn ngữ đều confirm)
+
+Across EN, JA, ZH, KO, DE, ES, FR, PT, RU — **3 pattern phổ quát**:
+1. **Screenshot + Annotation hotspots** — contextualize findings trên UI thật
+2. **Before/After comparison** — current vs recommended
+3. **Priority/Severity matrix** — triage findings
+
+### Language-Specific Insights
+
+| Ngôn ngữ | Insight độc quyền |
+|----------|-------------------|
+| 🇯🇵 JA | `階層的に表示` nested slides concept — vertical drill-down for detail |
+| 🇨🇳 ZH | Juejin.cn: `语义化HTML` + `焦点管理` audit as priority |
+| 🇰🇷 KO | `비선형 흐름` non-linear flow — diverse stakeholders explore differently |
+| 🇩🇪 DE | Design system audit chạy song song UX audit |
+| 🇪🇸 ES | Embed interactive prototypes trong audit report |
+| 🇷🇺 RU | Habr: embed Axure prototypes → "experience the fix" approach |
+
+### Key Frameworks / Tools
+
+| Tool | Stars/Reach | Value |
+|------|-------------|-------|
+| **reveal.js** | 70.7K ⭐ GitHub | Slide-based HTML presentation. Speaker notes, PDF export |
+| **JuxtaposeJS** | Knight Lab | Before/After comparison slider. Zero-dependency |
+| **CSS Scroll-Driven Animations** | Chrome 115+ | `animation-timeline: scroll()` — GPU-accelerated, zero JS |
+| **Storydoc** | 21% longer read | Engagement tracking: who opened, what sections viewed |
+| **Gamma.app** | M users | AI-generated presentations, per-card analytics |
+
+---
+
+## 8. Case Studies
+
+### Niche Discoveries (High Context Value)
+
+1. **JuxtaposeJS** (Knight Lab, Northwestern) — journalism tool adapted for UX audit before/after comparisons
+2. **Native `<details><summary>`** — underrated for progressive disclosure: executives see summary, designers expand
+3. **SVG `stroke-dashoffset` animation** — score rings "draw themselves" on scroll, pure CSS, dramatic
+4. **Beusable.net** (Korean) — finding annotations placed directly on screenshot coordinates
+5. **CSS `animation-timeline: view()`** — elements animate as they enter viewport, no JS, off-main-thread
+
+### Niche Case Study: Recora (via UXCam)
+Session replay revealed "press and hold" micro-interaction mismatch — only discoverable via replay, not heuristic evaluation. Lesson: embed video evidence directly in HTML audit deck.
+
+---
+
+## 9. Working Prototype
+
+### File Location
+
+```
+ux-audit-pitch-demos/index.html    ← Single-file, zero dependencies
+```
+
+### How to Run
+
+```bash
+# Option 1: Direct open
+open index.html
+
+# Option 2: Local server (for full font loading)
+python3 -m http.server 8787
+# → http://localhost:8787
+
+# Option 3: Any static hosting
+# Upload index.html to GitHub Pages, Netlify, Vercel, etc.
+```
+
+### What's Included
+
+| Concept | Tab | Key Features |
+|---------|-----|-------------|
+| Scroll Narrative | ① | Hero + score rings + findings with `<details>` + scroll progress |
+| Dashboard | ② | Stats grid + severity matrix + findings table |
+| Card Explorer | ③ | 7 filter buttons + dynamic card grid + tag system |
+| Score Cards | ④ | Big animated 58/100 ring + 6 heuristic category rings |
+
+### Content Source
+
+All 13 findings from: **UX Review Report — Chuyển tiền nội bộ cùng chủ (Co-op Bank KHCN)**
+
+| Metric | Value |
+|--------|-------|
+| UX Score | 58% |
+| Total Checks | 38 |
+| Pass | 22 |
+| Gap | 16 |
+| Unverifiable | 8 |
+| Critical | 3 (UXP-001, UXP-002, UXP-003) |
+| Major | 6 (UXP-004 → UXP-009) |
+| Minor | 4 (UXP-010 → UXP-013) |
+
+---
+
+## Appendix: Checklist trước khi deliver
+
+- [ ] Thay project name + subtitle trong Hero
+- [ ] Update score data (overall + per screen + per heuristic)
+- [ ] Populate `findings` JS array với real data
+- [ ] Verify SVG `stroke-dashoffset` calculations
+- [ ] Brand colors cập nhật trong `:root`
+- [ ] Test responsive: 375px, 768px, 1024px, 1440px
+- [ ] Test dark/light (hiện tại dark-only)
+- [ ] Verify `prefers-reduced-motion` disables animations
+- [ ] Print stylesheet test (Cmd+P)
+- [ ] Offline test (no internet) — fonts fallback to system

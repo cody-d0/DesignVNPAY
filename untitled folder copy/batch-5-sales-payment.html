@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xPOS Bán hàng & Thanh toán - Batch 5 Prototype</title>
+    <meta name="description" content="Prototype: Luồng bán hàng và thanh toán hoàn chỉnh (SCR-010 đến SCR-014)">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --background: #fff;
+            --foreground: #0a0a0a;
+            --primary: #E31837;
+            --primary-fg: #fff;
+            --secondary: #F8F9FA;
+            --secondary-fg: #0a0a0a;
+            --muted: #F8F9FA;
+            --muted-fg: #737373;
+            --accent: #FFB800;
+            --success: #22c55e;
+            --destructive: #DC3545;
+            --border: #DEE2E6;
+            --ring: #E31837;
+            --card: #fff;
+            --card-fg: #0a0a0a;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, .08);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, .08);
+            --r-sm: 4px;
+            --r-md: 8px;
+            --r-lg: 12px;
+            --r-xl: 16px;
+            --sp-xs: 4px;
+            --sp-sm: 8px;
+            --sp-md: 16px;
+            --sp-lg: 24px;
+            --sp-xl: 32px;
+            --ff: 'Be Vietnam Pro', sans-serif;
+            --fs-xs: 12px;
+            --fs-sm: 14px;
+            --fs-base: 16px;
+            --fs-lg: 18px;
+            --fs-xl: 20px;
+            --fs-2xl: 24px;
+            --fs-3xl: 30px;
+            --dur: 300ms;
+            --ease: cubic-bezier(.16, 1, .3, 1)
+        }
+
+        [data-theme="dark"] {
+            --background: #0a0a0a;
+            --foreground: #fafafa;
+            --primary: #FF4D5A;
+            --primary-fg: #1A1A1A;
+            --secondary: #1E1E1E;
+            --secondary-fg: #fafafa;
+            --muted: #1E1E1E;
+            --muted-fg: #a3a3a3;
+            --accent: #FFC233;
+            --success: #4ade80;
+            --destructive: #FF4D5A;
+            --border: #343A40;
+            --ring: #FF4D5A;
+            --card: #171717;
+            --card-fg: #fafafa;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, .3);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, .3)
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--ff);
+            background: #1a1a2e;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--sp-lg);
+            -webkit-font-smoothing: antialiased
+        }
+
+        .proto {
+            display: flex;
+            gap: var(--sp-xl);
+            align-items: flex-start;
+            max-width: 800px
+        }
+
+        /* Control Panel */
+        .cp {
+            width: 260px;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: var(--r-lg);
+            padding: var(--sp-lg);
+            color: #e0e0e0;
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: var(--sp-lg)
+        }
+
+        .cp h2 {
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: rgba(255, 255, 255, .5);
+            margin-bottom: var(--sp-md)
+        }
+
+        .cs {
+            margin-bottom: var(--sp-lg)
+        }
+
+        .cs label {
+            display: block;
+            font-size: var(--fs-xs);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: rgba(255, 255, 255, .4);
+            margin-bottom: var(--sp-sm)
+        }
+
+        .cs select {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, .08);
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: var(--r-md);
+            color: #fff;
+            font-size: var(--fs-sm);
+            font-family: var(--ff);
+            cursor: pointer;
+            outline: none
+        }
+
+        .cs select option {
+            background: #1a1a2e
+        }
+
+        .tg {
+            display: flex;
+            gap: var(--sp-xs);
+            margin-top: var(--sp-sm)
+        }
+
+        .tb {
+            flex: 1;
+            padding: 8px;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: var(--r-sm);
+            color: rgba(255, 255, 255, .6);
+            font-size: var(--fs-xs);
+            font-family: var(--ff);
+            cursor: pointer;
+            transition: all 150ms ease
+        }
+
+        .tb.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff
+        }
+
+        .sc {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--sp-xs);
+            margin-top: var(--sp-sm)
+        }
+
+        .chip {
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 100px;
+            color: rgba(255, 255, 255, .6);
+            font-size: 11px;
+            font-family: var(--ff);
+            cursor: pointer;
+            transition: all 150ms ease
+        }
+
+        .chip.active {
+            background: rgba(227, 24, 55, .2);
+            border-color: var(--primary);
+            color: var(--primary)
+        }
+
+        .flow-nav {
+            display: flex;
+            gap: var(--sp-xs);
+            margin-top: var(--sp-sm)
+        }
+
+        .flow-btn {
+            flex: 1;
+            padding: 8px;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: var(--r-sm);
+            color: rgba(255, 255, 255, .6);
+            font-size: var(--fs-xs);
+            font-family: var(--ff);
+            cursor: pointer;
+            transition: all 150ms
+        }
+
+        .flow-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, .12)
+        }
+
+        .flow-btn:disabled {
+            opacity: .3;
+            cursor: not-allowed
+        }
+
+        .si {
+            margin-top: var(--sp-lg);
+            padding-top: var(--sp-md);
+            border-top: 1px solid rgba(255, 255, 255, .08)
+        }
+
+        .si dt {
+            font-size: 11px;
+            color: rgba(255, 255, 255, .35);
+            text-transform: uppercase;
+            letter-spacing: .06em
+        }
+
+        .si dd {
+            font-size: var(--fs-sm);
+            color: rgba(255, 255, 255, .8);
+            margin-bottom: var(--sp-sm)
+        }
+
+        /* Phone */
+        .pw {
+            flex-shrink: 0
+        }
+
+        .pf {
+            width: 375px;
+            height: 812px;
+            background: var(--background);
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, .1), 0 25px 80px rgba(0, 0, 0, .5);
+            transition: background var(--dur) ease
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 34px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 10
+        }
+
+        .sb {
+            height: 54px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 0 var(--sp-xl) 8px;
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            color: var(--foreground)
+        }
+
+        .sbr {
+            display: flex;
+            gap: 6px;
+            align-items: center
+        }
+
+        .sbr svg {
+            width: 18px;
+            height: 12px;
+            fill: var(--foreground)
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            height: calc(100% - 54px)
+        }
+
+        .screen.active {
+            display: flex;
+            animation: si var(--dur) var(--ease) both
+        }
+
+        @keyframes si {
+            from {
+                opacity: 0;
+                transform: translateX(20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0)
+            }
+        }
+
+        .screen-body {
+            flex: 1;
+            overflow-y: auto
+        }
+
+        .stag {
+            opacity: 0;
+            transform: translateY(12px);
+            animation: sti var(--dur) var(--ease) forwards
+        }
+
+        @keyframes sti {
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .stag:nth-child(1) {
+            animation-delay: 0ms
+        }
+
+        .stag:nth-child(2) {
+            animation-delay: 60ms
+        }
+
+        .stag:nth-child(3) {
+            animation-delay: 120ms
+        }
+
+        .stag:nth-child(4) {
+            animation-delay: 180ms
+        }
+
+        .stag:nth-child(5) {
+            animation-delay: 240ms
+        }
+
+        .stag:nth-child(6) {
+            animation-delay: 300ms
+        }
+
+        @media(prefers-reduced-motion:reduce) {
+            .stag {
+                animation: none;
+                opacity: 1;
+                transform: none
+            }
+
+            .screen {
+                animation: none
+            }
+        }
+
+        /* Shared Components */
+        .hdr {
+            display: flex;
+            align-items: center;
+            height: 56px;
+            padding: 0 var(--sp-md);
+            gap: var(--sp-sm);
+            flex-shrink: 0
+        }
+
+        .btn-back {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-radius: var(--r-md);
+            color: var(--foreground);
+            transition: background 150ms
+        }
+
+        .btn-back:hover {
+            background: var(--muted)
+        }
+
+        .btn-back svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round
+        }
+
+        .hdr-title {
+            font-size: var(--fs-base);
+            font-weight: 600;
+            color: var(--foreground);
+            flex: 1
+        }
+
+        .footer {
+            padding: var(--sp-md) var(--sp-lg);
+            flex-shrink: 0
+        }
+
+        .btn-p {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--sp-sm);
+            background: var(--primary);
+            color: var(--primary-fg);
+            border: none;
+            border-radius: var(--r-md);
+            font-size: var(--fs-base);
+            font-weight: 600;
+            font-family: var(--ff);
+            cursor: pointer;
+            transition: opacity 150ms;
+            position: relative;
+            overflow: hidden
+        }
+
+        .btn-p:disabled {
+            opacity: .4;
+            cursor: not-allowed
+        }
+
+        .btn-s {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--sp-sm);
+            background: var(--secondary);
+            color: var(--secondary-fg);
+            border: 1px solid var(--border);
+            border-radius: var(--r-md);
+            font-size: var(--fs-base);
+            font-weight: 600;
+            font-family: var(--ff);
+            cursor: pointer;
+            transition: opacity 150ms;
+            margin-top: var(--sp-sm)
+        }
+
+        .toast {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--foreground);
+            color: var(--background);
+            padding: 12px 20px;
+            border-radius: var(--r-md);
+            font-size: var(--fs-sm);
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all var(--dur) var(--ease);
+            z-index: 100
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0)
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin .6s linear infinite
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        /* SCR-010: Tạo đơn */
+        .search-bar {
+            margin: 0 var(--sp-lg) var(--sp-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--sp-sm);
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--r-md);
+            padding: 0 var(--sp-md);
+            height: 44px
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--ring);
+            box-shadow: 0 0 0 3px rgba(227, 24, 55, .12)
+        }
+
+        .search-bar svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--muted-fg);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0
+        }
+
+        .search-bar input {
+            flex: 1;
+            border: none;
+            background: none;
+            font-size: var(--fs-sm);
+            font-family: var(--ff);
+            color: var(--foreground);
+            outline: none
+        }
+
+        .search-bar input::placeholder {
+            color: var(--muted-fg)
+        }
+
+        .prod-item {
+            display: flex;
+            align-items: center;
+            gap: var(--sp-md);
+            padding: var(--sp-md) var(--sp-lg);
+            border-bottom: 1px solid var(--border)
+        }
+
+        .prod-item .emoji {
+            font-size: 28px;
+            width: 40px;
+            text-align: center
+        }
+
+        .prod-item .info {
+            flex: 1
+        }
+
+        .prod-item .name {
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            color: var(--foreground)
+        }
+
+        .prod-item .price {
+            font-size: var(--fs-sm);
+            color: var(--primary);
+            font-weight: 600
+        }
+
+        .prod-item .add-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: transform 150ms
+        }
+
+        .prod-item .add-btn:hover {
+            transform: scale(1.1)
+        }
+
+        .prod-item .add-btn.added {
+            display: none
+        }
+
+        .qty-ctrl {
+            display: flex;
+            align-items: center;
+            gap: var(--sp-sm)
+        }
+
+        .qty-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--foreground);
+            transition: all 150ms
+        }
+
+        .qty-btn:hover {
+            background: var(--muted)
+        }
+
+        .qty-val {
+            font-size: var(--fs-base);
+            font-weight: 700;
+            color: var(--foreground);
+            min-width: 24px;
+            text-align: center
+        }
+
+        .order-summary {
+            padding: var(--sp-md) var(--sp-lg);
+            border-top: 1px solid var(--border);
+            background: var(--card)
+        }
+
+        .sum-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--sp-xs)
+        }
+
+        .sum-label {
+            font-size: var(--fs-sm);
+            color: var(--muted-fg)
+        }
+
+        .sum-value {
+            font-size: var(--fs-xl);
+            font-weight: 700;
+            color: var(--foreground)
+        }
+
+        .sum-count {
+            font-size: var(--fs-xs);
+            color: var(--muted-fg)
+        }
+
+        .pay-btns {
+            display: flex;
+            gap: var(--sp-sm);
+            padding: var(--sp-sm) var(--sp-lg) var(--sp-md)
+        }
+
+        .pay-btn {
+            flex: 1;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--sp-sm);
+            border: none;
+            border-radius: var(--r-md);
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            font-family: var(--ff);
+            cursor: pointer;
+            transition: opacity 150ms
+        }
+
+        .pay-btn.cash {
+            background: var(--success);
+            color: #fff
+        }
+
+        .pay-btn.qr {
+            background: var(--primary);
+            color: var(--primary-fg)
+        }
+
+        .pay-btn:disabled {
+            opacity: .3;
+            cursor: not-allowed
+        }
+
+        .pay-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round
+        }
+
+        /* SCR-011: Thanh toán tiền mặt */
+        .cash-section {
+            padding: var(--sp-lg)
+        }
+
+        .total-display {
+            text-align: center;
+            padding: var(--sp-xl) 0
+        }
+
+        .total-lbl {
+            font-size: var(--fs-sm);
+            color: var(--muted-fg);
+            margin-bottom: var(--sp-xs)
+        }
+
+        .total-amt {
+            font-size: var(--fs-3xl);
+            font-weight: 700;
+            color: var(--foreground)
+        }
+
+        .input-group {
+            margin-bottom: var(--sp-lg)
+        }
+
+        .input-lbl {
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            color: var(--foreground);
+            margin-bottom: var(--sp-sm)
+        }
+
+        .cash-input {
+            width: 100%;
+            height: 48px;
+            padding: 0 var(--sp-md);
+            background: var(--background);
+            border: 1.5px solid var(--border);
+            border-radius: var(--r-md);
+            font-size: var(--fs-xl);
+            font-family: var(--ff);
+            font-weight: 600;
+            color: var(--foreground);
+            outline: none;
+            text-align: center;
+            transition: border-color 150ms
+        }
+
+        .cash-input:focus {
+            border-color: var(--ring);
+            box-shadow: 0 0 0 3px rgba(227, 24, 55, .12)
+        }
+
+        .cash-input::placeholder {
+            color: var(--muted-fg);
+            font-weight: 400;
+            font-size: var(--fs-base)
+        }
+
+        .quick-chips {
+            display: flex;
+            gap: var(--sp-sm);
+            margin-top: var(--sp-md)
+        }
+
+        .q-chip {
+            flex: 1;
+            padding: 10px;
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--r-md);
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            font-family: var(--ff);
+            color: var(--foreground);
+            cursor: pointer;
+            text-align: center;
+            transition: all 150ms
+        }
+
+        .q-chip:hover {
+            background: var(--muted)
+        }
+
+        .q-chip.sel {
+            background: var(--primary);
+            color: var(--primary-fg);
+            border-color: var(--primary)
+        }
+
+        .change-display {
+            text-align: center;
+            padding: var(--sp-lg) 0;
+            margin-top: var(--sp-md);
+            border-top: 1px solid var(--border)
+        }
+
+        .change-lbl {
+            font-size: var(--fs-sm);
+            color: var(--muted-fg);
+            margin-bottom: var(--sp-xs)
+        }
+
+        .change-amt {
+            font-size: var(--fs-2xl);
+            font-weight: 700;
+            color: var(--success)
+        }
+
+        .change-amt.neg {
+            color: var(--destructive)
+        }
+
+        .insuf-msg {
+            font-size: var(--fs-xs);
+            color: var(--destructive);
+            margin-top: var(--sp-xs);
+            display: none
+        }
+
+        .insuf-msg.visible {
+            display: block
+        }
+
+        /* SCR-012: QR Code */
+        .qr-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--sp-lg);
+            flex: 1
+        }
+
+        .qr-amount {
+            font-size: var(--fs-sm);
+            color: var(--muted-fg);
+            margin-bottom: var(--sp-xs)
+        }
+
+        .qr-total {
+            font-size: var(--fs-2xl);
+            font-weight: 700;
+            color: var(--foreground);
+            margin-bottom: var(--sp-lg)
+        }
+
+        .qr-box {
+            width: 220px;
+            height: 220px;
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: var(--r-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--sp-lg);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden
+        }
+
+        .qr-pattern {
+            display: grid;
+            grid-template-columns: repeat(11, 1fr);
+            gap: 2px;
+            width: 180px;
+            height: 180px
+        }
+
+        .qr-cell {
+            background: var(--foreground);
+            border-radius: 1px
+        }
+
+        .qr-cell.w {
+            background: transparent
+        }
+
+        .qr-pulse {
+            position: absolute;
+            inset: 0;
+            border: 2px solid var(--primary);
+            border-radius: var(--r-xl);
+            animation: pulse 2s ease-in-out infinite;
+            opacity: 0
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .3;
+                transform: scale(1.02)
+            }
+        }
+
+        .qr-instruction {
+            font-size: var(--fs-base);
+            font-weight: 500;
+            color: var(--foreground);
+            margin-bottom: var(--sp-sm)
+        }
+
+        .countdown {
+            font-size: var(--fs-lg);
+            font-weight: 700;
+            color: var(--muted-fg);
+            display: flex;
+            align-items: center;
+            gap: var(--sp-sm)
+        }
+
+        .countdown.warning {
+            color: var(--accent)
+        }
+
+        .countdown.danger {
+            color: var(--destructive)
+        }
+
+        .countdown svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round
+        }
+
+        /* SCR-013: Kết quả */
+        .result-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--sp-xl) var(--sp-lg);
+            flex: 1;
+            text-align: center
+        }
+
+        .result-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--sp-lg)
+        }
+
+        .result-icon.ok {
+            background: rgba(34, 197, 94, .12)
+        }
+
+        .result-icon.ok svg {
+            stroke: var(--success)
+        }
+
+        .result-icon.fail {
+            background: rgba(220, 53, 69, .12)
+        }
+
+        .result-icon.fail svg {
+            stroke: var(--destructive)
+        }
+
+        .result-icon.timeout {
+            background: rgba(255, 184, 0, .12)
+        }
+
+        .result-icon.timeout svg {
+            stroke: var(--accent)
+        }
+
+        .result-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round
+        }
+
+        .result-msg {
+            font-size: var(--fs-xl);
+            font-weight: 700;
+            color: var(--foreground);
+            margin-bottom: var(--sp-sm)
+        }
+
+        .result-amount {
+            font-size: var(--fs-2xl);
+            font-weight: 700;
+            color: var(--foreground);
+            margin-bottom: var(--sp-sm)
+        }
+
+        .result-txn {
+            font-size: var(--fs-sm);
+            color: var(--muted-fg);
+            margin-bottom: var(--sp-lg)
+        }
+
+        /* SCR-014: Biên lai */
+        .receipt-wrap {
+            padding: var(--sp-lg)
+        }
+
+        .receipt {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            padding: var(--sp-lg);
+            font-family: 'Courier New', monospace;
+            box-shadow: var(--shadow-sm)
+        }
+
+        .receipt-header {
+            text-align: center;
+            padding-bottom: var(--sp-md);
+            border-bottom: 1px dashed var(--border);
+            margin-bottom: var(--sp-md)
+        }
+
+        .receipt-store {
+            font-size: var(--fs-base);
+            font-weight: 700;
+            color: var(--foreground);
+            margin-bottom: var(--sp-xs)
+        }
+
+        .receipt-meta {
+            font-size: var(--fs-xs);
+            color: var(--muted-fg);
+            line-height: 1.5
+        }
+
+        .receipt-items {
+            padding-bottom: var(--sp-md);
+            border-bottom: 1px dashed var(--border);
+            margin-bottom: var(--sp-md)
+        }
+
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--fs-sm);
+            color: var(--foreground);
+            padding: var(--sp-xs) 0
+        }
+
+        .receipt-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--fs-base);
+            font-weight: 700;
+            color: var(--foreground);
+            padding: var(--sp-sm) 0;
+            border-bottom: 1px dashed var(--border);
+            margin-bottom: var(--sp-md)
+        }
+
+        .receipt-footer {
+            font-size: var(--fs-xs);
+            color: var(--muted-fg);
+            line-height: 1.5
+        }
+
+        .receipt-footer div {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 0
+        }
+
+        .receipt-thanks {
+            text-align: center;
+            font-size: var(--fs-xs);
+            color: var(--muted-fg);
+            margin-top: var(--sp-md);
+            font-style: italic
+        }
+
+        .btn-row {
+            display: flex;
+            gap: var(--sp-sm)
+        }
+
+        .btn-row .btn-p,
+        .btn-row .btn-s {
+            flex: 1
+        }
+    </style>
+</head>
+
+<body>
+    <div class="proto">
+        <div class="cp">
+            <h2>xPOS Batch 5</h2>
+            <div class="cs"><label>Màn hình</label>
+                <select id="sel" onchange="nav(this.value)">
+                    <option value="s010">SCR-010 Tạo đơn bán hàng</option>
+                    <option value="s011">SCR-011 Thanh toán tiền mặt</option>
+                    <option value="s012">SCR-012 QR Code thanh toán</option>
+                    <option value="s013">SCR-013 Kết quả thanh toán</option>
+                    <option value="s014">SCR-014 Biên lai</option>
+                </select>
+            </div>
+            <div class="cs"><label>Giao diện</label>
+                <div class="tg"><button class="tb active" id="lb" onclick="theme('light')">Sáng</button><button
+                        class="tb" id="db" onclick="theme('dark')">Tối</button></div>
+            </div>
+            <div class="cs"><label>Trạng thái</label>
+                <div class="sc" id="chips"></div>
+            </div>
+            <div class="cs"><label>Di chuyển</label>
+                <div class="flow-nav"><button class="flow-btn" id="prevBtn" onclick="flowPrev()">Trước</button><button
+                        class="flow-btn" id="nextBtn" onclick="flowNext()">Sau</button></div>
+            </div>
+            <dl class="si">
+                <dt>Màn hình</dt>
+                <dd id="iId">SCR-010</dd>
+                <dt>Loại</dt>
+                <dd id="iType">action</dd>
+                <dt>Luồng</dt>
+                <dd id="iFlow">Bán hàng</dd>
+                <dt>UC</dt>
+                <dd id="iUC">UC-007</dd>
+            </dl>
+        </div>
+        <div class="pw">
+            <div class="pf" id="pf">
+                <div class="notch"></div>
+                <div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12">
+                            <rect x="0" y="3" width="4" height="9" rx="1" />
+                            <rect x="5" y="2" width="4" height="10" rx="1" />
+                            <rect x="10" y="0" width="4" height="12" rx="1" />
+                        </svg><svg viewBox="0 0 25 12" style="width:25px">
+                            <rect x="0" y=".5" width="22" height="11" rx="2.5" stroke="currentColor" stroke-width="1"
+                                fill="none" />
+                            <rect x="23" y="3.5" width="2" height="5" rx="1" fill="currentColor" />
+                            <rect x="2" y="2.5" width="16" height="7" rx="1.5" fill="currentColor" />
+                        </svg></span></div>
+
+                <!-- SCR-010 -->
+                <div class="screen active" id="s010">
+                    <div class="hdr"><button class="btn-back" aria-label="Quay lại"><svg viewBox="0 0 24 24">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg></button><span class="hdr-title">Bán hàng</span></div>
+                    <div class="search-bar stag"><svg viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="M21 21l-4.35-4.35" />
+                        </svg><input placeholder="Tìm sản phẩm..."></div>
+                    <div class="screen-body">
+                        <div class="prod-item stag"><span class="emoji"><svg viewBox="0 0 24 24" width="24" height="24" style="fill:none;stroke:var(--foreground);stroke-width:1.5"><rect x="6" y="4" width="12" height="16" rx="2"/><path d="M6 8h12"/><circle cx="12" cy="14" r="2"/></svg></span>
+                            <div class="info">
+                                <div class="name">Trà sữa trân châu</div>
+                                <div class="price">35.000 VND</div>
+                            </div><button class="add-btn" onclick="addItem(this,35000)"
+                                aria-label="Thêm sản phẩm">+</button>
+                            <div class="qty-ctrl" style="display:none"><button class="qty-btn"
+                                    onclick="adjQty(this,-1)">-</button><span class="qty-val">1</span><button
+                                    class="qty-btn" onclick="adjQty(this,1)">+</button></div>
+                        </div>
+                        <div class="prod-item stag"><span class="emoji"><svg viewBox="0 0 24 24" width="24" height="24" style="fill:none;stroke:var(--foreground);stroke-width:1.5"><path d="M17 8h1a4 4 0 010 8h-1M3 8h14v9a4 4 0 01-4 4H7a4 4 0 01-4-4V8zM6 2v2M10 2v2M14 2v2"/></svg></span>
+                            <div class="info">
+                                <div class="name">Cà phê đen</div>
+                                <div class="price">25.000 VND</div>
+                            </div><button class="add-btn" onclick="addItem(this,25000)"
+                                aria-label="Thêm sản phẩm">+</button>
+                            <div class="qty-ctrl" style="display:none"><button class="qty-btn"
+                                    onclick="adjQty(this,-1)">-</button><span class="qty-val">1</span><button
+                                    class="qty-btn" onclick="adjQty(this,1)">+</button></div>
+                        </div>
+                        <div class="prod-item stag"><span class="emoji"><svg viewBox="0 0 24 24" width="24" height="24" style="fill:none;stroke:var(--foreground);stroke-width:1.5"><path d="M4 12h16M4 12a8 8 0 0016 0M8 12V6M12 12V4M16 12V6"/></svg></span>
+                            <div class="info">
+                                <div class="name">Phở bò tái</div>
+                                <div class="price">55.000 VND</div>
+                            </div><button class="add-btn" onclick="addItem(this,55000)"
+                                aria-label="Thêm sản phẩm">+</button>
+                            <div class="qty-ctrl" style="display:none"><button class="qty-btn"
+                                    onclick="adjQty(this,-1)">-</button><span class="qty-val">1</span><button
+                                    class="qty-btn" onclick="adjQty(this,1)">+</button></div>
+                        </div>
+                        <div class="prod-item stag"><span class="emoji"><svg viewBox="0 0 24 24" width="24" height="24" style="fill:none;stroke:var(--foreground);stroke-width:1.5"><path d="M19 10H5a2 2 0 00-2 2v1a2 2 0 002 2h14a2 2 0 002-2v-1a2 2 0 00-2-2zM5 10V7a5 5 0 0114 0v3"/></svg></span>
+                            <div class="info">
+                                <div class="name">Bánh mì thịt nướng</div>
+                                <div class="price">30.000 VND</div>
+                            </div><button class="add-btn" onclick="addItem(this,30000)"
+                                aria-label="Thêm sản phẩm">+</button>
+                            <div class="qty-ctrl" style="display:none"><button class="qty-btn"
+                                    onclick="adjQty(this,-1)">-</button><span class="qty-val">1</span><button
+                                    class="qty-btn" onclick="adjQty(this,1)">+</button></div>
+                        </div>
+                        <div class="prod-item stag"><span class="emoji"><svg viewBox="0 0 24 24" width="24" height="24" style="fill:none;stroke:var(--foreground);stroke-width:1.5"><path d="M8 2l-2 18h12L16 2H8zM6 6h12"/></svg></span>
+                            <div class="info">
+                                <div class="name">Nước ép cam</div>
+                                <div class="price">30.000 VND</div>
+                            </div><button class="add-btn" onclick="addItem(this,30000)"
+                                aria-label="Thêm sản phẩm">+</button>
+                            <div class="qty-ctrl" style="display:none"><button class="qty-btn"
+                                    onclick="adjQty(this,-1)">-</button><span class="qty-val">1</span><button
+                                    class="qty-btn" onclick="adjQty(this,1)">+</button></div>
+                        </div>
+                    </div>
+                    <div class="order-summary">
+                        <div class="sum-row"><span class="sum-label">Tổng cộng</span><span class="sum-value"
+                                id="orderTotal">0 VND</span></div>
+                        <div class="sum-count" id="orderCount">0 sản phẩm</div>
+                    </div>
+                    <div class="pay-btns">
+                        <button class="pay-btn cash" id="cashBtn" disabled onclick="nav('s011')"><svg
+                                viewBox="0 0 24 24">
+                                <rect x="1" y="4" width="22" height="16" rx="2" />
+                                <circle cx="12" cy="12" r="4" />
+                            </svg>Tiền mặt</button>
+                        <button class="pay-btn qr" id="qrBtn" disabled onclick="nav('s012')"><svg viewBox="0 0 24 24">
+                                <rect x="3" y="3" width="7" height="7" />
+                                <rect x="14" y="3" width="7" height="7" />
+                                <rect x="3" y="14" width="7" height="7" />
+                                <path d="M14 14h3v3h-3z" />
+                            </svg>VNPAY QR</button>
+                    </div>
+                </div>
+
+                <!-- SCR-011 -->
+                <div class="screen" id="s011">
+                    <div class="hdr"><button class="btn-back" onclick="nav('s010')" aria-label="Quay lại"><svg
+                                viewBox="0 0 24 24">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg></button><span class="hdr-title">Thanh toán tiền mặt</span></div>
+                    <div class="screen-body">
+                        <div class="cash-section">
+                            <div class="total-display stag">
+                                <div class="total-lbl">Tổng đơn hàng</div>
+                                <div class="total-amt" id="cashTotal">95.000 VND</div>
+                            </div>
+                            <div class="input-group stag">
+                                <div class="input-lbl">Tiền khách đưa</div><input class="cash-input" type="text"
+                                    id="cashInput" placeholder="Nhập số tiền" oninput="calcChange()">
+                                <div class="quick-chips"><button class="q-chip"
+                                        onclick="quickFill(50000,this)">50K</button><button class="q-chip"
+                                        onclick="quickFill(100000,this)">100K</button><button class="q-chip"
+                                        onclick="quickFill(200000,this)">200K</button><button class="q-chip"
+                                        onclick="quickFill(500000,this)">500K</button></div>
+                                <div class="insuf-msg" id="insufMsg">Tiền khách đưa chưa đủ</div>
+                            </div>
+                            <div class="change-display stag">
+                                <div class="change-lbl">Tiền thừa</div>
+                                <div class="change-amt" id="changeAmt">0 VND</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer"><button class="btn-p" id="cashConfirm" disabled onclick="confirmCash()">Xác nhận
+                            thanh toán</button></div>
+                    <div class="toast" id="cashToast">Thanh toán thành công!</div>
+                </div>
+
+                <!-- SCR-012 -->
+                <div class="screen" id="s012">
+                    <div class="hdr"><button class="btn-back" onclick="nav('s010')" aria-label="Quay lại"><svg
+                                viewBox="0 0 24 24">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg></button><span class="hdr-title">Thanh toán VNPAY QR</span></div>
+                    <div class="qr-section">
+                        <div class="qr-amount stag">Tổng thanh toán</div>
+                        <div class="qr-total stag" id="qrTotal">95.000 VND</div>
+                        <div class="qr-box stag" id="qrBox">
+                            <div class="qr-pattern" id="qrPattern"></div>
+                            <div class="qr-pulse"></div>
+                        </div>
+                        <div class="qr-instruction stag">Quét mã để thanh toán</div>
+                        <div class="countdown stag" id="countdown"><svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 6v6l4 2" />
+                            </svg><span id="timer">04:59</span></div>
+                    </div>
+                    <div class="footer"><button class="btn-s" onclick="nav('s011')">Chuyển sang tiền mặt</button></div>
+                </div>
+
+                <!-- SCR-013 -->
+                <div class="screen" id="s013">
+                    <div class="result-section">
+                        <div class="result-icon ok stag" id="resIcon"><svg viewBox="0 0 24 24">
+                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                                <path d="M22 4L12 14.01l-3-3" />
+                            </svg></div>
+                        <div class="result-msg stag" id="resMsg">Thanh toán thành công!</div>
+                        <div class="result-amount stag" id="resAmt">95.000 VND</div>
+                        <div class="result-txn stag" id="resTxn">Mã giao dịch: TXN-20260304-042</div>
+                    </div>
+                    <div class="footer" id="resFooter">
+                        <button class="btn-p" onclick="nav('s014')">In biên lai</button>
+                        <button class="btn-s" onclick="nav('s010')">Về trang chính</button>
+                    </div>
+                </div>
+
+                <!-- SCR-014 -->
+                <div class="screen" id="s014">
+                    <div class="hdr"><button class="btn-back" onclick="nav('s013')" aria-label="Quay lại"><svg
+                                viewBox="0 0 24 24">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg></button><span class="hdr-title">Biên lai</span></div>
+                    <div class="screen-body">
+                        <div class="receipt-wrap stag">
+                            <div class="receipt">
+                                <div class="receipt-header">
+                                    <div class="receipt-store">QUÁN PHỞ 24H</div>
+                                    <div class="receipt-meta">MST: 0123456789<br>123 Nguyễn Huệ, Q.1, TP.HCM</div>
+                                </div>
+                                <div class="receipt-items">
+                                    <div class="receipt-item"><span>Trà sữa trân châu x2</span><span>70.000</span></div>
+                                    <div class="receipt-item"><span>Cà phê đen x1</span><span>25.000</span></div>
+                                </div>
+                                <div class="receipt-total"><span>TỔNG CỘNG</span><span>95.000 VND</span></div>
+                                <div class="receipt-footer">
+                                    <div><span>PTTT</span><span>Tiền mặt</span></div>
+                                    <div><span>Mã GD</span><span>TXN-20260304-042</span></div>
+                                    <div><span>Thời gian</span><span>04/03/2026 18:30</span></div>
+                                </div>
+                                <div class="receipt-thanks">Cảm ơn quý khách!<br>Hẹn gặp lại</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <div class="btn-row">
+                            <button class="btn-p" onclick="showToast('printToast')">In biên lai</button>
+                            <button class="btn-s" onclick="showToast('shareToast')">Chia sẻ</button>
+                        </div>
+                    </div>
+                    <div class="toast" id="printToast">Đang in biên lai...</div>
+                    <div class="toast" id="shareToast">Đang chuẩn bị biên lai...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const S = ['s010', 's011', 's012', 's013', 's014'];
+        const M = {
+            s010: { id: 'SCR-010', type: 'action', flow: 'Bán hàng', uc: 'UC-007', states: ['cart-empty', 'cart-items', 'searching'] },
+            s011: { id: 'SCR-011', type: 'form', flow: 'Thanh toán', uc: 'UC-008', states: ['default', 'filling', 'insufficient', 'submitting'] },
+            s012: { id: 'SCR-012', type: 'async', flow: 'Thanh toán', uc: 'UC-009', states: ['displaying', 'timeout', 'expired'] },
+            s013: { id: 'SCR-013', type: 'detail', flow: 'Thanh toán', uc: 'UC-009', states: ['success', 'failed', 'timeout'] },
+            s014: { id: 'SCR-014', type: 'detail', flow: 'Thanh toán', uc: 'UC-010', states: ['ready', 'printing'] },
+        };
+        let cur = 's010', orderTotal = 0, orderCount = 0, timerInterval;
+
+        function nav(id) {
+            if (!S.includes(id)) return;
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.stag').forEach(el => { el.style.animation = 'none'; void el.offsetHeight; el.style.animation = '' });
+            cur = id; document.getElementById('sel').value = id; updateCP();
+            if (id === 's012') startCountdown(); else clearInterval(timerInterval);
+        }
+        function updateCP() {
+            const m = M[cur];
+            document.getElementById('iId').textContent = m.id; document.getElementById('iType').textContent = m.type;
+            document.getElementById('iFlow').textContent = m.flow; document.getElementById('iUC').textContent = m.uc;
+            const c = document.getElementById('chips'); c.innerHTML = '';
+            m.states.forEach((s, i) => { const b = document.createElement('button'); b.className = 'chip' + (i === 0 ? ' active' : ''); b.dataset.state = s; b.textContent = s.charAt(0).toUpperCase() + s.slice(1); b.onclick = () => setS(s); c.appendChild(b) });
+            const idx = S.indexOf(cur); document.getElementById('prevBtn').disabled = idx === 0; document.getElementById('nextBtn').disabled = idx === S.length - 1;
+        }
+        function flowPrev() { const i = S.indexOf(cur); if (i > 0) nav(S[i - 1]) }
+        function flowNext() { const i = S.indexOf(cur); if (i < S.length - 1) nav(S[i + 1]) }
+        function theme(t) { const f = document.getElementById('pf'); t === 'dark' ? (f.setAttribute('data-theme', 'dark'), document.getElementById('db').classList.add('active'), document.getElementById('lb').classList.remove('active')) : (f.removeAttribute('data-theme'), document.getElementById('lb').classList.add('active'), document.getElementById('db').classList.remove('active')) }
+        function setS(state) {
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.chip[data-state="${state}"]`)?.classList.add('active');
+            if (cur === 's013') {
+                const icon = document.getElementById('resIcon'), msg = document.getElementById('resMsg'), foot = document.getElementById('resFooter');
+                if (state === 'success') { icon.className = 'result-icon ok stag'; icon.innerHTML = '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>'; msg.textContent = 'Thanh toán thành công!'; foot.innerHTML = '<button class="btn-p" onclick="nav(\'s014\')">In biên lai</button><button class="btn-s" onclick="nav(\'s010\')">Về trang chính</button>' }
+                else if (state === 'failed') { icon.className = 'result-icon fail stag'; icon.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>'; msg.textContent = 'Thanh toán thất bại'; foot.innerHTML = '<button class="btn-p" onclick="nav(\'s012\')">Tạo QR mới</button><button class="btn-s" onclick="nav(\'s011\')">Chuyển sang tiền mặt</button>' }
+                else if (state === 'timeout') { icon.className = 'result-icon timeout stag'; icon.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>'; msg.textContent = 'Hết thời gian chờ thanh toán'; foot.innerHTML = '<button class="btn-p" onclick="nav(\'s012\')">Tạo QR mới</button><button class="btn-s" onclick="confirmManual()">Xác nhận thủ công</button>' }
+            }
+        }
+        // SCR-010
+        function addItem(btn, price) { btn.classList.add('added'); const ctrl = btn.nextElementSibling; ctrl.style.display = 'flex'; orderTotal += price; orderCount++; updateOrder() }
+        function adjQty(btn, d) { const ctrl = btn.parentElement, val = ctrl.querySelector('.qty-val'), item = ctrl.parentElement; let q = parseInt(val.textContent) + d; const price = parseInt(item.querySelector('.price').textContent.replace(/\D/g, '')); if (q <= 0) { ctrl.style.display = 'none'; item.querySelector('.add-btn').classList.remove('added'); orderTotal -= price; orderCount-- } else { val.textContent = q; orderTotal += d * price; if (d > 0) orderCount++;/*simplified*/ } updateOrder() }
+        function updateOrder() { document.getElementById('orderTotal').textContent = orderTotal.toLocaleString('vi-VN') + ' VND'; document.getElementById('orderCount').textContent = orderCount + ' sản phẩm'; document.getElementById('cashBtn').disabled = orderTotal <= 0; document.getElementById('qrBtn').disabled = orderTotal <= 0; document.getElementById('cashTotal').textContent = orderTotal.toLocaleString('vi-VN') + ' VND'; document.getElementById('qrTotal').textContent = orderTotal.toLocaleString('vi-VN') + ' VND' }
+        // SCR-011
+        function quickFill(v, btn) { document.querySelectorAll('.q-chip').forEach(c => c.classList.remove('sel')); btn.classList.add('sel'); document.getElementById('cashInput').value = v.toLocaleString('vi-VN'); calcChange() }
+        function calcChange() { const raw = document.getElementById('cashInput').value.replace(/\D/g, ''), paid = parseInt(raw) || 0, total = orderTotal || 95000, change = paid - total, el = document.getElementById('changeAmt'), insuf = document.getElementById('insufMsg'); if (paid > 0 && change < 0) { el.textContent = '0 VND'; el.className = 'change-amt neg'; insuf.classList.add('visible'); document.getElementById('cashConfirm').disabled = true } else { el.textContent = Math.max(0, change).toLocaleString('vi-VN') + ' VND'; el.className = 'change-amt'; insuf.classList.remove('visible'); document.getElementById('cashConfirm').disabled = paid <= 0 || change < 0 } }
+        function confirmCash() { const btn = document.getElementById('cashConfirm'); btn.disabled = true; btn.innerHTML = '<div class="spinner"></div>'; setTimeout(() => { btn.innerHTML = 'Xác nhận thanh toán'; showToast('cashToast'); setTimeout(() => { nav('s013'); setS('success') }, 1500) }, 1200) }
+        // SCR-012
+        function startCountdown() { let s = 299; clearInterval(timerInterval); timerInterval = setInterval(() => { if (s <= 0) { clearInterval(timerInterval); document.getElementById('timer').textContent = '00:00'; return } const m = Math.floor(s / 60), sec = s % 60; document.getElementById('timer').textContent = `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`; const cd = document.getElementById('countdown'); cd.className = 'countdown stag' + (s < 60 ? ' danger' : s < 120 ? ' warning' : ''); s-- }, 1000) }
+        function generateQR() { const p = document.getElementById('qrPattern'); p.innerHTML = ''; const d = [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1]; d.forEach(v => { const c = document.createElement('div'); c.className = 'qr-cell' + (v ? '' : ' w'); p.appendChild(c) }) }
+        generateQR();
+        // SCR-013
+        function confirmManual() { const btn = event.target; btn.disabled = true; btn.textContent = 'Đang xác nhận...'; setTimeout(() => { setS('success') }, 1200) }
+        function showToast(id) { const t = document.getElementById(id); t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000) }
+        updateCP();
+    </script>
+</body>
+
+</html>

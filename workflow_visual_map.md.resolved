@@ -1,0 +1,250 @@
+# Figma → UX Review: Full Workflow Visual Map (v2 — Merged CP)
+
+## Pipeline Overview
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    PIPE 1: figma-to-prd-md                          │
+│  Figma URL → Metadata → Screenshots → Boundaries → OCR → .md pack  │
+├─────────────────────────────────────────────────────────────────────┤
+│                    PIPE 2: ux-review-pipe                            │
+│  .md pack + ui/*.png → Skill A + B + C → ux-review-report.md        │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Execution Flow
+
+```
+USER INPUT (figma_url, product_name, domain, output_dir)
+  │
+  ▼
+═══ Bước 0: PRE-FLIGHT (T-1..T-9) ═══════════════════════════
+  │
+  ▼
+═══ Bước 1: KHỞI TẠO INPUT ══════════════════════════════════
+  │ 🛑 GATE 0: Output Folder Guard [Human CP — T3]
+  │   Folder rỗng? → PASS
+  │   Có data? → [A] Empty / [B] Change / [C] Abort
+  ▼
+╔══════════════════════════════════════════════════════════════╗
+║  Bước 2: PIPE 1 — figma-to-prd-md                          ║
+╚══════════════════════════════════════════════════════════════╝
+  │
+  ├── Phase 0 & 1 ── Parse Structure (get_metadata → XML)
+  │     ▼
+  │   Phase 1d ── Save Screenshots ═════════════════ CRITICAL
+  │     │  figma-save-to-ui.sh per section
+  │     ▼
+  │   ⛔ GATE A ── Screenshot Existence [Script T1]
+  │     📌 CP1: Xả XML body. Giữ: provisional_boundaries
+  │
+  │  ┌─────────────────────────────────────────────┐
+  │  │ CAN PARALLEL:                               │
+  │  │  Screenshots ↕ Single-Pass Extraction       │
+  │  └─────────────────────────────────────────────┘
+  │
+  │  ═══ 2-ROUND BOUNDARY REFINEMENT ═══════════════
+  │  │
+  │  ├── 2a-bis ── Boundary Detection Round 1 ·····
+  │  │     │  Bước 1: List artboards
+  │  │     │  Bước 2: Group by Figma name
+  │  │     │  Bước 2.5: Icon fingerprint per artboard
+  │  │     │  Bước 3: ★ TEXT + ICON → flow-stage → boundaries
+  │  │     │  Bước 4: Output provisional_boundaries[] ← NOT FINAL
+  │  │     │  Bước 5: Self-check (Boundary Gate — automated)
+  │  │     │
+  │  │     │  ⚠️ Agent: KHÔNG DỪNG. Boundaries provisional.
+  │  │     ▼
+  │  ├── 2a-pre ── Single-Pass Extraction ·········
+  │  │     │  text_nodes[] + icon_fingerprint[] + icon_inventory[]
+  │  │     ▼
+  │  │   ⚠️ GATE D ── Icon Validation [Agent T2] (automated, WARNING only)
+  │  │     ▼
+  │  ├── 2d ── Flow + Icon Trigger Inference (Round 2) ·
+  │  │     │  2d.1: Text-based flow
+  │  │     │  2d.2: Agent reasoning icon triggers
+  │  │     │  2d.3: Boundary annotation (annotate, NOT restructure)
+  │  │     │  2d.4: → flow_graph.json
+  │  │     │  2d.5: ★ Boundary Consistency Check (NEW)
+  │  │     │         SUGGEST_MERGE / SUGGEST_SPLIT flags
+  │  │     ▼
+  │  │   ⛔ GATE E ── Flow Graph Validation [Agent T2] (automated)
+  │  │     │
+  │  │     ▼
+  │  ╚═════════════════════════════════════════════════
+  │     │
+  │     ▼
+  │   ┌──────────────────────────────────────────────────────────┐
+  │   │  🛑 MERGED HUMAN CHECKPOINT [T3]                         │
+  │   │  3 Tabs — user sees ALL data BEFORE lock                 │
+  │   │                                                          │
+  │   │  Tab 1: BOUNDARIES (from 2a-bis)                         │
+  │   │    • Screen boundaries table (provisional)               │
+  │   │    • Artboards per biên detail                           │
+  │   │    • Boundary Gate 4 assertions                          │
+  │   │                                                          │
+  │   │  Tab 2: FLOW GRAPH (from 2d)                             │
+  │   │    • Flow edges (text + icon triggers)                   │
+  │   │    • Boundary flags (SUGGEST_MERGE/SPLIT from 2d.5)      │
+  │   │    • Gate E 5 assertions                                 │
+  │   │                                                          │
+  │   │  Tab 3: ICON INVENTORY (from Gate D)                     │
+  │   │    • Icons per screen table                              │
+  │   │    • Categories breakdown                                │
+  │   │    • Gate D results                                      │
+  │   │                                                          │
+  │   │  [Y] → LOCK boundaries, continue pipeline                │
+  │   │  [E] → Edit boundaries, redo 2a-bis..2d (~1-2 min)       │
+  │   │  [N] → STOP pipeline                                     │
+  │   └──────────────────────────────────────────────────────────┘
+  │     │
+  │     │  📌 CP2: Xả icon raw + reasoning. Giữ: locked boundaries, flow_graph
+  │     ▼
+  │   ┌──────────────────────────────────────────────────────────┐
+  │   │  🏷️ NAMING SYNC (sau lock, trước 2f)                     │
+  │   │  Per screen:                                             │
+  │   │    main_screen_name_vi ← sub_sections[].name             │
+  │   │    screen_type_label_vi ← mapping(screen_type)           │
+  │   │    display_name_vi ← "{main} › {sub}"                    │
+  │   │  → Dùng display_name_vi cho toàn bộ downstream           │
+  │   └──────────────────────────────────────────────────────────┘
+  │     ▼
+  ├── 2f ── Mapping ảnh ↔ biên (locked) ···········
+  │     ▼
+  ├── 2g ── OCR per biên (Agent Vision) ···········
+  │     │  Round 1: text │ Round 2: icons → ocr_full_table[k]
+  │     │  📌 CP3: Xả OCR raw
+  │     ▼
+  ├── Phase 3 ── Gen PRD Draft (1 biên = 1 .md) ──
+  │     ▼
+  ├── Phase 4 ── Augment PRD (DDL + signal inference)
+  │     ▼
+  ├── Phase 5 ── Output + Handoff (.handoff/) ─────
+  │     ▼
+  │   ⛔ GATE F ── Handoff Completeness [Agent T2]
+  │     📌 CP4: Xả Phase 2-5 in-memory
+  │     ▼
+  │   ⛔ GATE B ── OCR Data Validation [Script T1]
+  │     📌 CP5: Xả Pipe 1 context
+  │
+  ▼
+═══ Bước 3: HANDOFF PREPARATION ═══════════════════════════
+  │  Load consumer_payload from .handoff/
+  ▼
+╔══════════════════════════════════════════════════════════════╗
+║  Bước 4: PIPE 2 — ux-review-pipe                           ║
+╚══════════════════════════════════════════════════════════════╝
+  │
+  │   ⛔ GATE C ── Vision File Check [Script T1]
+  │     ▼
+  │   ┌──────────────┬──────────────┐
+  │   │   Skill A    │   Skill B    │  ← PARALLEL
+  │   │ Signal+DDL   │ PRD Context  │
+  │   │ (text only)  │ (text only)  │
+  │   └──────┬───────┴──────┬───────┘
+  │          └──────┬───────┘
+  │                 ▼
+  │          ┌──────────────┐
+  │          │   Skill C    │  ← SEQUENTIAL (needs A+B)
+  │          │ Vision Review│
+  │          │ ★ reads PNG  │
+  │          └──────────────┘
+  │
+  ▼
+═══ Bước 5: TỔNG HỢP ════════════════════════════════════
+  │  5.1: → ux-review-report.md
+  │  5.2: ⛔ SCORE GATE [Script T1]
+  │        📌 CP6: Pipeline hoàn tất
+  ▼
+DONE ✅
+```
+
+---
+
+## Gate Summary
+
+```
+Chronological order:
+
+Gate 0 ──🛑── Output Folder Guard         [Human CP T3]   Bước 1
+Gate A ──🔧── Screenshot Existence         [Script T1]     Phase 1d
+Boundary─🤖── 4 Assertions (automated)    [Agent T2]      Phase 2a-bis
+Gate D ──🤖── Icon Validation (automated)  [Agent T2]      Phase 2a-pre
+Gate E ──🤖── Flow Graph (automated)       [Agent T2]      Phase 2d.4
+Merged ──🛑── Boundaries+Flow+Icons        [Human CP T3]   Sau Gate E ★ LOCK POINT
+Gate F ──🤖── Handoff Completeness         [Agent T2]      Phase 5
+Gate B ──🔧── OCR Data Validation          [Script T1]     Pre-Bước 3
+Gate C ──🔧── Vision File Check            [Script T1]     Pre-Skill C
+Score  ──🔧── UX Score Calculator          [Script T1]     Bước 5.2
+```
+
+## Context Checkpoints
+
+```
+CP1 ── Sau Gate A      ── Xả: figma_raw XML
+                          Giữ: provisional_boundaries, screen_ids
+
+CP2 ── Sau Merged CP   ── Xả: icon_inventory raw, reasoning
+                          Giữ: locked boundaries, flow_graph, annotations
+
+CP3 ── Sau Phase 2g    ── Xả: ocr_round1_text, ocr_round2_icons
+                          Giữ: ocr_full_table, ocr_gaps
+
+CP4 ── Sau Gate F      ── Xả: ALL Phase 2-5 in-memory
+                          Giữ: .handoff/ file paths
+
+CP5 ── Sau Handoff     ── Xả: ALL Pipe 1 context
+                          Giữ: consumer_payload (from file)
+
+CP6 ── Sau Score       ── Xả: ALL
+                          Giữ: ux-review-report.md path
+```
+
+## Parallel Opportunities
+
+```
+CAN RUN IN PARALLEL:
+┌─────────────────────────┬─────────────────────────┐
+│ Phase 1d: Screenshots   │ Phase 2a-pre: Extraction │
+│ (download from Figma)   │ (parse metadata XML)     │
+└─────────────────────────┴─────────────────────────┘
+
+┌─────────────────────────┬─────────────────────────┐
+│ Skill A: Signal+DDL     │ Skill B: PRD Context     │
+│ (inference from text)   │ (parse from .md)         │
+└─────────────────────────┴─────────────────────────┘
+
+MUST BE SEQUENTIAL:
+  2a-pre → 2a-bis (boundaries need text+icon data)
+  2a-bis → 2d (flow needs provisional boundaries)
+  Boundary Gate + Gate D + Gate E → Merged CP (all automated gates before human)
+  Merged CP [Y] → 2f → 2g (OCR needs locked boundaries)
+  Skill A+B → Skill C (C needs reports from A+B)
+```
+
+## Key Design Decision: Merged CP
+
+```
+BEFORE (v1):                         AFTER (v2 — current):
+  2a-bis                               2a-bis
+    ▼                                     ▼
+  🛑 Boundary CP ← poor data           Boundary Gate (automated)
+    │ user waits + confirms               ▼
+    ▼                                   2a-pre → Gate D
+  Gate D → 2d → Gate E                    ▼
+    │ rich data, user doesn't see       2d → Gate E
+    ▼                                     ▼
+  continue...                           🛑 Merged CP ← RICH data
+                                          │ user sees: boundaries + flow + icons
+                                          │ THEN confirms
+                                          ▼
+                                        continue (2f → 2g → ...)
+
+Benefits:
+  • Data quality at lock point: ⭐⭐ → ⭐⭐⭐⭐⭐
+  • User interrupts: 2 → 1
+  • Reject rate: ~20% → ~5%
+  • Redo cost if reject: 0 → ~1-2 min (acceptable)
+```

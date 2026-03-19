@@ -1,0 +1,409 @@
+# DDL Deep Research: Toàn bộ Tiềm năng & Tác động Giá trị
+
+## I. DDL Architecture — Full Map
+
+### 4 Layers, 6,421 Data Points
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    DDL DATABASE (ddl.db)                 │
+│                       2.6 MB SQLite                     │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  LAYER 1: Token Resolution Engine                       │
+│  ┌─────────────────────────────────────────────┐       │
+│  │ 9 Collections (4-tier: Tailwind→Theme→Mode→Custom)│  │
+│  │ 124 Groups · 1,106 Tokens · 306 References       │  │
+│  │ 5,096 Resolved Values (mode×platform combos)      │  │
+│  │ 23 Shadow Composites · 350 Color Details          │  │
+│  │ 7 Agent Context Rules                             │  │
+│  └─────────────────────────────────────────────┘       │
+│                                                         │
+│  LAYER 2: Component Schema Engine                       │
+│  ┌─────────────────────────────────────────────┐       │
+│  │ 18 Component Schemas (primitive/pattern/composition)│ │
+│  │   with: tokens, overridable, state, layout,        │  │
+│  │   accessibility, keyboard nav, platform_hints       │  │
+│  │ 28 Architecture Rules                             │  │
+│  │ 41 Domain Features · 14 Domain Workflows          │  │
+│  │ 21 Domain Integrations                            │  │
+│  └─────────────────────────────────────────────┘       │
+│                                                         │
+│  LAYER 3: UX Intelligence Engine                        │
+│  ┌─────────────────────────────────────────────┐       │
+│  │ 129 UX Guidelines (3 sources: ux-guidelines,       │  │
+│  │     web-interface, 5 Critical rules)               │  │
+│  │ 60 UX Laws (9 with trigger_conditions              │  │
+│  │     for automated matching)                         │  │
+│  │ 100 UI Reasoning Rules (pattern→recommendation)    │  │
+│  │ 44 Performance Patterns (7 Critical)               │  │
+│  └─────────────────────────────────────────────┘       │
+│                                                         │
+│  LAYER 4: Design Intelligence Engine                    │
+│  ┌─────────────────────────────────────────────┐       │
+│  │ 96 Product Types (Banking, Fintech, etc.)           │  │
+│  │   → primary_style, landing_pattern, dashboard_style │  │
+│  │ 96 Color Palettes (per product type)                │  │
+│  │ 57 Font Pairings (per mood/product)                 │  │
+│  │ 67 UI Styles (with CSS keywords, implementation    │  │
+│  │    checklist, design system variables)               │  │
+│  │ 25 Chart Types · 27 Landing Patterns               │  │
+│  │ 100 Icon Catalog (16 categories)                    │  │
+│  └─────────────────────────────────────────────┘       │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+### API Surface: 30+ Commands
+
+| Command | Layer | Returns | Use case |
+|:---|:---|:---|:---|
+| `--resolve <path>` | 1 | Value + full chain + source tier | Token verification |
+| `--query-type <type>` | 1 | All tokens of type by mode/platform | Color/spacing audit |
+| `--query-group <prefix>` | 1 | Group of tokens (base.*, spacing.*) | Component token extraction |
+| `--shadow <name>` | 1 | CSS shadow composite (multi-layer) | Shadow validation |
+| `--accessibility` | 1 | 350 colors with WCAG contrast ratios | Compliance check |
+| `--export <format>` | 1 | CSS/RN/Swift/JSON complete export | Dev handoff |
+| `--agent-context <name>` | 1 | Usage rules + constraints + examples | Agent behavior rules |
+| `--component <id>` | 2 | Full schema: tokens, state, layout, a11y, keyboard | Component audit |
+| `--component-tokens <id>` | 2 | Resolved token values for component | Pixel-perfect spec |
+| `--search-components <q>` | 2 | Component search results | Component detection |
+| `--guidelines [filters]` | 3 | UX rules by category/severity/source/law-ref | Check generation |
+| `--ux-laws [filters]` | 3 | Laws by category/keyword + trigger_conditions | Auto-matching |
+| `--ui-reasoning [filters]` | 3 | Pattern → recommendation rules | Design decisions |
+| `--perf-pattern <issue>` | 3 | Performance anti-patterns | Performance audit |
+| `--product-type <name>` | 4 | Style + palette + landing + considerations | Industry context |
+| `--color-palette <product>` | 4 | Primary/secondary/text/bg/CTA/border colors | Palette validation |
+| `--font-pairing <product>` | 4 | Heading + body font pair + mood | Typography check |
+| `--ui-style <name>` | 4 | Full style spec: effects, a11y, CSS keywords | Style compliance |
+| `--icon <name>` | 4 | Icon info by category/keyword | Icon audit |
+
+---
+
+## II. Workflow Phase × DDL Capability Matrix
+
+### Khoảng trống hiện tại
+
+| Workflow Phase | DDL capabilities HIỆN dùng | DDL capabilities CÓ THỂ dùng | Gap |
+|:---|:---|:---|:---|
+| **Phase 1d** (Screenshots) | ❌ Không | — | — |
+| **Phase 2a-bis** (Boundaries) | ❌ Không | `--icon` catalog → icon fingerprint validation | Icon name matching |
+| **Phase 2a-pre** (Metadata) | ❌ Không | `--search-components` → auto-detect DDL components | Component pre-identification |
+| **Phase 2d** (Flow inference) | ❌ Không | `--ux-laws` trigger_conditions → auto-flag laws per flow stage | Automated law matching |
+| **Phase 2g** (OCR) | ❌ Không | `--resolve` → verify token values in OCR text | Token value verification |
+| **Phase 3** (PRD gen) | ❌ Không | `--product-type` → industry context, `--component` → states | PRD enrichment |
+| **Phase 4e** (Signal inference) | "DDL" mentioned | `--guidelines` + `--ux-laws` + `--component` | **Full DDL query** |
+| **Skill A** (Signal + DDL) | "dựa vào DDL" | `--guidelines --severity High` + `--ux-laws` with triggers | **Structured queries** |
+| **Skill B** (PRD cross-ref) | "cross-ref DDL" | `--component <matched>` + `--guidelines --category` | **Component spec match** |
+| **Skill C** (Vision review) | "map DDL" | `--accessibility` + `--resolve` + `--component-tokens` | **WCAG + token audit** |
+| **Bước 5** (Report) | ❌ Không | `--product-type` → industry benchmark context | Industry-aware scoring |
+
+---
+
+## III. 7 Value Streams chưa khai thác
+
+### Value Stream 1: Component Schema State Audit
+
+**Data:** 18 component schemas, mỗi schema có `state`, `layout.children`, `accessibility`, `keyboard`
+
+**Cách hoạt động:**
+```
+Agent detect: "Screen có 6 OTP cells" 
+  → ddl-api.js --search-components otp
+  → Match: otp-input-1
+  → ddl-api.js --component otp-input-1
+  → DDL spec lists 4 states: digits[], activeIndex, canResend, timeLeft
+  → DDL spec lists 3 keyboard events: ArrowLeft, ArrowRight, Backspace
+  → DDL spec lists 4 layout children: cells, resend prompt, resend button, countdown
+  → Figma có: 6 static cells only
+  → GAP = 4 states + 3 keyboard + 3 children = 10 missing elements
+```
+
+**Tác động:** Biến 2 generic gaps ("missing auto-focus", "missing resend") thành **10 specific checkable items** với exact spec reference.
+
+**Components relevant cho banking:**
+
+| DDL Component | Banking screen | States trong DDL | Typical Figma gap |
+|:---|:---|:---|:---|
+| `otp-input-1` | OTP confirmation | 4 states + keyboard + countdown | Static cells only |
+| `text-input-1` | Form inputs | error + focused + helper + counter | Normal + filled only |
+| `loading-spinner-1` | Processing | 4 sizes + overlay + sr-only | Absent |
+| `empty-state-1` | Lists (danh bạ, lịch sử) | icon + title + description + CTA | Absent |
+| `receipt-preview-1` | Transaction result | print + share actions + totals | Partial (share + save) |
+| `app-header-1` | All screens | back + title + actions | Present |
+| `step-indicator-1` | Multi-step flows | current/completed/upcoming | Absent (no progress indicator) |
+| `countdown-timer-1` | OTP resend | circular progress + auto-expire | Absent |
+
+### Value Stream 2: Automated Law Trigger Engine
+
+**Data:** 9 UX laws with `trigger_conditions` JSON
+
+**Cách hoạt động:**
+```
+Screen signal analysis:
+  components: [button, input, otp-input, iconbutton, dropdown]
+  states: [loading, success]
+  counts: interactive=8, cards=2, lists=1
+
+Auto-match algorithm:
+  Fitts (min_interactive:3, signal:button) → MATCH ✅ (8 interactive)
+  Hick (min_interactive:5, signal:dropdown) → MATCH ✅ (dropdown NH picker)
+  Doherty (state:loading) → MATCH ✅ (CTA triggers async)
+  Miller (min_components:7) → MATCH ✅ (8 interactive > 7)
+  Peak-End (state:success) → MATCH ✅ (result screen)
+  Zeigarnik (state:step) → MATCH ✅ (3-step flow)  
+  Proximity (min_components:4) → MATCH ✅ (4+ fields)
+  Serial Position (signal:list) → MATCH ✅ (danh bạ list)
+  Common Region (signal:card) → MATCH ✅ (section cards)
+```
+
+**Tác động:** 9 laws auto-matched thay vì agent chọn 5 manually. Phát hiện 4 laws bị bỏ sót:
+- **Hick's Law** → NH picker với 50+ ngân hàng = choice overload. Cần search/filter
+- **Miller's Law** → Confirmation screen 7+ fields = memory overload. Cần visual grouping
+- **Zeigarnik Effect** → 3-step flow cần `step-indicator-1`. Figma thiếu
+- **Serial Position** → Danh bạ list: first + last items most remembered. Search alone insufficient
+
+### Value Stream 3: Product-Type Design System Validation
+
+**Data:** `--product-type banking` returns:
+
+```json
+{
+  "primary_style": "Minimalism + Accessible & Ethical",
+  "secondary_style": "Trust & Authority, Dark Mode (OLED)",
+  "color_palette": "Navy (#0A1628) + Trust Blue + Gold accents",
+  "key_considerations": "Security-first. Account overview. Transaction history. Mobile banking. Accessibility critical. Trust paramount."
+}
+```
+
+**Cách hoạt động cho UX Review:**
+1. Query `--product-type banking` → get `key_considerations`
+2. mỗi `key_consideration` → trở thành **mandatory check category**:
+   - "Security-first" → OTP states, loading protection, session timeout
+   - "Accessibility critical" → WCAG contrast, touch targets, form labels
+   - "Trust paramount" → confirmation flows, receipt completeness, error recovery
+
+**Tác động:** Chuyển từ "generic mobile UX" sang **"banking-specific UX audit"**. Banking có yêu cầu trust + security cao hơn app thường.
+
+### Value Stream 4: Token Resolution Chain cho Pixel-Perfect Proposals
+
+**Data:** `--component-tokens otp-input-1 --mode Light --platform Mobile`
+
+```json
+{
+  "base.primary": { "value": "#18181b", "chain": ["base.primary", "colors.primary-light", "tailwind colors.zinc.900"] },
+  "base.border": { "value": "#e5e5e5", "chain": ["base.border", "colors.border-light", "tailwind colors.neutral.200"] },
+  "base.destructive": { "value": "#dc2626", "chain": ["base.destructive", "colors.destructive-light", "tailwind colors.red.600"] },
+  "spacing.2": { "value": 8 },
+  "spacing.6": { "value": 24 }
+}
+```
+
+**Cách hoạt động:**
+```
+Proposal BEFORE: "OTP cell active border nên có highlight color"
+Proposal AFTER:  "OTP cell active: borderColor = base.primary (#18181b)
+                  OTP cell error:  borderColor = base.destructive (#dc2626)
+                  Cell gap: spacing.2 (8px)
+                  Cell size: 48px
+                  Font size: text.xl (20px)
+                  — Resolved for mode=Light, platform=Mobile"
+```
+
+**Tác động:** Designer nhận được **pixel-level spec** thay vì direction. Loại bỏ interpretation gap.
+
+### Value Stream 5: WCAG Compliance Engine
+
+**Data:** `--accessibility` → 350 tokens, pass/fail per WCAG AA
+
+**Hiện tại phát hiện (real data):**
+```
+❌ colors.primary-light: #E31837 (contrast: 4.45) — NEAR FAIL AA (4.5:1 required)
+❌ colors.secondary-light: #1A4B8C (contrast: 2.43) — FAIL AA
+❌ colors.chart-2-light: #1A4B8C (contrast: 2.43) — FAIL AA
+✅ AA Normal pass: 189 / 350
+```
+
+**Cách hoạt động trong UX review:**
+1. Run `--accessibility` → get fail list
+2. Cross-reference với Figma screenshot OCR: colors used
+3. Nếu banner text dùng `colors.secondary-light` (#1A4B8C) → contrast 2.43:1 → FAIL → cite exact ratio
+4. Proposal: "Thay `colors.secondary-light` bằng `base.secondary-foreground` (contrast ≥ 4.5:1)"
+
+**Tác động:** Từ "contrast thấp" → "contrast 2.43:1 trên #1A4B8C, FAIL WCAG AA (requires 4.5:1). Token DDL: colors.secondary-light"
+
+### Value Stream 6: Web-Interface Critical Rules (30 rules mới)
+
+**Data:** DDL DB có **129 guidelines** nhưng CSV chỉ có **99**. 30 rules bổ sung từ `web-interface` source:
+
+| Category | Count | Impact |
+|:---|---:|:---|
+| Accessibility | 6 | 2 **Critical**: Icon Button Labels, Form Control Labels |
+| Anti-Pattern | 4 | 1 **Critical**: Outline Removal |
+| Focus | 3 | 2 **Critical**: Visible Focus States, Never Remove Outline |
+| Forms | 6 | `Never Block Paste` (High), `Inline Errors` (High) |
+| Performance | 5 | `Virtualize Lists` (High, miller) |
+| State | 3 | `Confirm Destructive Actions` (High) |
+| Typography | 3 | — |
+
+**5 Critical rules CHƯA BAO GIỜ được check:**
+1. **Icon Button Labels** (id:243): "Icon-only buttons MUST have accessible names" → share/save icons trong result screen
+2. **Form Control Labels** (id:244): "All form controls need labels or aria-label" → OTP cells, search input
+3. **Outline Replacement** (id:271): "Never use outline-none without replacement"
+4. **Visible Focus States** (id:249): "All interactive elements need visible focus states"
+5. **Never Remove Outline** (id:250): "Never remove outline without providing replacement"
+
+**Tác động:** +5 Critical checks mà report hiện tại HOÀN TOÀN MISS. Chỉ accessible khi query DDL DB thay vì CSV.
+
+### Value Stream 7: Multi-Brand Token Comparison
+
+**Data:** DDL có 4 theme variants: Default, VNPAY, xPOS, xpos
+
+**Cách hoạt động:**
+```bash
+# Co-op Bank dùng brand nào?
+node ddl-api.js --resolve base.primary --mode Light --brand default
+# → #18181b (zinc.900)
+
+node ddl-api.js --resolve base.primary --mode Light --brand VNPAY
+# → Khác? → brand-specific token override
+```
+
+**Tác động cho external-bank review:** Co-op Bank có thể có brand-specific token overrides. DDL hỗ trợ `--brand` parameter nhưng chưa ai dùng cho UX review.
+
+---
+
+## IV. Impact Matrix: Phase × Value Stream
+
+| Phase | VS1 Component | VS2 Law Trigger | VS3 Product | VS4 Token | VS5 WCAG | VS6 Web Rules | VS7 Brand |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **2a-pre** (Metadata) | 🟢 detect | — | — | — | — | — | — |
+| **2d** (Flow) | — | 🟢 auto | — | — | — | — | — |
+| **4e** (Signal) | 🟢 match | 🟢 match | 🟢 context | 🟢 resolve | — | — | — |
+| **Skill A** | 🟢 audit | 🟢 auto | 🟢 filter | — | — | 🟢 check | — |
+| **Skill B** | 🟢 cross-ref | 🟢 cite | — | 🟢 verify | 🟢 check | 🟢 check | — |
+| **Skill C** | 🟢 vision | 🟢 score | 🟢 bench | 🟢 pixel | 🟢 audit | 🟢 vision | 🟢 compare |
+| **Report** | 🟢 ref | 🟢 cite | 🟢 context | 🟢 spec | 🟢 data | 🟢 ref | — |
+
+**🟢 = Viable, actionable use**
+
+---
+
+## V. Projected Impact Summary
+
+### Quantitative
+
+| Metric | Current | With full DDL | Change |
+|:---|---:|---:|:---|
+| Guidelines checked | 99 (CSV) | 129 (DB) | **+30 (+30%)** |
+| — of which Critical | 0 | 5 | **+5 Critical checks** |
+| UX Laws applied | 5 manual | 9 automated | **+80%, 0 false negatives** |
+| Component specs audited | 0 | 8 relevant | **+8 deterministic audits** |
+| State-level checks | 0 | ~40 (5 avg × 8 components) | **+40 deep checks** |
+| Token values in proposals | 0 | ~80 resolved | **Pixel-perfect specs** |
+| WCAG compliance data | 0 | 350 tokens | **Measurable compliance** |
+| Total check capacity | ~76 | ~160-180 | **+110-137%** |
+
+### Qualitative
+
+| Dimension | Before | After |
+|:---|:---|:---|
+| **Determinism** | Agent judgment (variable) | DDL returns data or empty (deterministic) |
+| **Hallucination** | High risk (bịa refs) | Zero (query returns structured JSON) |
+| **Depth** | Surface (2 OTP gaps) | Deep (10 OTP spec items) |
+| **Actionability** | "Thêm error state" | "Implement text-input-1.state.error: borderColor base.destructive (#dc2626)" |
+| **Industry context** | Generic mobile UX | Banking-specific: security-first, trust paramount, accessibility critical |
+| **Reproducibility** | Different each run | Same DDL queries → same results |
+| **New capabilities** | — | Automated law matching, WCAG audit, component spec diff |
+
+### Time & Effort
+
+| Activity | Before | After | Change |
+|:---|:---|:---|:---|
+| Guidelines lookup | Skip/fabricate | `--guidelines` query (instant) | Reliable |
+| Component matching | Manual inference | `--search-components` (instant) | Automated |
+| Token verification | Skip | `--component-tokens` (instant) | New capability |
+| WCAG check | Skip | `--accessibility` (instant) | New capability |
+| Law citation | Manual 5 | Auto 9 via trigger_conditions | +80%, no effort |
+| Report generation | ~20 min | ~25 min (5 min extra for DDL queries) | +25% time |
+| Report quality | Generic | Spec-grounded | **Fundamentally different** |
+
+---
+
+## VI. Architectural Recommendations
+
+### Change 1: Add DDL Query Phase between Handoff & UX Review
+
+```
+Current:  Handoff → Gate DDL → Skill A/B/C → Report
+Proposed: Handoff → Gate DDL → DDL Prefetch → Skill A/B/C → Report
+```
+
+**DDL Prefetch Phase:**
+```bash
+# 1. Product context
+node ddl-api.js --product-type banking > .handoff/ddl-product-context.json
+
+# 2. Component matching (from screen_inventory)
+node ddl-api.js --search-components otp > /tmp/ddl-matches.json
+node ddl-api.js --component otp-input-1 >> .handoff/ddl-component-specs.json
+# ... repeat for each detected component
+
+# 3. Full guidelines
+node ddl-api.js --guidelines --severity High > .handoff/ddl-guidelines-high.json
+node ddl-api.js --guidelines --source web-interface > .handoff/ddl-guidelines-web.json
+
+# 4. Auto-trigger laws
+node ddl-api.js --ux-laws > .handoff/ddl-ux-laws.json
+
+# 5. WCAG baseline
+node ddl-api.js --accessibility > .handoff/ddl-wcag-report.json
+```
+
+**Output:** `.handoff/ddl-*.json` files → input cho Skills A/B/C
+
+### Change 2: Component-Diff Skill (new Skill D)
+
+```
+Skill D: Component Spec Diff
+  - Input: DDL component specs + Figma screen variants
+  - For each matched component:
+    - List DDL states → check existence in Figma
+    - List DDL a11y requirements → check in screenshots  
+    - List DDL keyboard events → flag if static mockup
+  - Output: component_diff_report (pass/gap per state)
+```
+
+### Change 3: Automated Score Weighting from DDL Severity
+
+```
+Current:  Agent assigns severity (Critical/Major/Minor) manually
+Proposed: DDL guideline severity + component tier → auto-weight
+
+Mapping:
+  DDL severity Critical + component tier primitive → Weight 3.0
+  DDL severity High + Component match → Weight 2.5
+  DDL severity High (no component) → Weight 2.0  
+  DDL severity Medium → Weight 1.5
+  DDL severity Low → Weight 1.0
+```
+
+---
+
+## VII. Conclusion: DDL = UX Review Oracle
+
+DDL database đã chứa **câu trả lời** cho phần lớn UX review questions:
+
+| Question | DDL Answer |
+|:---|:---|
+| "OTP cần gì?" | `otp-input-1`: 4 states, keyboard nav, countdown, resend |
+| "Error state trông thế nào?" | `text-input-1.state.error`: border `#dc2626`, text below |
+| "Contrast có đủ không?" | `--accessibility`: 189/350 pass AA Normal |
+| "Banking cần focus gì?" | `--product-type banking`: security-first, trust paramount |
+| "Loading state spec?" | `loading-spinner-1`: 4 sizes, overlay, "Đang tải", sr-only |
+| "Law nào áp dụng?" | `trigger_conditions`: auto-match 9 laws per screen signals |
+| "Token value chính xác?" | `--resolve base.destructive → #dc2626` via chain |
+
+**DDL không phải reference material. DDL là UX Review Oracle.**
+
+Pipeline shift: Agent không "review" rồi "cite DDL". Agent **query DDL** rồi **diff với Figma**. DDL là source of truth, Figma là subject under test.

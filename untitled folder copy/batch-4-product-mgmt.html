@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xPOS Quản lý hàng hoá - Batch 4 Prototype</title>
+    <meta name="description" content="Prototype: Danh sách hàng hoá và Form thêm/sửa hàng hoá">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --background: #ffffff;
+            --foreground: #0a0a0a;
+            --primary: #E31837;
+            --primary-foreground: #FFFFFF;
+            --secondary: #F8F9FA;
+            --secondary-foreground: #0a0a0a;
+            --muted: #F8F9FA;
+            --muted-foreground: #737373;
+            --accent: #FFB800;
+            --accent-foreground: #1A1A1A;
+            --destructive: #DC3545;
+            --destructive-foreground: #FFFFFF;
+            --success: #22c55e;
+            --border: #DEE2E6;
+            --ring: #E31837;
+            --card: #ffffff;
+            --card-foreground: #0a0a0a;
+            --input-height: 48px;
+            --button-height: 48px;
+            --touch-target: 44px;
+            --icon-size: 24px;
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --font-family: 'Be Vietnam Pro', sans-serif;
+            --text-xs: 12px;
+            --text-sm: 14px;
+            --text-base: 16px;
+            --text-lg: 18px;
+            --text-xl: 20px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+            --duration-fast: 150ms;
+            --duration-normal: 300ms;
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        [data-theme="dark"] {
+            --background: #0a0a0a;
+            --foreground: #fafafa;
+            --primary: #FF4D5A;
+            --primary-foreground: #1A1A1A;
+            --secondary: #1E1E1E;
+            --secondary-foreground: #fafafa;
+            --muted: #1E1E1E;
+            --muted-foreground: #a3a3a3;
+            --accent: #FFC233;
+            --accent-foreground: #1A1A1A;
+            --destructive: #FF4D5A;
+            --destructive-foreground: #FFFFFF;
+            --success: #4ade80;
+            --border: #343A40;
+            --ring: #FF4D5A;
+            --card: #171717;
+            --card-foreground: #fafafa;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: #1a1a2e;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-lg);
+            -webkit-font-smoothing: antialiased
+        }
+
+        /* CONTROL PANEL */
+        .prototype-container {
+            display: flex;
+            gap: var(--spacing-xl);
+            align-items: flex-start;
+            max-width: 800px
+        }
+
+        .control-panel {
+            width: 260px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            color: #e0e0e0;
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: var(--spacing-lg)
+        }
+
+        .control-panel h2 {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: var(--spacing-md)
+        }
+
+        .control-section {
+            margin-bottom: var(--spacing-lg)
+        }
+
+        .control-section label {
+            display: block;
+            font-size: var(--text-xs);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: var(--spacing-sm)
+        }
+
+        .control-section select {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-md);
+            color: #fff;
+            font-size: var(--text-sm);
+            font-family: var(--font-family);
+            cursor: pointer;
+            outline: none
+        }
+
+        .control-section select:focus {
+            border-color: var(--primary)
+        }
+
+        .control-section select option {
+            background: #1a1a2e
+        }
+
+        .theme-toggle {
+            display: flex;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-sm)
+        }
+
+        .theme-btn {
+            flex: 1;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: var(--text-xs);
+            font-family: var(--font-family);
+            cursor: pointer;
+            transition: all var(--duration-fast) ease
+        }
+
+        .theme-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff
+        }
+
+        .flow-nav {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-sm)
+        }
+
+        .flow-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-md);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: var(--text-sm);
+            font-family: var(--font-family);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--duration-fast) ease
+        }
+
+        .flow-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1)
+        }
+
+        .flow-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed
+        }
+
+        .state-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-sm)
+        }
+
+        .state-chip {
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 11px;
+            font-family: var(--font-family);
+            cursor: pointer;
+            transition: all var(--duration-fast) ease
+        }
+
+        .state-chip.active {
+            background: rgba(227, 24, 55, 0.2);
+            border-color: var(--primary);
+            color: var(--primary)
+        }
+
+        .screen-info {
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid rgba(255, 255, 255, 0.08)
+        }
+
+        .screen-info dt {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.06em
+        }
+
+        .screen-info dd {
+            font-size: var(--text-sm);
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: var(--spacing-sm)
+        }
+
+        /* PHONE */
+        .phone-wrapper {
+            flex-shrink: 0
+        }
+
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: var(--background);
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 25px 80px rgba(0, 0, 0, 0.5), inset 0 0 0 2px rgba(255, 255, 255, 0.03);
+            transition: background var(--duration-normal) ease
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 34px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 10
+        }
+
+        .status-bar {
+            height: 54px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 0 var(--spacing-xl) 8px;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--foreground)
+        }
+
+        .status-bar-right {
+            display: flex;
+            gap: 6px;
+            align-items: center
+        }
+
+        .status-bar-right svg {
+            width: 18px;
+            height: 12px;
+            fill: var(--foreground)
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            height: calc(100% - 54px)
+        }
+
+        .screen.active {
+            display: flex;
+            animation: screenIn var(--duration-normal) var(--ease-out) both
+        }
+
+        @keyframes screenIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0)
+            }
+        }
+
+        .screen-body {
+            flex: 1;
+            overflow-y: auto
+        }
+
+        .stagger-item {
+            opacity: 0;
+            transform: translateY(12px);
+            animation: staggerIn var(--duration-normal) var(--ease-out) forwards
+        }
+
+        @keyframes staggerIn {
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .stagger-item:nth-child(1) {
+            animation-delay: 0ms
+        }
+
+        .stagger-item:nth-child(2) {
+            animation-delay: 60ms
+        }
+
+        .stagger-item:nth-child(3) {
+            animation-delay: 120ms
+        }
+
+        .stagger-item:nth-child(4) {
+            animation-delay: 180ms
+        }
+
+        .stagger-item:nth-child(5) {
+            animation-delay: 240ms
+        }
+
+        .stagger-item:nth-child(6) {
+            animation-delay: 300ms
+        }
+
+        .stagger-item:nth-child(7) {
+            animation-delay: 360ms
+        }
+
+        .stagger-item:nth-child(8) {
+            animation-delay: 420ms
+        }
+
+        @media(prefers-reduced-motion:reduce) {
+            .stagger-item {
+                animation: none;
+                opacity: 1;
+                transform: none
+            }
+
+            .screen {
+                animation: none
+            }
+        }
+
+        /* HEADER BAR */
+        .header-bar {
+            display: flex;
+            align-items: center;
+            height: 56px;
+            padding: 0 var(--spacing-md);
+            gap: var(--spacing-sm);
+            flex-shrink: 0
+        }
+
+        .btn-back {
+            width: var(--touch-target);
+            height: var(--touch-target);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            color: var(--foreground);
+            transition: background var(--duration-fast) ease
+        }
+
+        .btn-back:hover {
+            background: var(--muted)
+        }
+
+        .btn-back svg {
+            width: var(--icon-size);
+            height: var(--icon-size);
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round
+        }
+
+        .header-title {
+            font-size: var(--text-base);
+            font-weight: 600;
+            color: var(--foreground);
+            flex: 1
+        }
+
+        .header-action-btn {
+            width: var(--touch-target);
+            height: var(--touch-target);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            color: var(--primary-foreground);
+            transition: opacity var(--duration-fast) ease
+        }
+
+        .header-action-btn:hover {
+            opacity: 0.9
+        }
+
+        .header-action-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round
+        }
+
+        /* SEARCH */
+        .search-section {
+            padding: 0 var(--spacing-lg) var(--spacing-sm)
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 0 var(--spacing-md);
+            height: var(--touch-target);
+            transition: border-color var(--duration-fast) ease
+        }
+
+        .search-box:focus-within {
+            border-color: var(--ring);
+            box-shadow: 0 0 0 3px rgba(227, 24, 55, 0.12)
+        }
+
+        .search-box svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--muted-foreground);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            background: none;
+            font-size: var(--text-sm);
+            font-family: var(--font-family);
+            color: var(--foreground);
+            outline: none
+        }
+
+        .search-box input::placeholder {
+            color: var(--muted-foreground)
+        }
+
+        /* FILTER */
+        .filter-row {
+            display: flex;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-md)
+        }
+
+        .filter-chip {
+            padding: 6px 14px;
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: var(--text-xs);
+            font-weight: 500;
+            font-family: var(--font-family);
+            color: var(--muted-foreground);
+            cursor: pointer;
+            transition: all var(--duration-fast) ease
+        }
+
+        .filter-chip.active {
+            background: var(--primary);
+            color: var(--primary-foreground);
+            border-color: var(--primary)
+        }
+
+        .filter-chip:not(.active):hover {
+            background: var(--muted)
+        }
+
+        /* PRODUCT CARD */
+        .product-list {
+            padding: 0 var(--spacing-lg)
+        }
+
+        .product-card {
+            display: flex;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--spacing-md);
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: transform var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+            position: relative
+        }
+
+        .product-card:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md)
+        }
+
+        .product-img {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-md);
+            background: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            font-size: 24px
+        }
+
+        .product-info {
+            flex: 1;
+            min-width: 0
+        }
+
+        .product-sku {
+            font-size: 11px;
+            color: var(--muted-foreground);
+            font-weight: 500;
+            margin-bottom: 2px
+        }
+
+        .product-name {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--foreground);
+            margin-bottom: var(--spacing-xs)
+        }
+
+        .product-price {
+            font-size: var(--text-sm);
+            font-weight: 700;
+            color: var(--primary)
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 10px;
+            border-radius: 9999px;
+            font-size: 12px;
+            line-height: 16px;
+            font-weight: 600
+        }
+
+        .product-card .badge {
+            position: absolute;
+            top: var(--spacing-md);
+            right: var(--spacing-md)
+        }
+
+        .badge--dot::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor
+        }
+
+        .badge--success {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success)
+        }
+
+        .badge--error {
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--destructive)
+        }
+
+        .badge--warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--accent)
+        }
+
+        .badge--info {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3B82F6
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-xl) var(--spacing-lg);
+            text-align: center;
+            height: 100%
+        }
+
+        .empty-state.visible {
+            display: flex
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-lg)
+        }
+
+        .empty-icon svg {
+            width: 36px;
+            height: 36px;
+            stroke: var(--muted-foreground);
+            fill: none;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round
+        }
+
+        .empty-title {
+            font-size: var(--text-base);
+            font-weight: 600;
+            color: var(--foreground);
+            margin-bottom: var(--spacing-xs)
+        }
+
+        .empty-desc {
+            font-size: var(--text-sm);
+            color: var(--muted-foreground);
+            margin-bottom: var(--spacing-lg)
+        }
+
+        .empty-btn {
+            padding: var(--spacing-sm) var(--spacing-lg);
+            background: var(--primary);
+            color: var(--primary-foreground);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            font-weight: 600;
+            font-family: var(--font-family);
+            cursor: pointer
+        }
+
+        /* FORM (SCR-009) */
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+            padding: 0 var(--spacing-lg)
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--foreground);
+            margin-bottom: var(--spacing-sm)
+        }
+
+        .required {
+            color: var(--destructive);
+            margin-left: 2px
+        }
+
+        .form-input {
+            width: 100%;
+            height: var(--input-height);
+            padding: 0 var(--spacing-md);
+            background: var(--background);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: var(--text-base);
+            font-family: var(--font-family);
+            color: var(--foreground);
+            outline: none;
+            transition: border-color var(--duration-fast) ease
+        }
+
+        .form-input:focus {
+            border-color: var(--ring);
+            box-shadow: 0 0 0 3px rgba(227, 24, 55, 0.12)
+        }
+
+        .form-input.error {
+            border-color: var(--destructive)
+        }
+
+        .form-input::placeholder {
+            color: var(--muted-foreground)
+        }
+
+        .field-msg {
+            font-size: var(--text-xs);
+            margin-top: var(--spacing-xs);
+            display: none
+        }
+
+        .field-msg.visible {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs)
+        }
+
+        .error-msg {
+            color: var(--destructive)
+        }
+
+        .success-msg {
+            color: var(--success)
+        }
+
+        .sku-row {
+            display: flex;
+            gap: var(--spacing-sm);
+            align-items: center
+        }
+
+        .sku-row .form-input {
+            flex: 1
+        }
+
+        .sku-toggle {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: var(--text-xs);
+            color: var(--muted-foreground);
+            white-space: nowrap
+        }
+
+        .toggle-switch {
+            width: 40px;
+            height: 22px;
+            background: var(--border);
+            border-radius: 100px;
+            position: relative;
+            cursor: pointer;
+            transition: background var(--duration-fast) ease;
+            border: none;
+            padding: 0
+        }
+
+        .toggle-switch.on {
+            background: var(--primary)
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            transition: transform var(--duration-fast) ease;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15)
+        }
+
+        .toggle-switch.on::after {
+            transform: translateX(18px)
+        }
+
+        .image-picker {
+            width: 100%;
+            height: 120px;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            cursor: pointer;
+            transition: border-color var(--duration-fast) ease;
+            background: var(--secondary)
+        }
+
+        .image-picker:hover {
+            border-color: var(--primary)
+        }
+
+        .image-picker svg {
+            width: 32px;
+            height: 32px;
+            stroke: var(--muted-foreground);
+            fill: none;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round
+        }
+
+        .image-picker span {
+            font-size: var(--text-sm);
+            color: var(--muted-foreground);
+            font-weight: 500
+        }
+
+        .screen-footer {
+            padding: var(--spacing-md) var(--spacing-lg);
+            flex-shrink: 0
+        }
+
+        .btn-primary {
+            width: 100%;
+            height: var(--button-height);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            background: var(--primary);
+            color: var(--primary-foreground);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: var(--text-base);
+            font-weight: 600;
+            font-family: var(--font-family);
+            cursor: pointer;
+            transition: all var(--duration-fast) ease;
+            position: relative;
+            overflow: hidden
+        }
+
+        .btn-primary:hover::after {
+            background: rgba(255, 255, 255, 0.1)
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0);
+            transition: background var(--duration-fast) ease
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed
+        }
+
+        .btn-primary.loading {
+            pointer-events: none
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .toast {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--foreground);
+            color: var(--background);
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all var(--duration-normal) var(--ease-out);
+            z-index: 100
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0)
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--muted) 25%, rgba(200, 200, 200, 0.15) 50%, var(--muted) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: var(--radius-sm)
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0
+            }
+
+            100% {
+                background-position: -200% 0
+            }
+        }
+
+        .skeleton-card {
+            height: 90px;
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--spacing-md)
+        }
+    </style>
+</head>
+
+<body>
+    <div class="prototype-container">
+        <div class="control-panel">
+            <h2>xPOS Batch 4</h2>
+            <div class="control-section">
+                <label>Màn hình</label>
+                <select id="screenSelect" onchange="navigateTo(this.value)">
+                    <option value="scr-008">SCR-008 Danh sách hàng hoá</option>
+                    <option value="scr-009-add">SCR-009 Thêm hàng hoá</option>
+                    <option value="scr-009-edit">SCR-009 Sửa hàng hoá</option>
+                </select>
+            </div>
+            <div class="control-section">
+                <label>Giao diện</label>
+                <div class="theme-toggle">
+                    <button class="theme-btn active" id="lightBtn" onclick="setTheme('light')">Sáng</button>
+                    <button class="theme-btn" id="darkBtn" onclick="setTheme('dark')">Tối</button>
+                </div>
+            </div>
+            <div class="control-section">
+                <label>Trạng thái</label>
+                <div class="state-chips" id="stateChips"></div>
+            </div>
+            <div class="control-section">
+                <label>Di chuyển</label>
+                <div class="flow-nav">
+                    <button class="flow-btn" id="prevBtn" onclick="flowPrev()">Trước</button>
+                    <button class="flow-btn" id="nextBtn" onclick="flowNext()">Sau</button>
+                </div>
+            </div>
+            <dl class="screen-info">
+                <dt>Màn hình</dt>
+                <dd id="infoId">SCR-008</dd>
+                <dt>Loại</dt>
+                <dd id="infoType">list</dd>
+                <dt>Luồng</dt>
+                <dd id="infoFlow">Quản lý hàng hoá</dd>
+                <dt>UC</dt>
+                <dd id="infoUC">UC-004</dd>
+            </dl>
+        </div>
+
+        <div class="phone-wrapper">
+            <div class="phone-frame" id="phoneFrame">
+                <div class="notch"></div>
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <span class="status-bar-right">
+                        <svg viewBox="0 0 18 12">
+                            <rect x="0" y="3" width="4" height="9" rx="1" />
+                            <rect x="5" y="2" width="4" height="10" rx="1" />
+                            <rect x="10" y="0" width="4" height="12" rx="1" />
+                        </svg>
+                        <svg viewBox="0 0 25 12" style="width:25px">
+                            <rect x="0" y="0.5" width="22" height="11" rx="2.5" stroke="currentColor" stroke-width="1"
+                                fill="none" />
+                            <rect x="23" y="3.5" width="2" height="5" rx="1" fill="currentColor" />
+                            <rect x="2" y="2.5" width="16" height="7" rx="1.5" fill="currentColor" />
+                        </svg>
+                    </span>
+                </div>
+
+                <!-- SCR-008: Danh sách hàng hoá -->
+                <div class="screen active" id="scr-008" data-type="list" data-flow="Quản lý hàng hoá" data-uc="UC-004">
+                    <div class="header-bar">
+                        <button class="btn-back" aria-label="Quay lại"><svg viewBox="0 0 24 24">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg></button>
+                        <span class="header-title">Hàng hoá</span>
+                        <button class="header-action-btn" onclick="navigateTo('scr-009-add')"
+                            aria-label="Thêm hàng hoá"><svg viewBox="0 0 24 24">
+                                <path d="M12 5v14M5 12h14" />
+                            </svg></button>
+                    </div>
+                    <div class="search-section stagger-item">
+                        <div class="search-box">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="11" cy="11" r="8" />
+                                <path d="M21 21l-4.35-4.35" />
+                            </svg>
+                            <input type="text" placeholder="Tìm kiếm hàng hoá..." id="searchInput"
+                                oninput="handleSearch(this.value)">
+                        </div>
+                    </div>
+                    <div class="filter-row stagger-item">
+                        <button class="filter-chip active" data-filter="all" onclick="filterProducts('all',this)">Tất
+                            cả</button>
+                        <button class="filter-chip" data-filter="active" onclick="filterProducts('active',this)">Đang
+                            bán</button>
+                        <button class="filter-chip" data-filter="inactive"
+                            onclick="filterProducts('inactive',this)">Ngừng bán</button>
+                    </div>
+                    <div class="screen-body">
+                        <div class="product-list" id="productList">
+                            <div class="product-card stagger-item" data-status="active"
+                                onclick="navigateTo('scr-009-edit')">
+                                <div class="product-img"><svg viewBox="0 0 24 24" width="24" height="24"
+                                        style="fill:none;stroke:var(--foreground);stroke-width:1.5">
+                                        <rect x="6" y="4" width="12" height="16" rx="2" />
+                                        <path d="M6 8h12" />
+                                        <circle cx="12" cy="14" r="2" />
+                                    </svg></div>
+                                <div class="product-info">
+                                    <div class="product-sku">SP-001</div>
+                                    <div class="product-name">Trà sữa trân châu</div>
+                                    <div class="product-price">35.000 VND</div>
+                                </div>
+                                <span class="badge badge--success badge--dot">Đang bán</span>
+                            </div>
+                            <div class="product-card stagger-item" data-status="active"
+                                onclick="navigateTo('scr-009-edit')">
+                                <div class="product-img"><svg viewBox="0 0 24 24" width="24" height="24"
+                                        style="fill:none;stroke:var(--foreground);stroke-width:1.5">
+                                        <path
+                                            d="M17 8h1a4 4 0 010 8h-1M3 8h14v9a4 4 0 01-4 4H7a4 4 0 01-4-4V8zM6 2v2M10 2v2M14 2v2" />
+                                    </svg></div>
+                                <div class="product-info">
+                                    <div class="product-sku">SP-002</div>
+                                    <div class="product-name">Cà phê đen</div>
+                                    <div class="product-price">25.000 VND</div>
+                                </div>
+                                <span class="badge badge--success badge--dot">Đang bán</span>
+                            </div>
+                            <div class="product-card stagger-item" data-status="inactive"
+                                onclick="navigateTo('scr-009-edit')">
+                                <div class="product-img"><svg viewBox="0 0 24 24" width="24" height="24"
+                                        style="fill:none;stroke:var(--foreground);stroke-width:1.5">
+                                        <path d="M8 2l-2 18h12L16 2H8zM6 6h12" />
+                                    </svg></div>
+                                <div class="product-info">
+                                    <div class="product-sku">SP-003</div>
+                                    <div class="product-name">Sinh tố bơ</div>
+                                    <div class="product-price">40.000 VND</div>
+                                </div>
+                                <span class="badge badge--error badge--dot">Ngừng bán</span>
+                            </div>
+                            <div class="product-card stagger-item" data-status="active"
+                                onclick="navigateTo('scr-009-edit')">
+                                <div class="product-img"><svg viewBox="0 0 24 24" width="24" height="24"
+                                        style="fill:none;stroke:var(--foreground);stroke-width:1.5">
+                                        <path d="M4 12h16M4 12a8 8 0 0016 0M8 12V6M12 12V4M16 12V6" />
+                                    </svg></div>
+                                <div class="product-info">
+                                    <div class="product-sku">SP-004</div>
+                                    <div class="product-name">Phở bò tái</div>
+                                    <div class="product-price">55.000 VND</div>
+                                </div>
+                                <span class="badge badge--success badge--dot">Đang bán</span>
+                            </div>
+                            <div class="product-card stagger-item" data-status="active"
+                                onclick="navigateTo('scr-009-edit')">
+                                <div class="product-img"><svg viewBox="0 0 24 24" width="24" height="24"
+                                        style="fill:none;stroke:var(--foreground);stroke-width:1.5">
+                                        <path
+                                            d="M19 10H5a2 2 0 00-2 2v1a2 2 0 002 2h14a2 2 0 002-2v-1a2 2 0 00-2-2zM5 10V7a5 5 0 0114 0v3" />
+                                    </svg></div>
+                                <div class="product-info">
+                                    <div class="product-sku">SP-005</div>
+                                    <div class="product-name">Bánh mì thịt nướng</div>
+                                    <div class="product-price">30.000 VND</div>
+                                </div>
+                                <span class="badge badge--success badge--dot">Đang bán</span>
+                            </div>
+                        </div>
+                        <div class="empty-state" id="emptyProducts">
+                            <div class="empty-icon"><svg viewBox="0 0 24 24">
+                                    <path
+                                        d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" />
+                                    <circle cx="7" cy="7" r="1" />
+                                </svg></div>
+                            <div class="empty-title">Chưa có hàng hoá</div>
+                            <div class="empty-desc">Thêm sản phẩm đầu tiên để bắt đầu bán hàng</div>
+                            <button class="empty-btn" onclick="navigateTo('scr-009-add')">Thêm sản phẩm</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SCR-009: Thêm hàng hoá -->
+                <div class="screen" id="scr-009-add" data-type="form" data-flow="Quản lý hàng hoá" data-uc="UC-005">
+                    <div class="header-bar">
+                        <button class="btn-back" onclick="navigateTo('scr-008')" aria-label="Quay lại"><svg
+                                viewBox="0 0 24 24">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg></button>
+                        <span class="header-title">Thêm hàng hoá</span>
+                    </div>
+                    <div class="screen-body">
+                        <div class="form-group stagger-item">
+                            <label class="form-label">Mã hàng</label>
+                            <div class="sku-row">
+                                <input class="form-input" type="text" id="addSku" value="SP-006" readonly
+                                    style="background:var(--muted)">
+                                <div class="sku-toggle">
+                                    <button class="toggle-switch on" id="addSkuToggle"
+                                        onclick="toggleSku(this)"></button>
+                                    <span>Tự động</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group stagger-item">
+                            <label class="form-label">Tên hàng hoá <span class="required">*</span></label>
+                            <input class="form-input" type="text" id="addName" placeholder="Nhập tên sản phẩm"
+                                oninput="checkAddForm()">
+                            <div class="field-msg error-msg" id="addNameError">Tên hàng hoá không được để trống</div>
+                        </div>
+                        <div class="form-group stagger-item">
+                            <label class="form-label">Giá bán (VND) <span class="required">*</span></label>
+                            <input class="form-input" type="text" id="addPrice" placeholder="Ví dụ: 35000"
+                                oninput="formatPrice(this); checkAddForm()">
+                            <div class="field-msg error-msg" id="addPriceError">Giá bán phải lớn hơn 0</div>
+                        </div>
+                        <div class="form-group stagger-item">
+                            <label class="form-label">Ảnh sản phẩm</label>
+                            <div class="image-picker" id="addImgPicker">
+                                <svg viewBox="0 0 24 24">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                                    <circle cx="8.5" cy="8.5" r="1.5" />
+                                    <path d="M21 15l-5-5L5 21" />
+                                </svg>
+                                <span>Chụp ảnh hoặc chọn từ thư viện</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="screen-footer">
+                        <button class="btn-primary" id="addSaveBtn" disabled onclick="simulateAddSave()">
+                            <span class="btn-text">Lưu sản phẩm</span>
+                        </button>
+                    </div>
+                    <div class="toast" id="addToast">Đã lưu thành công</div>
+                </div>
+
+                <!-- SCR-009: Sửa hàng hoá -->
+                <div class="screen" id="scr-009-edit" data-type="form" data-flow="Quản lý hàng hoá" data-uc="UC-005">
+                    <div class="header-bar">
+                        <button class="btn-back" onclick="navigateTo('scr-008')" aria-label="Quay lại"><svg
+                                viewBox="0 0 24 24">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg></button>
+                        <span class="header-title">Sửa hàng hoá</span>
+                    </div>
+                    <div class="screen-body">
+                        <div class="form-group stagger-item">
+                            <label class="form-label">Mã hàng</label>
+                            <input class="form-input" type="text" value="SP-001" readonly
+                                style="background:var(--muted)">
+                        </div>
+                        <div class="form-group stagger-item">
+                            <label class="form-label">Tên hàng hoá <span class="required">*</span></label>
+                            <input class="form-input" type="text" id="editName" value="Trà sữa trân châu"
+                                oninput="checkEditForm()">
+                        </div>
+                        <div class="form-group stagger-item">
+                            <label class="form-label">Giá bán (VND) <span class="required">*</span></label>
+                            <input class="form-input" type="text" id="editPrice" value="35,000"
+                                oninput="formatPrice(this); checkEditForm()">
+                        </div>
+                        <div class="form-group stagger-item">
+                            <label class="form-label">Ảnh sản phẩm</label>
+                            <div class="image-picker">
+                                <svg viewBox="0 0 24 24">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                                    <circle cx="8.5" cy="8.5" r="1.5" />
+                                    <path d="M21 15l-5-5L5 21" />
+                                </svg>
+                                <span>Thay đổi ảnh sản phẩm</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="screen-footer">
+                        <button class="btn-primary" id="editSaveBtn" onclick="simulateEditSave()">
+                            <span class="btn-text">Cập nhật</span>
+                        </button>
+                    </div>
+                    <div class="toast" id="editToast">Đã cập nhật thành công</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SCREENS = ['scr-008', 'scr-009-add', 'scr-009-edit'];
+        const SCREEN_META = {
+            'scr-008': { id: 'SCR-008', type: 'list', flow: 'Quản lý hàng hoá', uc: 'UC-004', states: ['loaded', 'loading', 'empty', 'searching'] },
+            'scr-009-add': { id: 'SCR-009', type: 'form', flow: 'Quản lý hàng hoá', uc: 'UC-005', states: ['add-default', 'filling', 'sku-duplicate', 'submitting'] },
+            'scr-009-edit': { id: 'SCR-009', type: 'form', flow: 'Quản lý hàng hoá', uc: 'UC-005', states: ['edit-prefilled', 'filling', 'submitting'] },
+        };
+        let currentScreen = 'scr-008';
+
+        const productListOriginal = document.getElementById('productList').innerHTML;
+
+        function navigateTo(id) {
+            if (!SCREENS.includes(id)) return;
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const t = document.getElementById(id); t.classList.add('active');
+            t.querySelectorAll('.stagger-item').forEach(el => { el.style.animation = 'none'; void el.offsetHeight; el.style.animation = '' });
+            currentScreen = id; document.getElementById('screenSelect').value = id; updateControlPanel();
+        }
+        function flowPrev() { const i = SCREENS.indexOf(currentScreen); if (i > 0) navigateTo(SCREENS[i - 1]) }
+        function flowNext() { const i = SCREENS.indexOf(currentScreen); if (i < SCREENS.length - 1) navigateTo(SCREENS[i + 1]) }
+
+        function updateControlPanel() {
+            const m = SCREEN_META[currentScreen], i = SCREENS.indexOf(currentScreen);
+            document.getElementById('infoId').textContent = m.id;
+            document.getElementById('infoType').textContent = m.type;
+            document.getElementById('infoFlow').textContent = m.flow;
+            document.getElementById('infoUC').textContent = m.uc;
+            document.getElementById('prevBtn').disabled = i === 0;
+            document.getElementById('nextBtn').disabled = i === SCREENS.length - 1;
+            const chips = document.getElementById('stateChips'); chips.innerHTML = '';
+            m.states.forEach((s, idx) => { const btn = document.createElement('button'); btn.className = 'state-chip' + (idx === 0 ? ' active' : ''); btn.dataset.state = s; btn.textContent = s.charAt(0).toUpperCase() + s.slice(1); btn.onclick = () => setState(s); chips.appendChild(btn) });
+        }
+
+        function setTheme(t) {
+            const f = document.getElementById('phoneFrame');
+            if (t === 'dark') { f.setAttribute('data-theme', 'dark'); document.getElementById('darkBtn').classList.add('active'); document.getElementById('lightBtn').classList.remove('active') }
+            else { f.removeAttribute('data-theme'); document.getElementById('lightBtn').classList.add('active'); document.getElementById('darkBtn').classList.remove('active') }
+        }
+
+        function setState(state) {
+            document.querySelectorAll('.state-chip').forEach(c => c.classList.remove('active'));
+            const ac = document.querySelector(`.state-chip[data-state="${state}"]`); if (ac) ac.classList.add('active');
+
+            if (currentScreen === 'scr-008') {
+                const list = document.getElementById('productList'), empty = document.getElementById('emptyProducts');
+                document.querySelectorAll('.field-msg').forEach(e => e.classList.remove('visible'));
+                if (state === 'loading') { list.innerHTML = '<div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div>'; list.style.display = ''; empty.classList.remove('visible') }
+                else if (state === 'empty') { list.style.display = 'none'; empty.classList.add('visible') }
+                else if (state === 'searching') { list.innerHTML = productListOriginal; list.style.display = ''; empty.classList.remove('visible'); document.getElementById('searchInput').value = 'trà'; document.querySelectorAll('.product-card').forEach(c => { c.style.display = c.querySelector('.product-name').textContent.toLowerCase().includes('trà') ? '' : 'none' }) }
+                else { list.innerHTML = productListOriginal; list.style.display = ''; empty.classList.remove('visible'); document.getElementById('searchInput').value = '' }
+            } else if (currentScreen === 'scr-009-add') {
+                document.querySelectorAll('.field-msg').forEach(e => e.classList.remove('visible'));
+                if (state === 'filling') { document.getElementById('addName').value = 'Nước ép cam'; document.getElementById('addPrice').value = '30,000'; document.getElementById('addSaveBtn').disabled = false }
+                else if (state === 'sku-duplicate') { document.getElementById('addName').value = 'Trà sữa'; document.getElementById('addPrice').value = '35,000'; document.getElementById('addSku').value = 'SP-001'; document.getElementById('addSku').classList.add('error');/* show error is implicit */ }
+                else if (state === 'submitting') { document.getElementById('addName').value = 'Nước ép cam'; document.getElementById('addPrice').value = '30,000'; const btn = document.getElementById('addSaveBtn'); btn.classList.add('loading'); btn.disabled = true; btn.querySelector('.btn-text').style.display = 'none'; const sp = document.createElement('div'); sp.className = 'spinner'; btn.appendChild(sp) }
+                else { document.getElementById('addName').value = ''; document.getElementById('addPrice').value = ''; document.getElementById('addSku').value = 'SP-006'; document.getElementById('addSku').classList.remove('error'); document.getElementById('addSaveBtn').disabled = true; document.getElementById('addSaveBtn').classList.remove('loading'); const sp = document.getElementById('addSaveBtn').querySelector('.spinner'); if (sp) sp.remove(); document.getElementById('addSaveBtn').querySelector('.btn-text').style.display = '' }
+            }
+        }
+
+        function handleSearch(val) {
+            const cards = document.querySelectorAll('#productList .product-card');
+            cards.forEach(c => { c.style.display = c.querySelector('.product-name').textContent.toLowerCase().includes(val.toLowerCase()) ? '' : 'none' });
+        }
+
+        function filterProducts(type, btn) {
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active')); btn.classList.add('active');
+            document.querySelectorAll('#productList .product-card').forEach(c => { c.style.display = (type === 'all' || c.dataset.status === type) ? '' : 'none' });
+            document.getElementById('productList').style.display = ''; document.getElementById('emptyProducts').classList.remove('visible');
+        }
+
+        function toggleSku(btn) {
+            btn.classList.toggle('on');
+            const input = document.getElementById('addSku');
+            if (btn.classList.contains('on')) { input.readOnly = true; input.style.background = 'var(--muted)'; input.value = 'SP-006'; btn.nextElementSibling.textContent = 'Tự động' }
+            else { input.readOnly = false; input.style.background = 'var(--background)'; input.value = ''; input.focus(); btn.nextElementSibling.textContent = 'Thủ công' }
+        }
+
+        function formatPrice(input) { let v = input.value.replace(/\D/g, ''); if (v) input.value = parseInt(v).toLocaleString('vi-VN'); else input.value = '' }
+        function checkAddForm() { const n = document.getElementById('addName').value.trim(), p = document.getElementById('addPrice').value.replace(/\D/g, ''); document.getElementById('addSaveBtn').disabled = !(n && parseInt(p) > 0) }
+        function checkEditForm() { const n = document.getElementById('editName').value.trim(), p = document.getElementById('editPrice').value.replace(/\D/g, ''); document.getElementById('editSaveBtn').disabled = !(n && parseInt(p) > 0) }
+
+        function simulateAddSave() {
+            const btn = document.getElementById('addSaveBtn'); btn.classList.add('loading'); btn.disabled = true; btn.querySelector('.btn-text').style.display = 'none'; const sp = document.createElement('div'); sp.className = 'spinner'; btn.appendChild(sp);
+            setTimeout(() => { btn.classList.remove('loading'); sp.remove(); btn.querySelector('.btn-text').style.display = ''; showToast('addToast'); setTimeout(() => navigateTo('scr-008'), 1500) }, 1200);
+        }
+        function simulateEditSave() {
+            const btn = document.getElementById('editSaveBtn'); btn.classList.add('loading'); btn.disabled = true; btn.querySelector('.btn-text').style.display = 'none'; const sp = document.createElement('div'); sp.className = 'spinner'; btn.appendChild(sp);
+            setTimeout(() => { btn.classList.remove('loading'); sp.remove(); btn.querySelector('.btn-text').style.display = ''; btn.disabled = false; showToast('editToast'); setTimeout(() => navigateTo('scr-008'), 1500) }, 1200);
+        }
+        function showToast(id) { const t = document.getElementById(id); t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000) }
+
+        updateControlPanel();
+    </script>
+</body>
+
+</html>

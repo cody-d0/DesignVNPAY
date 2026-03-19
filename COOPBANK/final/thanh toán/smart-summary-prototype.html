@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Smart Summary — Prototype PA-A</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0A1F44;
+  --navy-light: #132D5E;
+  --white: #FFFFFF;
+  --gray-50: #F8FAFC;
+  --gray-100: #F1F5F9;
+  --gray-200: #E2E8F0;
+  --gray-300: #CBD5E1;
+  --gray-400: #94A3B8;
+  --gray-500: #64748B;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --primary: #0052CC;
+  --primary-light: #E8F0FE;
+  --success: #16A34A;
+  --success-light: #DCFCE7;
+  --warning: #EA580C;
+  --amount-color: #0A1F44;
+  --red-accent: #DC2626;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.1);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,.12);
+  --transition: 250ms cubic-bezier(.4,0,.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-font-smoothing: antialiased; }
+body {
+  font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+  background: #E5E7EB;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 24px 16px;
+}
+
+/* ═══ Phone Frame ═══ */
+.phone {
+  width: 375px;
+  max-width: 100%;
+  background: var(--gray-50);
+  border-radius: 32px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,.18), 0 0 0 1px rgba(0,0,0,.06);
+  position: relative;
+}
+
+/* ═══ Status Bar ═══ */
+.status-bar {
+  background: var(--navy);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+.status-bar .right { display: flex; gap: 6px; align-items: center; }
+.status-bar .right span { font-size: 12px; }
+
+/* ═══ Header ═══ */
+.header {
+  background: var(--navy);
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 14px 16px 16px;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+.header .back { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 8px; transition: background var(--transition); }
+.header .back:hover { background: rgba(255,255,255,.12); }
+.header .back svg { width: 20px; height: 20px; }
+.header .title { flex: 1; font-size: 16px; font-weight: 600; text-align: center; }
+.header .home { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 8px; transition: background var(--transition); }
+.header .home:hover { background: rgba(255,255,255,.12); }
+.header .home svg { width: 20px; height: 20px; }
+
+/* ═══ Progress ═══ */
+.progress-bar {
+  background: var(--navy-light);
+  padding: 8px 20px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.progress-step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: rgba(255,255,255,.5);
+  font-weight: 500;
+}
+.progress-step.active { color: white; }
+.progress-step .dot {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700;
+  background: rgba(255,255,255,.15);
+  color: rgba(255,255,255,.5);
+}
+.progress-step.active .dot {
+  background: var(--white);
+  color: var(--navy);
+}
+.progress-step.done .dot {
+  background: var(--success);
+  color: white;
+}
+.progress-line {
+  flex: 1;
+  height: 2px;
+  background: rgba(255,255,255,.15);
+  border-radius: 1px;
+}
+.progress-line.done { background: var(--success); }
+
+/* ═══ Content ═══ */
+.content {
+  padding: 0;
+  padding-bottom: 100px; /* room for sticky CTA */
+  overflow-y: auto;
+  max-height: 640px;
+}
+
+/* ═══ Account Card ═══ */
+.account-card {
+  margin: 16px;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  border-radius: var(--radius);
+  padding: 16px;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition);
+  box-shadow: var(--shadow-md);
+}
+.account-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+.account-logo {
+  width: 40px; height: 40px;
+  background: white;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.account-logo span { color: var(--red-accent); font-size: 11px; font-weight: 700; }
+.account-info { flex: 1; }
+.account-label { font-size: 11px; opacity: .7; margin-bottom: 2px; }
+.account-number { font-size: 14px; font-weight: 600; letter-spacing: .5px; }
+.account-balance { font-size: 12px; opacity: .8; margin-top: 2px; }
+.account-chevron { opacity: .6; }
+.account-chevron svg { width: 20px; height: 20px; }
+
+/* ═══ Amount Block ═══ */
+.amount-block {
+  padding: 24px 20px;
+  text-align: center;
+  background: var(--white);
+  margin: 0 16px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+}
+.amount-label { font-size: 13px; color: var(--gray-500); margin-bottom: 4px; }
+.amount-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--amount-color);
+  line-height: 1.2;
+  letter-spacing: -.5px;
+}
+.amount-text {
+  font-size: 13px;
+  color: var(--primary);
+  margin-top: 4px;
+  font-weight: 500;
+}
+.amount-fee {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--gray-200);
+  font-size: 13px;
+  color: var(--gray-500);
+}
+
+/* ═══ Collapsible Sections ═══ */
+.section-group { margin: 12px 16px; }
+.collapse-section {
+  background: var(--white);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+  overflow: hidden;
+  transition: box-shadow var(--transition);
+}
+.collapse-section:hover { box-shadow: var(--shadow-md); }
+.collapse-header {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  user-select: none;
+  gap: 10px;
+  transition: background var(--transition);
+}
+.collapse-header:hover { background: var(--gray-50); }
+.collapse-icon {
+  width: 28px; height: 28px;
+  background: var(--primary-light);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.collapse-title {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+.collapse-badge {
+  font-size: 11px;
+  color: var(--gray-400);
+  background: var(--gray-100);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+.collapse-chevron {
+  color: var(--gray-400);
+  transition: transform var(--transition);
+  width: 20px; height: 20px;
+}
+.collapse-section.open .collapse-chevron { transform: rotate(180deg); }
+.collapse-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 350ms cubic-bezier(.4,0,.2,1), opacity 250ms ease;
+  opacity: 0;
+}
+.collapse-section.open .collapse-body {
+  max-height: 500px;
+  opacity: 1;
+}
+.collapse-content {
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--gray-100);
+}
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--gray-100);
+  gap: 12px;
+}
+.info-row:last-child { border-bottom: none; }
+.info-label { font-size: 13px; color: var(--gray-500); flex-shrink: 0; }
+.info-value { font-size: 13px; color: var(--gray-700); font-weight: 500; text-align: right; }
+
+/* ═══ Consent ═══ */
+.consent {
+  margin: 0 16px 16px;
+  padding: 12px 16px;
+  background: var(--gray-100);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--gray-500);
+  line-height: 1.5;
+}
+
+/* ═══ Sticky CTA ═══ */
+.sticky-cta {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px 24px;
+  background: linear-gradient(transparent, var(--gray-50) 20%);
+  z-index: 30;
+}
+.cta-button {
+  width: 100%;
+  padding: 16px;
+  background: var(--navy);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px; /* ≥44px touch target */
+}
+.cta-button:hover { background: var(--navy-light); transform: translateY(-1px); }
+.cta-button:active { transform: scale(.98); }
+.cta-button .lock-icon { opacity: .7; }
+
+/* ═══ Context Switcher (Demo only) ═══ */
+.demo-switcher {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.demo-tab {
+  padding: 8px 16px;
+  border: 2px solid #ddd;
+  border-radius: 24px;
+  background: white;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--transition);
+  color: var(--gray-600);
+}
+.demo-tab.active {
+  border-color: var(--navy);
+  background: var(--navy);
+  color: white;
+}
+.demo-label {
+  text-align: center;
+  font-size: 12px;
+  color: var(--gray-400);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  font-weight: 500;
+}
+
+/* ═══ Annotations ═══ */
+.annotation {
+  position: absolute;
+  background: rgba(239,68,68,.95);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  z-index: 40;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(239,68,68,.3);
+  animation: pulse-annotation 2s ease-in-out infinite;
+}
+.annotation::after {
+  content: '';
+  position: absolute;
+  width: 8px; height: 8px;
+  background: rgba(239,68,68,.95);
+  transform: rotate(45deg);
+}
+.annotation.left::after { right: -4px; top: 50%; margin-top: -4px; }
+.annotation.right::after { left: -4px; top: 50%; margin-top: -4px; }
+.annotation.bottom::after { top: -4px; left: 50%; margin-left: -4px; }
+@keyframes pulse-annotation { 0%,100%{opacity:1} 50%{opacity:.7} }
+
+.annotations-toggle {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 50;
+  background: rgba(239,68,68,.9);
+  color: white;
+  border: none;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+}
+.annotations-toggle:hover { transform: scale(1.1); }
+.annotations-toggle.off { background: var(--gray-400); }
+
+/* ═══ Comparison ═══ */
+.comparison {
+  margin-top: 24px;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow-md);
+  max-width: 800px;
+  width: 100%;
+}
+.comparison h3 {
+  font-size: 14px;
+  color: var(--gray-700);
+  margin-bottom: 12px;
+  text-align: center;
+  font-weight: 600;
+}
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.comparison-item {
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+.comparison-item.before { background: #FEF2F2; }
+.comparison-item.after { background: #F0FDF4; }
+.comparison-item .label { font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: .06em; font-weight: 500; margin-bottom: 4px; }
+.comparison-item .val { font-size: 24px; font-weight: 700; }
+.comparison-item.before .val { color: var(--red-accent); }
+.comparison-item.after .val { color: var(--success); }
+.comparison-item .desc { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+
+/* ═══ Wrapper ═══ */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+@media (max-width: 420px) {
+  body { padding: 0; }
+  .phone { border-radius: 0; width: 100%; }
+  .comparison { border-radius: 0; }
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<p class="demo-label">Chọn dịch vụ để xem Smart Summary</p>
+<div class="demo-switcher">
+  <button class="demo-tab active" onclick="switchService('vietlott')">🎰 Vietlott</button>
+  <button class="demo-tab" onclick="switchService('phim')">🎬 Vé xem phim</button>
+  <button class="demo-tab" onclick="switchService('tau')">🚂 Vé tàu</button>
+</div>
+
+<div class="phone" id="phone">
+  <!-- Annotations toggle -->
+  <button class="annotations-toggle" id="annoToggle" onclick="toggleAnnotations()" title="Bật/tắt ghi chú thiết kế">📌</button>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <div class="right">
+      <span>●●●●</span>
+      <span>WiFi</span>
+      <span>🔋</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="back" onclick="alert('← Quay lại SDK')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </div>
+    <div class="title" id="headerTitle">Thanh toán xổ số Vietlott</div>
+    <div class="home" onclick="alert('🏠 Về trang chủ')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </div>
+  </div>
+
+  <!-- Progress: Bước 1/2 -->
+  <div class="progress-bar">
+    <div class="progress-step done">
+      <div class="dot">✓</div>
+      <span>SDK</span>
+    </div>
+    <div class="progress-line done"></div>
+    <div class="progress-step active">
+      <div class="dot">1</div>
+      <span>Xác nhận</span>
+    </div>
+    <div class="progress-line"></div>
+    <div class="progress-step">
+      <div class="dot">2</div>
+      <span>Kết quả</span>
+    </div>
+  </div>
+
+  <!-- Scrollable Content -->
+  <div class="content" id="mainContent">
+
+    <!-- Account Card -->
+    <div class="account-card" onclick="alert('Chọn tài khoản khác')">
+      <div class="account-logo"><span>Co-op</span></div>
+      <div class="account-info">
+        <div class="account-label">Tài khoản nguồn</div>
+        <div class="account-number">9099 **** 3123</div>
+        <div class="account-balance">Số dư khả dụng: 20,000,000 đ</div>
+      </div>
+      <div class="account-chevron">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+    </div>
+
+    <!-- Amount Block -->
+    <div class="amount-block">
+      <div class="amount-label">Tổng thanh toán</div>
+      <div class="amount-value" id="amountValue">50,000 đ</div>
+      <div class="amount-text" id="amountText">Năm mươi nghìn đồng</div>
+      <div class="amount-fee">
+        <span>Phí giao dịch</span>
+        <span id="feeValue">2,200 đ</span>
+      </div>
+    </div>
+
+    <!-- Collapsible Sections -->
+    <div class="section-group">
+
+      <!-- Section 1: Service Info -->
+      <div class="collapse-section" id="sec-service">
+        <div class="collapse-header" onclick="toggleSection('sec-service')">
+          <div class="collapse-icon">📋</div>
+          <div class="collapse-title" id="secServiceTitle">Thông tin dịch vụ</div>
+          <div class="collapse-badge" id="secServiceBadge">3 mục</div>
+          <svg class="collapse-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="collapse-body">
+          <div class="collapse-content" id="secServiceContent">
+            <!-- Dynamic content -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Customer Info -->
+      <div class="collapse-section" id="sec-customer">
+        <div class="collapse-header" onclick="toggleSection('sec-customer')">
+          <div class="collapse-icon">👤</div>
+          <div class="collapse-title">Thông tin khách hàng</div>
+          <div class="collapse-badge" id="secCustomerBadge">3 mục</div>
+          <svg class="collapse-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="collapse-body">
+          <div class="collapse-content" id="secCustomerContent">
+            <!-- Dynamic content -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Discount (conditional) -->
+      <div class="collapse-section" id="sec-discount" style="display:none">
+        <div class="collapse-header" onclick="toggleSection('sec-discount')">
+          <div class="collapse-icon">🏷️</div>
+          <div class="collapse-title">Chi tiết giảm giá</div>
+          <div class="collapse-badge" id="secDiscountBadge">1 mục</div>
+          <svg class="collapse-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="collapse-body">
+          <div class="collapse-content" id="secDiscountContent">
+            <!-- Dynamic content -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Trip Info (train only) -->
+      <div class="collapse-section" id="sec-trip" style="display:none">
+        <div class="collapse-header" onclick="toggleSection('sec-trip')">
+          <div class="collapse-icon">🚂</div>
+          <div class="collapse-title">Thông tin chuyến đi</div>
+          <div class="collapse-badge" id="secTripBadge">6 mục</div>
+          <svg class="collapse-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="collapse-body">
+          <div class="collapse-content" id="secTripContent">
+            <!-- Dynamic content -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Consent -->
+    <div class="consent">
+      Bằng cách xác nhận, Quý khách đồng ý với thông tin giao dịch trên đây và chấp nhận các điều khoản dịch vụ của Co-opBank.
+    </div>
+
+  </div>
+
+  <!-- Sticky CTA -->
+  <div class="sticky-cta">
+    <button class="cta-button" onclick="handleConfirm()">
+      <svg class="lock-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      Xác nhận thanh toán
+    </button>
+  </div>
+
+  <!-- Design Annotations -->
+  <div class="annotation right" id="anno1" style="top:182px;left:-145px;display:none">Goal Gradient ✓</div>
+  <div class="annotation left" id="anno2" style="top:270px;right:-130px;display:none">1 decision mới</div>
+  <div class="annotation left" id="anno3" style="top:385px;right:-155px;display:none">Generous space</div>
+  <div class="annotation left" id="anno4" style="top:490px;right:-155px;display:none">Collapsed default</div>
+  <div class="annotation bottom" id="anno5" style="bottom:88px;left:50%;transform:translateX(-50%);display:none">Sticky ≥52px</div>
+
+</div>
+
+<!-- Comparison -->
+<div class="comparison">
+  <h3>So sánh: Trước và Sau Smart Summary</h3>
+  <div class="comparison-grid">
+    <div class="comparison-item before">
+      <div class="label">Trước (hiện tại)</div>
+      <div class="val">4</div>
+      <div class="desc">màn hình banking</div>
+    </div>
+    <div class="comparison-item after">
+      <div class="label">Sau (Smart Summary)</div>
+      <div class="val">3</div>
+      <div class="desc">màn hình banking</div>
+    </div>
+    <div class="comparison-item before">
+      <div class="label">Scroll depth vé tàu</div>
+      <div class="val">1.7x</div>
+      <div class="desc">viewport</div>
+    </div>
+    <div class="comparison-item after">
+      <div class="label">Scroll depth vé tàu</div>
+      <div class="val">0.8x</div>
+      <div class="desc">viewport (collapsed)</div>
+    </div>
+    <div class="comparison-item before">
+      <div class="label">Decision mới</div>
+      <div class="val">3</div>
+      <div class="desc">TK + confirm + auth</div>
+    </div>
+    <div class="comparison-item after">
+      <div class="label">Decision mới</div>
+      <div class="val">1</div>
+      <div class="desc">chỉ chọn tài khoản</div>
+    </div>
+    <div class="comparison-item before">
+      <div class="label">Drop-off ước tính</div>
+      <div class="val">28%</div>
+      <div class="desc">4 transitions × 7%</div>
+    </div>
+    <div class="comparison-item after">
+      <div class="label">Drop-off ước tính</div>
+      <div class="val">21%</div>
+      <div class="desc">3 transitions × 7%</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const services = {
+  vietlott: {
+    title: 'Thanh toán xổ số Vietlott',
+    amount: '50,000 đ',
+    amountText: 'Năm mươi nghìn đồng',
+    fee: '2,200 đ',
+    service: [
+      {l:'Dịch vụ',v:'Mua xổ số Vietlott'},
+      {l:'Mã thanh toán',v:'VL20240801001'},
+      {l:'Số tiền gốc',v:'50,000 đ'},
+    ],
+    customer: [
+      {l:'Họ tên',v:'Nguyễn Văn A'},
+      {l:'Số điện thoại',v:'098****123'},
+      {l:'Email',v:'nguyenvana@email.com'},
+    ],
+    showDiscount: false,
+    showTrip: false,
+  },
+  phim: {
+    title: 'Thanh toán vé xem phim',
+    amount: '100,000 đ',
+    amountText: 'Một trăm nghìn đồng',
+    fee: '2,200 đ',
+    service: [
+      {l:'Dịch vụ',v:'Đặt vé xem phim'},
+      {l:'Nhà cung cấp',v:'CGV Cinemas'},
+      {l:'Mã thanh toán',v:'123123'},
+    ],
+    customer: [
+      {l:'Họ tên',v:'Nguyễn Văn A'},
+      {l:'Số điện thoại',v:'098****123'},
+      {l:'Email',v:'nguyenvana@email.com'},
+    ],
+    discount: [
+      {l:'Tổng tiền gốc',v:'150,000 đ'},
+      {l:'Giảm giá voucher',v:'-20,000 đ'},
+      {l:'Giảm giá thành viên',v:'-30,000 đ'},
+    ],
+    showDiscount: true,
+    showTrip: false,
+  },
+  tau: {
+    title: 'Thanh toán vé tàu',
+    amount: '80,000 đ',
+    amountText: 'Tám mươi nghìn đồng',
+    fee: '0 đ',
+    service: [
+      {l:'Dịch vụ',v:'Thanh toán vé tàu'},
+      {l:'Mã thanh toán',v:'TR20240108SE1'},
+      {l:'Số lượng vé',v:'2 vé'},
+    ],
+    customer: [
+      {l:'Họ tên',v:'Nguyễn Văn A'},
+      {l:'Giấy tờ',v:'0901****5678'},
+      {l:'Số điện thoại',v:'098****123'},
+      {l:'Email',v:'nguyenvana@email.com'},
+    ],
+    discount: [
+      {l:'Tổng tiền gốc',v:'120,000 đ'},
+      {l:'Giảm giá',v:'-40,000 đ'},
+    ],
+    trip: [
+      {l:'Ga khởi hành',v:'Hà Nội'},
+      {l:'Ga đến',v:'Sài Gòn'},
+      {l:'Ngày giờ',v:'01/08/2025 19:30'},
+      {l:'Mã chuyến tàu',v:'SE1'},
+      {l:'Số ghế',v:'Ghế 5 - Toa 1, Ghế 6 - Toa 1'},
+      {l:'Loại ghế',v:'Ngồi mềm điều hòa'},
+    ],
+    showDiscount: true,
+    showTrip: true,
+  }
+};
+
+let currentService = 'vietlott';
+let annotationsVisible = false;
+
+function buildRows(data) {
+  return data.map(d => `<div class="info-row"><span class="info-label">${d.l}</span><span class="info-value">${d.v}</span></div>`).join('');
+}
+
+function switchService(key) {
+  currentService = key;
+  const s = services[key];
+  
+  // Update tabs
+  document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  // Update header
+  document.getElementById('headerTitle').textContent = s.title;
+  
+  // Update amount
+  document.getElementById('amountValue').textContent = s.amount;
+  document.getElementById('amountText').textContent = s.amountText;
+  document.getElementById('feeValue').textContent = s.fee;
+  
+  // Update sections
+  document.getElementById('secServiceContent').innerHTML = buildRows(s.service);
+  document.getElementById('secServiceBadge').textContent = s.service.length + ' mục';
+  
+  document.getElementById('secCustomerContent').innerHTML = buildRows(s.customer);
+  document.getElementById('secCustomerBadge').textContent = s.customer.length + ' mục';
+  
+  // Discount
+  const discEl = document.getElementById('sec-discount');
+  if (s.showDiscount) {
+    discEl.style.display = 'block';
+    document.getElementById('secDiscountContent').innerHTML = buildRows(s.discount);
+    document.getElementById('secDiscountBadge').textContent = s.discount.length + ' mục';
+  } else {
+    discEl.style.display = 'none';
+  }
+  
+  // Trip
+  const tripEl = document.getElementById('sec-trip');
+  if (s.showTrip) {
+    tripEl.style.display = 'block';
+    document.getElementById('secTripContent').innerHTML = buildRows(s.trip);
+    document.getElementById('secTripBadge').textContent = s.trip.length + ' mục';
+  } else {
+    tripEl.style.display = 'none';
+  }
+  
+  // Close all sections
+  document.querySelectorAll('.collapse-section').forEach(el => el.classList.remove('open'));
+  
+  // Scroll to top
+  document.getElementById('mainContent').scrollTop = 0;
+}
+
+function toggleSection(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+function toggleAnnotations() {
+  annotationsVisible = !annotationsVisible;
+  const btn = document.getElementById('annoToggle');
+  btn.classList.toggle('off', !annotationsVisible);
+  
+  ['anno1','anno2','anno3','anno4','anno5'].forEach(id => {
+    document.getElementById(id).style.display = annotationsVisible ? 'block' : 'none';
+  });
+}
+
+function handleConfirm() {
+  const btn = event.target.closest('.cta-button');
+  btn.innerHTML = '<span style="display:inline-block;width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite"></span> Đang xử lý...';
+  btn.style.pointerEvents = 'none';
+  
+  setTimeout(() => {
+    btn.innerHTML = '✓ Chuyển sang OTP';
+    btn.style.background = 'var(--success)';
+    setTimeout(() => {
+      alert('→ Chuyển sang màn hình OTP (Bước 2/2)');
+      btn.innerHTML = '<svg class="lock-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Xác nhận thanh toán';
+      btn.style.background = '';
+      btn.style.pointerEvents = '';
+    }, 1000);
+  }, 800);
+}
+
+// Init
+switchService('vietlott');
+
+// Add spin keyframe
+const style = document.createElement('style');
+style.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+document.head.appendChild(style);
+</script>
+</body>
+</html>
