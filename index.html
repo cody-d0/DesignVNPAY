@@ -368,7 +368,7 @@
       width: 100%;
       max-width: 100%;
       margin: 0 auto;
-      padding: 0 clamp(24px, 4vw, 80px);
+      padding: 24px clamp(24px, 4vw, 80px) 0;
     }
 
     @media (min-width: 1440px) {
@@ -467,6 +467,21 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .page-type-icon {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      opacity: 0.55;
+      transition: opacity var(--transition-fast);
+    }
+
+    .header-title:hover .page-type-icon {
+      opacity: 0.85;
     }
 
     .header-subtitle {
@@ -3390,9 +3405,30 @@
     }
 
     // ── Render functions ──
+    /* ── File type icon map ── */
+    function getFileTypeIcon(fileName) {
+      const name = (fileName || '').toLowerCase();
+      const icons = {
+        md: '<svg class="page-type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>',
+        json: '<svg class="page-type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',
+        yaml: '<svg class="page-type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h2l2 3 2-3h2"/></svg>',
+        csv: '<svg class="page-type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>',
+        svg: '<svg class="page-type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+        txt: '<svg class="page-type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+        rst: '<svg class="page-type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>'
+      };
+      // Match extension
+      const ext = name.replace(/^.*\./, '');
+      if (ext === 'yml') return icons.yaml;
+      if (ext === 'markdown' || ext === 'mdx' || ext === 'mdc') return icons.md;
+      return icons[ext] || icons.md; // default to document icon
+    }
+
     function setPreviewHeader(fileName, label) {
       currentFile = fileName || label;
-      document.getElementById('page-title').textContent = fileName || label;
+      const titleEl = document.getElementById('page-title');
+      const icon = getFileTypeIcon(fileName);
+      titleEl.innerHTML = icon + '<span>' + escapeHtml(fileName || label) + '</span>';
       document.getElementById('breadcrumb').textContent = 'Dropped: ' + (fileName || '');
       const bc = document.getElementById('back-button-container');
       bc.innerHTML = '<a href="#" class="back-button" aria-label="Quay lại"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Quay lại</span></a>';
@@ -3407,7 +3443,7 @@
     function showDropZone() {
       if (droppedObjectUrls.length) { droppedObjectUrls.forEach(u => URL.revokeObjectURL(u)); droppedObjectUrls = []; }
       currentFile = null;
-      document.getElementById('page-title').textContent = 'viewer.io.vn';
+      document.getElementById('page-title').innerHTML = 'viewer<span style="opacity:0.3">.io.vn</span>';
       document.getElementById('breadcrumb').textContent = 'client-side file preview';
       const bc = document.getElementById('back-button-container');
       bc.innerHTML = ''; bc.setAttribute('aria-hidden', 'true');
