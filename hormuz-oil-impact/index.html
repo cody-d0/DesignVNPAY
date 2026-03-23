@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tác động giá xăng dầu — Khủng hoảng Eo biển Hormuz 2026</title>
+    <meta name="description" content="Phân tích chi tiết về tác động giá xăng dầu toàn cầu sau khi Iran đóng eo biển Hormuz tháng 3/2026">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a2035;
+            --bg-card-hover: #1e2640;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-red: #ef4444;
+            --accent-red-glow: rgba(239, 68, 68, 0.3);
+            --accent-orange: #f97316;
+            --accent-orange-glow: rgba(249, 115, 22, 0.2);
+            --accent-amber: #f59e0b;
+            --accent-blue: #3b82f6;
+            --accent-emerald: #10b981;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --border-color: rgba(255,255,255,0.06);
+            --glass-bg: rgba(26, 32, 53, 0.8);
+            --radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 20% 50%, rgba(239,68,68,0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 20%, rgba(249,115,22,0.06) 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 80%, rgba(59,130,246,0.04) 0%, transparent 50%);
+            animation: bgShift 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes bgShift {
+            0%, 100% { transform: translate(0, 0); }
+            33% { transform: translate(-2%, 1%); }
+            66% { transform: translate(1%, -2%); }
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Hero Header */
+        .hero {
+            text-align: center;
+            margin-bottom: 64px;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.2);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-red);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 24px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--accent-red);
+            border-radius: 50%;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.2); }
+            50% { box-shadow: 0 0 20px 4px rgba(239,68,68,0.1); }
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 56px);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #fff 0%, #ef4444 40%, #f97316 70%, #fff 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 4s ease-in-out infinite;
+        }
+
+        @keyframes textShine {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            font-weight: 300;
+        }
+
+        .hero .date-range {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            font-weight: 500;
+        }
+
+        /* Summary Stats Row */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(255,255,255,0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+        }
+
+        .stat-card:nth-child(1)::after { background: linear-gradient(90deg, var(--accent-red), var(--accent-orange)); }
+        .stat-card:nth-child(2)::after { background: linear-gradient(90deg, var(--accent-orange), var(--accent-amber)); }
+        .stat-card:nth-child(3)::after { background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple)); }
+        .stat-card:nth-child(4)::after { background: linear-gradient(90deg, var(--accent-emerald), var(--accent-blue)); }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 4px;
+        }
+
+        .stat-value.red { color: var(--accent-red); }
+        .stat-value.orange { color: var(--accent-orange); }
+        .stat-value.blue { color: var(--accent-blue); }
+        .stat-value.emerald { color: var(--accent-emerald); }
+
+        .stat-sub {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Section titles */
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title .icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        /* Chart containers */
+        .chart-section {
+            margin-bottom: 48px;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 500px;
+        }
+
+        .chart-wrapper-sm {
+            height: 400px;
+        }
+
+        /* Two-column layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        @media (max-width: 768px) {
+            .two-col { grid-template-columns: 1fr; }
+        }
+
+        /* Timeline */
+        .timeline {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 32px;
+            margin-bottom: 48px;
+        }
+
+        .timeline-list {
+            list-style: none;
+            position: relative;
+        }
+
+        .timeline-list::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-red), var(--accent-orange), var(--accent-amber));
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 24px;
+            padding: 16px 0;
+            position: relative;
+        }
+
+        .timeline-dot {
+            width: 32px;
+            min-width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            border: 3px solid var(--accent-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            font-size: 12px;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-date {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent-orange);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .timeline-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .timeline-text strong {
+            color: var(--text-primary);
+        }
+
+        /* Winner highlight */
+        .winner-card {
+            background: linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(249,115,22,0.1) 100%);
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: var(--radius);
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 48px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .winner-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(239,68,68,0.15), transparent 70%);
+        }
+
+        .winner-flag {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .winner-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-orange);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .winner-country {
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .winner-pct {
+            font-size: 72px;
+            font-weight: 900;
+            color: var(--accent-red);
+            line-height: 1;
+            margin-bottom: 8px;
+            text-shadow: 0 0 40px rgba(239,68,68,0.4);
+        }
+
+        .winner-detail {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .data-table thead th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table tbody tr {
+            transition: background 0.2s;
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .data-table tbody td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .data-table .country-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .data-table .pct-cell {
+            font-weight: 700;
+            color: var(--accent-red);
+        }
+
+        .data-table .pct-bar {
+            display: inline-block;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--accent-red), var(--accent-orange));
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid var(--border-color);
+            margin-top: 48px;
+        }
+
+        .footer p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .sources-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        .sources-list li {
+            font-size: 11px;
+            background: rgba(255,255,255,0.04);
+            padding: 4px 12px;
+            border-radius: 100px;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container { padding: 24px 16px; }
+            .chart-wrapper { height: 350px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .winner-pct { font-size: 48px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero -->
+        <header class="hero">
+            <div class="hero-badge">⚠️ Khủng hoảng năng lượng toàn cầu</div>
+            <h1>Giá xăng dầu thế giới sau khi Iran đóng eo biển Hormuz</h1>
+            <p>Phân tích tác động giá nhiên liệu tại 12 quốc gia kể từ khi xung đột bùng phát ngày 28/02/2026, dẫn đến gián đoạn lớn nhất trong lịch sử thị trường dầu mỏ toàn cầu.</p>
+            <div class="date-range">Dữ liệu: 27/02/2026 → 23/03/2026 · Cập nhật: 23/03/2026</div>
+        </header>
+
+        <!-- Key Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Brent Crude — Đỉnh</div>
+                <div class="stat-value red">$126/thùng</div>
+                <div class="stat-sub">Từ $72 → cao nhất 4 năm</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Mức tăng Brent</div>
+                <div class="stat-value orange">+75%</div>
+                <div class="stat-sub">$72.48 → $126 trong 10 ngày</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Sản lượng mất</div>
+                <div class="stat-value blue">10M thùng/ngày</div>
+                <div class="stat-sub">Kuwait, Iraq, Saudi, UAE</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">GDP toàn cầu ảnh hưởng</div>
+                <div class="stat-value emerald">−2.9%</div>
+                <div class="stat-sub">Suy giảm Q2/2026 (Dallas Fed)</div>
+            </div>
+        </div>
+
+        <!-- Winner Card -->
+        <div class="winner-card">
+            <div class="winner-flag">🇻🇳</div>
+            <div class="winner-title">🏆 Quốc gia có giá diesel tăng mạnh nhất</div>
+            <div class="winner-country">Việt Nam — Diesel</div>
+            <div class="winner-pct">+70%</div>
+            <div class="winner-detail">Xăng RON95 tăng <strong>+50%</strong> · Diesel tăng <strong>+70%</strong> kể từ cuối tháng 2/2026<br>Nguồn: Bộ Công Thương VN, Straits Times, BSS News</div>
+        </div>
+
+        <!-- Gasoline % Change Chart -->
+        <div class="chart-section">
+            <div class="section-title"><span class="icon" style="background:rgba(239,68,68,0.15);">📊</span> Mức tăng giá xăng theo % — So sánh quốc tế</div>
+            <div class="section-desc">Tỷ lệ tăng giá xăng bán lẻ từ 27/02/2026 đến 23/03/2026, sắp xếp từ cao → thấp</div>
+            <div class="chart-card">
+                <div class="chart-wrapper">
+                    <canvas id="pctChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Brent Crude Timeline Chart -->
+        <div class="chart-section">
+            <div class="section-title"><span class="icon" style="background:rgba(249,115,22,0.15);">📈</span> Diễn biến giá dầu Brent Crude</div>
+            <div class="section-desc">Giá dầu thô Brent (USD/thùng) từ trước xung đột đến hiện tại</div>
+            <div class="chart-card">
+                <div class="chart-wrapper chart-wrapper-sm">
+                    <canvas id="brentChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Two Column: Dependency + Diesel -->
+        <div class="two-col">
+            <div>
+                <div class="section-title" style="font-size:18px;"><span class="icon" style="background:rgba(59,130,246,0.15);">🛢️</span> Phụ thuộc Hormuz</div>
+                <div class="section-desc">% nhập khẩu dầu qua eo biển Hormuz</div>
+                <div class="chart-card">
+                    <div class="chart-wrapper chart-wrapper-sm">
+                        <canvas id="dependencyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="section-title" style="font-size:18px;"><span class="icon" style="background:rgba(139,92,246,0.15);">⛽</span> Diesel vs. Xăng</div>
+                <div class="section-desc">So sánh % tăng diesel và xăng tại các nước châu Á</div>
+                <div class="chart-card">
+                    <div class="chart-wrapper chart-wrapper-sm">
+                        <canvas id="dieselChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="chart-section">
+            <div class="section-title"><span class="icon" style="background:rgba(16,185,129,0.15);">📋</span> Bảng dữ liệu chi tiết</div>
+            <div class="section-desc">Giá xăng bán lẻ trước và sau xung đột, % thay đổi, và mức phụ thuộc Hormuz</div>
+            <div class="chart-card" style="overflow-x: auto;">
+                <table class="data-table" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Quốc gia</th>
+                            <th>Trước (USD/lít)</th>
+                            <th>Sau (USD/lít)</th>
+                            <th>% Thay đổi</th>
+                            <th>% Phụ thuộc Hormuz</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Timeline Events -->
+        <div class="chart-section">
+            <div class="section-title"><span class="icon" style="background:rgba(236,72,153,0.15);">⏱️</span> Dòng thời gian sự kiện</div>
+            <div class="section-desc">Các mốc quan trọng từ khi xung đột bùng phát</div>
+            <div class="timeline">
+                <ul class="timeline-list">
+                    <li class="timeline-item">
+                        <div class="timeline-dot">💥</div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">28/02/2026</div>
+                            <div class="timeline-text"><strong>Mỹ-Israel tấn công Iran</strong> — Chiến dịch quân sự chung bắt đầu. Brent: $72/thùng.</div>
+                        </div>
+                    </li>
+                    <li class="timeline-item">
+                        <div class="timeline-dot">🚢</div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">01-02/03/2026</div>
+                            <div class="timeline-text"><strong>Brent tăng 10-13% trong phiên sáng</strong> — IRGC cảnh báo cấm tàu qua Hormuz. Các hãng bảo hiểm rút lui.</div>
+                        </div>
+                    </li>
+                    <li class="timeline-item">
+                        <div class="timeline-dot">🔒</div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">04/03/2026</div>
+                            <div class="timeline-text"><strong>Hormuz đóng cửa de facto</strong> — Giao thông hàng hải gần như ngừng. Brent vượt $120/thùng.</div>
+                        </div>
+                    </li>
+                    <li class="timeline-item">
+                        <div class="timeline-dot">📈</div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">08/03/2026</div>
+                            <div class="timeline-text"><strong>Brent vượt $100/thùng</strong> lần đầu trong 4 năm, sau đó đạt đỉnh <strong>$126/thùng</strong>.</div>
+                        </div>
+                    </li>
+                    <li class="timeline-item">
+                        <div class="timeline-dot">🇻🇳</div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">05-20/03/2026</div>
+                            <div class="timeline-text"><strong>Việt Nam điều chỉnh giá xăng 5 lần</strong> — RON95 tăng tổng +50%, Diesel tăng +70%. Quỹ bình ổn chi mạnh.</div>
+                        </div>
+                    </li>
+                    <li class="timeline-item">
+                        <div class="timeline-dot">🇺🇸</div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">23/03/2026</div>
+                            <div class="timeline-text"><strong>Giá xăng Mỹ tăng +48%</strong> — $2.23 → $3.30/gallon, mức tăng tuần nhanh nhất trong 20 năm.</div>
+                        </div>
+                    </li>
+                    <li class="timeline-item">
+                        <div class="timeline-dot">🌍</div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">IEA</div>
+                            <div class="timeline-text">IEA tuyên bố: <strong>"Thách thức an ninh năng lượng lớn nhất trong lịch sử."</strong> Sản lượng mất 10M thùng/ngày.</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Dữ liệu tổng hợp từ nhiều nguồn tin quốc tế. Các con số là ước tính dựa trên báo cáo đến 23/03/2026.</p>
+            <ul class="sources-list">
+                <li>Wikipedia</li>
+                <li>The Guardian</li>
+                <li>CBS News</li>
+                <li>IEA</li>
+                <li>Dallas Fed</li>
+                <li>Goldman Sachs</li>
+                <li>Time</li>
+                <li>Straits Times</li>
+                <li>Kurdistan24</li>
+                <li>TradingEconomics</li>
+                <li>Bộ Công Thương VN</li>
+                <li>Tuổi Trẻ</li>
+            </ul>
+        </footer>
+    </div>
+
+    <script>
+    // ============================================
+    // DATA — compiled from multiple news sources
+    // ============================================
+    const countryData = [
+        { country: 'Việt Nam (Diesel)', flag: '🇻🇳', before: 0.79, after: 1.34, pct: 70, hormuzDep: 25, note: 'Bộ CT: 5 lần điều chỉnh' },
+        { country: 'Việt Nam (RON95)', flag: '🇻🇳', before: 0.82, after: 1.23, pct: 50, hormuzDep: 25, note: 'Quỹ bình ổn chi mạnh' },
+        { country: 'Mỹ', flag: '🇺🇸', before: 0.59, after: 0.87, pct: 48, hormuzDep: 12, note: 'Mức tăng tuần cao nhất 20 năm' },
+        { country: 'Ấn Độ', flag: '🇮🇳', before: 1.18, after: 1.71, pct: 45, hormuzDep: 65, note: 'CP hấp thụ 1 phần giá' },
+        { country: 'Nhật Bản', flag: '🇯🇵', before: 0.91, after: 1.30, pct: 43, hormuzDep: 93, note: 'Xả kho dự trữ chiến lược' },
+        { country: 'Hàn Quốc', flag: '🇰🇷', before: 1.30, after: 1.82, pct: 40, hormuzDep: 75, note: 'CP áp trần giá nhiên liệu' },
+        { country: 'Úc', flag: '🇦🇺', before: 1.15, after: 1.55, pct: 35, hormuzDep: 30, note: 'Tăng sản xuất nội địa' },
+        { country: 'Đức', flag: '🇩🇪', before: 1.72, after: 2.24, pct: 30, hormuzDep: 20, note: 'Thuế năng lượng + CO2 cao' },
+        { country: 'Anh', flag: '🇬🇧', before: 1.62, after: 2.08, pct: 28, hormuzDep: 15, note: 'Duty thuế cố định' },
+        { country: 'Pháp', flag: '🇫🇷', before: 1.80, after: 2.27, pct: 26, hormuzDep: 18, note: 'TICPE + VAT 20%' },
+        { country: 'Trung Quốc', flag: '🇨🇳', before: 1.05, after: 1.31, pct: 25, hormuzDep: 45, note: 'Cấm xuất khẩu xăng tinh chế' },
+        { country: 'Saudi Arabia', flag: '🇸🇦', before: 0.62, after: 0.63, pct: 2, hormuzDep: 0, note: 'Trợ giá nội địa, gần như không đổi' },
+    ];
+
+    // Sort by % descending
+    const sorted = [...countryData].sort((a, b) => b.pct - a.pct);
+
+    // Register datalabels plugin
+    Chart.register(ChartDataLabels);
+
+    // ============================================
+    // Chart 1: % Change Bar Chart (horizontal)
+    // ============================================
+    const ctx1 = document.getElementById('pctChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: sorted.map(d => `${d.flag} ${d.country}`),
+            datasets: [{
+                label: '% Tăng giá xăng',
+                data: sorted.map(d => d.pct),
+                backgroundColor: sorted.map((d, i) => {
+                    const ratio = i / (sorted.length - 1);
+                    if (ratio < 0.3) return 'rgba(239, 68, 68, 0.85)';
+                    if (ratio < 0.6) return 'rgba(249, 115, 22, 0.75)';
+                    if (ratio < 0.85) return 'rgba(245, 158, 11, 0.65)';
+                    return 'rgba(100, 116, 139, 0.5)';
+                }),
+                borderColor: sorted.map((d, i) => {
+                    const ratio = i / (sorted.length - 1);
+                    if (ratio < 0.3) return 'rgba(239, 68, 68, 1)';
+                    if (ratio < 0.6) return 'rgba(249, 115, 22, 1)';
+                    if (ratio < 0.85) return 'rgba(245, 158, 11, 1)';
+                    return 'rgba(100, 116, 139, 0.8)';
+                }),
+                borderWidth: 1,
+                borderRadius: 6,
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: { padding: { right: 40 } },
+            plugins: {
+                legend: { display: false },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'right',
+                    color: '#f1f5f9',
+                    font: { weight: 'bold', size: 13 },
+                    formatter: v => `+${v}%`
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(17,24,39,0.95)',
+                    titleFont: { size: 14, weight: 'bold' },
+                    bodyFont: { size: 13 },
+                    padding: 12,
+                    cornerRadius: 8,
+                    callbacks: {
+                        afterLabel: function(ctx) {
+                            const d = sorted[ctx.dataIndex];
+                            return `Trước: $${d.before}/L → Sau: $${d.after}/L\nPhụ thuộc Hormuz: ${d.hormuzDep}%\n${d.note}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { color: 'rgba(255,255,255,0.04)' },
+                    ticks: { color: '#64748b', font: { size: 11 }, callback: v => v + '%' },
+                    max: 80,
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: { color: '#e2e8f0', font: { size: 13, weight: '500' } }
+                }
+            }
+        }
+    });
+
+    // ============================================
+    // Chart 2: Brent Crude Price Timeline
+    // ============================================
+    const ctx2 = document.getElementById('brentChart').getContext('2d');
+    const brentData = {
+        labels: ['27/02', '28/02', '01/03', '02/03', '04/03', '06/03', '08/03', '10/03', '12/03', '14/03', '16/03', '18/03', '20/03', '22/03', '23/03'],
+        prices: [72.48, 74, 81, 84, 120, 118, 126, 122, 118, 115, 114, 113, 112, 111, 111],
+    };
+
+    const gradient2 = ctx2.createLinearGradient(0, 0, 0, 400);
+    gradient2.addColorStop(0, 'rgba(239, 68, 68, 0.3)');
+    gradient2.addColorStop(1, 'rgba(239, 68, 68, 0.01)');
+
+    new Chart(ctx2, {
+        type: 'line',
+        data: {
+            labels: brentData.labels,
+            datasets: [{
+                label: 'Brent Crude (USD/thùng)',
+                data: brentData.prices,
+                borderColor: '#ef4444',
+                backgroundColor: gradient2,
+                fill: true,
+                tension: 0.3,
+                pointRadius: 4,
+                pointBackgroundColor: '#ef4444',
+                pointBorderColor: '#1a2035',
+                pointBorderWidth: 2,
+                pointHoverRadius: 7,
+                borderWidth: 2.5,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                datalabels: {
+                    display: function(ctx) {
+                        return [0, 4, 6, 14].includes(ctx.dataIndex);
+                    },
+                    anchor: 'end',
+                    align: 'top',
+                    color: '#f1f5f9',
+                    font: { weight: 'bold', size: 12 },
+                    formatter: v => `$${v}`,
+                    backgroundColor: 'rgba(239,68,68,0.2)',
+                    borderRadius: 4,
+                    padding: { top: 4, bottom: 4, left: 6, right: 6 }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(17,24,39,0.95)',
+                    displayColors: false,
+                    callbacks: {
+                        title: ctx => `Ngày: ${ctx[0].label}/2026`,
+                        label: ctx => `Brent: $${ctx.raw}/thùng`
+                    }
+                },
+                annotation: {
+                    annotations: {}
+                }
+            },
+            scales: {
+                x: {
+                    grid: { color: 'rgba(255,255,255,0.04)' },
+                    ticks: { color: '#64748b', font: { size: 11 } }
+                },
+                y: {
+                    grid: { color: 'rgba(255,255,255,0.04)' },
+                    ticks: { color: '#64748b', font: { size: 11 }, callback: v => `$${v}` },
+                    min: 60,
+                    max: 135,
+                }
+            }
+        }
+    });
+
+    // ============================================
+    // Chart 3: Hormuz Dependency Doughnut
+    // ============================================
+    const ctx3 = document.getElementById('dependencyChart').getContext('2d');
+    const depCountries = ['🇯🇵 Nhật', '🇰🇷 Hàn Quốc', '🇮🇳 Ấn Độ', '🇨🇳 TQ', '🇦🇺 Úc', '🇻🇳 VN', '🇩🇪 Đức', '🇬🇧 Anh', '🇺🇸 Mỹ'];
+    const depValues = [93, 75, 65, 45, 30, 25, 20, 15, 12];
+
+    new Chart(ctx3, {
+        type: 'polarArea',
+        data: {
+            labels: depCountries,
+            datasets: [{
+                data: depValues,
+                backgroundColor: [
+                    'rgba(239, 68, 68, 0.7)',
+                    'rgba(249, 115, 22, 0.7)',
+                    'rgba(245, 158, 11, 0.7)',
+                    'rgba(236, 72, 153, 0.6)',
+                    'rgba(59, 130, 246, 0.6)',
+                    'rgba(16, 185, 129, 0.6)',
+                    'rgba(139, 92, 246, 0.5)',
+                    'rgba(100, 116, 139, 0.5)',
+                    'rgba(71, 85, 105, 0.4)',
+                ],
+                borderColor: 'rgba(26, 32, 53, 0.8)',
+                borderWidth: 2,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: '#94a3b8', font: { size: 11 }, padding: 12, usePointStyle: true }
+                },
+                datalabels: {
+                    color: '#f1f5f9',
+                    font: { weight: 'bold', size: 11 },
+                    formatter: v => `${v}%`
+                }
+            },
+            scales: {
+                r: {
+                    grid: { color: 'rgba(255,255,255,0.06)' },
+                    ticks: { display: false },
+                }
+            }
+        }
+    });
+
+    // ============================================
+    // Chart 4: Diesel vs Gasoline comparison
+    // ============================================
+    const ctx4 = document.getElementById('dieselChart').getContext('2d');
+    const asiaCountries = ['🇻🇳 VN', '🇮🇳 Ấn Độ', '🇯🇵 Nhật', '🇰🇷 Hàn Quốc', '🇨🇳 TQ'];
+    const gasolinePct = [50, 45, 43, 40, 25];
+    const dieselPct = [70, 50, 48, 45, 30];
+
+    new Chart(ctx4, {
+        type: 'bar',
+        data: {
+            labels: asiaCountries,
+            datasets: [
+                {
+                    label: 'Xăng (%)',
+                    data: gasolinePct,
+                    backgroundColor: 'rgba(249, 115, 22, 0.7)',
+                    borderColor: 'rgba(249, 115, 22, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                },
+                {
+                    label: 'Diesel (%)',
+                    data: dieselPct,
+                    backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                    borderColor: 'rgba(239, 68, 68, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: { color: '#94a3b8', font: { size: 12 }, padding: 16, usePointStyle: true }
+                },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    color: '#f1f5f9',
+                    font: { weight: 'bold', size: 11 },
+                    formatter: v => `+${v}%`
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#e2e8f0', font: { size: 12, weight: '500' } }
+                },
+                y: {
+                    grid: { color: 'rgba(255,255,255,0.04)' },
+                    ticks: { color: '#64748b', font: { size: 11 }, callback: v => v + '%' },
+                    max: 85,
+                }
+            }
+        }
+    });
+
+    // ============================================
+    // Populate Data Table
+    // ============================================
+    const tbody = document.querySelector('#dataTable tbody');
+    sorted.forEach((d, i) => {
+        const tr = document.createElement('tr');
+        const barWidth = (d.pct / 70) * 80;
+        tr.innerHTML = `
+            <td style="color:var(--text-muted)">${i + 1}</td>
+            <td><div class="country-cell"><span>${d.flag}</span> ${d.country}</div></td>
+            <td>$${d.before.toFixed(2)}</td>
+            <td>$${d.after.toFixed(2)}</td>
+            <td class="pct-cell">+${d.pct}% <span class="pct-bar" style="width:${barWidth}px"></span></td>
+            <td>${d.hormuzDep}%</td>
+            <td style="font-size:12px;color:var(--text-muted)">${d.note}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+    </script>
+</body>
+</html>
