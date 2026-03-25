@@ -1258,7 +1258,7 @@ def parse_proposals(report_path):
             prop: dict[str, Any] = {
                 'id': pm.group(1), 'severity_raw': pm.group(2).strip(),
                 'severity': '', 'screen': '', 'ddl': '', 'ux_law': '',
-                'hiện_trạng': '', 'hậu_quả': '', 'user_impact': '',
+                'hiện_trạng': '', 'current_state': '', 'hậu_quả': '', 'user_impact': '',
                 'business_impact': '', 'violation': '', 'giải_pháp': [],
                 'evidence_img': '',
             }
@@ -1315,6 +1315,10 @@ def parse_proposals(report_path):
                 if '**DDL Ref**' in row and not prop['ddl']:
                     m2 = re.search(r'\|\s*(.+?)\s*\|\s*$', row.split('**DDL Ref**')[1])
                     if m2: prop['ddl'] = m2.group(1).strip().strip('|').strip()
+                # Capture **Hiện tại** (current state with artboard IDs)
+                if '**Hiện tại**' in row and not prop.get('current_state'):
+                    m2 = re.search(r'\|\s*(.+?)\s*\|\s*$', row.split('**Hiện tại**')[1])
+                    if m2: prop['current_state'] = m2.group(1).strip().strip('|').strip()
                 i += 1
 
             # Parse body sections — supports 4 report formats:
@@ -1923,10 +1927,10 @@ def generate(args):
             img_name = prop['evidence_img']
             if img_name and img_name in available_imgs:  # type: ignore[operator]
                 img_src = f'{ui_base}/{img_name}'
-            # Tier 0.5: Direct artboard ID from hiện trạng text
+            # Tier 0.5: Direct artboard ID from hiện trạng / current_state text
             # If text mentions "(7203)" or "popup (7100)", map directly to *{id}*.png
             if not img_src:
-                ht_text = prop.get('hiện_trạng', '') or ''
+                ht_text = (prop.get('hiện_trạng', '') or '') + ' ' + (prop.get('current_state', '') or '')
                 artboard_ids = re.findall(r'\b(\d{4,5})\b', ht_text)
                 for aid in artboard_ids:
                     for a_img in sorted(available_imgs):
@@ -1935,6 +1939,29 @@ def generate(args):
                             break
                     if img_src:
                         break
+            # Tier 0.7: Screen title → SCR-ID → primary artboard image
+            # When no artboard ID in text, use screen field to find best matching SCR-ID
+            # then use that screen's first wireframe image
+            if not img_src and screen_specs:
+                screen_field = prop.get('screen', '')
+                if screen_field:
+                    screen_norm = vn_normalize(screen_field)
+                    screen_words = [w for w in screen_norm.split() if len(w) > 2]
+                    best_scr_id = None
+                    best_score = 0
+                    for cand_scr_id, cand_spec in screen_specs.items():
+                        # Score by matching words in screen spec source/title
+                        src_norm = vn_normalize(cand_spec.get('source', '') + ' ' + cand_spec.get('title', ''))
+                        score = sum(1 for w in screen_words if w in src_norm)
+                        if score > best_score:
+                            best_score = score
+                            best_scr_id = cand_scr_id
+                    if best_scr_id and best_score > 0:
+                        spec_imgs = screen_specs[best_scr_id].get('wireframe_images', [])
+                        if spec_imgs:
+                            primary_img = spec_imgs[0]
+                            if primary_img in available_imgs:
+                                img_src = f'{ui_base}/{primary_img}'
             # Tier 1.5: Screen MD-based check→image mapping (authoritative)
             # Uses Gap ref "Check #N1, #N2 (SCR-XXX)" → parsed from screen .md
             # NOTE: This can OVERRIDE Tier 1 (evidence_img) because check→image
