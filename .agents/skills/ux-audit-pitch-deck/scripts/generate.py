@@ -796,6 +796,21 @@ def build_check_image_map(
             best_img = None
             best_score = 0
 
+            # Strategy 0: Direct artboard ID match from check content
+            # If check mentions "(7203)" or "artboard 7100", map directly to *{id}*.png
+            artboard_ids_in_check = re.findall(r'(?:\(|artboard\s+|ảnh\s+)(\d{4,5})', check_lower)
+            if not artboard_ids_in_check:
+                # Also match "bottom sheet (NNNN)" or standalone IDs like "7203"
+                artboard_ids_in_check = re.findall(r'(\d{4,5})', check_content)
+            for aid in artboard_ids_in_check:
+                for img in wf_images:
+                    if aid in img:
+                        best_img = img
+                        best_score = 100  # Highest priority — direct reference
+                        break
+                if best_score >= 100:
+                    break
+
             # Strategy A: Match check content against state/overlay descriptions
             matched_section_imgs: list[str] = []
 
@@ -1824,6 +1839,18 @@ def generate(args):
             img_name = prop['evidence_img']
             if img_name and img_name in available_imgs:  # type: ignore[operator]
                 img_src = f'{ui_base}/{img_name}'
+            # Tier 0.5: Direct artboard ID from hiện trạng text
+            # If text mentions "(7203)" or "popup (7100)", map directly to *{id}*.png
+            if not img_src:
+                ht_text = prop.get('hiện_trạng', '') or ''
+                artboard_ids = re.findall(r'\b(\d{4,5})\b', ht_text)
+                for aid in artboard_ids:
+                    for a_img in sorted(available_imgs):
+                        if aid in a_img:
+                            img_src = f'{ui_base}/{a_img}'
+                            break
+                    if img_src:
+                        break
             # Tier 1.5: Screen MD-based check→image mapping (authoritative)
             # Uses Gap ref "Check #N1, #N2 (SCR-XXX)" → parsed from screen .md
             if not img_src and check_image_map:
@@ -1852,9 +1879,10 @@ def generate(args):
                 for c in prop['all_imgs']:
                     if c in available_imgs:  # type: ignore[operator]
                         img_src = f'{ui_base}/{c}'; break
-            # Tier 2.5: Artboard ID from "Từ ảnh NNNN" pattern
+            # Tier 2.5: Artboard ID from text patterns (broader than Tier 0.5 — also checks screen field)
             if not img_src:
-                artboard_ids = re.findall(r'Từ ảnh[\s:]*(\d{3,5})', prop.get('hiện_trạng', ''))
+                combined_text = (prop.get('hiện_trạng', '') + ' ' + prop.get('screen', '') + ' ' + prop.get('violation', ''))
+                artboard_ids = re.findall(r'\b(\d{4,5})\b', combined_text)
                 for aid in artboard_ids:
                     for img in sorted(available_imgs):
                         if img.startswith(aid + '-') or img.startswith(aid + '_'):
