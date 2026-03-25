@@ -3,493 +3,311 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>UX Audit — Chuyển tiền ngoài Co-opBank</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<title>UX Audit — {{MODULE_NAME}} | {{PRODUCT_NAME}} · {{CLIENT_NAME}}</title>
 <style>
-:root{--bg-base:#0a0e1a;--bg-surface:#111827;--bg-card:#1a2235;--bg-card-hover:#1f2a40;--text-primary:#f1f5f9;--text-secondary:#94a3b8;--text-muted:#64748b;--accent-gold:#f59e0b;--accent-purple:#8b5cf6;--accent-blue:#3b82f6;--severity-critical:#ef4444;--severity-major:#f97316;--severity-minor:#eab308;--severity-pass:#22c55e;--severity-unverifiable:#6b7280;--font-sans:'IBM Plex Sans',system-ui,sans-serif;--font-display:'Playfair Display',serif;--font-mono:'IBM Plex Mono',monospace}
-@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg-base);color:var(--text-primary);font-family:var(--font-sans);font-size:.85rem;line-height:1.6;overflow-x:hidden}
-.scroll-progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:999;background:rgba(255,255,255,.05)}
-.scroll-progress .bar{height:100%;background:linear-gradient(90deg,var(--accent-purple),var(--accent-gold));width:0%}
-nav{position:fixed;top:3px;left:0;right:0;z-index:998;background:rgba(10,14,26,.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.06);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem}
-nav .logo{font-family:var(--font-display);font-size:1rem;font-weight:700;background:linear-gradient(135deg,var(--accent-gold),var(--accent-purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-nav .nav-links{margin-left:auto;display:flex;gap:.8rem}
-nav a{color:var(--text-secondary);text-decoration:none;font-size:.75rem;font-weight:500;padding:.3rem .6rem;border-radius:6px;transition:all .25s}
-nav a:hover{color:var(--text-primary);background:rgba(255,255,255,.06)}
-.container{max-width:1100px;margin:0 auto;padding:0 1.5rem}
-.scroll-section{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease}
-.scroll-section.visible{opacity:1;transform:translateY(0)}
-.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:6rem 1.5rem 3rem;position:relative}
-.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(139,92,246,.12),transparent 70%);pointer-events:none}
-.hero h1{font-family:var(--font-display);font-size:clamp(2.2rem,5vw,3.8rem);font-weight:800;line-height:1.1;margin-bottom:.8rem;background:linear-gradient(135deg,#f1f5f9 30%,var(--accent-gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero .subtitle{font-size:1.05rem;color:var(--text-secondary);margin-bottom:2.5rem;max-width:600px;line-height:1.7}
-.meta-grid{display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center}
-.meta-item{background:var(--bg-card);padding:.8rem 1.4rem;border-radius:10px;border:1px solid rgba(255,255,255,.06);text-align:center}
-.meta-item .value{font-family:var(--font-mono);font-size:1.6rem;font-weight:700;color:var(--accent-gold)}
-.meta-item .label{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-top:.2rem}
-.score-ring{position:relative;display:inline-flex;align-items:center;justify-content:center}
-.score-ring .value{position:absolute;font-family:var(--font-mono);font-weight:700;font-size:1rem}
-.screen-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:2rem 0}
-.screen-card{background:var(--bg-card);border-radius:12px;padding:1.2rem;text-align:center;border:1px solid rgba(255,255,255,.06);transition:all .25s}
-.screen-card:hover{background:var(--bg-card-hover);transform:translateY(-2px)}
-.screen-card h4{font-size:.82rem;font-weight:600;margin-top:.6rem}
-.screen-card .type{font-size:.68rem;color:var(--text-muted);margin-top:.15rem}
-.badge{display:inline-flex;align-items:center;gap:.35rem;padding:.2rem .65rem;border-radius:20px;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
-.badge.critical{background:rgba(239,68,68,.15);color:#fca5a5}
-.badge.major{background:rgba(249,115,22,.15);color:#fdba74}
-.badge.minor{background:rgba(234,179,8,.15);color:#fde047}
-.badge.pass{background:rgba(34,197,94,.15);color:#86efac}
-.section-header{margin:4rem 0 2rem;padding-top:2rem}
-.section-header h2{font-family:var(--font-display);font-size:1.8rem;font-weight:800;margin-bottom:.4rem}
-.section-header p{color:var(--text-secondary);font-size:.9rem}
-.section-header .section-num{font-family:var(--font-mono);font-size:.7rem;color:var(--accent-purple);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.3rem;display:block}
-.finding-card{background:var(--bg-card);border-radius:12px;border:1px solid rgba(255,255,255,.06);margin-bottom:2rem;overflow:hidden}
-.finding-card:hover{border-color:rgba(255,255,255,.12)}
-.finding-accent{height:4px;width:100%}
-.finding-accent.critical{background:var(--severity-critical)}
-.finding-accent.major{background:var(--severity-major)}
-.finding-accent.minor{background:var(--severity-minor)}
-.finding-accent.low{background:var(--severity-pass)}
-.card-body{padding:1.4rem 1.6rem}
-.card-top{display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem}
-.card-id{font-family:var(--font-mono);font-size:.8rem;color:var(--text-muted)}
-.card-body h3{font-size:1.05rem;font-weight:700;margin-bottom:1rem}
-.evidence-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0 1.2rem;align-items:start}
-.evidence-shot{background:var(--bg-surface);border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
-.evidence-shot img{width:100%;display:block}
-.shot-label{padding:.5rem .8rem;font-size:.72rem;font-weight:600;text-align:center;text-transform:uppercase;letter-spacing:.04em}
-.shot-label.current{background:rgba(239,68,68,.08);color:#fca5a5}
-.shot-label.proposed{background:rgba(34,197,94,.08);color:#86efac}
-.proposed-content{padding:1.2rem;color:var(--text-secondary);font-size:.82rem;background:var(--bg-card);display:flex;flex-direction:column;justify-content:center;gap:.8rem;min-height:280px}
-.proposed-content .title{font-size:1.1rem;text-align:center;margin-bottom:.5rem;color:var(--text-primary)}
-.proposed-list{background:rgba(34,197,94,.08);padding:.8rem 1rem;border-radius:8px;text-align:left;line-height:1.8}
-.proposed-list strong{color:var(--text-primary)}
-.finding-section{margin-top:.8rem}
-.finding-section h4{font-size:.8rem;color:var(--accent-gold);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem;font-weight:600}
-.finding-section p{color:var(--text-secondary);font-size:.83rem;line-height:1.7}
-.finding-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.8rem}
-.card-tag{font-size:.65rem;padding:.15rem .5rem;border-radius:4px;background:rgba(255,255,255,.06);color:var(--text-muted)}
-details{margin-top:1rem}
-summary{cursor:pointer;color:var(--accent-blue);font-size:.78rem;font-weight:500}
-summary:hover{color:var(--accent-gold)}
-.detail-content{padding:.8rem;background:rgba(0,0,0,.2);border-radius:8px;margin-top:.5rem;font-size:.8rem;color:var(--text-secondary)}
-.detail-content strong{color:var(--text-primary)}
-.heuristic-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin:2rem 0}
-.heuristic-card{background:var(--bg-card);border-radius:12px;padding:1rem;text-align:center;border:1px solid rgba(255,255,255,.06)}
-.heuristic-card h5{font-size:.75rem;margin-top:.5rem;font-weight:600}
-.heuristic-card .desc{font-size:.65rem;color:var(--text-muted);margin-top:.2rem}
-.method-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
-.method-card{background:var(--bg-card);padding:1rem 1.2rem;border-radius:10px;border:1px solid rgba(255,255,255,.06)}
-.method-card h4{font-size:.85rem;font-weight:600;margin-bottom:.4rem;color:var(--accent-gold)}
-.method-card p{font-size:.78rem;color:var(--text-secondary);line-height:1.6}
-.gate-row{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0}
-.gate-pill{display:flex;align-items:center;gap:.3rem;padding:.3rem .7rem;border-radius:20px;font-size:.7rem;font-weight:500;background:rgba(34,197,94,.1);color:#86efac}
-.gate-pill::before{content:'✅';font-size:.7rem}
-.action-card{background:var(--bg-card);padding:1.2rem;border-radius:12px}
-.action-card .sprint{font-size:.7rem;text-transform:uppercase;font-weight:600;margin-bottom:.4rem}
-.action-card h4{font-size:.9rem;margin-bottom:.4rem}
-.action-card p{font-size:.78rem;color:var(--text-secondary);line-height:1.6}
-@media(max-width:768px){.evidence-grid{grid-template-columns:1fr}.meta-grid{gap:.8rem}.screen-grid{grid-template-columns:repeat(2,1fr)}}
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+/* ═══ DESIGN TOKENS — Light Theme (WCAG AA) ═══ */
+:root {
+  --bg-base:#ffffff; --bg-surface:#f8fafc; --bg-card:#ffffff; --bg-card-hover:#f1f5f9;
+  --text-primary:#0f172a; --text-secondary:#475569; --text-muted:#64748b;
+  --accent-gold:#b45309; --accent-purple:#7c3aed; --accent-blue:#2563eb;
+  --sev-critical:#b91c1c; --sev-critical-bg:rgba(185,28,28,.08); --sev-critical-fg:#b91c1c;
+  --sev-major:#c2410c; --sev-major-bg:rgba(194,65,12,.08); --sev-major-fg:#c2410c;
+  --sev-minor:#92400e; --sev-minor-bg:rgba(146,64,14,.08); --sev-minor-fg:#92400e;
+  --sev-pass:#15803d; --sev-pass-bg:rgba(21,128,61,.08); --sev-pass-fg:#15803d;
+  --border:#e2e8f0; --border-light:#cbd5e1;
+  --font-sans:'Manrope',system-ui,-apple-system,sans-serif;
+  --font-display:'Manrope',system-ui,sans-serif;
+  --font-mono:'Manrope',system-ui,sans-serif;
+}
+
+/* ═══ RESET ═══ */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-primary);line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ═══ HERO ═══ */
+.hero{background:linear-gradient(135deg,#f8fafc 0%,#e0e7ff 40%,#dbeafe 70%,#f8fafc 100%);padding:64px 56px 72px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-120px;top:-120px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.06),transparent 70%)}
+.hero::after{content:'';position:absolute;left:-80px;bottom:-80px;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.04),transparent 70%)}
+.hero-label{font-family:var(--font-sans);font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--accent-purple);margin-bottom:12px;font-weight:700}
+.hero h1{font-family:var(--font-display);font-size:42px;font-weight:800;line-height:1.15;margin-bottom:8px;color:var(--text-primary)}
+.hero-sub{color:var(--text-secondary);font-size:15px;margin-bottom:40px}
+.hero-stats{display:flex;gap:48px;flex-wrap:wrap}
+.stat-item{text-align:center}
+.stat-num{font-family:var(--font-sans);font-size:44px;font-weight:800;line-height:1;display:block;color:var(--text-primary)}
+.stat-num.gap-c{color:var(--sev-critical)}
+.stat-label{font-family:var(--font-sans);font-size:10px;color:var(--text-secondary);margin-top:6px;text-transform:uppercase;letter-spacing:1.5px;font-weight:600}
+.hero-score{position:absolute;right:56px;top:50%;transform:translateY(-50%);z-index:1}
+
+/* ═══ NAV ═══ */
+.nav{background:var(--bg-base);border-bottom:1px solid var(--border);padding:0 56px;display:flex;gap:0;position:sticky;top:0;z-index:100}
+.nav a{color:var(--text-secondary);text-decoration:none;padding:14px 20px;font-size:12px;font-weight:600;letter-spacing:.3px;border-bottom:2px solid transparent;transition:all .25s}
+.nav a:hover{color:var(--accent-blue);border-bottom-color:var(--accent-blue)}
+
+/* ═══ SECTIONS ═══ */
+.section{max-width:1100px;margin:0 auto;padding:56px 56px 0}
+.section-title{font-family:var(--font-display);font-size:24px;font-weight:800;margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;color:var(--text-primary)}
+.section-title .icon{font-size:20px}
+
+/* ═══ BADGES ═══ */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-family:var(--font-sans);font-size:11px;font-weight:700;letter-spacing:.3px}
+.badge.critical{background:var(--sev-critical-bg);color:var(--sev-critical-fg)}
+.badge.major{background:var(--sev-major-bg);color:var(--sev-major-fg)}
+.badge.minor{background:var(--sev-minor-bg);color:var(--sev-minor-fg)}
+
+/* ═══ FINDING CARDS — 2fr:3fr phone-frame layout ═══ */
+.finding-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:24px;transition:all .25s}
+.finding-card:hover{background:var(--bg-card-hover);box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.finding-accent{height:4px}
+.finding-accent.critical{background:var(--sev-critical)}.finding-accent.major{background:var(--sev-major)}.finding-accent.minor{background:var(--sev-minor)}
+.card-layout{display:grid;grid-template-columns:2fr 3fr;gap:0}
+.card-visual{background:var(--bg-surface);padding:32px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
+.phone-frame{position:relative;border:3px solid var(--border-light);border-radius:24px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.08);max-width:160px;width:100%}
+.phone-frame img{width:100%;display:block}
+.shot-overlay{background:rgba(220,38,38,.9);color:#fff;font-size:10px;padding:6px 8px;text-align:center;font-weight:700;border-radius:6px;max-width:160px;width:100%;margin-top:6px}
+.shot-overlay.major{background:rgba(234,88,12,.9)}.shot-overlay.minor{background:rgba(202,138,4,.9)}
+.card-info{padding:24px 28px}
+.card-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.card-id{font-family:var(--font-sans);font-size:12px;font-weight:700;color:var(--accent-blue);background:rgba(37,99,235,.08);padding:2px 8px;border-radius:4px}
+.card-info h3{font-size:16px;font-weight:700;margin-bottom:16px;color:var(--text-primary);line-height:1.45}
+.finding-section{margin-bottom:14px}
+.finding-section h4{font-family:var(--font-sans);font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-muted);margin-bottom:6px;font-weight:700}
+.finding-section p{font-size:13.5px;color:var(--text-secondary);line-height:1.55}
+.proposed-box{background:rgba(22,163,74,.06);border-left:3px solid var(--sev-pass);border-radius:0 8px 8px 0;padding:12px 14px;margin-top:6px}
+.proposed-box ul{padding-left:16px}.proposed-box li{font-size:13px;color:#15803d;margin-bottom:4px}
+.finding-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.card-tag{background:rgba(37,99,235,.08);color:var(--accent-blue);font-family:var(--font-sans);font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600}
+
+/* ═══ DETAILS (Progressive disclosure) ═══ */
+details{margin-top:12px}details summary{cursor:pointer;font-family:var(--font-sans);font-size:11px;color:var(--accent-purple);font-weight:700;padding:4px 0}
+.detail-content{background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:8px;font-family:var(--font-sans);font-size:11px;color:var(--text-muted);line-height:1.6;word-break:break-all}
+
+/* ═══ METHODOLOGY ═══ */
+.method-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.method-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px 20px;transition:all .25s}
+.method-card:hover{background:var(--bg-card-hover);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.method-icon{font-size:28px;margin-bottom:12px}
+.method-card h4{font-size:13px;font-weight:700;margin-bottom:8px;color:var(--text-primary)}
+.method-card p{font-size:12px;color:var(--text-secondary);line-height:1.5}
+
+/* ═══ SCORECARD ═══ */
+.scorecard-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.score-item{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;align-items:center;gap:16px;transition:all .25s}
+.score-item:hover{background:var(--bg-card-hover)}
+.score-info h4{font-size:13px;font-weight:700;margin-bottom:4px;color:var(--text-primary)}
+.score-info p{font-size:12px;color:var(--text-secondary)}
+
+/* ═══ GAPS SECTION ═══ */
+.gap-screen{font-family:var(--font-sans);font-size:11px;font-weight:700;color:var(--accent-blue);background:rgba(37,99,235,.08);padding:3px 8px;border-radius:4px;white-space:nowrap}
+.gap-card{border:1px solid var(--border);border-radius:12px;padding:18px 22px;margin-bottom:12px;background:var(--bg-card);transition:all .25s}
+.gap-card:hover{background:var(--bg-card-hover);box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.gap-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--accent-blue);color:#fff;font-family:var(--font-sans);font-size:11px;font-weight:800;flex-shrink:0}
+.gap-ref{font-family:var(--font-sans);font-size:10px;color:var(--text-secondary);margin-left:6px;font-weight:600}
+.gap-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;font-size:12.5px;line-height:1.55;margin-top:12px}
+.gap-label{font-family:var(--font-sans);font-weight:700;color:var(--text-secondary);font-size:10px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
+.gap-full{grid-column:1/-1}
+
+/* ═══ FOOTER ═══ */
+footer{background:var(--bg-surface);border-top:1px solid var(--border);color:var(--text-muted);text-align:center;padding:28px 56px;margin-top:72px;font-size:12px}
+footer strong{color:var(--text-secondary)}
+
+/* ═══ ANIMATION ═══ */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:768px){
+  .card-layout{grid-template-columns:1fr}.hero-score{display:none}
+  .scorecard-grid,.method-grid{grid-template-columns:1fr}
+  .hero{padding:32px 24px}.section{padding:32px 24px 0}.nav{padding:0 16px;overflow-x:auto}
+  .gap-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  .reveal{transition-duration:.01ms!important}.finding-card,.method-card,.score-item,.gap-card{transition-duration:.01ms!important}
+}
 </style>
 </head>
 <body>
-<div class="scroll-progress"><div class="bar" id="progressBar"></div></div>
-<nav>
-  <span class="logo">UX Audit</span>
-  <div class="nav-links">
-    <a href="#summary">Tổng quan</a>
-    <a href="#method">Phương pháp</a>
-    <a href="#findings">Phát hiện</a>
-    <a href="#scorecard">Scorecard</a>
-    <a href="#actions">Hành động</a>
-  </div>
+<!-- ═══ NAV ═══ -->
+<nav class="nav">
+  <a href="#summary">Tổng quan</a>
+  <a href="#method">Phương pháp</a>
+  <a href="#findings">Phát hiện</a>
+  <a href="#scorecard">Scorecard</a>
+  <a href="#gaps">Gaps</a>
 </nav>
 
-<!-- ═══ SECTION 1: EXECUTIVE SUMMARY ═══ -->
-<section class="hero" id="summary">
-  <h1>UX Audit Report</h1>
-  <p class="subtitle">Đánh giá trải nghiệm người dùng cho module <strong>Chuyển tiền ngoài Co-opBank</strong> — bao gồm luồng chuyển tiền nhanh 24/7 qua tài khoản ngân hàng và qua thẻ ngân hàng</p>
-  <div class="meta-grid">
-    <div class="meta-item"><div class="value" data-counter="6">0</div><div class="label">Màn hình</div></div>
-    <div class="meta-item"><div class="value" data-counter="30">0</div><div class="label">Hạng mục kiểm tra</div></div>
-    <div class="meta-item"><div class="value" data-counter="5">0</div><div class="label">Phát hiện</div></div>
-    <div class="meta-item"><div class="value" data-counter="15">0</div><div class="label">Ảnh chụp phân tích</div></div>
+<!-- ═══ SECTION 1: HERO / EXECUTIVE SUMMARY ═══ -->
+<section class="hero" id="top">
+  <div class="hero-label">UX Audit Report</div>
+  <h1>{{CLIENT_NAME}} · {{MODULE_NAME}}</h1>
+  <p class="hero-sub">{{PRODUCT_NAME}}</p>
+  <div class="hero-stats">
+    <div class="stat-item"><span class="stat-num">{{SCREEN_COUNT}}</span><span class="stat-label">Màn hình</span></div>
+    <div class="stat-item"><span class="stat-num">{{CHECK_COUNT}}</span><span class="stat-label">Tổng kiểm tra</span></div>
+    <div class="stat-item"><span class="stat-num gap-c">{{GAP_COUNT}}</span><span class="stat-label">Cần cải thiện</span></div>
+    <div class="stat-item"><span class="stat-num">{{PROPOSAL_COUNT}}</span><span class="stat-label">Đề xuất</span></div>
   </div>
-  <div style="margin-top:1.5rem;display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center">
-    <span class="badge critical">1 Nghiêm trọng</span>
-    <span class="badge major">2 Quan trọng</span>
-    <span class="badge minor">1 Trung bình</span>
-    <span class="badge pass">1 Nhẹ</span>
-  </div>
-  <p style="margin-top:2rem;font-size:.75rem;color:var(--text-muted);max-width:500px">Phạm vi đánh giá: 15 artboard Figma thuộc 6 màn hình chính, phân tích bằng Design Data Layer (5 component specs, 69 hướng dẫn UX, 60 luật UX) kết hợp agent vision trực tiếp trên ảnh thiết kế.</p>
+  <!-- Overall score ring: r=51, circumference=320, offset = 320 × (1 - score/100) -->
+  <div class="hero-score"><svg width="110" height="110" viewBox="0 0 110 110"><circle cx="55" cy="55" r="51" fill="none" stroke="#e2e8f0" stroke-width="8"/><circle cx="55" cy="55" r="51" fill="none" stroke="{{OVERALL_SCORE_COLOR}}" stroke-width="8" stroke-dasharray="320" stroke-dashoffset="{{OVERALL_SCORE_OFFSET}}" stroke-linecap="round" transform="rotate(-90 55 55)"/><text x="55" y="60" text-anchor="middle" font-family="var(--font-sans)" font-size="24" font-weight="800" fill="{{OVERALL_SCORE_COLOR}}">{{OVERALL_SCORE}}%</text></svg></div>
 </section>
 
-<!-- ═══ SECTION 2: METHODOLOGY ═══ -->
-<section class="container scroll-section" id="method">
-  <div class="section-header">
-    <span class="section-num">Section 01</span>
-    <h2>Phương pháp đánh giá</h2>
-    <p>Quy trình tự động hoá kết hợp phân tích heuristic, Design Data Layer, và agent vision</p>
+<!-- ═══ SECTION 2: SUMMARY (Screen scores + severity breakdown) ═══ -->
+<section class="section" id="summary">
+  <div class="section-title"><span class="icon">📊</span> 01 · Tổng quan kết quả kiểm tra</div>
+  <!-- Severity breakdown badges -->
+  <div style="display:flex;gap:12px;margin-bottom:28px">
+    <!-- Only show badges for severities that have findings -->
+    <span class="badge critical">🔴 {{CRITICAL_COUNT}} Critical</span>
+    <span class="badge major">🟡 {{MAJOR_COUNT}} Major</span>
+    <span class="badge minor">⚪ {{MINOR_COUNT}} Minor</span>
   </div>
+  <!-- Screen score cards: r=25, circumference=157, offset = 157 × (1 - score/100) -->
+  <div class="scorecard-grid">
+    <!-- Repeat for each screen -->
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="{{SCREEN_SCORE_COLOR}}" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="{{SCREEN_SCORE_OFFSET}}" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="{{SCREEN_SCORE_COLOR}}">{{SCREEN_SCORE}}%</text></svg></div>
+      <div class="score-info">
+        <h4>{{SCREEN_NAME}}</h4>
+        <p>{{SCREEN_ID}} · {{SCREEN_TYPE}} · <span style="color:var(--sev-critical-fg)">{{SCREEN_GAP_COUNT}} Gap</span></p>
+      </div>
+    </div>
+    <!-- ...repeat for each screen... -->
+  </div>
+</section>
+
+<!-- ═══ SECTION 3: METHODOLOGY ═══ -->
+<section class="section reveal" id="method">
+  <div class="section-title"><span class="icon">🔬</span> 02 · Phương pháp đánh giá</div>
   <div class="method-grid">
-    <div class="method-card">
-      <h4>Heuristic Evaluation</h4>
-      <p>Đánh giá dựa trên 10 Usability Heuristics của Jakob Nielsen, bổ sung 69 hướng dẫn UX chuyên ngành từ Design Data Layer (DDL).</p>
-    </div>
-    <div class="method-card">
-      <h4>Component Spec Analysis</h4>
-      <p>So sánh thiết kế thực tế với 5 component specs chuẩn từ DDL: text-input, otp-input, app-header, receipt-preview, empty-state.</p>
-    </div>
-    <div class="method-card">
-      <h4>Vision-Based Inspection</h4>
-      <p>Agent vision phân tích trực tiếp 15 ảnh chụp màn hình — phát hiện vấn đề về kích thước touch target, contrast, và layout consistency.</p>
-    </div>
-    <div class="method-card">
-      <h4>UX Law Cross-Reference</h4>
-      <p>60 luật UX được auto-trigger theo loại màn hình: Fitts's Law, Hick's Law, Peak-End Rule, Doherty Threshold.</p>
-    </div>
-  </div>
-  <div style="margin-top:1.5rem">
-    <h4 style="font-size:.78rem;color:var(--text-muted);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.06em">Cổng chất lượng đã vượt qua</h4>
-    <div class="gate-row">
-      <span class="gate-pill">Handoff — 6 màn hình, 9 luồng</span>
-      <span class="gate-pill">OCR — 6/6 validated</span>
-      <span class="gate-pill">DDL — 10/10 nguồn dữ liệu</span>
-      <span class="gate-pill">Vision — 15/15 ảnh</span>
-    </div>
-  </div>
-  <!-- Screen Score Overview -->
-  <div class="section-header" style="margin-top:3rem">
-    <h2>Điểm UX theo màn hình</h2>
-    <p>6 màn hình từ 2 luồng chuyển tiền — đánh giá trên 30 hạng mục</p>
-  </div>
-  <div class="screen-grid">
-    <div class="screen-card">
-      <div class="score-ring"><svg width="90" height="90"><circle cx="45" cy="45" r="38" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/><circle cx="45" cy="45" r="38" fill="none" stroke="var(--severity-minor)" stroke-width="5" stroke-dasharray="239" stroke-dashoffset="119" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center"/></svg><span class="value">50%</span></div>
-      <h4>Form nhập thông tin</h4><div class="type">Qua tài khoản</div>
-    </div>
-    <div class="screen-card">
-      <div class="score-ring"><svg width="90" height="90"><circle cx="45" cy="45" r="38" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/><circle cx="45" cy="45" r="38" fill="none" stroke="var(--severity-major)" stroke-width="5" stroke-dasharray="239" stroke-dashoffset="143" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center"/></svg><span class="value">40%</span></div>
-      <h4>Xác nhận giao dịch</h4><div class="type">Qua tài khoản</div>
-    </div>
-    <div class="screen-card">
-      <div class="score-ring"><svg width="90" height="90"><circle cx="45" cy="45" r="38" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/><circle cx="45" cy="45" r="38" fill="none" stroke="var(--severity-pass)" stroke-width="5" stroke-dasharray="239" stroke-dashoffset="48" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center"/></svg><span class="value">80%</span></div>
-      <h4>Kết quả giao dịch</h4><div class="type">Qua tài khoản</div>
-    </div>
-    <div class="screen-card">
-      <div class="score-ring"><svg width="90" height="90"><circle cx="45" cy="45" r="38" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/><circle cx="45" cy="45" r="38" fill="none" stroke="var(--severity-minor)" stroke-width="5" stroke-dasharray="239" stroke-dashoffset="107" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center"/></svg><span class="value">55%</span></div>
-      <h4>Form nhập thông tin</h4><div class="type">Qua thẻ ngân hàng</div>
-    </div>
-    <div class="screen-card">
-      <div class="score-ring"><svg width="90" height="90"><circle cx="45" cy="45" r="38" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/><circle cx="45" cy="45" r="38" fill="none" stroke="var(--severity-major)" stroke-width="5" stroke-dasharray="239" stroke-dashoffset="143" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center"/></svg><span class="value">40%</span></div>
-      <h4>Xác nhận giao dịch</h4><div class="type">Qua thẻ ngân hàng</div>
-    </div>
-    <div class="screen-card">
-      <div class="score-ring"><svg width="90" height="90"><circle cx="45" cy="45" r="38" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/><circle cx="45" cy="45" r="38" fill="none" stroke="var(--severity-pass)" stroke-width="5" stroke-dasharray="239" stroke-dashoffset="48" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center"/></svg><span class="value">80%</span></div>
-      <h4>Kết quả giao dịch</h4><div class="type">Qua thẻ ngân hàng</div>
-    </div>
+    <div class="method-card"><div class="method-icon">🔍</div><h4>Heuristic Evaluation</h4><p>Đánh giá theo 10 heuristics của Nielsen Norman Group. Mỗi phát hiện được liên kết với heuristic cụ thể bị vi phạm.</p></div>
+    <div class="method-card"><div class="method-icon">🧩</div><h4>Component Spec Analysis</h4><p>So sánh thiết kế Figma với DDL component specifications để phát hiện gap về states, props và behavior.</p></div>
+    <div class="method-card"><div class="method-icon">👁️</div><h4>Vision Inspection</h4><p>Phân tích trực quan từng màn hình: alignment, contrast, typography, touch targets, overlay detection.</p></div>
+    <div class="method-card"><div class="method-icon">⚖️</div><h4>UX Law Cross-Reference</h4><p>Áp dụng Fitts's Law, Hick's Law, Peak-End Rule và các nguyên tắc thiết kế vào từng màn hình.</p></div>
   </div>
 </section>
 
-<!-- ═══ SECTION 3: DETAILED FINDINGS ═══ -->
-<section class="container scroll-section" id="findings">
-  <div class="section-header">
-    <span class="section-num">Section 02</span>
-    <h2>Phát hiện chi tiết</h2>
-    <p>Mỗi phát hiện bao gồm: ảnh minh hoạ hiện trạng, mô tả tác động, heuristic vi phạm, và đề xuất cải thiện cụ thể</p>
+<!-- ═══ SECTION 4: DETAILED FINDINGS ═══ -->
+<section class="section" id="findings">
+  <div class="section-title"><span class="icon">🔎</span> 03 · Các vấn đề được phát hiện</div>
+
+  <!-- Group findings by severity. Each group has a colored label header. -->
+  <div style="margin-bottom:36px">
+    <!-- Severity group label -->
+    <div style="background:var(--sev-critical-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-critical-fg);margin-bottom:20px;letter-spacing:.3px">🔴 Critical — Cần xử lý ngay</div>
+
+    <!-- FINDING CARD TEMPLATE
+         Layout: 2fr (phone-frame screenshot) : 3fr (card-info)
+         Repeat for each UXP finding in this severity group -->
+    <div class="finding-card reveal">
+      <div class="finding-accent critical"></div>
+      <div class="card-layout">
+        <div class="card-visual">
+          <div class="phone-frame"><img src="{{SCREENSHOT_PATH}}" alt="{{SCREENSHOT_ALT}}" loading="lazy"></div>
+          <div class="shot-overlay">⚠️ {{OVERLAY_LABEL}}</div>
+        </div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-{{ID}}</span><span class="badge critical">Critical</span></div>
+          <h3>{{FINDING_TITLE}}</h3>
+          <div class="finding-section"><h4>Tác động đến người dùng</h4><p>{{USER_IMPACT}}</p></div>
+          <div class="finding-section"><h4>Heuristic vi phạm</h4><p>{{HEURISTIC_REFS}}</p></div>
+          <div class="proposed-box"><ul><li>{{PROPOSAL_TEXT}}</li></ul></div>
+          <div class="finding-tags"><span class="card-tag">{{SCREEN_TAG}}</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">{{DDL_REFS}}<br>Effort: —</div></details>
+        </div>
+      </div>
+    </div>
+    <!-- ...repeat finding cards... -->
   </div>
 
-  <!-- ── UXP-002: OTP (Critical) ── -->
-  <div class="finding-card">
-    <div class="finding-accent critical"></div>
-    <div class="card-body">
-      <div class="card-top"><span class="card-id">UXP-002</span><span class="badge critical">Nghiêm trọng</span></div>
-      <h3>Màn hình nhập mã OTP thiếu bộ đếm thời gian và chức năng gửi lại mã</h3>
-      <div class="evidence-grid">
-        <div class="evidence-shot">
-          <div class="shot-label current">⚠️ Hiện trạng</div>
-          <img src="chuyen-tien-nhanh-24-7-qua-tai-khoan/ui/chuyen-tien-nhanh-247-qua-tai-khoan-5.png" alt="Màn hình OTP hiện tại chỉ có 6 ô nhập mã và nút xác nhận, không có bộ đếm thời gian hay nút gửi lại">
-        </div>
-        <div class="evidence-shot" style="border-color:rgba(34,197,94,.3)">
-          <div class="shot-label proposed">✅ Đề xuất cải thiện</div>
-          <div class="proposed-content">
-            <div class="title">Thiết kế lại màn hình OTP</div>
-            <div class="proposed-list">
-              <strong>Bổ sung các thành phần:</strong><br>
-              ✅ Bộ đếm ngược 60 giây hiển thị rõ ràng<br>
-              ✅ Nút "Gửi lại mã OTP" (vô hiệu hoá khi bộ đếm đang chạy)<br>
-              ✅ Tự động chuyển con trỏ sang ô tiếp theo sau mỗi số<br>
-              ✅ Hỗ trợ dán mã OTP từ clipboard (6 chữ số)<br>
-              ✅ Thông báo xác nhận "Mã OTP đã được gửi lại" dạng toast
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="finding-section">
-        <h4>Hiện trạng</h4>
-        <p>Màn hình xác thực OTP hiện tại chỉ hiển thị 6 ô nhập mã và nút "Xác nhận". Không có bộ đếm thời gian cho biết thời hạn hiệu lực của mã OTP, cũng không có nút cho phép người dùng yêu cầu gửi lại mã mới.</p>
-      </div>
-      <div class="finding-section">
-        <h4>Tác động đến người dùng</h4>
-        <p>Người dùng sẽ bị mắc kẹt hoàn toàn nếu mã OTP hết hạn hoặc tin nhắn SMS không đến. Trong trường hợp này, họ buộc phải quay lại màn hình trước và nhập lại toàn bộ thông tin giao dịch — gây mất thời gian và giảm sự tin tưởng vào ứng dụng.</p>
-      </div>
-      <div class="finding-section">
-        <h4>Heuristic vi phạm</h4>
-        <p><strong>Visibility of System Status</strong> (Nielsen #1) — Người dùng không biết trạng thái hiện tại của mã OTP: còn hiệu lực hay đã hết hạn, có thể gửi lại hay chưa.</p>
-      </div>
-      <div class="finding-tags">
-        <span class="card-tag">Màn hình Xác nhận — Tài khoản</span>
-        <span class="card-tag">Màn hình Xác nhận — Thẻ ngân hàng</span>
-      </div>
-      <details>
-        <summary>Xem tham chiếu kỹ thuật →</summary>
-        <div class="detail-content">
-          <strong>DDL Component:</strong> COMP:otp-input-1 → schema.state.canResend, schema.state.timeLeft<br>
-          <strong>Hướng dẫn UX:</strong> UXG-089 (Trải nghiệm OTP — mức nghiêm trọng Critical)<br>
-          <strong>Luật UX:</strong> Doherty Threshold — phản hồi phải dưới 400ms; người dùng không nên chờ quá 60 giây mà không có hành động thay thế
-        </div>
-      </details>
-    </div>
+  <!-- Major group -->
+  <div style="margin-bottom:36px">
+    <div style="background:var(--sev-major-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-major-fg);margin-bottom:20px;letter-spacing:.3px">🟡 Major — Ưu tiên cao</div>
+    <!-- ...repeat finding cards with .finding-accent.major and .badge.major... -->
   </div>
 
-  <!-- ── UXP-001: Error States (High) ── -->
-  <div class="finding-card">
-    <div class="finding-accent major"></div>
-    <div class="card-body">
-      <div class="card-top"><span class="card-id">UXP-001</span><span class="badge major">Quan trọng</span></div>
-      <h3>Các trường nhập liệu thiếu trạng thái hiển thị lỗi khi dữ liệu không hợp lệ</h3>
-      <div class="evidence-grid">
-        <div class="evidence-shot">
-          <div class="shot-label current">⚠️ Hiện trạng — Chỉ có trạng thái trống và đã điền</div>
-          <img src="chuyen-tien-nhanh-24-7-qua-tai-khoan/ui/chuyen-tien-nhanh-247-qua-tai-khoan.png" alt="Form nhập thông tin chuyển tiền ở trạng thái trống, không có trạng thái hiển thị lỗi">
-        </div>
-        <div class="evidence-shot" style="border-color:rgba(34,197,94,.3)">
-          <div class="shot-label proposed">✅ Đề xuất cải thiện</div>
-          <div class="proposed-content">
-            <div class="title">Bổ sung trạng thái lỗi cho trường nhập liệu</div>
-            <div class="proposed-list">
-              <strong>Thiết kế trạng thái lỗi bao gồm:</strong><br>
-              ❌ Viền đỏ (#ef4444) quanh trường nhập liệu<br>
-              ❌ Thông báo lỗi cụ thể bên dưới trường<br>
-              ❌ Biểu tượng cảnh báo hiển thị trong trường<br>
-              ❌ Ví dụ: "Số tài khoản không hợp lệ"<br>
-              ❌ Ví dụ: "Vui lòng chọn ngân hàng thụ hưởng"
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="finding-section">
-        <h4>Hiện trạng</h4>
-        <p>Thiết kế form nhập thông tin chuyển tiền chỉ thể hiện 2 trạng thái: trống (placeholder) và đã điền (filled). Không có trạng thái lỗi nào được thiết kế cho trường hợp người dùng nhập sai số tài khoản, số thẻ không hợp lệ, hoặc bỏ trống trường bắt buộc.</p>
-      </div>
-      <div class="finding-section">
-        <h4>Tác động đến người dùng</h4>
-        <p>Người dùng không nhận được phản hồi trực quan khi nhập dữ liệu sai. Họ chỉ phát hiện lỗi khi hệ thống từ chối giao dịch ở bước sau, gây mất thời gian và tăng số lượng cuộc gọi hỗ trợ kỹ thuật.</p>
-      </div>
-      <div class="finding-section">
-        <h4>Heuristic vi phạm</h4>
-        <p><strong>Error Prevention</strong> (Nielsen #5) và <strong>Help Users Recognize, Diagnose, and Recover from Errors</strong> (Nielsen #9) — Hệ thống không giúp người dùng nhận biết và sửa lỗi ngay tại thời điểm nhập liệu.</p>
-      </div>
-      <div class="finding-tags">
-        <span class="card-tag">Màn hình Form — Tài khoản</span>
-        <span class="card-tag">Màn hình Form — Thẻ ngân hàng</span>
-      </div>
-      <details>
-        <summary>Xem tham chiếu kỹ thuật →</summary>
-        <div class="detail-content">
-          <strong>DDL Component:</strong> COMP:text-input-1 → schema.state.error<br>
-          <strong>Hướng dẫn UX:</strong> UXG-012 (Trạng thái lỗi cho trường nhập liệu — mức quan trọng High)
-        </div>
-      </details>
-    </div>
-  </div>
+  <!-- Minor group (if any) -->
+  <!-- <div style="margin-bottom:36px">
+    <div style="background:var(--sev-minor-bg);padding:...">⚪ Minor — Cải thiện</div>
+    ...finding cards...
+  </div> -->
+</section>
 
-  <!-- ── UXP-004: Loading (High) ── -->
-  <div class="finding-card">
-    <div class="finding-accent major"></div>
-    <div class="card-body">
-      <div class="card-top"><span class="card-id">UXP-004</span><span class="badge major">Quan trọng</span></div>
-      <h3>Nút "Tiếp tục" thiếu trạng thái tải và phản hồi sau khi người dùng nhấn</h3>
-      <div class="evidence-grid">
-        <div class="evidence-shot">
-          <div class="shot-label current">⚠️ Hiện trạng — Nút không có phản hồi trực quan</div>
-          <img src="chuyen-tien-nhanh-24-7-qua-tai-khoan/ui/chuyen-tien-nhanh-247-qua-tai-khoan-3.png" alt="Form đã điền đầy đủ thông tin với nút Tiếp tục ở cuối, không có trạng thái tải">
-        </div>
-        <div class="evidence-shot" style="border-color:rgba(34,197,94,.3)">
-          <div class="shot-label proposed">✅ Đề xuất cải thiện</div>
-          <div class="proposed-content">
-            <div class="title">Bổ sung trạng thái tải cho nút hành động</div>
-            <div class="proposed-list">
-              <strong>Thiết kế phản hồi sau khi nhấn:</strong><br>
-              ⏳ Vô hiệu hoá nút ngay sau khi nhấn<br>
-              ⏳ Hiển thị biểu tượng tải (spinner) trong nút<br>
-              ⏳ Thay text thành "Đang xử lý..."<br>
-              ⏳ Timeout 10 giây kèm thông báo thử lại<br>
-              ⏳ Ngăn chặn nhấn nhiều lần liên tiếp
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="finding-section">
-        <h4>Hiện trạng</h4>
-        <p>Nút "Tiếp tục" trên form nhập thông tin không có bất kỳ phản hồi trực quan nào sau khi người dùng nhấn. Không rõ liệu hệ thống đang xử lý yêu cầu hay nút nhấn không hoạt động.</p>
-      </div>
-      <div class="finding-section">
-        <h4>Tác động đến người dùng</h4>
-        <p>Người dùng có khuynh hướng nhấn nút nhiều lần do không nhận được phản hồi, dẫn đến nguy cơ tạo yêu cầu chuyển tiền trùng lặp — đặc biệt nghiêm trọng trong bối cảnh giao dịch tài chính.</p>
-      </div>
-      <div class="finding-section">
-        <h4>Heuristic vi phạm</h4>
-        <p><strong>Visibility of System Status</strong> (Nielsen #1) — Hệ thống không thông báo cho người dùng biết đang diễn ra quá trình gì sau khi họ thực hiện hành động.</p>
-      </div>
-      <div class="finding-tags"><span class="card-tag">Màn hình Form — Tài khoản</span><span class="card-tag">Màn hình Form — Thẻ ngân hàng</span></div>
-      <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content"><strong>Hướng dẫn UX:</strong> UXG-023 (Phản hồi khi người dùng thực hiện hành động)</div></details>
+<!-- ═══ SECTION 5: HEURISTIC SCORECARD ═══ -->
+<section class="section" id="scorecard">
+  <div class="section-title"><span class="icon">📊</span> 04 · Đánh giá theo danh mục heuristic</div>
+  <div class="scorecard-grid">
+    <!-- Repeat for each heuristic category.
+         Score ring: r=33, circumference=207, offset = 207 × (1 - score/100)
+         Color: use --sev-critical for <50%, --sev-major for 50-69%, --sev-pass for ≥70%
+         Layout: flex-direction:column for centered display -->
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="{{HEURISTIC_COLOR}}" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="{{HEURISTIC_OFFSET}}" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="{{HEURISTIC_COLOR}}">{{HEURISTIC_SCORE}}%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>{{HEURISTIC_NAME_VI}}</h4><p>{{HEURISTIC_NAME_EN}}</p></div>
     </div>
-  </div>
-
-  <!-- ── UXP-003: Touch (Medium) ── -->
-  <div class="finding-card">
-    <div class="finding-accent minor"></div>
-    <div class="card-body">
-      <div class="card-top"><span class="card-id">UXP-003</span><span class="badge minor">Trung bình</span></div>
-      <h3>Biểu tượng chức năng có vùng chạm nhỏ hơn tiêu chuẩn tối thiểu 44 pixel</h3>
-      <div class="evidence-grid">
-        <div class="evidence-shot">
-          <div class="shot-label current">⚠️ Hiện trạng — Biểu tượng 24×24 pixel</div>
-          <img src="chuyen-tien-nhanh-24-7-qua-the/ui/chuyen-tien-nhanh-247-qua-the.png" alt="Form chuyển tiền qua thẻ ngân hàng với biểu tượng danh bạ nhỏ 24 pixel bên phải trường nhập">
-        </div>
-        <div class="evidence-shot" style="border-color:rgba(34,197,94,.3)">
-          <div class="shot-label proposed">✅ Đề xuất cải thiện</div>
-          <div class="proposed-content">
-            <div class="title">Mở rộng vùng chạm biểu tượng</div>
-            <div class="proposed-list">
-              <strong>Áp dụng tiêu chuẩn WCAG:</strong><br>
-              👆 Giữ nguyên kích thước hiển thị biểu tượng 24×24 pixel<br>
-              👆 Thêm vùng đệm (padding) để vùng chạm đạt 44×44 pixel<br>
-              👆 Đặc biệt quan trọng cho ứng dụng ngân hàng có người dùng lớn tuổi
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="finding-section">
-        <h4>Heuristic vi phạm</h4>
-        <p><strong>Fitts's Law</strong> — Đối tượng có kích thước nhỏ và nằm xa vị trí hiện tại của ngón tay sẽ khó chạm chính xác, làm giảm hiệu quả tương tác.</p>
-      </div>
-      <div class="finding-tags"><span class="card-tag">Màn hình Form — Tài khoản</span><span class="card-tag">Màn hình Form — Thẻ ngân hàng</span></div>
-    </div>
-  </div>
-
-  <!-- ── UXP-005: Dropdown A11y (Low) ── -->
-  <div class="finding-card">
-    <div class="finding-accent low"></div>
-    <div class="card-body">
-      <div class="card-top"><span class="card-id">UXP-005</span><span class="badge pass">Nhẹ</span></div>
-      <h3>Trường chọn ngân hàng thụ hưởng thiếu gợi ý cho công nghệ hỗ trợ tiếp cận</h3>
-      <div class="evidence-grid">
-        <div class="evidence-shot">
-          <div class="shot-label current">⚠️ Hiện trạng — Chỉ hiển thị biểu tượng mũi tên</div>
-          <img src="chuyen-tien-nhanh-24-7-qua-tai-khoan/ui/chuyen-tien-nhanh-247-qua-tai-khoan-9.png" alt="Danh sách chọn ngân hàng thụ hưởng với các ngân hàng Vietcombank, Agribank, BIDV, Vietinbank">
-        </div>
-        <div class="evidence-shot" style="border-color:rgba(34,197,94,.3)">
-          <div class="shot-label proposed">✅ Đề xuất cải thiện</div>
-          <div class="proposed-content">
-            <div class="title">Bổ sung hỗ trợ tiếp cận</div>
-            <div class="proposed-list">
-              <strong>Cải thiện khả năng tiếp cận:</strong><br>
-              ♿ Thêm nhãn aria-label cho trường chọn<br>
-              ♿ Thêm văn bản placeholder "Chọn ngân hàng thụ hưởng"<br>
-              ♿ Đảm bảo trình đọc màn hình nhận diện đúng loại thành phần
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="finding-section">
-        <h4>Heuristic vi phạm</h4>
-        <p><strong>Accessibility</strong> (WCAG 2.1 AA) — Trường chọn dropdown chỉ sử dụng biểu tượng mũi tên, không có nhãn văn bản cho công nghệ hỗ trợ tiếp cận (screen reader).</p>
-      </div>
-      <div class="finding-tags"><span class="card-tag">Màn hình Form — Tài khoản</span></div>
-    </div>
+    <!-- Standard categories:
+         Luồng người dùng (Flow & Navigation)
+         Xử lý lỗi (Error Handling)
+         Trạng thái hệ thống (System Status)
+         Điểm chạm & Mục tiêu (Touch & Target)
+         Nhất quán & Tiêu chuẩn (Consistency)
+         Nội dung & Trình bày (Content & Layout) -->
   </div>
 </section>
 
-<!-- ═══ SECTION 4: HEURISTIC SCORECARD ═══ -->
-<section class="container scroll-section" id="scorecard">
-  <div class="section-header">
-    <span class="section-num">Section 03</span>
-    <h2>Bảng điểm Heuristic</h2>
-    <p>Đánh giá theo 6 nhóm heuristic — từ hướng dẫn DDL và luật UX</p>
+<!-- ═══ SECTION 6: GAPS DETAIL ═══ -->
+<section class="section" id="gaps" style="padding-top:48px">
+  <div class="section-title"><span class="icon">📋</span> Tổng hợp Gap ({{TOTAL_GAP_COUNT}} hạng mục)</div>
+  <p style="color:var(--text-muted);font-size:14px;margin-bottom:20px">Các hạng mục kiểm tra chưa đạt chuẩn theo từng màn hình — checklist cải thiện từ ux-review-report</p>
+
+  <!-- Repeat for each screen -->
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">{{SCREEN_ID}}</span>
+      <strong style="font-size:14px">{{SCREEN_NAME}}</strong> · <em>{{SCREEN_TYPE}}</em>
+    </div>
+
+    <!-- Repeat for each gap item in this screen -->
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">{{GAP_NUMBER}}</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">{{GAP_TITLE}}</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">{{GAP_REF}}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">{{GAP_USER_IMPACT}}</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">{{GAP_HEURISTIC}}</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng & Phân tích <span style="display:inline-block;background:#EFF6FF;color:#2563EB;font-size:10px;padding:1px 6px;border-radius:4px;font-family:monospace;margin-left:4px">📸 {{GAP_SCREENSHOT}}</span></div>
+          <div style="color:#444">{{GAP_EVIDENCE}}</div>
+        </div>
+      </div>
+    </div>
+    <!-- ...repeat gap items... -->
   </div>
-  <div class="heuristic-grid">
-    <div class="heuristic-card">
-      <div class="score-ring"><svg width="70" height="70"><circle cx="35" cy="35" r="28" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/><circle cx="35" cy="35" r="28" fill="none" stroke="var(--severity-pass)" stroke-width="4" stroke-dasharray="176" stroke-dashoffset="35" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center"/></svg><span class="value" style="font-size:.85rem">80%</span></div>
-      <h5>Luồng người dùng</h5><div class="desc">Happy path rõ ràng</div>
-    </div>
-    <div class="heuristic-card">
-      <div class="score-ring"><svg width="70" height="70"><circle cx="35" cy="35" r="28" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/><circle cx="35" cy="35" r="28" fill="none" stroke="var(--severity-critical)" stroke-width="4" stroke-dasharray="176" stroke-dashoffset="123" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center"/></svg><span class="value" style="font-size:.85rem">30%</span></div>
-      <h5>Xử lý lỗi</h5><div class="desc">Thiếu trạng thái lỗi</div>
-    </div>
-    <div class="heuristic-card">
-      <div class="score-ring"><svg width="70" height="70"><circle cx="35" cy="35" r="28" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/><circle cx="35" cy="35" r="28" fill="none" stroke="var(--severity-major)" stroke-width="4" stroke-dasharray="176" stroke-dashoffset="106" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center"/></svg><span class="value" style="font-size:.85rem">40%</span></div>
-      <h5>Trạng thái tải</h5><div class="desc">Thiếu phản hồi</div>
-    </div>
-    <div class="heuristic-card">
-      <div class="score-ring"><svg width="70" height="70"><circle cx="35" cy="35" r="28" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/><circle cx="35" cy="35" r="28" fill="none" stroke="var(--severity-pass)" stroke-width="4" stroke-dasharray="176" stroke-dashoffset="18" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center"/></svg><span class="value" style="font-size:.85rem">90%</span></div>
-      <h5>Vùng chạm</h5><div class="desc">Nút chính đạt, icon nhỏ</div>
-    </div>
-    <div class="heuristic-card">
-      <div class="score-ring"><svg width="70" height="70"><circle cx="35" cy="35" r="28" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/><circle cx="35" cy="35" r="28" fill="none" stroke="var(--severity-minor)" stroke-width="4" stroke-dasharray="176" stroke-dashoffset="88" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center"/></svg><span class="value" style="font-size:.85rem">50%</span></div>
-      <h5>Khả năng tiếp cận</h5><div class="desc">Thiếu nhãn ARIA</div>
-    </div>
-    <div class="heuristic-card">
-      <div class="score-ring"><svg width="70" height="70"><circle cx="35" cy="35" r="28" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/><circle cx="35" cy="35" r="28" fill="none" stroke="var(--severity-minor)" stroke-width="4" stroke-dasharray="176" stroke-dashoffset="70" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center"/></svg><span class="value" style="font-size:.85rem">60%</span></div>
-      <h5>Tính nhất quán</h5><div class="desc">2 luồng tương tự tốt</div>
-    </div>
-  </div>
+  <!-- ...repeat screen groups... -->
 </section>
 
-<!-- ═══ SECTION 5: ACTION PLAN ═══ -->
-<section class="container scroll-section" id="actions">
-  <div class="section-header">
-    <span class="section-num">Section 04</span>
-    <h2>Kế hoạch hành động</h2>
-    <p>Lộ trình triển khai theo mức độ ưu tiên — sửa vấn đề nghiêm trọng trước, kết hợp cải thiện nhanh</p>
-  </div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:1.5rem">
-    <div class="action-card" style="border-left:4px solid var(--severity-critical)">
-      <div class="sprint" style="color:var(--severity-critical)">Sprint 1 — Tuần 1</div>
-      <h4>Thiết kế lại màn hình OTP</h4>
-      <p>Bổ sung bộ đếm ngược, nút gửi lại mã, tự động chuyển con trỏ. Áp dụng cho cả luồng chuyển tiền qua tài khoản và qua thẻ ngân hàng.</p>
-      <div style="margin-top:.5rem"><span class="badge critical">Nghiêm trọng</span></div>
-    </div>
-    <div class="action-card" style="border-left:4px solid var(--severity-major)">
-      <div class="sprint" style="color:var(--severity-major)">Sprint 1 — Tuần 1–2</div>
-      <h4>Trạng thái lỗi cho trường nhập liệu</h4>
-      <p>Thiết kế trạng thái lỗi cho trường nhập số tài khoản, số thẻ, và số tiền. Định nghĩa quy tắc kiểm tra dữ liệu đầu vào.</p>
-      <div style="margin-top:.5rem"><span class="badge major">Quan trọng</span></div>
-    </div>
-    <div class="action-card" style="border-left:4px solid var(--severity-minor)">
-      <div class="sprint" style="color:var(--severity-minor)">Sprint 2 — Cải thiện nhanh</div>
-      <h4>Phản hồi tải, vùng chạm, và tiếp cận</h4>
-      <p>Thêm trạng thái tải cho nút hành động, mở rộng vùng chạm biểu tượng lên 44 pixel, bổ sung nhãn ARIA cho trường chọn.</p>
-      <div style="margin-top:.5rem"><span class="badge minor">Trung bình — Nhẹ</span></div>
-    </div>
-  </div>
-  <div style="margin-top:3rem;text-align:center;color:var(--text-muted);font-size:.75rem;padding-bottom:2rem">
-    <p>Báo cáo được tạo: 2026-03-18 · Pipeline: figma-prd-handoff-v1</p>
-    <p>Design Data Layer: 5 component specs · 69 hướng dẫn UX · 60 luật UX</p>
-    <p>Co-opBank Mobile Banking — Module Chuyển tiền ngoài Co-opBank</p>
-  </div>
-</section>
+<!-- ═══ FOOTER — No dates, no pipeline refs ═══ -->
+<footer>
+  <p><strong>{{PRODUCT_NAME}}</strong> · {{MODULE_NAME}} · Đánh giá DDL-grounded</p>
+</footer>
 
-<div style="height:3rem"></div>
-
+<!-- ═══ ANIMATION SCRIPT ═══ -->
 <script>
-window.addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-window.innerHeight;const p=h>0?(window.scrollY/h)*100:0;document.getElementById('progressBar').style.width=p+'%'});
-const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')})},{threshold:.12});
-document.querySelectorAll('.scroll-section').forEach(s=>obs.observe(s));
-function animCounter(el,target,dur=1200){let s=null;const step=ts=>{if(!s)s=ts;const p=Math.min((ts-s)/dur,1);el.textContent=Math.floor(p*target);if(p<1)requestAnimationFrame(step)};requestAnimationFrame(step)}
-document.querySelectorAll('[data-counter]').forEach(el=>{const t=parseInt(el.dataset.counter);const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){animCounter(el,t);io.disconnect()}},{threshold:.5});io.observe(el)});
+document.addEventListener('DOMContentLoaded',()=>{
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})
+  },{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+});
 </script>
+
 </body>
 </html>
