@@ -1547,10 +1547,12 @@ def parse_proposals(report_path):
 # GAP HTML GENERATOR
 # ═══════════════════════════════════════════════════════════
 
-def generate_gap_html(gaps, screens, enriched_gaps=None):
+def generate_gap_html(gaps, screens, enriched_gaps=None, available_imgs=None, ui_base='ui'):
     """Generate gap section HTML grouped by screen."""
     if enriched_gaps is None:
         enriched_gaps = {}
+    if available_imgs is None:
+        available_imgs = set()
     if not gaps:
         return ''
     from collections import OrderedDict
@@ -1589,6 +1591,16 @@ def generate_gap_html(gaps, screens, enriched_gaps=None):
             gap_imgs = g.get('images', [])
             if not gap_imgs:
                 gap_imgs = re.findall(r'([\w-]+\.png)', ev_raw)[:2]  # type: ignore[index]
+            # Fallback: extract artboard IDs from evidence text and resolve to filenames
+            if not gap_imgs and available_imgs:
+                artboard_ids = re.findall(r'\b(\d{4,5})\b', ev_raw)
+                for aid in artboard_ids:
+                    for img_file in sorted(available_imgs):
+                        if aid in img_file:
+                            gap_imgs.append(img_file)
+                            break
+                    if len(gap_imgs) >= 2:
+                        break
             ev_img_ref = ', '.join(gap_imgs[:2]) if gap_imgs else ''
 
             ev_clean = ev_raw
@@ -1600,10 +1612,10 @@ def generate_gap_html(gaps, screens, enriched_gaps=None):
             if ev_clean: ev_clean = ev_clean[0].upper() + ev_clean[1:]  # type: ignore[index]
 
             img_citation = ''
-            if ev_img_ref:
+            if gap_imgs:
                 cite_parts = []
                 for gi in gap_imgs[:2]:
-                    cite_parts.append(f'<span class="img-cite" onclick="openLightbox(\'ui/{gi}\')">📸 {gi}</span>')
+                    cite_parts.append(f'<span class="img-cite" onclick="openLightbox(\'{ui_base}/{gi}\')">📸 {gi}</span>')
                 img_citation = ' ' + ' '.join(cite_parts)
 
             # Use enriched data if available, fallback to regex
@@ -2230,7 +2242,7 @@ def generate(args):
 {scorecard_items}  </div>
 </section>'''
 
-    gap_html = generate_gap_html(gaps, screens, enriched_gaps)
+    gap_html = generate_gap_html(gaps, screens, enriched_gaps, available_imgs=available_imgs, ui_base=ui_base)
 
     footer_html = f'''<footer>
   <p><strong>{e(product)}</strong> · {e(title)} · Đánh giá trải nghiệm người dùng dựa trên thông số thiết kế (DDL)</p>
