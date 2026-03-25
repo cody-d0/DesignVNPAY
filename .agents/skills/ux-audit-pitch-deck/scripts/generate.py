@@ -623,6 +623,16 @@ def parse_screen_specs(report_dir: Path) -> dict[str, Any]:
                                 wf_images.append(png.name)
                                 break
 
+        # Format D: extract from markdown image embeds ![caption](ui/xxx.png)
+        if not wf_images:
+            img_embeds = re.findall(r'!\[([^\]]*)\]\(ui/([\w.-]+\.png)\)', content)
+            if img_embeds:
+                for caption, img_file in img_embeds:
+                    wf_images.append(img_file)
+
+        # Also extract overlay/state info from image embed captions
+        img_embeds_all = re.findall(r'!\[([^\]]*)\]\(ui/([\w.-]+\.png)\)', content)
+
         # Extract screen states
         states: list[dict[str, Any]] = []
         # Format A: ### State N: Name
@@ -635,7 +645,7 @@ def parse_screen_specs(report_dir: Path) -> dict[str, Any]:
             states.append({'num': sm.group(1), 'name': sm.group(2).strip(), 'desc': sm.group(3).strip(), 'keywords': keywords})
 
         # Format B: extract from **Artboards:** line entries (non-overlay)
-        if not states and wf_images:
+        if not states and wf_images and not img_embeds_all:
             ab_m = re.search(r'\*\*Artboards?:?\*\*:?\s*(.+)', content, re.IGNORECASE)
             if ab_m:
                 entries = re.split(r'\s*\+\s*', ab_m.group(1))
@@ -647,6 +657,20 @@ def parse_screen_specs(report_dir: Path) -> dict[str, Any]:
                     if name_m:
                         keywords = _extract_keywords(name_m.group(2).strip() + ' ' + entry)
                         states.append({'num': str(idx + 1), 'name': name_m.group(2).strip(), 'desc': entry, 'keywords': keywords})
+
+        # Format E: extract states from image embed captions ![caption](ui/xxx.png)
+        if not states and img_embeds_all:
+            for caption, img_file in img_embeds_all:
+                caption_lower = caption.lower()
+                if 'overlay' in caption_lower or 'bottom sheet' in caption_lower or 'popup' in caption_lower:
+                    continue  # Skip overlays, handle below
+                keywords = _extract_keywords(caption)
+                states.append({
+                    'num': str(len(states) + 1),
+                    'name': caption,
+                    'desc': caption,
+                    'keywords': keywords,
+                })
 
         # Extract overlays
         overlays: list[dict[str, Any]] = []
@@ -683,6 +707,19 @@ def parse_screen_specs(report_dir: Path) -> dict[str, Any]:
                             ov_tag = name_m.group(3) or 'overlay'
                             keywords = _extract_keywords(ov_name + ' ' + ov_tag)
                             overlays.append({'num': str(len(overlays) + 1), 'name': f'{ov_name} ({ov_tag})', 'desc': entry, 'keywords': keywords})
+
+        # Format F: extract overlays from image embed captions
+        if not overlays and img_embeds_all:
+            for caption, img_file in img_embeds_all:
+                caption_lower = caption.lower()
+                if 'overlay' in caption_lower or 'bottom sheet' in caption_lower or 'popup' in caption_lower:
+                    keywords = _extract_keywords(caption)
+                    overlays.append({
+                        'num': str(len(overlays) + 1),
+                        'name': caption,
+                        'desc': caption,
+                        'keywords': keywords,
+                    })
 
         # Format D: **Overlay:** in Flow section
         flow_m = re.search(r'\*\*Overlay:\*\*\s*(.+)', content)
