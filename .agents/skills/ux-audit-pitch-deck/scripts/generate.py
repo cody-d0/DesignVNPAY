@@ -143,6 +143,17 @@ summary { font-size:11px; color:var(--text-muted); cursor:pointer; }
   color:#2563EB; border-radius:4px; font-weight:600; }
 .gap-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px; }
 .gap-full { grid-column:1/-1; }
+.img-cite { display:inline-block;background:#EFF6FF;color:#2563EB;font-size:10px;padding:1px 6px;border-radius:4px;font-family:var(--font-mono);margin-left:4px;cursor:pointer;transition:all .2s; }
+.img-cite:hover { background:#DBEAFE;transform:scale(1.05);box-shadow:0 1px 4px rgba(37,99,235,.25); }
+.phone-frame { cursor:pointer;transition:transform .2s; }
+.phone-frame:hover { transform:scale(1.03); }
+/* Lightbox */
+.lightbox-overlay { position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;flex-direction:column;opacity:0;transition:opacity .3s; }
+.lightbox-overlay.active { display:flex;opacity:1; }
+.lightbox-overlay img { max-width:90vw;max-height:80vh;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.5);object-fit:contain; }
+.lightbox-close { position:absolute;top:20px;right:28px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.12);border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s; }
+.lightbox-close:hover { background:rgba(255,255,255,.25); }
+.lightbox-caption { color:rgba(255,255,255,.8);font-size:13px;font-family:var(--font-mono);margin-top:12px;padding:4px 16px;background:rgba(255,255,255,.08);border-radius:8px; }
 .gap-label { font-size:11px; font-weight:600; color:var(--text-muted); margin-bottom:2px; }
 .gap-ref { font-family:var(--font-mono); font-size:10px; padding:1px 6px; background:#F5F3FF;
   color:#7C3AED; border-radius:4px; }
@@ -1590,7 +1601,10 @@ def generate_gap_html(gaps, screens, enriched_gaps=None):
 
             img_citation = ''
             if ev_img_ref:
-                img_citation = f' <span style="display:inline-block;background:#EFF6FF;color:#2563EB;font-size:10px;padding:1px 6px;border-radius:4px;font-family:monospace;margin-left:4px">📸 {ev_img_ref}</span>'
+                cite_parts = []
+                for gi in gap_imgs[:2]:
+                    cite_parts.append(f'<span class="img-cite" onclick="openLightbox(\'ui/{gi}\')">📸 {gi}</span>')
+                img_citation = ' ' + ' '.join(cite_parts)
 
             # Use enriched data if available, fallback to regex
             # Try composite key first, then sequential index  
@@ -2152,7 +2166,7 @@ def generate(args):
             findings_html += f'''    <div class="finding-card reveal">
       <div class="finding-accent {sev}"></div>
       <div class="card-layout">
-        <div class="card-visual"><div class="phone-frame"><img src="{img_src}" alt="{e(ovl)}" loading="lazy"></div><div class="{ovl_class}">⚠️ {e(ovl)}</div></div>
+        <div class="card-visual"><div class="phone-frame" onclick="openLightbox('{img_src}')"><img src="{img_src}" alt="{e(ovl)}" loading="lazy"></div><div class="{ovl_class}">⚠️ {e(ovl)}</div></div>
         <div class="card-info">
           <div class="card-top"><span class="card-id">{prop["id"]}</span><span class="badge {sev}">{_sev_vi}</span></div>
           <h3>{e(card_title)}</h3>
@@ -2222,12 +2236,37 @@ def generate(args):
   <p><strong>{e(product)}</strong> · {e(title)} · Đánh giá trải nghiệm người dùng dựa trên thông số thiết kế (DDL)</p>
 </footer>'''
 
-    script_html = '''<script>
+    script_html = '''
+<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox(event)" aria-label="Close">&times;</button>
+  <img id="lightbox-img" src="" alt="Evidence screenshot">
+  <div class="lightbox-caption" id="lightbox-caption"></div>
+</div>
+<script>
 document.addEventListener('DOMContentLoaded',()=>{
   const obs=new IntersectionObserver((entries)=>{
     entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})
   },{threshold:0.12});
   document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+});
+
+function openLightbox(src){
+  const lb=document.getElementById('lightbox');
+  const img=document.getElementById('lightbox-img');
+  const cap=document.getElementById('lightbox-caption');
+  img.src=src;
+  cap.textContent=src.split('/').pop();
+  lb.classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(e){
+  if(e.target.tagName==='IMG')return;
+  const lb=document.getElementById('lightbox');
+  lb.classList.remove('active');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeLightbox({target:{tagName:''}});
 });
 </script>'''
 
