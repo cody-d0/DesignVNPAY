@@ -906,8 +906,15 @@ def augment_uxp_hien_trang(
     overlays = spec.get('overlays', [])
     artboard_count = len(wf_images)
 
-    # Extract check references from Gap ref
-    check_refs = re.findall(r'Check\s*#(\d+)\s*\((SCR-[\w-]+)\)', gap_ref)
+    # Extract check references from Gap ref (multi-check aware)
+    check_refs: list[tuple[str, str]] = []
+    multi_m = re.search(r'Check\s+((?:#\d+(?:\s*,\s*)?)+)\s*\((SCR-[\w-]+)\)', gap_ref)
+    if multi_m:
+        scr_id_ref = multi_m.group(2)
+        all_nums = re.findall(r'#(\d+)', multi_m.group(1))
+        check_refs = [(n, scr_id_ref) for n in all_nums]
+    else:
+        check_refs = re.findall(r'Check\s*#(\d+)\s*\((SCR-[\w-]+)\)', gap_ref)
 
     # Determine context: is this check about a state or overlay?
     hien_lower = vn_normalize(hien_trang.lower())
@@ -1787,15 +1794,21 @@ def generate(args):
             if img_name and img_name in available_imgs:  # type: ignore[operator]
                 img_src = f'{ui_base}/{img_name}'
             # Tier 1.5: Screen MD-based check→image mapping (authoritative)
-            # Uses Gap ref pattern "Check #N (SCR-XXX)" → parsed from screen .md
+            # Uses Gap ref "Check #N1, #N2 (SCR-XXX)" → parsed from screen .md
             if not img_src and check_image_map:
                 gap_ref = prop.get('violation', '') or ''
-                # Extract all Check #N (SCR-XXX-NNN) references
-                check_refs = re.findall(r'Check\s*#(\d+)\s*\((SCR-[\w-]+)\)', gap_ref)
-                if not check_refs:
-                    # Also search in _gap_ref field or screen field
-                    combined = gap_ref + ' ' + (prop.get('screen', '') or '')
-                    check_refs = re.findall(r'Check\s*#(\d+)\s*\((SCR-[\w-]+)\)', combined)
+                combined_ref = gap_ref + ' ' + (prop.get('screen', '') or '')
+                # 2-step: extract SCR-ID + all check numbers from multi-check format
+                check_refs: list[tuple[str, str]] = []
+                # Handle "Check #1, #2, #3 (SCR-XXX)" — extract SCR-ID, then all #N
+                multi_m = re.search(r'Check\s+((?:#\d+(?:\s*,\s*)?)+)\s*\((SCR-[\w-]+)\)', combined_ref)
+                if multi_m:
+                    scr_id_ref = multi_m.group(2)
+                    all_nums = re.findall(r'#(\d+)', multi_m.group(1))
+                    check_refs = [(n, scr_id_ref) for n in all_nums]
+                else:
+                    # Fallback: single "Check #N (SCR-XXX)"
+                    check_refs = re.findall(r'Check\s*#(\d+)\s*\((SCR-[\w-]+)\)', combined_ref)
                 for check_num, check_scr_id in check_refs:
                     ck = f'Check #{check_num} ({check_scr_id})'
                     if ck in check_image_map:
