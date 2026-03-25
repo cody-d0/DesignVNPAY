@@ -818,27 +818,28 @@ def build_check_image_map(
             img_kws.extend([p for p in parts if len(p) > 2])  # type: ignore[arg-type]
             img_keyword_map[img] = img_kws
 
-        # Parse check table rows
+        # Parse check table rows — capture full row for evidence column
         check_rows = re.findall(
-            r'^\|\s*(\d+)\s*\|\s*(.+?)\s*\|\s*(\w+)',
+            r'^\|\s*(\d+)\s*\|\s*(.+?)\s*\|\s*(\w+)(.*)$',
             section, re.MULTILINE
         )
 
-        for check_num_str, check_content, _category in check_rows:
+        for check_num_str, check_content, _category, rest_of_row in check_rows:
             check_num = int(check_num_str)
             check_key = f'Check #{check_num} ({scr_id})'
+            # Combine check content + evidence columns for richer matching
+            full_check_text = check_content + ' ' + rest_of_row.replace('|', ' ')
             check_lower = vn_normalize(check_content.lower())
             check_keywords = _extract_keywords(check_content)
 
             best_img = None
             best_score = 0
 
-            # Strategy 0: Direct artboard ID match from check content
-            # If check mentions "(7203)" or "artboard 7100", map directly to *{id}*.png
-            artboard_ids_in_check = re.findall(r'(?:\(|artboard\s+|ảnh\s+)(\d{4,5})', check_lower)
+            # Strategy 0: Direct artboard ID match from check + evidence
+            # If check/evidence mentions "(7203)" or "Figma 7100", map to *{id}*.png
+            artboard_ids_in_check = re.findall(r'(?:\(|artboard\s+|Figma\s+)(\d{4,5})', full_check_text)
             if not artboard_ids_in_check:
-                # Also match "bottom sheet (NNNN)" or standalone IDs like "7203"
-                artboard_ids_in_check = re.findall(r'(\d{4,5})', check_content)
+                artboard_ids_in_check = re.findall(r'\b(\d{4,5})\b', full_check_text)
             for aid in artboard_ids_in_check:
                 for img in wf_images:
                     if aid in img:
@@ -1890,7 +1891,10 @@ def generate(args):
                         break
             # Tier 1.5: Screen MD-based check→image mapping (authoritative)
             # Uses Gap ref "Check #N1, #N2 (SCR-XXX)" → parsed from screen .md
-            if not img_src and check_image_map:
+            # NOTE: This can OVERRIDE Tier 1 (evidence_img) because check→image
+            # mapping is derived from screen MDs which are more accurate than
+            # evidence_img parsed from report text (which can be wrong)
+            if check_image_map:
                 gap_ref = prop.get('violation', '') or ''
                 combined_ref = gap_ref + ' ' + (prop.get('screen', '') or '')
                 # 2-step: extract SCR-ID + all check numbers from multi-check format
@@ -1904,13 +1908,38 @@ def generate(args):
                 else:
                     # Fallback: single "Check #N (SCR-XXX)"
                     check_refs = re.findall(r'Check\s*#(\d+)\s*\((SCR-[\w-]+)\)', combined_ref)
+                # Fallback: if Check #N has no (SCR-XXX), infer from screen field
+                if not check_refs:
+                    bare_nums = re.findall(r'Check\s*#(\d+)', combined_ref)
+                    if bare_nums and screen_specs:
+                        # Find best matching SCR-ID from screen field (score-based)
+                        screen_norm = vn_normalize(prop.get('screen', ''))
+                        screen_words = [w for w in screen_norm.split() if len(w) > 3]
+                        best_scr_id = None
+                        best_match_count = 0
+                        for cand_scr_id, cand_spec in screen_specs.items():
+                            src_norm = vn_normalize(cand_spec.get('source', ''))
+                            match_count = sum(1 for w in screen_words if w in src_norm)
+                            if match_count > best_match_count:
+                                best_match_count = match_count
+                                best_scr_id = cand_scr_id
+                        if best_scr_id and best_match_count > 0:
+                            check_refs = [(n, best_scr_id) for n in bare_nums]
+                        # If still no match, try all SCR-IDs
+                        if not check_refs:
+                            for n in bare_nums:
+                                for cand_scr_id in screen_specs:
+                                    ck = f'Check #{n} ({cand_scr_id})'
+                                    if ck in check_image_map:
+                                        check_refs.append((n, cand_scr_id))
+                                        break
                 for check_num, check_scr_id in check_refs:
                     ck = f'Check #{check_num} ({check_scr_id})'
                     if ck in check_image_map:
                         mapped_img = check_image_map[ck]
-                        if mapped_img not in used_images_global or not img_src:  # type: ignore[operator]
-                            img_src = f'{ui_base}/{mapped_img}'
-                            break
+                        # Always override — check→image map (from screen MDs) is authoritative
+                        img_src = f'{ui_base}/{mapped_img}'
+                        break
             # Tier 2: all_imgs from cross-reference
             if not img_src and prop.get('all_imgs'):
                 for c in prop['all_imgs']:
