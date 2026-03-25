@@ -592,74 +592,104 @@ def parse_screen_specs(report_dir: Path) -> dict[str, Any]:
         except (UnicodeDecodeError, OSError):
             continue
 
-        # Extract screen_id
-        scr_m = re.search(r'\*\*screen_id\*\*:\s*(SCR-[\w-]+)', content)
+        # Extract screen_id — supports: **screen_id**: / **Screen ID:** / # SCR-XXX / filename
+        scr_m = re.search(r'\*\*(?:screen_id|Screen\s*ID)\*\*:\s*(SCR-[\w-]+)', content, re.IGNORECASE)
         if not scr_m:
-            # Fallback: from header line
             scr_m = re.search(r'^#\s+(SCR-[\w-]+)', content, re.MULTILINE)
         if not scr_m:
+            fn_m = re.search(r'(SCR-[\w-]+)', md_file.stem, re.IGNORECASE)
+            if fn_m:
+                scr_m = fn_m
+        if not scr_m:
             continue
-        scr_id = scr_m.group(1)
+        scr_id = scr_m.group(1).upper() if scr_m.group(1)[:3].lower() == 'scr' else scr_m.group(1)
 
-        # Extract wireframe_images (ordered list)
+        # Extract wireframe_images — supports: **wireframe_images**: / **Wireframe Images:**
         wf_images: list[str] = []
-        wf_m = re.search(r'\*\*wireframe_images\*\*:\s*(.+)', content)
+        wf_m = re.search(r'\*\*(?:wireframe_images|Wireframe\s*Images):?\*\*:?\s*(.+)', content, re.IGNORECASE)
         if wf_m:
-            # Parse markdown links: [`ui/name.png`](ui/name.png)
-            wf_images = re.findall(r'ui/([\w.-]+\.png)', wf_m.group(1))
+            wf_images = re.findall(r'(?:ui/)([\w.-]+\.png)', wf_m.group(1))
 
-        # Extract screen states with descriptions
+        # Fallback: extract from **Artboards:** line (e.g. "7201 Name (main) + 7204 Name (overlay)")
+        if not wf_images:
+            ab_m = re.search(r'\*\*Artboards?:?\*\*:?\s*(.+)', content, re.IGNORECASE)
+            if ab_m:
+                artboard_ids = re.findall(r'(\d{4,5})', ab_m.group(1))
+                ui_dir = report_dir / 'ui'
+                if ui_dir.exists():
+                    for png in sorted(ui_dir.glob('*.png')):
+                        for aid in artboard_ids:
+                            if aid in png.name:
+                                wf_images.append(png.name)
+                                break
+
+        # Extract screen states
         states: list[dict[str, Any]] = []
+        # Format A: ### State N: Name
         state_pattern = re.compile(
             r'###\s+State\s+(\d+):\s*(.+?)(?:\n|$)([\s\S]*?)(?=###\s+|---|\n##\s+|$)',
             re.MULTILINE
         )
         for sm in state_pattern.finditer(content):
-            state_num = sm.group(1)
-            state_name = sm.group(2).strip()
-            state_desc = sm.group(3).strip()
-            # Extract keywords from state name + description
-            keywords = _extract_keywords(state_name + ' ' + state_desc)
-            states.append({
-                'num': state_num,
-                'name': state_name,
-                'desc': state_desc,
-                'keywords': keywords,
-            })
+            keywords = _extract_keywords(sm.group(2).strip() + ' ' + sm.group(3).strip())
+            states.append({'num': sm.group(1), 'name': sm.group(2).strip(), 'desc': sm.group(3).strip(), 'keywords': keywords})
+
+        # Format B: extract from **Artboards:** line entries (non-overlay)
+        if not states and wf_images:
+            ab_m = re.search(r'\*\*Artboards?:?\*\*:?\s*(.+)', content, re.IGNORECASE)
+            if ab_m:
+                entries = re.split(r'\s*\+\s*', ab_m.group(1))
+                for idx, entry in enumerate(entries):
+                    entry = entry.strip()
+                    if not entry or 'overlay' in entry.lower():
+                        continue
+                    name_m = re.match(r'(\d{4,5})\s+(.+?)(?:\s*\(([^)]+)\))?\s*$', entry)
+                    if name_m:
+                        keywords = _extract_keywords(name_m.group(2).strip() + ' ' + entry)
+                        states.append({'num': str(idx + 1), 'name': name_m.group(2).strip(), 'desc': entry, 'keywords': keywords})
 
         # Extract overlays
         overlays: list[dict[str, Any]] = []
+        # Format A: ### Overlay N: Name
         overlay_pattern = re.compile(
             r'###\s+Overlay\s*(\d*):\s*(.+?)(?:\n|$)([\s\S]*?)(?=###\s+|---|\n##\s+|$)',
             re.MULTILINE
         )
         for om in overlay_pattern.finditer(content):
             ov_num = om.group(1) or '1'
-            ov_name = om.group(2).strip()
-            ov_desc = om.group(3).strip()
-            keywords = _extract_keywords(ov_name + ' ' + ov_desc)
-            overlays.append({
-                'num': ov_num,
-                'name': ov_name,
-                'desc': ov_desc,
-                'keywords': keywords,
-            })
+            keywords = _extract_keywords(om.group(2).strip() + ' ' + om.group(3).strip())
+            overlays.append({'num': ov_num, 'name': om.group(2).strip(), 'desc': om.group(3).strip(), 'keywords': keywords})
 
-        # Also check for "## Overlay:" format (without ###)
+        # Format B: ## Overlay:
         overlay2_pattern = re.compile(
             r'##\s+Overlay:\s*(.+?)(?:\n|$)([\s\S]*?)(?=\n##\s+|---\n\n##|$)',
             re.MULTILINE
         )
         for om in overlay2_pattern.finditer(content):
-            ov_name = om.group(1).strip()
-            ov_desc = om.group(2).strip()
-            keywords = _extract_keywords(ov_name + ' ' + ov_desc)
-            overlays.append({
-                'num': str(len(overlays) + 1),
-                'name': ov_name,
-                'desc': ov_desc,
-                'keywords': keywords,
-            })
+            keywords = _extract_keywords(om.group(1).strip() + ' ' + om.group(2).strip())
+            overlays.append({'num': str(len(overlays) + 1), 'name': om.group(1).strip(), 'desc': om.group(2).strip(), 'keywords': keywords})
+
+        # Format C: from **Artboards:** overlay entries
+        if not overlays:
+            ab_m = re.search(r'\*\*Artboards?:?\*\*:?\s*(.+)', content, re.IGNORECASE)
+            if ab_m:
+                entries = re.split(r'\s*\+\s*', ab_m.group(1))
+                for entry in entries:
+                    entry = entry.strip()
+                    if 'overlay' in entry.lower():
+                        name_m = re.match(r'(\d{4,5})\s+(.+?)(?:\s*\(([^)]+)\))?\s*$', entry)
+                        if name_m:
+                            ov_name = name_m.group(2).strip()
+                            ov_tag = name_m.group(3) or 'overlay'
+                            keywords = _extract_keywords(ov_name + ' ' + ov_tag)
+                            overlays.append({'num': str(len(overlays) + 1), 'name': f'{ov_name} ({ov_tag})', 'desc': entry, 'keywords': keywords})
+
+        # Format D: **Overlay:** in Flow section
+        flow_m = re.search(r'\*\*Overlay:\*\*\s*(.+)', content)
+        if flow_m and not overlays:
+            ov_text = flow_m.group(1).strip()
+            keywords = _extract_keywords(ov_text)
+            overlays.append({'num': '1', 'name': ov_text, 'desc': ov_text, 'keywords': keywords})
 
         specs[scr_id] = {
             'wireframe_images': wf_images,
@@ -667,6 +697,7 @@ def parse_screen_specs(report_dir: Path) -> dict[str, Any]:
             'overlays': overlays,
             'source': md_file.name,
         }
+
 
     return specs
 
