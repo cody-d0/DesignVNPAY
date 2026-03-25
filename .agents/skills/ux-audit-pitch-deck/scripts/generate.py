@@ -396,12 +396,23 @@ def parse_gaps(report_path):
             })
             continue
 
-        # Gap row in table — both hard (❌) and soft (⚠️) gaps
-        if ('❌ Gap' in line or '⚠️ Gap' in line) and '|' in line:
+        # Gap row in table — supports multiple formats:
+        #   Format 1 (emoji): ...| ❌ Gap |...   or  ...| ⚠️ Gap |...
+        #   Format 2 (plain): ...| gap |  (case-insensitive, last column)
+        _is_gap_row = False
+        if '|' in line:
+            if '❌ Gap' in line or '⚠️ Gap' in line:
+                _is_gap_row = True
+            elif re.search(r'\|\s*gap\s*\|\s*$', line, re.IGNORECASE):
+                _is_gap_row = True
+        if _is_gap_row:
             cols = [c.strip() for c in line.split('|')]
             cols = [c for c in cols if c]
+            # Remove trailing "gap" / "Gap" status column if present
+            if cols and cols[-1].lower() in ('gap', '❌ gap', '⚠️ gap'):
+                cols = cols[:-1]
             if len(cols) >= 5:
-                ev_text = cols[5] if len(cols) > 5 else ''
+                ev_text = cols[4] if len(cols) > 4 else ''
                 ev_imgs = re.findall(r'([\w-]+\.png)', ev_text)
                 if not ev_imgs:
                     ev_imgs = screen_images.get(current_screen, [])
@@ -1191,8 +1202,9 @@ def parse_proposals(report_path):
         if wf:
             current_wireframe_imgs = re.findall(r'([\w-]+\.png)', wf.group(1))
             continue
-        # Parse checklist rows — both formats
-        if '|' in line and ('Pass' in line or 'Gap' in line):
+        # Parse checklist rows — both emoji and plain-text formats
+        _line_lower = line.lower()
+        if '|' in line and ('pass' in _line_lower or 'gap' in _line_lower):
             cols = [c.strip() for c in line.split('|')]
             cols = [c for c in cols if c]
             if len(cols) >= 5:
@@ -1547,7 +1559,7 @@ def parse_proposals(report_path):
 # GAP HTML GENERATOR
 # ═══════════════════════════════════════════════════════════
 
-def generate_gap_html(gaps, screens, enriched_gaps=None, available_imgs=None, ui_base='ui'):
+def generate_gap_html(gaps, screens, enriched_gaps=None, available_imgs=None, ui_base='ui', check_image_map=None):
     """Generate gap section HTML grouped by screen."""
     if enriched_gaps is None:
         enriched_gaps = {}
@@ -1601,6 +1613,14 @@ def generate_gap_html(gaps, screens, enriched_gaps=None, available_imgs=None, ui
                             break
                     if len(gap_imgs) >= 2:
                         break
+            # Fallback: use check_image_map — resolve gap's check # + screen to image
+            if not gap_imgs and check_image_map:
+                gap_num = g.get('num', '')
+                gap_scr = g.get('screen', '')
+                if gap_num and gap_scr:
+                    ck = f'Check #{gap_num} ({gap_scr})'
+                    if ck in check_image_map:
+                        gap_imgs = [check_image_map[ck]]
             ev_img_ref = ', '.join(gap_imgs[:2]) if gap_imgs else ''
 
             ev_clean = ev_raw
@@ -2242,7 +2262,7 @@ def generate(args):
 {scorecard_items}  </div>
 </section>'''
 
-    gap_html = generate_gap_html(gaps, screens, enriched_gaps, available_imgs=available_imgs, ui_base=ui_base)
+    gap_html = generate_gap_html(gaps, screens, enriched_gaps, available_imgs=available_imgs, ui_base=ui_base, check_image_map=check_image_map)
 
     footer_html = f'''<footer>
   <p><strong>{e(product)}</strong> · {e(title)} · Đánh giá trải nghiệm người dùng dựa trên thông số thiết kế (DDL)</p>
