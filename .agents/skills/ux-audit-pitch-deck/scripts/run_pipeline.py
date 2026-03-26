@@ -65,11 +65,31 @@ def process_module(report_path: Path, force: bool = False, verify: bool = False)
         reason_result = json.loads(stdout) if stdout.strip() else {}
     except json.JSONDecodeError:
         reason_result = {'error': stdout[:200]}
-    results['steps']['reason'] = reason_result
+    results['steps']['reason_uxps'] = reason_result
     if not ok:
         results['success'] = False
 
-    # Step 2: Generate HTML
+    # Step 2: Reason Gaps (heuristic resolution + source links)
+    gap_cmd = [
+        sys.executable,
+        str(SCRIPT_DIR / 'reason_gaps.py'),
+        '--report', str(report_path),
+    ]
+    if force:
+        gap_cmd.append('--force')
+    if verify:
+        gap_cmd.append('--verify')
+
+    ok, stdout = run_step('Reasoning Gaps', gap_cmd)
+    try:
+        gap_result = json.loads(stdout) if stdout.strip() else {}
+    except json.JSONDecodeError:
+        gap_result = {'error': stdout[:200]}
+    results['steps']['reason_gaps'] = gap_result
+    if not ok:
+        results['success'] = False
+
+    # Step 3: Generate HTML
     gen_cmd = [
         sys.executable,
         str(SCRIPT_DIR / 'generate.py'),

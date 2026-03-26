@@ -1666,6 +1666,28 @@ def generate_gap_html(gaps, screens, enriched_gaps=None, available_imgs=None, ui
           <div style="color:var(--text-muted);font-size:12px;font-style:italic">{ddl_evidence}</div>
         </div>'''
 
+            # Gap source links (from reason_gaps.py enrichment)
+            gap_sources = eg.get('heuristic_sources', [])
+            gap_sources_html = ''
+            if gap_sources:
+                src_items = []
+                for src in gap_sources[:3]:
+                    s_name = src.get('name', '')
+                    s_url = src.get('url', '')
+                    s_quote = src.get('quote', '')
+                    if s_url:
+                        src_items.append(f'<li><a href="{s_url}" target="_blank" rel="noopener">{s_name}</a> — <em>"{s_quote}"</em></li>')
+                    else:
+                        src_items.append(f'<li>{s_name} — <em>"{s_quote}"</em></li>')
+                gap_sources_html = f'''\n        <div class="gap-full">
+          <details style="margin-top:4px">
+            <summary style="cursor:pointer;font-size:12px;color:var(--text-muted)">📚 Tham chiếu kỹ thuật ({len(gap_sources)} nguồn)</summary>
+            <ul class="ref-sources" style="margin:6px 0 0;padding-left:18px;font-size:11.5px">
+              {''.join(src_items)}
+            </ul>
+          </details>
+        </div>'''
+
             # Gap hiện trạng section (from enriched data)
             hien_trang_section = ''
             if gap_hien_trang:
@@ -1673,6 +1695,14 @@ def generate_gap_html(gaps, screens, enriched_gaps=None, available_imgs=None, ui
           <div class="gap-label">📝 Hiện trạng</div>
           <div style="color:var(--text-secondary)">{gap_hien_trang}</div>
         </div>'''
+
+            # Use resolved heuristic name if available
+            resolved_h_name = eg.get('heuristic_name', '')
+            if resolved_h_name:
+                h_tag = translate_label(resolved_h_name)
+                h_desc = translate_label(resolved_h_name)
+            else:
+                h_desc = heuristic
 
             body += f'''    <div class="gap-card reveal">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
@@ -1687,12 +1717,12 @@ def generate_gap_html(gaps, screens, enriched_gaps=None, available_imgs=None, ui
         </div>
         <div>
           <div class="gap-label">📐 {h_tag}</div>
-          <div style="color:var(--text-secondary)">{heuristic}</div>
+          <div style="color:var(--text-secondary)">{h_desc}</div>
         </div>
         <div class="gap-full">
           <div class="gap-label">🔍 Bằng chứng &amp; Phân tích{img_citation}</div>
           <div style="color:var(--text-secondary)">{ev_clean}</div>
-        </div>{ddl_badge}
+        </div>{ddl_badge}{gap_sources_html}
       </div>
     </div>
 '''
