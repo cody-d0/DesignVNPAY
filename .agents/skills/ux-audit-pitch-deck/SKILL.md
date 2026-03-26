@@ -190,3 +190,53 @@ This provides **Tier 1.5** resolution (after explicit evidence_img, before cross
 | **Already detailed** (≥ 100 chars, Format A/B) | Preserved unchanged |
 
 False positive prevention: requires ≥2 keyword overlap for overlay matching, or explicit overlay terms (`\boverlay\b`, `\botp\b`, `\bpin\b.*auth`) in the text.
+
+## UXP Deep Reasoning Pipeline
+
+`reason_uxps.py` enriches each UXP card's 5 sections with contextual reasoning from source data:
+
+| Block | Source | Output |
+|---|---|---|
+| **Hiện trạng** | Screen MDs + artboard IDs | Detailed current state with artboard evidence |
+| **Tác động** | Severity + DDL + domain context | Domain-aware user impact (banking trust, etc.) |
+| **Nguyên tắc** | Heuristic field + DDL + problem text | Official name + WHY violated + quote |
+| **Đề xuất** | Proposal field | Structured bullet points |
+| **Tham chiếu** | heuristics_db.json + WCAG + DDL | Clickable links to nngroup.com, lawsofux.com, WCAG |
+
+```bash
+# Single module
+python3 {skill}/scripts/reason_uxps.py --report path/to/ux-review-report.md --verify
+
+# Re-reason (override existing data)
+python3 {skill}/scripts/reason_uxps.py --report path/to/ux-review-report.md --force --verify
+```
+
+Heuristic auto-matching strategy (in priority order):
+1. **Direct Nielsen #N** match in heuristic text or DDL ref
+2. **UXG code mapping** (UXG-165→#1, UXG-257→#9, etc.)
+3. **Keyword scoring** across Nielsen + WCAG + Laws of UX
+4. **Laws of UX fallback** (Fitts, Hick, Miller, Jakob)
+
+Data is saved to `enriched-data.json` under the `uxps` key as a dict: `{UXP-ID → 5-block data}`.
+
+### Offline Citation DB
+
+`heuristics_db.json` contains all 10 Nielsen heuristics, 4 WCAG criteria, 5 Laws of UX, and banking domain principles — each with official URLs and quotes. No API calls needed.
+
+## Full Pipeline Runner
+
+`run_pipeline.py` chains all steps: **Reasoning → HTML Generation → Audit**
+
+```bash
+# Single module
+python3 {skill}/scripts/run_pipeline.py --report path/to/ux-review-report.md --verify
+
+# Batch (all modules)
+python3 {skill}/scripts/run_pipeline.py --base path/to/project/final/ --verify
+
+# Force re-reason all
+python3 {skill}/scripts/run_pipeline.py --base path/to/project/final/ --force --verify
+```
+
+Outputs JSON summary to stdout with per-module results.
+
