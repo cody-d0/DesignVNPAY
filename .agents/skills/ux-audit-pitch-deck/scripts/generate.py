@@ -134,6 +134,11 @@ p { font-size:14px; color:var(--text-secondary); }
 details { margin-top:8px; }
 summary { font-size:11px; color:var(--text-muted); cursor:pointer; }
 .detail-content { font-size:11px; color:var(--text-muted); padding:6px 0; font-family:var(--font-mono); }
+.ref-sources { list-style:none; padding:8px 0 0; margin:8px 0 0; border-top:1px solid rgba(127,127,127,.15); }
+.ref-sources li { font-size:10px; padding:3px 0; color:var(--text-muted); }
+.ref-sources a { color:var(--accent); text-decoration:none; font-weight:600; }
+.ref-sources a:hover { text-decoration:underline; }
+.ref-sources em { font-style:italic; opacity:.8; }
 .gap-c { color:var(--sev-critical-fg); }
 .gap-card { background:var(--surface); border:1px solid var(--border); border-radius:10px;
   padding:16px; margin-bottom:12px; }
@@ -1814,9 +1819,19 @@ def generate(args):
         # Sequential fallback
         enriched_gaps_seq.append(enr_data)
     enriched_uxps = {}  # UXP-ID → enriched data
+    # Layer 1 (base): old format — proposals list (items with 'id' field)
     for ep in enriched.get('proposals', []):
         enriched_uxps[ep.get('id', '')] = ep
-    enriched_cats = enriched.get('category_scores', {})
+    # Layer 2 (override): new format — uxps dict with AI-reasoned data
+    # This MUST come after proposals to override shallow data with deep reasoning
+    _uxps_raw = enriched.get('uxps', {})
+    if isinstance(_uxps_raw, dict) and _uxps_raw:
+        for uid, udata in _uxps_raw.items():
+            if uid in enriched_uxps:
+                enriched_uxps[uid].update(udata)  # merge, reasoned wins
+            else:
+                enriched_uxps[uid] = udata
+    enriched_cats = enriched.get('category_scores', enriched.get('categories', {}))
 
     # ── Build sections ──
     nav_html = '<nav class="nav">\n  <a href="#summary">Tổng quan</a>\n  <a href="#method">Phương pháp</a>\n  <a href="#findings">Phát hiện</a>\n  <a href="#scorecard">Scorecard</a>\n'
@@ -2182,43 +2197,84 @@ def generate(args):
             if prop['ux_law'] and prop['ux_law'] != '—':
                 tech_ref += f", Law:{prop['ux_law']}"
 
-            # ── 4-Block Card: Hiện trạng → Tác động → Heuristic → Đề xuất ──
+            # ── 5-Block Card: Hiện trạng → Tác động → Nguyên tắc → Đề xuất → Tham chiếu ──
 
-            # Block 1: Hiện trạng — from enriched data or parsed field
+            # Check for AI-reasoned UXP data from enriched-data.json
             uxp_enr = enriched_uxps.get(prop['id'], {})
-            hien_trang_text = prop.get('hiện_trạng', card_title)
-            if not hien_trang_text or hien_trang_text == card_title:
-                hien_trang_text = card_title
+            _has_reasoned = bool(uxp_enr.get('hiện_trạng'))
 
-            # Augment shallow hiện trạng with screen MD context
-            if screen_specs:
-                hien_trang_text = augment_uxp_hien_trang(
-                    hien_trang_text, prop, screen_specs, check_content_map
-                )
+            # Block 1: Hiện trạng — reasoned > augmented > parsed
+            if _has_reasoned:
+                hien_trang_text = uxp_enr['hiện_trạng']
+            else:
+                hien_trang_text = prop.get('hiện_trạng', card_title)
+                if not hien_trang_text or hien_trang_text == card_title:
+                    hien_trang_text = card_title
+                if screen_specs:
+                    hien_trang_text = augment_uxp_hien_trang(
+                        hien_trang_text, prop, screen_specs, check_content_map
+                    )
 
-            # Block 2: Tác động — enriched impact or inferred
-            tac_dong_text = impact
+            # Block 2: Tác động — reasoned > enriched > inferred
+            if _has_reasoned and uxp_enr.get('tác_động'):
+                tac_dong_text = uxp_enr['tác_động']
+            else:
+                tac_dong_text = impact
 
-            # Block 3: Heuristic vi phạm — full name + description from enriched data
-            heur_full = heur
-            heur_details = uxp_enr.get('heuristics', [])
-            if heur_details:
-                h0 = heur_details[0]
-                h_name = h0.get('name', '')
-                h_desc = h0.get('desc', '')
-                if h_name and h_desc:
-                    heur_full = f'{h_name} — {h_desc}'
-                elif h_name:
-                    heur_full = h_name
+            # Block 3: Nguyên tắc bị vi phạm — reasoned > heuristic lookup > parsed
+            if _has_reasoned and isinstance(uxp_enr.get('nguyên_tắc'), dict):
+                nt = uxp_enr['nguyên_tắc']
+                heur_full = f"{nt.get('name', '')} — {nt.get('violation', '')}"
+            else:
+                heur_full = heur
+                heur_details = uxp_enr.get('heuristics', [])
+                if heur_details:
+                    h0 = heur_details[0]
+                    h_name = h0.get('name', '')
+                    h_desc = h0.get('desc', '')
+                    if h_name and h_desc:
+                        heur_full = f'{h_name} — {h_desc}'
+                    elif h_name:
+                        heur_full = h_name
 
-            # Block 4: Đề xuất cải thiện — with explicit label
+            # Block 4: Đề xuất cải thiện — reasoned > parsed
             proposed = ''
-            if prop['giải_pháp']:
+            if _has_reasoned and uxp_enr.get('đề_xuất'):
+                items = ''.join(f'<li>{e(s)}</li>' for s in uxp_enr['đề_xuất'])
+                proposed = f'''
+          <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+            <div class="proposed-box"><ul>{items}</ul></div>
+          </div>'''
+            elif prop['giải_pháp']:
                 items = ''.join(f'<li>{e(s)}</li>' for s in prop['giải_pháp'])
                 proposed = f'''
           <div class="finding-section"><h4>Đề xuất cải thiện</h4>
             <div class="proposed-box"><ul>{items}</ul></div>
           </div>'''
+
+            # Block 5: Tham chiếu kỹ thuật — reasoned (with source links) > raw DDL
+            if _has_reasoned and isinstance(uxp_enr.get('tham_chiếu'), dict):
+                tc = uxp_enr['tham_chiếu']
+                tc_text = tc.get('text', '')
+                tc_sources = tc.get('sources', [])
+                source_links = ''
+                if tc_sources:
+                    link_items = []
+                    for src in tc_sources:
+                        name = src.get('name', '')
+                        url = src.get('url', '')
+                        quote = src.get('quote', '')
+                        if url:
+                            link_items.append(
+                                f'<li><a href="{e(url)}" target="_blank" rel="noopener">{e(name)}</a>'
+                                + (f' — <em>"{e(quote[:120])}"</em>' if quote else '')
+                                + '</li>'
+                            )
+                    if link_items:
+                        source_links = f'<ul class="ref-sources">{"".join(link_items)}</ul>'
+                tech_ref_html = f'<div class="detail-content">{e(tc_text)}{source_links}</div>'
+            else:
+                tech_ref_html = f'<div class="detail-content">{e(tech_ref)}</div>'
 
             _sev_vi = {'critical': 'Nghiêm trọng', 'major': 'Quan trọng', 'minor': 'Cải thiện'}.get(sev, sev)
 
@@ -2233,7 +2289,7 @@ def generate(args):
           <div class="finding-section"><h4>Tác động</h4><p>{e(tac_dong_text)}</p></div>
           <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>{e(heur_full)}</p></div>{proposed}
           <div class="finding-tags"><span class="card-tag">{e(prop["screen"])}</span></div>
-          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">{e(tech_ref)}</div></details>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary>{tech_ref_html}</details>
         </div>
       </div>
     </div>\n'''
