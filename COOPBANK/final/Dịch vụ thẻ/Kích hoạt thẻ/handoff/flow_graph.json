@@ -1,0 +1,78 @@
+{
+  "edges": [
+    {
+      "from_screen": "ENTRY",
+      "to_screen": "SCR-KHT-001",
+      "trigger": "Kích hoạt thẻ button",
+      "trigger_label": "Kích hoạt thẻ",
+      "type": "navigation",
+      "evidence": "danh-sach-the-21.png: Trạng thái thẻ = Chờ kích hoạt → CTA Kích hoạt thẻ"
+    },
+    {
+      "from_screen": "SCR-KHT-001",
+      "to_screen": "SCR-KHT-002",
+      "trigger": "Tiếp tục",
+      "trigger_label": "Tiếp tục",
+      "type": "navigation",
+      "evidence": "kich-hoat-the-1.png / kich-hoat-the-2.png: Button Tiếp tục / Xác nhận sau nhập số thẻ"
+    },
+    {
+      "from_screen": "SCR-KHT-001",
+      "to_screen": "SCR-KHT-001",
+      "trigger": "validation_error",
+      "trigger_label": "Lỗi nhập số thẻ",
+      "type": "overlay_trigger",
+      "evidence": "case-loi-1,2,3: Modal Thông báo (nền mờ) khi nhập sai/thiếu",
+      "confidence": 0.95
+    },
+    {
+      "from_screen": "SCR-KHT-002",
+      "to_screen": "SCR-KHT-003",
+      "trigger": "Cài đặt mã PIN",
+      "trigger_label": "Cài đặt mã PIN",
+      "type": "navigation",
+      "evidence": "kich-hoat-the-4.png: Success modal → CTA Cài đặt mã PIN"
+    },
+    {
+      "from_screen": "SCR-KHT-002",
+      "to_screen": "ENTRY",
+      "trigger": "Bỏ qua",
+      "trigger_label": "Bỏ qua",
+      "type": "navigation",
+      "evidence": "kich-hoat-the-4.png: Button Bỏ qua → skip PIN setup"
+    },
+    {
+      "from_screen": "SCR-KHT-003",
+      "to_screen": "SCR-KHT-003",
+      "trigger": "pin_validation_error",
+      "trigger_label": "Lỗi validate PIN",
+      "type": "overlay_trigger",
+      "evidence": "case-loi-4..10: Inline error messages (không phải modal)",
+      "confidence": 0.98
+    },
+    {
+      "from_screen": "SCR-KHT-003",
+      "to_screen": "END",
+      "trigger": "Xác nhận",
+      "trigger_label": "Xác nhận",
+      "type": "navigation",
+      "evidence": "kich-hoat-the-8.png: Success modal 'Cài đặt mã PIN thành công' → Đóng"
+    }
+  ],
+  "overlay_events": [
+    {
+      "host_screen": "SCR-KHT-001",
+      "overlay_name": "validation_error",
+      "overlay_type": "popup",
+      "trigger": "validation_error",
+      "evidence": "case-loi-1,2,3: Modal Thông báo (nền mờ) khi nhập sai/thiếu"
+    },
+    {
+      "host_screen": "SCR-KHT-003",
+      "overlay_name": "pin_validation_error",
+      "overlay_type": "bottom_sheet",
+      "trigger": "pin_validation_error",
+      "evidence": "case-loi-4..10: Inline error messages (không phải modal)"
+    }
+  ]
+}

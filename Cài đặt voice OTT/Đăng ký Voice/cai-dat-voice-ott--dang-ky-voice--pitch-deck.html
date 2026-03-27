@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>UX Audit — Đăng ký Voice OTT | Mobile Banking</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+/* ═══ DESIGN TOKENS — Light Theme (WCAG AA) ═══ */
+:root {
+  --bg-base:#ffffff; --bg-surface:#f8fafc; --bg-card:#ffffff; --bg-card-hover:#f1f5f9;
+  --text-primary:#0f172a; --text-secondary:#475569; --text-muted:#64748b;
+  --accent-gold:#b45309; --accent-purple:#7c3aed; --accent-blue:#2563eb;
+  --sev-critical:#b91c1c; --sev-critical-bg:rgba(185,28,28,.08); --sev-critical-fg:#b91c1c;
+  --sev-major:#c2410c; --sev-major-bg:rgba(194,65,12,.08); --sev-major-fg:#c2410c;
+  --sev-minor:#92400e; --sev-minor-bg:rgba(146,64,14,.08); --sev-minor-fg:#92400e;
+  --sev-pass:#15803d; --sev-pass-bg:rgba(21,128,61,.08); --sev-pass-fg:#15803d;
+  --border:#e2e8f0; --border-light:#cbd5e1;
+  --font-sans:'Manrope',system-ui,-apple-system,sans-serif;
+  --font-display:'Manrope',system-ui,sans-serif;
+  --font-mono:'Manrope',system-ui,sans-serif;
+}
+
+/* ═══ RESET ═══ */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-primary);line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ═══ HERO ═══ */
+.hero{background:linear-gradient(135deg,#f8fafc 0%,#e0e7ff 40%,#dbeafe 70%,#f8fafc 100%);padding:64px 56px 72px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-120px;top:-120px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.06),transparent 70%)}
+.hero::after{content:'';position:absolute;left:-80px;bottom:-80px;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.04),transparent 70%)}
+.hero-label{font-family:var(--font-sans);font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--accent-purple);margin-bottom:12px;font-weight:700}
+.hero h1{font-family:var(--font-display);font-size:42px;font-weight:800;line-height:1.15;margin-bottom:8px;color:var(--text-primary)}
+.hero-sub{color:var(--text-secondary);font-size:15px;margin-bottom:40px}
+.hero-stats{display:flex;gap:48px;flex-wrap:wrap}
+.stat-item{text-align:center}
+.stat-num{font-family:var(--font-sans);font-size:44px;font-weight:800;line-height:1;display:block;color:var(--text-primary)}
+.stat-num.gap-c{color:var(--sev-critical)}
+.stat-label{font-family:var(--font-sans);font-size:10px;color:var(--text-secondary);margin-top:6px;text-transform:uppercase;letter-spacing:1.5px;font-weight:600}
+.hero-score{position:absolute;right:56px;top:50%;transform:translateY(-50%);z-index:1}
+
+/* ═══ NAV ═══ */
+.nav{background:var(--bg-base);border-bottom:1px solid var(--border);padding:0 56px;display:flex;gap:0;position:sticky;top:0;z-index:100}
+.nav a{color:var(--text-secondary);text-decoration:none;padding:14px 20px;font-size:12px;font-weight:600;letter-spacing:.3px;border-bottom:2px solid transparent;transition:all .25s}
+.nav a:hover{color:var(--accent-blue);border-bottom-color:var(--accent-blue)}
+
+/* ═══ SECTIONS ═══ */
+.section{max-width:1100px;margin:0 auto;padding:56px 56px 0}
+.section-title{font-family:var(--font-display);font-size:24px;font-weight:800;margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;color:var(--text-primary)}
+.section-title .icon{font-size:20px}
+
+/* ═══ BADGES ═══ */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-family:var(--font-sans);font-size:11px;font-weight:700;letter-spacing:.3px}
+.badge.critical{background:var(--sev-critical-bg);color:var(--sev-critical-fg)}
+.badge.major{background:var(--sev-major-bg);color:var(--sev-major-fg)}
+.badge.minor{background:var(--sev-minor-bg);color:var(--sev-minor-fg)}
+
+/* ═══ FINDING CARDS — 2fr:3fr phone-frame layout ═══ */
+.finding-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:24px;transition:all .25s}
+.finding-card:hover{background:var(--bg-card-hover);box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.finding-accent{height:4px}
+.finding-accent.critical{background:var(--sev-critical)}.finding-accent.major{background:var(--sev-major)}.finding-accent.minor{background:var(--sev-minor)}
+.card-layout{display:grid;grid-template-columns:2fr 3fr;gap:0}
+.card-visual{background:var(--bg-surface);padding:32px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
+.phone-frame{position:relative;border:3px solid var(--border-light);border-radius:24px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.08);max-width:160px;width:100%}
+.phone-frame img{width:100%;display:block}
+.shot-overlay{background:rgba(220,38,38,.9);color:#fff;font-size:10px;padding:6px 8px;text-align:center;font-weight:700;border-radius:6px;max-width:160px;width:100%;margin-top:6px}
+.shot-overlay.major{background:rgba(234,88,12,.9)}.shot-overlay.minor{background:rgba(202,138,4,.9)}
+.card-info{padding:24px 28px}
+.card-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.card-id{font-family:var(--font-sans);font-size:12px;font-weight:700;color:var(--accent-blue);background:rgba(37,99,235,.08);padding:2px 8px;border-radius:4px}
+.card-info h3{font-size:16px;font-weight:700;margin-bottom:16px;color:var(--text-primary);line-height:1.45}
+.finding-section{margin-bottom:14px}
+.finding-section h4{font-family:var(--font-sans);font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-muted);margin-bottom:6px;font-weight:700}
+.finding-section p{font-size:13.5px;color:var(--text-secondary);line-height:1.55}
+.proposed-box{background:rgba(22,163,74,.06);border-left:3px solid var(--sev-pass);border-radius:0 8px 8px 0;padding:12px 14px;margin-top:6px}
+.proposed-box ul{padding-left:16px}.proposed-box li{font-size:13px;color:#15803d;margin-bottom:4px}
+.finding-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.card-tag{background:rgba(37,99,235,.08);color:var(--accent-blue);font-family:var(--font-sans);font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600}
+
+/* ═══ DETAILS (Progressive disclosure) ═══ */
+details{margin-top:12px}details summary{cursor:pointer;font-family:var(--font-sans);font-size:11px;color:var(--accent-purple);font-weight:700;padding:4px 0}
+.detail-content{background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:8px;font-family:var(--font-sans);font-size:11px;color:var(--text-muted);line-height:1.6;word-break:break-all}
+
+/* ═══ METHODOLOGY ═══ */
+.method-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.method-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px 20px;transition:all .25s}
+.method-card:hover{background:var(--bg-card-hover);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.method-icon{font-size:28px;margin-bottom:12px}
+.method-card h4{font-size:13px;font-weight:700;margin-bottom:8px;color:var(--text-primary)}
+.method-card p{font-size:12px;color:var(--text-secondary);line-height:1.5}
+
+/* ═══ SCORECARD ═══ */
+.scorecard-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.score-item{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;align-items:center;gap:16px;transition:all .25s}
+.score-item:hover{background:var(--bg-card-hover)}
+.score-info h4{font-size:13px;font-weight:700;margin-bottom:4px;color:var(--text-primary)}
+.score-info p{font-size:12px;color:var(--text-secondary)}
+
+/* ═══ GAPS SECTION ═══ */
+.gap-screen{font-family:var(--font-sans);font-size:11px;font-weight:700;color:var(--accent-blue);background:rgba(37,99,235,.08);padding:3px 8px;border-radius:4px;white-space:nowrap}
+.gap-card{border:1px solid var(--border);border-radius:12px;padding:18px 22px;margin-bottom:12px;background:var(--bg-card);transition:all .25s}
+.gap-card:hover{background:var(--bg-card-hover);box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.gap-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--accent-blue);color:#fff;font-family:var(--font-sans);font-size:11px;font-weight:800;flex-shrink:0}
+.gap-ref{font-family:var(--font-sans);font-size:10px;color:var(--text-secondary);margin-left:6px;font-weight:600}
+.gap-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;font-size:12.5px;line-height:1.55;margin-top:12px}
+.gap-label{font-family:var(--font-sans);font-weight:700;color:var(--text-secondary);font-size:10px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
+.gap-full{grid-column:1/-1}
+/* ═══ IMAGE LIGHTBOX ═══ */
+.img-cite{display:inline-block;background:#EFF6FF;color:#2563EB;font-size:10px;padding:1px 6px;border-radius:4px;font-family:var(--font-mono);margin-left:4px;cursor:pointer;transition:all .2s}
+.img-cite:hover{background:#DBEAFE;transform:scale(1.05);box-shadow:0 1px 4px rgba(37,99,235,.25)}
+.phone-frame{cursor:pointer;transition:transform .2s}
+.phone-frame:hover{transform:scale(1.03)}
+.lightbox-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;flex-direction:column;opacity:0;transition:opacity .3s}
+.lightbox-overlay.active{display:flex;opacity:1}
+.lightbox-overlay img{max-width:90vw;max-height:80vh;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.5);object-fit:contain}
+.lightbox-close{position:absolute;top:20px;right:28px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.12);border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.lightbox-close:hover{background:rgba(255,255,255,.25)}
+.lightbox-caption{color:rgba(255,255,255,.8);font-size:13px;font-family:var(--font-mono);margin-top:12px;padding:4px 16px;background:rgba(255,255,255,.08);border-radius:8px}
+
+/* ═══ FOOTER ═══ */
+footer{background:var(--bg-surface);border-top:1px solid var(--border);color:var(--text-muted);text-align:center;padding:28px 56px;margin-top:72px;font-size:12px}
+footer strong{color:var(--text-secondary)}
+
+/* ═══ ANIMATION ═══ */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:768px){
+  .card-layout{grid-template-columns:1fr}.hero-score{display:none}
+  .scorecard-grid,.method-grid{grid-template-columns:1fr}
+  .hero{padding:32px 24px}.section{padding:32px 24px 0}.nav{padding:0 16px;overflow-x:auto}
+  .gap-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  .reveal{transition-duration:.01ms!important}.finding-card,.method-card,.score-item,.gap-card{transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="#summary">Tổng quan</a>
+  <a href="#method">Phương pháp</a>
+  <a href="#findings">Phát hiện</a>
+  <a href="#scorecard">Scorecard</a>
+  <a href="#gaps">Gaps</a>
+</nav>
+
+<section class="hero" id="top">
+  <div class="hero-label">UX Audit Report</div>
+  <h1>Đăng ký Voice OTT</h1>
+  <p class="hero-sub">Mobile Banking</p>
+  <div class="hero-stats">
+    <div class="stat-item"><span class="stat-num">4</span><span class="stat-label">Màn hình</span></div>
+    <div class="stat-item"><span class="stat-num">35</span><span class="stat-label">Tổng kiểm tra</span></div>
+    <div class="stat-item"><span class="stat-num gap-c">11</span><span class="stat-label">Cần cải thiện</span></div>
+    <div class="stat-item"><span class="stat-num">10</span><span class="stat-label">Đề xuất</span></div>
+  </div>
+  <div class="hero-score"><svg width="110" height="110" viewBox="0 0 110 110"><circle cx="55" cy="55" r="51" fill="none" stroke="#e2e8f0" stroke-width="8"/><circle cx="55" cy="55" r="51" fill="none" stroke="#c2410c" stroke-width="8" stroke-dasharray="320" stroke-dashoffset="137" stroke-linecap="round" transform="rotate(-90 55 55)"/><text x="55" y="60" text-anchor="middle" font-family="var(--font-sans)" font-size="24" font-weight="800" fill="#c2410c">57%</text></svg></div>
+</section>
+
+<section class="section" id="summary">
+  <div class="section-title"><span class="icon">📊</span> 01 · Tổng quan kết quả kiểm tra</div>
+  <div style="display:flex;gap:12px;margin-bottom:28px">
+    <span class="badge critical">🔴 2 Nghiêm trọng</span>
+    <span class="badge major">🟡 6 Quan trọng</span>
+    <span class="badge minor">⚪ 2 Cải thiện</span>
+  </div>
+  <div class="scorecard-grid">
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#c2410c" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="78" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#c2410c">50%</text></svg></div>
+      <div class="score-info">
+        <h4>Thông báo › Danh sách</h4>
+        <p>SCR-DKV-001 · list · <span style="color:var(--sev-major-fg)">2 hạng mục cần cải thiện</span></p>
+      </div>
+    </div>
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#c2410c" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="51" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#c2410c">67%</text></svg></div>
+      <div class="score-info">
+        <h4>Cài đặt Voice OTT › Form nhập thông tin</h4>
+        <p>SCR-DKV-002 · form · <span style="color:var(--sev-major-fg)">2 hạng mục cần cải thiện</span></p>
+      </div>
+    </div>
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#b91c1c" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="91" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#b91c1c">42%</text></svg></div>
+      <div class="score-info">
+        <h4>Cài đặt Voice OTT › Xác nhận giao dịch</h4>
+        <p>SCR-DKV-003 · confirm · <span style="color:var(--sev-critical-fg)">5 hạng mục cần cải thiện</span></p>
+      </div>
+    </div>
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#15803d" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="47" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#15803d">70%</text></svg></div>
+      <div class="score-info">
+        <h4>Cài đặt Voice OTT › Chi tiết</h4>
+        <p>SCR-DKV-004 · detail · <span style="color:var(--sev-major-fg)">2 hạng mục cần cải thiện</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section reveal" id="method">
+  <div class="section-title"><span class="icon">🔬</span> 02 · Phương pháp đánh giá</div>
+  <div class="method-grid">
+    <div class="method-card"><div class="method-icon">🔍</div><h4>Đánh giá Heuristic</h4><p>Kiểm tra theo 10 nguyên tắc khả dụng của Nielsen Norman Group. Mỗi phát hiện được truy vết đến heuristic cụ thể bị vi phạm cùng mức độ ảnh hưởng.</p></div>
+    <div class="method-card"><div class="method-icon">🧩</div><h4>Đối chiếu thông số thiết kế</h4><p>So sánh thiết kế Figma với thông số thành phần DDL (Design Data Layer) để phát hiện sai lệch về trạng thái, thuộc tính và hành vi tương tác.</p></div>
+    <div class="method-card"><div class="method-icon">👁️</div><h4>Kiểm tra trực quan</h4><p>Phân tích từng màn hình: căn chỉnh bố cục, tương phản màu sắc, font chữ, vùng chạm tối thiểu, và phát hiện lớp phủ (overlay).</p></div>
+    <div class="method-card"><div class="method-icon">⚖️</div><h4>Đối chiếu nguyên tắc UX</h4><p>Áp dụng Định luật Fitts, Định luật Hick, Hiệu ứng Peak-End và các nguyên tắc thiết kế tương tác vào từng màn hình.</p></div>
+  </div>
+</section>
+
+<section class="section" id="findings">
+  <div class="section-title"><span class="icon">🔎</span> 03 · Các vấn đề được phát hiện</div>
+
+  <div style="margin-bottom:36px">
+    <div style="background:var(--sev-critical-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-critical-fg);margin-bottom:20px;letter-spacing:.3px">🔴 Nghiêm trọng — Cần xử lý ngay</div>
+    <div class="finding-card reveal">
+      <div class="finding-accent critical"></div>
+      <div class="card-layout">
+        <div class="card-visual"><div class="phone-frame" onclick="openLightbox('ui/7004-yang-ky-voice.png')"><img src="ui/7004-yang-ky-voice.png" alt="OTP bottom sheet thiếu &quot;Gửi lại OTP&quot; button và countdown timer" loading="lazy"></div><div class="shot-overlay">⚠️ OTP bottom sheet thiếu &quot;Gửi lại OTP&quot; button và countdown timer</div></div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-001</span><span class="badge critical">Nghiêm trọng</span></div>
+          <h3>OTP bottom sheet thiếu &quot;Gửi lại OTP&quot; button và countdown timer</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>OTP bottom sheet thiếu &quot;Gửi lại OTP&quot; button và countdown timer — user stuck nếu SMS delayed</p></div>
+          <div class="finding-section"><h4>Tác động</h4><p>Người dùng bị chặn hoặc mất khả năng hoàn thành tác vụ: OTP bottom sheet thiếu &quot;Gửi lại OTP&quot; button và countdown timer — user stuck nếu SMS delayed. Trong ngữ cảnh banking, đây là giao dịch nhạy cảm đòi hỏi feedback rõ ràng về trạng thái xác thực.</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>Nielsen #1 — Visibility of System Status — Thiết kế hiện tại vi phạm nguyên tắc: &quot;The design should always keep users informed about what is going on, through appropriate feedback within a reasonable time.&quot;</p></div>
+          <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+            <div class="proposed-box"><ul><li>Thêm: (1) &quot;Gửi lại mã OTP&quot; button (disabled 60s đầu), (2) Countdown &quot;Gửi lại sau 00:45&quot; real-time, (3) Active cell highlight cho ô đang nhập</li></ul></div>
+          </div>
+          <div class="finding-tags"><span class="card-tag">Cài đặt Voice OTT › Xác nhận giao dịch (SCR-DKV-003)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">Nielsen #1 — Visibility of System Status — Hệ thống phải luôn giữ người dùng được thông báo về trạng thái hiện tại thông qua phản hồi phù hợp trong thời gian hợp lý.. DDL ref: COMP:otp-input-1 (canResend, timeLeft states)<ul class="ref-sources"><li><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" rel="noopener">Nielsen Norman Group</a> — <em>"The system should always keep users informed about what is going on, through appropriate feedback within a reasonable ti"</em></li><li><a href="https://lawsofux.com/visibility-of-system-status/" target="_blank" rel="noopener">Laws of UX</a> — <em>"The design should always keep users informed about what is going on."</em></li></ul></div></details>
+        </div>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent critical"></div>
+      <div class="card-layout">
+        <div class="card-visual"><div class="phone-frame" onclick="openLightbox('ui/7000-yang-ky-voice.png')"><img src="ui/7000-yang-ky-voice.png" alt="&quot;Xoá tất cả thông báo&quot; không có confirmation dialog" loading="lazy"></div><div class="shot-overlay">⚠️ &quot;Xoá tất cả thông báo&quot; không có confirmation dialog</div></div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-002</span><span class="badge critical">Nghiêm trọng</span></div>
+          <h3>&quot;Xoá tất cả thông báo&quot; không có confirmation dialog</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>&quot;Xoá tất cả thông báo&quot; không có confirmation dialog — destructive action không bảo vệ</p></div>
+          <div class="finding-section"><h4>Tác động</h4><p>Người dùng bị chặn hoặc mất khả năng hoàn thành tác vụ: &quot;Xoá tất cả thông báo&quot; không có confirmation dialog — destructive action không bảo vệ. Trong ngành banking, hành động phá huỷ cần rào cản tâm lý rõ ràng để bảo vệ người dùng.</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>Nielsen #1 — Visibility of System Status — Thiết kế hiện tại vi phạm nguyên tắc: &quot;The design should always keep users informed about what is going on, through appropriate feedback within a reasonable time.&quot;</p></div>
+          <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+            <div class="proposed-box"><ul><li>Thêm confirm dialog: &quot;Bạn có chắc muốn xoá tất cả thông báo?</li><li>Hành động này không thể hoàn tác.&quot; với CTA &quot;Xoá&quot; (destructive) + &quot;Huỷ&quot; (secondary)</li></ul></div>
+          </div>
+          <div class="finding-tags"><span class="card-tag">Thông báo › Danh sách (SCR-DKV-001)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">Nielsen #1 — Visibility of System Status — Hệ thống phải luôn giữ người dùng được thông báo về trạng thái hiện tại thông qua phản hồi phù hợp trong thời gian hợp lý.. DDL ref: UXG-165 (destructive action safety)<ul class="ref-sources"><li><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" rel="noopener">Nielsen Norman Group</a> — <em>"The system should always keep users informed about what is going on, through appropriate feedback within a reasonable ti"</em></li><li><a href="https://lawsofux.com/visibility-of-system-status/" target="_blank" rel="noopener">Laws of UX</a> — <em>"The design should always keep users informed about what is going on."</em></li><li><a href="https://www.w3.org/WAI/WCAG22/Understanding/error-prevention-legal-financial-data.html" target="_blank" rel="noopener">WCAG 2.2 SC 3.3.4 — Error Prevention (Legal, Financial, Data)</a> — <em>"For Web pages that cause legal commitments or financial transactions, submissions are reversible, checked, or confirmed."</em></li></ul></div></details>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:36px">
+    <div style="background:var(--sev-major-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-major-fg);margin-bottom:20px;letter-spacing:.3px">🟡 Quan trọng — Ưu tiên cao</div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-layout">
+        <div class="card-visual"><div class="phone-frame" onclick="openLightbox('ui/7001-yang-ky-voice.png')"><img src="ui/7001-yang-ky-voice.png" alt="Thiếu error state cho time fields khi nhập range không hợp lệ…" loading="lazy"></div><div class="shot-overlay major">⚠️ Thiếu error state cho time fields khi nhập range không hợp lệ…</div></div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-003</span><span class="badge major">Quan trọng</span></div>
+          <h3>Thiếu error state cho time fields khi nhập range không hợp lệ (Từ &gt; Đến)</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>Thiếu error state cho time fields khi nhập range không hợp lệ (Từ &gt; Đến)</p></div>
+          <div class="finding-section"><h4>Tác động</h4><p>Trải nghiệm người dùng bị ảnh hưởng đáng kể: Thiếu error state cho time fields khi nhập range không hợp lệ (Từ &gt; Đến).</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>COMP:text-input-1 · error state — </p></div>
+          <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+            <div class="proposed-box"><ul><li>Thêm inline error text đỏ dưới time fields: &quot;Thời gian bắt đầu phải trước thời gian kết thúc&quot; + red border cho input</li></ul></div>
+          </div>
+          <div class="finding-tags"><span class="card-tag">Cài đặt Voice OTT › Form nhập thông tin (SCR-DKV-002)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL ref: COMP:text-input-1 · error state<ul class="ref-sources"><li><a href="https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html" target="_blank" rel="noopener">WCAG 2.2 SC 3.3.1 — Error Identification</a> — <em>"If an input error is automatically detected, the item that is in error is identified and the error is described to the u"</em></li><li><a href="https://www.w3.org/WAI/WCAG22/Understanding/error-suggestion.html" target="_blank" rel="noopener">WCAG 2.2 SC 3.3.3 — Error Suggestion</a> — <em>"If an input error is automatically detected and suggestions for correction are known, then the suggestions are provided "</em></li></ul></div></details>
+        </div>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-layout">
+        <div class="card-visual"><div class="phone-frame" onclick="openLightbox('ui/7002-yang-ky-voice.png')"><img src="ui/7002-yang-ky-voice.png" alt="Account picker thiếu max-selection indicator" loading="lazy"></div><div class="shot-overlay major">⚠️ Account picker thiếu max-selection indicator</div></div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-004</span><span class="badge major">Quan trọng</span></div>
+          <h3>Account picker thiếu max-selection indicator</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>Account picker thiếu max-selection indicator — cognitive overload khi nhiều TK</p></div>
+          <div class="finding-section"><h4>Tác động</h4><p>Trải nghiệm người dùng bị ảnh hưởng đáng kể: Account picker thiếu max-selection indicator — cognitive overload khi nhiều TK.</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>Hick&#x27;s Law — Thiết kế hiện tại vi phạm nguyên tắc: &quot;The time it takes to make a decision increases with the number and complexity of choices.&quot;</p></div>
+          <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+            <div class="proposed-box"><ul><li>Thêm subtitle &quot;Tối đa X tài khoản&quot; hoặc counter &quot;Đã chọn 2/5&quot; trong account picker bottom sheet</li></ul></div>
+          </div>
+          <div class="finding-tags"><span class="card-tag">Cài đặt Voice OTT › Form nhập thông tin (SCR-DKV-002)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">Hick&#x27;s Law — The time it takes to make a decision increases with the number and complexity of choices.. DDL ref: Hick&#x27;s Law<ul class="ref-sources"><li><a href="https://lawsofux.com/hicks-law/" target="_blank" rel="noopener">Hick&#x27;s Law</a> — <em>"The time it takes to make a decision increases with the number and complexity of choices."</em></li></ul></div></details>
+        </div>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-layout">
+        <div class="card-visual"><div class="phone-frame" onclick="openLightbox('ui/7005-yang-ky-voice.png')"><img src="ui/7005-yang-ky-voice.png" alt="Thiếu loading/processing state sau khi submit OTP" loading="lazy"></div><div class="shot-overlay major">⚠️ Thiếu loading/processing state sau khi submit OTP</div></div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-005</span><span class="badge major">Quan trọng</span></div>
+          <h3>Thiếu loading/processing state sau khi submit OTP</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>Thiếu loading/processing state sau khi submit OTP — user không biết hệ thống đang xử lý</p></div>
+          <div class="finding-section"><h4>Tác động</h4><p>Trải nghiệm người dùng bị ảnh hưởng đáng kể: Thiếu loading/processing state sau khi submit OTP — user không biết hệ thống đang xử lý.</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>Nielsen #1 — Visibility of System Status — Thiết kế hiện tại vi phạm nguyên tắc: &quot;The design should always keep users informed about what is going on, through appropriate feedback within a reasonable time.&quot;</p></div>
+          <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+            <div class="proposed-box"><ul><li>Thêm loading spinner + text &quot;Đang xử lý...&quot; overlay sau nhấn &quot;Xác nhận&quot; OTP</li></ul></div>
+          </div>
+          <div class="finding-tags"><span class="card-tag">Cài đặt Voice OTT › Xác nhận giao dịch (SCR-DKV-003)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">Nielsen #1 — Visibility of System Status — Hệ thống phải luôn giữ người dùng được thông báo về trạng thái hiện tại thông qua phản hồi phù hợp trong thời gian hợp lý.. DDL ref: UXG (feedback) · Doherty Threshold<ul class="ref-sources"><li><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" rel="noopener">Nielsen Norman Group</a> — <em>"The system should always keep users informed about what is going on, through appropriate feedback within a reasonable ti"</em></li><li><a href="https://lawsofux.com/visibility-of-system-status/" target="_blank" rel="noopener">Laws of UX</a> — <em>"The design should always keep users informed about what is going on."</em></li></ul></div></details>
+        </div>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-layout">
+        <div class="card-visual"><div class="phone-frame" onclick="openLightbox('ui/7005-yang-ky-voice.png')"><img src="ui/7005-yang-ky-voice.png" alt="Success popup thiếu chi tiết giao dịch và chỉ có 1 exit option…" loading="lazy"></div><div class="shot-overlay major">⚠️ Success popup thiếu chi tiết giao dịch và chỉ có 1 exit option…</div></div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-006</span><span class="badge major">Quan trọng</span></div>
+          <h3>Success popup thiếu chi tiết giao dịch và chỉ có 1 exit option &quot;Đóng&quot;</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>Success popup thiếu chi tiết giao dịch và chỉ có 1 exit option &quot;Đóng&quot;</p></div>
+          <div class="finding-section"><h4>Tác động</h4><p>Trải nghiệm người dùng bị ảnh hưởng đáng kể: Success popup thiếu chi tiết giao dịch và chỉ có 1 exit option &quot;Đóng&quot;.</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>Nielsen #3 — User Control and Freedom — Thiết kế hiện tại vi phạm nguyên tắc: &quot;Users often perform actions by mistake. They need a clearly marked &#x27;emergency exit&#x27; to leave the unwanted action without having to go through an extended process.&quot;</p></div>
+          <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+            <div class="proposed-box"><ul><li>(1) Thêm TK number + time window trong success popup, (2) Thêm CTA &quot;Xem cài đặt&quot; bên cạnh &quot;Đóng&quot;</li></ul></div>
+          </div>
+          <div class="finding-tags"><span class="card-tag">Cài đặt Voice OTT › Xác nhận giao dịch (SCR-DKV-003)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">Nielsen #3 — User Control and Freedom — Người dùng thường chọn chức năng hệ thống do nhầm và cần một lối thoát rõ ràng để rời khỏi trạng thái không mong muốn mà không cần quy trình phức tạp.. DDL ref: Peak-End Rule<ul class="ref-sources"><li><a href="https://www.nngroup.com/articles/user-control-and-freedom/" target="_blank" rel="noopener">Nielsen Norman Group</a> — <em>"Users need a clearly marked &#x27;emergency exit&#x27; to leave the unwanted action."</em></li></ul></div></details>
+        </div>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-layout">
+        <div class="card-visual"><div class="phone-frame" onclick="openLightbox('ui/7006-yang-ky-voice.png')"><img src="ui/7006-yang-ky-voice.png" alt="Toggle &quot;Nhận thông báo BĐSD&quot; height 24px &lt; 44px minimum" loading="lazy"></div><div class="shot-overlay major">⚠️ Toggle &quot;Nhận thông báo BĐSD&quot; height 24px &lt; 44px minimum</div></div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-007</span><span class="badge major">Quan trọng</span></div>
+          <h3>Toggle &quot;Nhận thông báo BĐSD&quot; height 24px &lt; 44px minimum</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>Toggle &quot;Nhận thông báo BĐSD&quot; height 24px &lt; 44px minimum — accessibility fail</p></div>
+          <div class="finding-section"><h4>Tác động</h4><p>Trải nghiệm người dùng bị ảnh hưởng đáng kể: Toggle &quot;Nhận thông báo BĐSD&quot; height 24px &lt; 44px minimum — accessibility fail.</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>TOKEN:touch.target.min=44px — </p></div>
+          <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+            <div class="proposed-box"><ul><li>Tăng toggle tap area tối thiểu 44×44px bằng padding invisible hoặc resizing component</li></ul></div>
+          </div>
+          <div class="finding-tags"><span class="card-tag">Cài đặt Voice OTT › Chi tiết (SCR-DKV-004)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL ref: TOKEN:touch.target.min=44px<ul class="ref-sources"><li><a href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html" target="_blank" rel="noopener">WCAG 2.2 SC 2.5.8 — Target Size (Minimum)</a> — <em>"The size of the target for pointer inputs is at least 24 by 24 CSS pixels."</em></li></ul></div></details>
+        </div>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-layout">
+        <div class="card-visual"><div class="phone-frame" onclick="openLightbox('ui/7006-yang-ky-voice.png')"><img src="ui/7006-yang-ky-voice.png" alt="Account numbers hiển thị full không masked" loading="lazy"></div><div class="shot-overlay major">⚠️ Account numbers hiển thị full không masked</div></div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-008</span><span class="badge major">Quan trọng</span></div>
+          <h3>Account numbers hiển thị full không masked</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>Account numbers hiển thị full không masked — vi phạm banking security best practice</p></div>
+          <div class="finding-section"><h4>Tác động</h4><p>Trải nghiệm người dùng bị ảnh hưởng đáng kể: Account numbers hiển thị full không masked — vi phạm banking security best practice. Trong ngữ cảnh banking, đây là giao dịch nhạy cảm đòi hỏi feedback rõ ràng về trạng thái xác thực.</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>Security best practice (PII protection) — </p></div>
+          <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+            <div class="proposed-box"><ul><li>Mask account numbers: &quot;2123***2313&quot; (show first 4 + last 4, mask middle)</li></ul></div>
+          </div>
+          <div class="finding-tags"><span class="card-tag">Cài đặt Voice OTT › Chi tiết (SCR-DKV-004)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">DDL ref: Security best practice (PII protection)<ul class="ref-sources"><li><a href="https://www.w3.org/WAI/WCAG22/Understanding/error-prevention-legal-financial-data.html" target="_blank" rel="noopener">WCAG 2.2 SC 3.3.4 — Error Prevention (Legal, Financial, Data)</a> — <em>"For Web pages that cause legal commitments or financial transactions, submissions are reversible, checked, or confirmed."</em></li></ul></div></details>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:36px">
+    <div style="background:var(--sev-minor-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-minor-fg);margin-bottom:20px;letter-spacing:.3px">⚪ Cải thiện — Nâng cao trải nghiệm</div>
+    <div class="finding-card reveal">
+      <div class="finding-accent minor"></div>
+      <div class="card-layout">
+        <div class="card-visual"><div class="phone-frame" onclick="openLightbox('ui/7000-yang-ky-voice.png')"><img src="ui/7000-yang-ky-voice.png" alt="Bottom sheet menu items thiếu icons phân biệt" loading="lazy"></div><div class="shot-overlay minor">⚠️ Bottom sheet menu items thiếu icons phân biệt</div></div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-009</span><span class="badge minor">Cải thiện</span></div>
+          <h3>Bottom sheet menu items thiếu icons phân biệt</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>Bottom sheet menu items thiếu icons phân biệt — giảm discoverability</p></div>
+          <div class="finding-section"><h4>Tác động</h4><p>Trải nghiệm người dùng có thể được cải thiện: Bottom sheet menu items thiếu icons phân biệt — giảm discoverability.</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>Nielsen #4 — Consistency and Standards — Thiết kế hiện tại vi phạm nguyên tắc: &quot;Users should not have to wonder whether different words, situations, or actions mean the same thing. Follow platform conventions.&quot;</p></div>
+          <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+            <div class="proposed-box"><ul><li>Thêm icon prefix cho mỗi menu item (settings, share, manage, delete)</li></ul></div>
+          </div>
+          <div class="finding-tags"><span class="card-tag">Thông báo › Danh sách (SCR-DKV-001)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">Nielsen #4 — Consistency and Standards — Người dùng không nên phải thắc mắc liệu các từ, tình huống hoặc hành động khác nhau có cùng ý nghĩa hay không. Tuân theo các quy ước nền tảng.. DDL ref: UXG-243<ul class="ref-sources"><li><a href="https://www.nngroup.com/articles/consistency-and-standards/" target="_blank" rel="noopener">Nielsen Norman Group</a> — <em>"Users should not have to wonder whether different words, situations, or actions mean the same thing."</em></li><li><a href="https://lawsofux.com/jakobs-law/" target="_blank" rel="noopener">Laws of UX — Jakob&#x27;s Law</a> — <em>"Users spend most of their time on other sites. This means users prefer your site to work the same way as all the other s"</em></li></ul></div></details>
+        </div>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent minor"></div>
+      <div class="card-layout">
+        <div class="card-visual"><div class="phone-frame" onclick="openLightbox('ui/7005-yang-ky-voice.png')"><img src="ui/7005-yang-ky-voice.png" alt="Success message generic" loading="lazy"></div><div class="shot-overlay minor">⚠️ Success message generic</div></div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-010</span><span class="badge minor">Cải thiện</span></div>
+          <h3>Success message generic, không có TK number hay time window confirmation</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>Success message generic, không có TK number hay time window confirmation</p></div>
+          <div class="finding-section"><h4>Tác động</h4><p>Trải nghiệm người dùng có thể được cải thiện: Success message generic, không có TK number hay time window confirmation.</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>Nielsen #1 — Visibility of System Status — Thiết kế hiện tại vi phạm nguyên tắc: &quot;The design should always keep users informed about what is going on, through appropriate feedback within a reasonable time.&quot;</p></div>
+          <div class="finding-section"><h4>Đề xuất cải thiện</h4>
+            <div class="proposed-box"><ul><li>Thêm: &quot;TK: 2123xxx2313 · Thời gian: 10:00–23:15&quot; trong success popup</li></ul></div>
+          </div>
+          <div class="finding-tags"><span class="card-tag">Cài đặt Voice OTT › Xác nhận giao dịch (SCR-DKV-003)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">Nielsen #1 — Visibility of System Status — Hệ thống phải luôn giữ người dùng được thông báo về trạng thái hiện tại thông qua phản hồi phù hợp trong thời gian hợp lý.. DDL ref: UXG-165 (data confirmation)<ul class="ref-sources"><li><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" rel="noopener">Nielsen Norman Group</a> — <em>"The system should always keep users informed about what is going on, through appropriate feedback within a reasonable ti"</em></li><li><a href="https://lawsofux.com/visibility-of-system-status/" target="_blank" rel="noopener">Laws of UX</a> — <em>"The design should always keep users informed about what is going on."</em></li></ul></div></details>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="scorecard">
+  <div class="section-title"><span class="icon">📊</span> 04 · Đánh giá theo danh mục heuristic</div>
+  <div class="scorecard-grid">
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#c2410c" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="89" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#c2410c">57%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Luồng người dùng</h4><p>Flow &amp; Navigation</p><p style="font-size:11px;color:var(--text-muted);margin:2px 0 0;opacity:0.6">ước tính</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#b91c1c" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="207" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#b91c1c">0%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Xử lý lỗi</h4><p>Error Handling</p><p style="font-size:11px;color:var(--text-muted);margin:2px 0 0">0✅ 1❌ / 1 hạng mục</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#c2410c" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="89" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#c2410c">57%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Trạng thái hệ thống</h4><p>System Status</p><p style="font-size:11px;color:var(--text-muted);margin:2px 0 0;opacity:0.6">ước tính</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#c2410c" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="89" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#c2410c">57%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Điểm chạm &amp; Mục tiêu</h4><p>Touch &amp; Target</p><p style="font-size:11px;color:var(--text-muted);margin:2px 0 0;opacity:0.6">ước tính</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#c2410c" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="89" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#c2410c">57%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Nhất quán &amp; Tiêu chuẩn</h4><p>Consistency &amp; Standards</p><p style="font-size:11px;color:var(--text-muted);margin:2px 0 0;opacity:0.6">ước tính</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#c2410c" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="89" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#c2410c">57%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Nội dung &amp; Trình bày</h4><p>Content &amp; Layout</p><p style="font-size:11px;color:var(--text-muted);margin:2px 0 0;opacity:0.6">ước tính</p></div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="gaps" style="padding-top:48px">
+  <div class="section-title"><span class="icon">📋</span> Tổng hợp Gap (11 hạng mục)</div>
+  <p style="color:var(--text-muted);font-size:14px;margin-bottom:20px">Các hạng mục kiểm tra chưa đạt chuẩn theo từng màn hình — checklist cải thiện từ ux-review-report</p>
+
+  <div style="margin-bottom:36px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <span class="gap-screen">SCR-DKV-001</span>
+      <strong style="font-size:14px">Thông báo › Danh sách</strong> · <em>list</em>
+    </div>
+    <div class="gap-card reveal">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span class="gap-num">1</span>
+        <strong style="font-size:13.5px">Menu items trong bottom sheet có icon phân biệt</strong>
+        
+      </div>
+      <div class="gap-grid">
+        <div>
+          <div class="gap-label">🎯 Tác động đến người dùng</div>
+          <div style="color:var(--text-secondary)">Người dùng thiếu thông tin hoặc chức năng cần thiết, ảnh hưởng đến khả năng hoàn thành tác vụ</div>
+        </div>
+        <div>
+          <div class="gap-label">📐 Nguyên tắc UX</div>
+          <div style="color:var(--text-secondary)">Nguyên tắc UX</div>
+        </div>
+        <div class="gap-full">
+          <div class="gap-label">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/7000-yang-ky-voice.png')">📸 7000-yang-ky-voice.png</span></div>
+          <div style="color:var(--text-secondary)">❌ Các menu items chỉ có text, không có icon prefix để phân biệt nhanh. Khó discoverability khi scan danh sách UXG-243</div>
+        </div>
+      </div>
+    </div>
+    <div class="gap-card reveal">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span class="gap-num">2</span>
+        <strong style="font-size:13.5px">"Xoá tất cả thông báo" có confirmation dialog</strong>
+        
+      </div>
+      <div class="gap-grid">
+        <div>
+          <div class="gap-label">🎯 Tác động đến người dùng</div>
+          <div style="color:var(--text-secondary)">Vùng chạm quá nhỏ, người dùng thao tác trên di động dễ bấm nhầm hoặc phải tap nhiều lần</div>
+        </div>
+        <div>
+          <div class="gap-label">📐 Nguyên tắc UX</div>
+          <div style="color:var(--text-secondary)">Nguyên tắc UX</div>
+        </div>
+        <div class="gap-full">
+          <div class="gap-label">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/7000-yang-ky-voice.png')">📸 7000-yang-ky-voice.png</span></div>
+          <div style="color:var(--text-secondary)">❌ Destructive action hiển thị trực tiếp không có warning/confirm step. Fitts + UXG concern: user có thể nhấn sai</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:36px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <span class="gap-screen">SCR-DKV-002</span>
+      <strong style="font-size:14px">Cài đặt Voice OTT › Form nhập thông tin</strong> · <em>form</em>
+    </div>
+    <div class="gap-card reveal">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span class="gap-num">3</span>
+        <strong style="font-size:13.5px">DDL trường nhập văn bản error state cho time fields</strong>
+        
+      </div>
+      <div class="gap-grid">
+        <div>
+          <div class="gap-label">🎯 Tác động đến người dùng</div>
+          <div style="color:var(--text-secondary)">Khi nhập sai, người dùng không nhận biết được trường nào bị lỗi — thiếu tín hiệu thị giác rõ ràng</div>
+        </div>
+        <div>
+          <div class="gap-label">📐 Nguyên tắc UX</div>
+          <div style="color:var(--text-secondary)">Nguyên tắc UX</div>
+        </div>
+        <div class="gap-full">
+          <div class="gap-label">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/7001-yang-ky-voice.png')">📸 7001-yang-ky-voice.png</span> <span class="img-cite" onclick="openLightbox('ui/7003-yang-ky-voice.png')">📸 7003-yang-ky-voice.png</span></div>
+          <div style="color:var(--text-secondary)">DDL `text-input-1` spec requires `error` state. Vision 7001/7003: ❌ Không thấy error state artboard (Từ > Đến, invalid range). Gap component: thiếu validation error display</div>
+        </div>
+      </div>
+    </div>
+    <div class="gap-card reveal">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span class="gap-num">4</span>
+        <strong style="font-size:13.5px">Định luật Hick: Account picker không gây cognitive overload</strong>
+        
+      </div>
+      <div class="gap-grid">
+        <div>
+          <div class="gap-label">🎯 Tác động đến người dùng</div>
+          <div style="color:var(--text-secondary)">Thao tác chọn không thuận tiện, tăng số bước cần thực hiện để hoàn thành tác vụ</div>
+        </div>
+        <div>
+          <div class="gap-label">📐 Nguyên tắc UX</div>
+          <div style="color:var(--text-secondary)">Nguyên tắc UX</div>
+        </div>
+        <div class="gap-full">
+          <div class="gap-label">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/7002-yang-ky-voice.png')">📸 7002-yang-ky-voice.png</span></div>
+          <div style="color:var(--text-secondary)">Hick's Law auto-match. Vision 7002: 3 account items visible với checkbox — manageable. Nhưng không có indicator số lượng tối đa được chọn → potential confusion khi nhiều TK</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:36px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <span class="gap-screen">SCR-DKV-003</span>
+      <strong style="font-size:14px">Cài đặt Voice OTT › Xác nhận giao dịch</strong> · <em>confirm</em>
+    </div>
+    <div class="gap-card reveal">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span class="gap-num">5</span>
+        <strong style="font-size:13.5px">DDL nhập OTP state gửi lại OTP + "Gửi lại" button</strong>
+        
+      </div>
+      <div class="gap-grid">
+        <div>
+          <div class="gap-label">🎯 Tác động đến người dùng</div>
+          <div style="color:var(--text-secondary)">Khi OTP không đến, người dùng không có cách gửi lại mã — bị kẹt tại màn hình xác thực, buộc phải thoát app</div>
+        </div>
+        <div>
+          <div class="gap-label">📐 Nguyên tắc UX</div>
+          <div style="color:var(--text-secondary)">Nguyên tắc UX</div>
+        </div>
+        <div class="gap-full">
+          <div class="gap-label">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/7004-yang-ky-voice.png')">📸 7004-yang-ky-voice.png</span></div>
+          <div style="color:var(--text-secondary)">DDL `otp-input-1` spec requires `canResend` state + resend button UI. Vision 7004: ❌ 6 ô OTP hiển thị nhưng KHÔNG CÓ "Gửi lại" button hay countdown timer. User stuck nếu SMS delayed</div>
+        </div>
+      </div>
+    </div>
+    <div class="gap-card reveal">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span class="gap-num">6</span>
+        <strong style="font-size:13.5px">DDL nhập OTP state bộ đếm ngược thời gian OTP</strong>
+        
+      </div>
+      <div class="gap-grid">
+        <div>
+          <div class="gap-label">🎯 Tác động đến người dùng</div>
+          <div style="color:var(--text-secondary)">Người dùng không biết còn bao lâu để chờ hoặc còn bao nhiêu lần thử, gây bất an và thao tác vội vàng</div>
+        </div>
+        <div>
+          <div class="gap-label">📐 Nguyên tắc UX</div>
+          <div style="color:var(--text-secondary)">Nguyên tắc UX</div>
+        </div>
+        <div class="gap-full">
+          <div class="gap-label">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/7004-yang-ky-voice.png')">📸 7004-yang-ky-voice.png</span></div>
+          <div style="color:var(--text-secondary)">DDL `otp-input-1` spec requires `timeLeft`. Vision 7004: ❌ Không có countdown timer trong OTP sheet. User không biết thời hạn hiệu lực OTP</div>
+        </div>
+      </div>
+    </div>
+    <div class="gap-card reveal">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span class="gap-num">7</span>
+        <strong style="font-size:13.5px">Loading state sau khi submit OTP</strong>
+        
+      </div>
+      <div class="gap-grid">
+        <div>
+          <div class="gap-label">🎯 Tác động đến người dùng</div>
+          <div style="color:var(--text-secondary)">Người dùng thiếu thông tin hoặc chức năng cần thiết, ảnh hưởng đến khả năng hoàn thành tác vụ</div>
+        </div>
+        <div>
+          <div class="gap-label">📐 Nguyên tắc UX</div>
+          <div style="color:var(--text-secondary)">Nguyên tắc UX</div>
+        </div>
+        <div class="gap-full">
+          <div class="gap-label">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/7005-yang-ky-voice.png')">📸 7005-yang-ky-voice.png</span></div>
+          <div style="color:var(--text-secondary)">❌ Không có loading/processing state artboard sau khi nhấn "Xác nhận" OTP. User không biết hệ thống đang xử lý</div>
+        </div>
+      </div>
+    </div>
+    <div class="gap-card reveal">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span class="gap-num">8</span>
+        <strong style="font-size:13.5px">Peak-End Rule: Thành công popup positive</strong>
+        
+      </div>
+      <div class="gap-grid">
+        <div>
+          <div class="gap-label">🎯 Tác động đến người dùng</div>
+          <div style="color:var(--text-secondary)">Người dùng thiếu thông tin hoặc chức năng cần thiết, ảnh hưởng đến khả năng hoàn thành tác vụ</div>
+        </div>
+        <div>
+          <div class="gap-label">📐 Nguyên tắc UX</div>
+          <div style="color:var(--text-secondary)">Nguyên tắc UX</div>
+        </div>
+        <div class="gap-full">
+          <div class="gap-label">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/7005-yang-ky-voice.png')">📸 7005-yang-ky-voice.png</span></div>
+          <div style="color:var(--text-secondary)">Peak-End Rule auto-match. Vision 7005: ⚠️ Popup "Quý khách đã đăng ký nhận thông báo BĐSD bằng giọng nói thành công" — ✅ positive. Nhưng chỉ có 1 action "Đóng" — thiếu "Về trang chủ" hay "Xem cài đặt" option</div>
+        </div>
+      </div>
+    </div>
+    <div class="gap-card reveal">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span class="gap-num">9</span>
+        <strong style="font-size:13.5px">Thành công message có chi tiết giao dịch</strong>
+        
+      </div>
+      <div class="gap-grid">
+        <div>
+          <div class="gap-label">🎯 Tác động đến người dùng</div>
+          <div style="color:var(--text-secondary)">Người dùng thiếu thông tin hoặc chức năng cần thiết, ảnh hưởng đến khả năng hoàn thành tác vụ</div>
+        </div>
+        <div>
+          <div class="gap-label">📐 Nguyên tắc UX</div>
+          <div style="color:var(--text-secondary)">Nguyên tắc UX</div>
+        </div>
+        <div class="gap-full">
+          <div class="gap-label">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/7005-yang-ky-voice.png')">📸 7005-yang-ky-voice.png</span></div>
+          <div style="color:var(--text-secondary)">7005: ❌ Success popup chỉ có generic message, không có TK number hay time window confirmation. User không thể verify đăng ký đúng không</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:36px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <span class="gap-screen">SCR-DKV-004</span>
+      <strong style="font-size:14px">Cài đặt Voice OTT › Chi tiết</strong> · <em>detail</em>
+    </div>
+    <div class="gap-card reveal">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span class="gap-num">10</span>
+        <strong style="font-size:13.5px">Toggle "Nhận thông báo BĐSD" height ≥44px</strong>
+        
+      </div>
+      <div class="gap-grid">
+        <div>
+          <div class="gap-label">🎯 Tác động đến người dùng</div>
+          <div style="color:var(--text-secondary)">Vùng chạm quá nhỏ, người dùng thao tác trên di động dễ bấm nhầm hoặc phải tap nhiều lần</div>
+        </div>
+        <div>
+          <div class="gap-label">📐 Nguyên tắc UX</div>
+          <div style="color:var(--text-secondary)">Nguyên tắc UX</div>
+        </div>
+        <div class="gap-full">
+          <div class="gap-label">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/7006-yang-ky-voice.png')">📸 7006-yang-ky-voice.png</span></div>
+          <div style="color:var(--text-secondary)">DDL `TOKEN:touch.target.min=44px`. Vision: Toggle component 44×24px — ✅ width 44px nhưng HEIGHT chỉ 24px < 44px minimum. Tap area có thể không đủ cho người dùng lớn tuổi</div>
+        </div>
+      </div>
+    </div>
+    <div class="gap-card reveal">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span class="gap-num">11</span>
+        <strong style="font-size:13.5px">Account numbers masking trong view mode</strong>
+        
+      </div>
+      <div class="gap-grid">
+        <div>
+          <div class="gap-label">🎯 Tác động đến người dùng</div>
+          <div style="color:var(--text-secondary)">Trải nghiệm người dùng bị ảnh hưởng, cần cải thiện để đạt chuẩn UX banking</div>
+        </div>
+        <div>
+          <div class="gap-label">📐 Nguyên tắc UX</div>
+          <div style="color:var(--text-secondary)">Nguyên tắc UX</div>
+        </div>
+        <div class="gap-full">
+          <div class="gap-label">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/7006-yang-ky-voice-2.png')">📸 7006-yang-ky-voice-2.png</span></div>
+          <div style="color:var(--text-secondary)">7006: ❌ Account numbers "212312312313", "312312312313" hiển thị full không masked. Banking best practice yêu cầu partial masking (e.g., "2123***2313") cho account numbers ở read-only view</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer>
+  <p><strong>Mobile Banking</strong> · Đăng ký Voice OTT · Đánh giá trải nghiệm người dùng dựa trên thông số thiết kế (DDL)</p>
+</footer>
+
+
+<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox(event)" aria-label="Close">&times;</button>
+  <img id="lightbox-img" src="" alt="Evidence screenshot">
+  <div class="lightbox-caption" id="lightbox-caption"></div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})
+  },{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+});
+
+function openLightbox(src){
+  const lb=document.getElementById('lightbox');
+  const img=document.getElementById('lightbox-img');
+  const cap=document.getElementById('lightbox-caption');
+  img.src=src;
+  cap.textContent=src.split('/').pop();
+  lb.classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(e){
+  if(e.target.tagName==='IMG')return;
+  const lb=document.getElementById('lightbox');
+  lb.classList.remove('active');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeLightbox({target:{tagName:''}});
+});
+</script>
+
+</body>
+</html>

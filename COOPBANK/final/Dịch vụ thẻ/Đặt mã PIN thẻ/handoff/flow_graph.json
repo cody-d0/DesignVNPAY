@@ -1,0 +1,169 @@
+{
+  "module": "Dịch vụ thẻ",
+  "section": "Đặt mã PIN thẻ",
+  "generated_at": "2026-03-23",
+  "pipeline_phase": "2d",
+  "nodes": [
+    {
+      "id": "SCR-PIN-001",
+      "name_vi": "Dịch vụ thẻ",
+      "screen_type": "list",
+      "flow_stage": "entry"
+    },
+    {
+      "id": "SCR-PIN-002",
+      "name_vi": "Cài đặt mã PIN",
+      "screen_type": "form",
+      "flow_stage": "input"
+    },
+    {
+      "id": "SCR-PIN-003",
+      "name_vi": "Xác thực khuôn mặt",
+      "screen_type": "biometric",
+      "flow_stage": "verify"
+    }
+  ],
+  "edges": [
+    {
+      "id": "E1",
+      "from_screen": "SCR-PIN-001",
+      "to_screen": "SCR-PIN-002",
+      "trigger": "ic_pinthe",
+      "trigger_label": "Cài đặt PIN thẻ (menu item)",
+      "type": "navigation",
+      "evidence": "icon_trigger_inference",
+      "trigger_icon": "ic_pinthe",
+      "confidence": 0.9
+    },
+    {
+      "id": "E2",
+      "from_screen": "SCR-PIN-002",
+      "to_screen": "SCR-PIN-003",
+      "trigger": "Tiếp tục",
+      "trigger_label": "Tiếp tục CTA button",
+      "type": "navigation",
+      "evidence": "text_trigger",
+      "confidence": 0.95
+    },
+    {
+      "id": "E3",
+      "from_screen": "SCR-PIN-002",
+      "to_screen": "SCR-PIN-002",
+      "trigger": "Xác nhận",
+      "trigger_label": "Xác nhận → overlay Xác thực giao dịch",
+      "type": "overlay_trigger",
+      "overlay_name": "Xác thực giao dịch",
+      "evidence": "text_trigger + visual",
+      "confidence": 0.85
+    },
+    {
+      "id": "E4",
+      "from_screen": "SCR-PIN-002",
+      "to_screen": "SCR-PIN-002",
+      "trigger": "auth_success",
+      "trigger_label": "Xác thực thành công → Success dialog",
+      "type": "overlay_trigger",
+      "overlay_name": "Thành công",
+      "evidence": "flow_inference",
+      "confidence": 0.85
+    },
+    {
+      "id": "E5",
+      "from_screen": "SCR-PIN-002",
+      "to_screen": "SCR-PIN-002",
+      "trigger": "error_id_expired",
+      "trigger_label": "Lỗi giấy tờ hết hạn → Error dialog",
+      "type": "overlay_trigger",
+      "overlay_name": "Thông báo — Giấy tờ hết hạn",
+      "evidence": "flow_inference",
+      "confidence": 0.8
+    },
+    {
+      "id": "E6",
+      "from_screen": "SCR-PIN-002",
+      "to_screen": "SCR-PIN-002",
+      "trigger": "error_facepay",
+      "trigger_label": "Lỗi Facepay chưa đăng ký → Error dialog",
+      "type": "overlay_trigger",
+      "overlay_name": "Thông báo — Facepay",
+      "evidence": "flow_inference",
+      "confidence": 0.8
+    },
+    {
+      "id": "E7",
+      "from_screen": "SCR-PIN-003",
+      "to_screen": "SCR-PIN-002",
+      "trigger": "face_auth_complete",
+      "trigger_label": "Hoàn tất xác thực khuôn mặt → quay về PIN form",
+      "type": "return",
+      "evidence": "flow_inference",
+      "confidence": 0.8
+    },
+    {
+      "id": "E8",
+      "from_screen": "SCR-PIN-002",
+      "to_screen": "SCR-PIN-001",
+      "trigger": "ic_back",
+      "trigger_label": "Back navigation",
+      "type": "navigation",
+      "evidence": "icon_trigger_inference",
+      "trigger_icon": "ic_back",
+      "confidence": 0.95
+    }
+  ],
+  "boundary_flags": [],
+  "gate_e_results": {
+    "check1_edges_gt0": {
+      "pass": true,
+      "value": 8
+    },
+    "check2_all_screens_exist": {
+      "pass": true
+    },
+    "check3_self_loops": {
+      "pass": "warning",
+      "overlay_self_loops": 4,
+      "note": "OVERLAY_SELF_LOOP allowed for overlay_trigger type"
+    },
+    "check4_icon_edges_have_metadata": {
+      "pass": true
+    },
+    "check5_coverage": {
+      "pass": true,
+      "value": "100%",
+      "screens_in_edges": 3,
+      "total_screens": 3
+    },
+    "overall": "PASS"
+  },
+  "overlay_events": [
+    {
+      "host_screen": "SCR-PIN-002",
+      "overlay_name": "Xác nhận",
+      "overlay_type": "bottom_sheet",
+      "trigger": "Xác nhận",
+      "evidence": "text_trigger + visual"
+    },
+    {
+      "host_screen": "SCR-PIN-002",
+      "overlay_name": "auth_success",
+      "overlay_type": "popup",
+      "trigger": "auth_success",
+      "evidence": "flow_inference"
+    },
+    {
+      "host_screen": "SCR-PIN-002",
+      "overlay_name": "error_id_expired",
+      "overlay_type": "popup",
+      "trigger": "error_id_expired",
+      "evidence": "flow_inference"
+    },
+    {
+      "host_screen": "SCR-PIN-002",
+      "overlay_name": "error_facepay",
+      "overlay_type": "popup",
+      "trigger": "error_facepay",
+      "evidence": "flow_inference"
+    }
+  ]
+}

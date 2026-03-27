@@ -1,0 +1,357 @@
+{
+  "meta": {
+    "client_name": "Co-opBank",
+    "product_name": "Co-opBank Mobile Banking",
+    "module_name": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+    "domain": "Banking",
+    "section": "Cài đặt voice OTT › Chỉnh sửa cài đặt Voice",
+    "module_dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/Cài đặt voice OTT/Chỉnh sửa cài đặt Voice"
+  },
+  "stats": {
+    "screen_count": 2,
+    "check_count": 24,
+    "gap_count": 11,
+    "pass_count": 12,
+    "proposal_count": 8,
+    "overall_score": 100,
+    "overall_score_color": "#15803d",
+    "overall_score_offset": 0,
+    "severity_counts": {
+      "critical": 1,
+      "major": 5,
+      "minor": 2
+    }
+  },
+  "screens": [
+    {
+      "id": "SCR-VCE-001",
+      "name": "Cài đặt Voice OTT › Form nhập thông tin (`SCR-VCE-001`)",
+      "type": "form",
+      "score": 70,
+      "score_color": "#15803d",
+      "score_offset": 47,
+      "gap_count": 3,
+      "artboard_count": 2
+    },
+    {
+      "id": "SCR-VCE-002",
+      "name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin (`SCR-VCE-002`)",
+      "type": "form",
+      "score": 36,
+      "score_color": "#b91c1c",
+      "score_offset": 100,
+      "gap_count": 8,
+      "artboard_count": 2
+    }
+  ],
+  "uxps": [
+    {
+      "id": "UXP-001",
+      "severity": "Critical",
+      "screen_tag": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+      "problem": "OTP bottom sheet (7203) thiếu hoàn toàn \"Gửi lại OTP\" button và countdown timer",
+      "gap_ref": "Check #12, #13",
+      "ddl_ref": "COMP:otp-input-1 (canResend, timeLeft states)",
+      "solution": "Thêm: (1) Countdown \"Gửi lại sau 01:30\" và (2) Link \"Gửi lại\" sau khi hết timeout. Đặt ngay dưới instruction text trong bottom sheet",
+      "screenshot_path": "ui/7203-chinh-sua-voice.png"
+    },
+    {
+      "id": "UXP-002",
+      "severity": "Major",
+      "screen_tag": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+      "problem": "Time picker fields \"Từ\"/\"Đến\" dùng Calendar icon thay vì Clock icon — semantic mismatch",
+      "gap_ref": "Check #11",
+      "ddl_ref": "UXG-197 (Input Labels)",
+      "solution": "Thay Calendar icon (📅) bằng Clock icon (🕐) cho 2 time-picker fields \"Từ\" và \"Đến\" trong màn hình 7202",
+      "screenshot_path": "ui/7202-chinh-sua-voice.png"
+    },
+    {
+      "id": "UXP-003",
+      "severity": "Major",
+      "screen_tag": "SCR-VCE-001 + SCR-VCE-002",
+      "problem": "Số tài khoản hiển thị đầy đủ trên cả view (7201) và edit (7202) — không mask PII",
+      "gap_ref": "Check #4, #18",
+      "ddl_ref": "UXG-180 (Color Only) — security principle Banking",
+      "solution": "Mask account numbers: \"212312312313\" → \"****2313\". Nhất quán với phone masking tại OTP screen",
+      "screenshot_path": "ui/7201-chinh-sua-voice.png"
+    },
+    {
+      "id": "UXP-004",
+      "severity": "Major",
+      "screen_tag": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+      "problem": "Thiếu inline error cho time picker khi \"Từ\" > \"Đến\" (invalid range)",
+      "gap_ref": "Check #17",
+      "ddl_ref": "UXG-257 (Inline Errors) · COMP:text-input-1 (error state)",
+      "solution": "Thêm error state dưới time picker: \"Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc\". Dùng red border + error text pattern",
+      "screenshot_path": "ui/7202-chinh-sua-voice.png"
+    },
+    {
+      "id": "UXP-005",
+      "severity": "Major",
+      "screen_tag": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+      "problem": "Xóa tài khoản khỏi danh sách không có confirmation dialog — destructive action không được bảo vệ",
+      "gap_ref": "Check #19",
+      "ddl_ref": "UXG-265 (Confirm Destructive Actions)",
+      "solution": "Khi tap (−): hiện confirmation bottom sheet \"Xóa tài khoản ****2313 khỏi danh sách Voice OTT?\" với CTA \"Xóa\" (destructive) + \"Huỷ\"",
+      "screenshot_path": "ui/7202-chinh-sua-voice.png"
+    },
+    {
+      "id": "UXP-006",
+      "severity": "Major",
+      "screen_tag": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+      "problem": "\"Lưu chỉnh sửa\" thiếu loading state sau khi submit — nguy cơ double-submit",
+      "gap_ref": "Check #22",
+      "ddl_ref": "UXG-175 (Loading Buttons)",
+      "solution": "Sau tap \"Lưu chỉnh sửa\": button chuyển sang loading state (spinner + disabled) trong khi OTP bottom sheet loading",
+      "screenshot_path": "ui/7202-chinh-sua-voice.png"
+    },
+    {
+      "id": "UXP-007",
+      "severity": "Minor",
+      "screen_tag": "Cài đặt Voice OTT › Form nhập thông tin",
+      "problem": "Nút \"Đóng\" trong success popup (7204) là text-link, thiếu button affordance",
+      "gap_ref": "Check #6",
+      "ddl_ref": "UXG-204 (Submit Feedback)",
+      "solution": "Style \"Đóng\" dưới dạng outlined button (border + padding) để rõ ràng là tappable element",
+      "screenshot_path": "ui/7204-chinh-sua-voice.png"
+    },
+    {
+      "id": "UXP-008",
+      "severity": "Minor",
+      "screen_tag": "Cài đặt Voice OTT › Form nhập thông tin",
+      "problem": "Warning \"Lưu ý: KHÔNG để thiết bị ở chế độ im lặng\" không đủ nổi bật",
+      "gap_ref": "Check #3",
+      "ddl_ref": "UXG-219 (Contrast Readability)",
+      "solution": "Thêm icon cảnh báo (⚠️ amber) trước text, hoặc dùng warning text color (#D97706 amber) để phân biệt với body text",
+      "screenshot_path": "ui/7201-chinh-sua-voice.png"
+    }
+  ],
+  "gaps_by_screen": [
+    {
+      "screen_id": "SCR-VCE-001",
+      "screen_name": "Cài đặt Voice OTT › Form nhập thông tin (`SCR-VCE-001`)",
+      "screen_type": "form",
+      "gaps": [
+        {
+          "num": 3,
+          "title": "Warning text \"Lưu ý: KHÔNG\" đủ nổi bật, không chỉ dựa vào chữ in hoa",
+          "ref": "UXG-219",
+          "severity": "Minor",
+          "user_impact": "Warning text \"Lưu ý: KHÔNG\" đủ nổi bật, không chỉ dựa vào chữ in hoa",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "Từ ảnh 7201-chinh-sua-voice.png: Text \"Lưu ý: KHÔNG...\" cùng màu body text, không có màu cảnh báo (amber/đỏ). Chỉ caps không đủ để phân biệt — rủi ro bị bỏ qua",
+          "screenshot": "7201-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-001",
+          "screen_name": "Cài đặt Voice OTT › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7201-chinh-sua-voice.png"
+        },
+        {
+          "num": 4,
+          "title": "Số tài khoản trong danh sách được masking (PII protection)",
+          "ref": "UXG-180",
+          "severity": "Minor",
+          "user_impact": "Số tài khoản trong danh sách được masking (PII protection)",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "Từ ảnh 7201-chinh-sua-voice.png: \"212312312313\" / \"312312312313\" hiển thị đầy đủ. Banking: account numbers phải masked (e.g., ****2313). Inconsistent với OTP screen (mask phone)",
+          "screenshot": "7201-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-001",
+          "screen_name": "Cài đặt Voice OTT › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7201-chinh-sua-voice.png"
+        },
+        {
+          "num": 6,
+          "title": "Success popup \"Thông báo\" (7204): nút \"Đóng\" có affordance rõ dạng button",
+          "ref": "UXG-204",
+          "severity": "Minor",
+          "user_impact": "Success popup \"Thông báo\" (7204): nút \"Đóng\" có affordance rõ dạng button",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "Từ ảnh 7204-chinh-sua-voice.png: \"Đóng\" được render dạng text-link màu xanh, không có border/background. Giảm affordance — user có thể không nhận ra là bấm được",
+          "screenshot": "7204-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-001",
+          "screen_name": "Cài đặt Voice OTT › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7204-chinh-sua-voice.png"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-VCE-002",
+      "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin (`SCR-VCE-002`)",
+      "screen_type": "form",
+      "gaps": [
+        {
+          "num": 11,
+          "title": "Time picker fields dùng Clock icon (không phải Calendar)",
+          "ref": "UXG-197",
+          "severity": "Minor",
+          "user_impact": "Time picker fields dùng Clock icon (không phải Calendar)",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "Từ ảnh 7202-chinh-sua-voice.png: Các field \"Từ\"/\"Đến\" kèm **Calendar icon (📅)** — semantic mismatch. Time selection phải dùng Clock icon 🕐, không phải date picker icon",
+          "screenshot": "7202-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-002",
+          "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7202-chinh-sua-voice.png"
+        },
+        {
+          "num": 12,
+          "title": "`otp-input-1` DDL spec: có \"Gửi lại OTP\" (canResend) trong bottom sheet",
+          "ref": "COMP:otp-input-1",
+          "severity": "Minor",
+          "user_impact": "`otp-input-1` DDL spec: có \"Gửi lại OTP\" (canResend) trong bottom sheet",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "Từ ảnh 7203-chinh-sua-voice.png: Bottom sheet OTP chỉ có 6 ô + \"Xác nhận\". **Thiếu hoàn toàn** \"Gửi lại\" trigger. DDL `otp-input-1` spec: `canResend` state là mandatory",
+          "screenshot": "7203-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-002",
+          "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7203-chinh-sua-voice.png"
+        },
+        {
+          "num": 13,
+          "title": "`otp-input-1` DDL spec: có countdown timer (timeLeft)",
+          "ref": "COMP:otp-input-1",
+          "severity": "Minor",
+          "user_impact": "`otp-input-1` DDL spec: có countdown timer (timeLeft)",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "Từ ảnh 7203-chinh-sua-voice.png: Không có countdown \"Gửi lại sau Xs\". DDL `otp-input-1` spec: `timeLeft` state là mandatory. User không biết khi nào resend",
+          "screenshot": "7203-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-002",
+          "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7203-chinh-sua-voice.png"
+        },
+        {
+          "num": 17,
+          "title": "Time picker: error state khi \"Từ\" > \"Đến\" invalid range",
+          "ref": "UXG-257",
+          "severity": "Minor",
+          "user_impact": "Time picker: error state khi \"Từ\" > \"Đến\" invalid range",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "Từ ảnh 7202-chinh-sua-voice.png: Không có error state visible cho invalid time range. DDL `text-input-1` spec có `error` state — thiếu trong Figma variants",
+          "screenshot": "7202-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-002",
+          "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7202-chinh-sua-voice.png"
+        },
+        {
+          "num": 18,
+          "title": "Số tài khoản trong edit form được masking",
+          "ref": "UXG-180",
+          "severity": "Minor",
+          "user_impact": "Số tài khoản trong edit form được masking",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "Từ ảnh 7202-chinh-sua-voice.png: \"12312312313123\" hiển thị đầy đủ trong list. Inconsistent: phone masked ở 7203 nhưng account không masked ở 7202",
+          "screenshot": "7202-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-002",
+          "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7202-chinh-sua-voice.png"
+        },
+        {
+          "num": 19,
+          "title": "Xóa tài khoản (−) có confirmation dialog trước khi xóa",
+          "ref": "UXG-265",
+          "severity": "Minor",
+          "user_impact": "Xóa tài khoản (−) có confirmation dialog trước khi xóa",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "Từ ảnh 7202-chinh-sua-voice.png: Icon (−) per account row, không rõ có confirm step. UXG-265 (Confirm Destructive Actions) — xóa tài khoản là destructive action",
+          "screenshot": "7202-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-002",
+          "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7202-chinh-sua-voice.png"
+        },
+        {
+          "num": 22,
+          "title": "\"Lưu chỉnh sửa\" có loading state sau submit (tránh double-submit)",
+          "ref": "UXG-175",
+          "severity": "Minor",
+          "user_impact": "\"Lưu chỉnh sửa\" có loading state sau submit (tránh double-submit)",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "Không thấy loading button state trong Figma 7202. Banking: submit → OTP trigger cần loading indicator. DDL `text-input-1`: missing loading/submitting state",
+          "screenshot": "7202-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-002",
+          "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7202-chinh-sua-voice.png"
+        },
+        {
+          "num": 24,
+          "title": "Hick's Law: form có nhiều interactive zones — cognitive load có thể cao",
+          "ref": "hick",
+          "severity": "Minor",
+          "user_impact": "Hick's Law: form có nhiều interactive zones — cognitive load có thể cao",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "Từ ảnh 7202-chinh-sua-voice.png: 5-6 interactive zones (add/remove accounts + time pickers + dual CTA). Hick's Law: cân nhắc visual grouping rõ hơn giữa sections để giảm cognitive load",
+          "screenshot": "7202-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-002",
+          "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7202-chinh-sua-voice.png",
+          "_enriched_ref": {
+            "name": "Hick's Law",
+            "url": "https://lawsofux.com/hicks-law/",
+            "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+            "source": "Laws of UX"
+          }
+        }
+      ]
+    }
+  ],
+  "heuristics": [
+    {
+      "key": "flow",
+      "name_vi": "Luồng người dùng",
+      "name_en": "Flow & Navigation",
+      "score": 52,
+      "gap_count": 11
+    },
+    {
+      "key": "component",
+      "name_vi": "Thành phần",
+      "name_en": "Component & DDL",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "visual",
+      "name_vi": "Thiết kế trực quan",
+      "name_en": "Visual Design",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "content",
+      "name_vi": "Nội dung",
+      "name_en": "Content & Copy",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "a11y",
+      "name_vi": "Tiếp cận",
+      "name_en": "Accessibility",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "trust",
+      "name_vi": "Tin cậy & Bảo mật",
+      "name_en": "Trust & Security",
+      "score": 100,
+      "gap_count": 0
+    }
+  ],
+  "_ref_enrichment": {
+    "gap_enriched": 1,
+    "uxp_enriched": 0,
+    "sources": [
+      "enriched-data.json",
+      "official-urls.md"
+    ]
+  }
+}

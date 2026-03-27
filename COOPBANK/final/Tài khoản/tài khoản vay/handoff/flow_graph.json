@@ -1,0 +1,89 @@
+{
+  "edges": [
+    {
+      "from_screen": "SCR-TAV-001",
+      "to_screen": "SCR-TAV-002",
+      "trigger": "account row tap — 12300123123000",
+      "trigger_label_vi": "Tap vào tài khoản vay",
+      "type": "navigation",
+      "evidence": "text_based"
+    },
+    {
+      "from_screen": "SCR-TAV-002",
+      "to_screen": "SCR-TAV-004",
+      "trigger": "CTA Lịch sử giao dịch",
+      "trigger_label_vi": "Lịch sử giao dịch",
+      "type": "navigation",
+      "evidence": "text_based"
+    },
+    {
+      "from_screen": "SCR-TAV-004",
+      "to_screen": "SCR-TAV-003",
+      "trigger": "transaction row tap",
+      "trigger_label_vi": "Tap vào giao dịch",
+      "type": "navigation",
+      "evidence": "text_based"
+    },
+    {
+      "from_screen": "SCR-TAV-001",
+      "to_screen": "SCR-TAV-001",
+      "trigger": "caret-arrow-up",
+      "trigger_label_vi": "Expand/Collapse accordion Tài khoản vay",
+      "type": "state_change",
+      "evidence": "icon_trigger_inference",
+      "trigger_icon": "caret-arrow-up",
+      "figma_node_id": "142:17855",
+      "confidence": 0.92,
+      "reasoning": "caret-arrow-up icon tại header accordion 'Tài khoản vay' — expand/collapse state change trong cùng màn hình, không navigate sang biên mới. Self-loop nhưng type=state_change, không phải overlay_trigger."
+    },
+    {
+      "from_screen": "SCR-TAV-002",
+      "to_screen": "SCR-TAV-001",
+      "trigger": "header back arrow OR home icon",
+      "trigger_label_vi": "Nút Back / Home về trang chủ",
+      "type": "back_navigation",
+      "evidence": "icon_trigger_inference",
+      "trigger_icon": "header (back+home)",
+      "figma_node_id": "142:17861",
+      "confidence": 0.95,
+      "reasoning": "header instance tại AB2 chứa cả back arrow (về SCR-TAV-001) và home icon (về màn hình chủ). Back arrow → SCR-TAV-001, home → root nav (không mapped sang biên tài khoản vay)."
+    },
+    {
+      "from_screen": "SCR-TAV-004",
+      "to_screen": "SCR-TAV-002",
+      "trigger": "header back arrow",
+      "trigger_label_vi": "Quay lại thông tin tài khoản",
+      "type": "back_navigation",
+      "evidence": "icon_trigger_inference",
+      "trigger_icon": "header (back)",
+      "figma_node_id": "142:17898",
+      "confidence": 0.9,
+      "reasoning": "header instance tại AB4 chứa back arrow. Context: SCR-TAV-004 được mở từ SCR-TAV-002 qua CTA 'Lịch sử giao dịch' → back arrow quay về SCR-TAV-002."
+    },
+    {
+      "from_screen": "SCR-TAV-003",
+      "to_screen": "SCR-TAV-004",
+      "trigger": "header back arrow",
+      "trigger_label_vi": "Quay lại lịch sử giao dịch",
+      "type": "back_navigation",
+      "evidence": "icon_trigger_inference",
+      "trigger_icon": "header (back)",
+      "figma_node_id": "142:17886",
+      "confidence": 0.9,
+      "reasoning": "header instance tại AB3 chứa back arrow. Context: SCR-TAV-003 mở từ SCR-TAV-004 khi tap giao dịch → back arrow quay về SCR-TAV-004."
+    }
+  ],
+  "meta": {
+    "total_edges": 7,
+    "text_based_edges": 3,
+    "icon_inferred_edges": 4,
+    "coverage_pct": 100,
+    "self_loop_count": 1,
+    "self_loop_type": "state_change (NOT overlay_trigger — caret accordion expand is in-screen state change)",
+    "gate_e_status": "PASS",
+    "boundary_flags": [],
+    "overlay_detect_run": true,
+    "overlay_detect_result": "0/4 artboards classified as overlay — all STANDALONE confirmed"
+  },
+  "overlay_events": []
+}

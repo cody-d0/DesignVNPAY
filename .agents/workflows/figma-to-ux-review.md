@@ -38,7 +38,7 @@ Workflow này kết hợp 2 pipe chính để sinh PRD .md từ link Figma, đ�
 │   ├── artboard-name-1.png
 │   ├── artboard-name-2.png
 │   └── ...
-├── .handoff/
+├── handoff/
 │   ├── screen_inventory.json
 │   ├── flow_graph.json
 │   ├── handoff-manifest.json
@@ -125,6 +125,7 @@ Workflow này kết hợp 2 pipe chính để sinh PRD .md từ link Figma, đ�
 | `gate-ddl-sources.sh` | `tools/scripts/gate-ddl-sources.sh` | Gate DDL: Verify DDL data sources (10 files) |
 | `ddl-prefetch.js` | `tools/scripts/ddl-prefetch.js` | Gate DDL-PF: Query DDL → output `ddl-context.json` |
 | `ddl-api.js` | `DDL/scripts/ddl-api.js` | DDL Query Engine (30+ commands, 6,421 data points) |
+| `pitch-deck-gen.py` | `tools/scripts/pitch-deck-gen.py` | Bước 6: Deterministic pitch deck generator (generate, generate-all, verify, audit) |
 
 ---
 
@@ -196,7 +197,7 @@ Workflow này kết hợp 2 pipe chính để sinh PRD .md từ link Figma, đ�
 
 | Option | Hành vi | Sau đó |
 |:---:|:---|:---|
-| **A** (Empty) | `rm -rf {output_dir}/*` + `rm -rf {output_dir}/.handoff` | Re-verify folder rỗng → ✅ PASS |
+| **A** (Empty) | `rm -rf {output_dir}/*` + `rm -rf {output_dir}/handoff {output_dir}/.handoff` | Re-verify folder rỗng → ✅ PASS |
 | **B** (Change) | Yêu cầu user nhập `output_dir` mới | Quay lại Gate 0 từ đầu |
 | **C** (Abort) | STOP pipeline | Thông báo: "Pipeline dừng theo yêu cầu user." |
 
@@ -207,7 +208,7 @@ Workflow này kết hợp 2 pipe chính để sinh PRD .md từ link Figma, đ�
 - ❌ Tiếp tục pipeline khi folder có data cũ (gây lẫn boundaries, ảnh, .md giữa 2 runs)
 
 **Lưu ý:**
-- Gate 0 kiểm tra cả hidden files (`.handoff/`, `.ocr_done`)
+- Gate 0 kiểm tra cả hidden files (`handoff/`, `.ocr_done`)
 - Lệnh kiểm tra: `ls -A {output_dir} | wc -l` — nếu > 0 → có items
 - Khi chọn option A, ghi log: `GATE_0_FOLDER_EMPTIED: {output_dir}, {N} items removed`
 
@@ -464,7 +465,7 @@ Với mỗi `screen_boundaries[k]`:
    - Đặc biệt chạy **Phase 4e**: Lấy raw text/icon ở trên feed thẳng vào `ux-signal-inference` (`.cursor/skills/ux-signal-inference/SKILL.md`) → tạo `prd_extension` có `ddl_ref`. Merged vào `prd_augmented`.
 5. **Phase 5:**
    - Dựng cây Output Folders. Xuất toàn bộ `.md` và copy ảnh vào `/ui`.
-   - **Tạo Handoff (BẮT BUỘC):** Xuất ra thư mục `.handoff/` với đầy đủ files:
+   - **Tạo Handoff (BẮT BUỘC):** Xuất ra thư mục `handoff/` với đầy đủ files:
 
 ### Handoff Files Contract
 
@@ -480,9 +481,9 @@ Với mỗi `screen_boundaries[k]`:
 ### ⛔ Gate F: Handoff Completeness (BẮT BUỘC sau Phase 5, trước Gate B)
 
 Agent tự kiểm tra:
-1. `.handoff/screen_inventory.json` exists + valid JSON — **HARD-FAIL**
-2. `.handoff/handoff-manifest.json` exists + has `schema_version` — **HARD-FAIL**
-3. `.handoff/flow_graph.json` exists + has `edges[]` — **HARD-FAIL**
+1. `handoff/screen_inventory.json` exists + valid JSON — **HARD-FAIL**
+2. `handoff/handoff-manifest.json` exists + has `schema_version` — **HARD-FAIL**
+3. `handoff/flow_graph.json` exists + has `edges[]` — **HARD-FAIL**
 4. `screen_inventory.screens.length === screen_boundaries.length` — WARNING
 5. Every screen has `wireframe_images.length ≥ 1` — WARNING
 6. `handoff-manifest.phases_completed` includes `"2a-bis"`, `"2a-pre"`, `"2d"` — WARNING. **Lưu ý:** Phase 2c-bis đã merge vào `"2a-pre"` (xem Phase 2a-pre spec). Chỉ check `"2a-pre"`, KHÔNG check `"2c-bis"` riêng.
@@ -499,7 +500,7 @@ Gate F Results:
 Gate F: PASS/FAIL
 ```
 
-> **📌 CHECKPOINT #4:** Sau Gate F, tất cả Phase 2-5 intermediate data ĐÃ GHI VÀO DISK. Xả toàn bộ in-memory Phase 2-5 data. Pipe 2 đọc lại từ `.handoff/` files.
+> **📌 CHECKPOINT #4:** Sau Gate F, tất cả Phase 2-5 intermediate data ĐÃ GHI VÀO DISK. Xả toàn bộ in-memory Phase 2-5 data. Pipe 2 đọc lại từ `handoff/` files.
 
 ### ⛔ Gate B: OCR Data Validation (BẮT BUỘC trước khi sang Bước 3)
 
@@ -539,12 +540,12 @@ node tools/scripts/gate-ocr-check.js <prd_folder>
 
 Khai báo nguồn data đầu vào cho UX review:
 - `prd_folder`: Thư mục Output `output_dir` vừa được tạo.
-- `consumer_payload`: Load object từ `.handoff/screen_inventory.json`.
-  - **Fast-path (có `.handoff/`):** Skill A dùng trực tiếp `text_list`, `context_hint`, `ocr_icons`.
-  - **Fallback (không có `.handoff/`):** Skill A tự parse .md Section 3 (chậm hơn, thiếu ocr_icons).
+- `consumer_payload`: Load object từ `handoff/screen_inventory.json`.
+  - **Fast-path (có `handoff/`):** Skill A dùng trực tiếp `text_list`, `context_hint`, `ocr_icons`.
+  - **Fallback (không có `handoff/`):** Skill A tự parse .md Section 3 (chậm hơn, thiếu ocr_icons).
 - `domain`: Truyền từ Bước 1 (hoặc mặc định từ `handoff-manifest.json`).
 
-> **📌 CHECKPOINT #5:** Sau Handoff Preparation, xả toàn bộ Pipe 1 context. Pipe 2 chỉ đọc từ `.handoff/` files + `*.md` files + `ui/*.png`.
+> **📌 CHECKPOINT #5:** Sau Handoff Preparation, xả toàn bộ Pipe 1 context. Pipe 2 chỉ đọc từ `handoff/` files + `*.md` files + `ui/*.png`.
 
 ---
 
@@ -570,7 +571,7 @@ node tools/scripts/ddl-prefetch.js {prd_folder} --product {product_type}
 ```
 
 - **Product type** tự detect từ domain: `banking`, `fintech`, `ecommerce`, etc.
-- **Output:** `{prd_folder}/.handoff/ddl-context.json`
+- **Output:** `{prd_folder}/handoff/ddl-context.json`
 - **Exit 0** → `ddl-context.json` tạo thành công, tiếp tục Skills
 - **Exit 1** → DỪNG PIPELINE. DDL query thất bại
 
@@ -709,6 +710,28 @@ Thông báo Agent tiến hành Pipeline Review.
 
 1. Tổng hợp thành `{prd_folder}/ux-review-report.md`.
 
+   **⛔ UXP Format Enforcement (MANDATORY — trước scoring):**
+   Report section "Đề xuất cải tiến" **PHẢI** tuân thủ **UXP Format Contract** trong `ux-review-pipe/SKILL.md § ⛔ UXP Format Contract`.
+
+   **Mỗi UXP PHẢI có ĐÚNG 5-field table:**
+   ```markdown
+   #### UXP-{NNN} · {Critical|Major|Minor}
+   | **Màn hình** | {display_name_vi} |
+   |:---|:---|
+   | **Vấn đề** | {1 dòng tóm tắt} |
+   | **Gap ref** | Check #{X}, #{Y} |
+   | **DDL** | {ref} |
+   | **Giải pháp** | {đề xuất cụ thể} |
+   ```
+
+   **Agent self-check trước scoring:**
+   - Mỗi `#### UXP-` block có đúng 5 field names: Màn hình, Vấn đề, Gap ref, DDL, Giải pháp
+   - KHÔNG có fields lạ: Thuộc tính, Hiện trạng, Hậu quả, Tác động, Heuristic, DDL Ref, Đề xuất, Mức độ, UX Law, Ref
+   - KHÔNG có emoji trong severity header
+   - Mỗi UXP có Gap ref trỏ đến Check # trong phần Chi tiết
+
+   **Nếu agent phát hiện UXP KHÔNG đúng format → SỬA NGAY trước khi tiếp tục scoring.**
+
 2. **⛔ Tool-Verified Scoring (MANDATORY — không được bỏ qua):**
    - Chạy: `node tools/ux-score-calculator.js run --json {prd_folder}/ux-review-report.md`
    - **Nếu có discrepancies** (exit code 3):
@@ -727,22 +750,76 @@ Thông báo Agent tiến hành Pipeline Review.
 
 > **📌 CHECKPOINT #6:** Pipeline hoàn tất. Report on disk. Xả toàn bộ context.
 
-## Bước 6: Pitch Deck (BẮT BUỘC)
+## Bước 6: Pitch Deck (BẮT BUỘC — Script-Driven)
 
-Sử dụng skill `ux-audit-pitch-deck` để tạo HTML pitch deck chuyên nghiệp.
+**Sử dụng script `pitch-deck-gen.py` để tạo HTML pitch deck deterministic.**
 
-1. Đọc `ux-review-report.md` + `.handoff/ddl-context.json` + screenshots từ `ui/*.png`
-2. Tạo `{prd_folder}/pitch-deck.html` theo cấu trúc NNg: Executive Summary → Methodology → Detailed Findings → Heuristic Scorecard → Action Plan
-3. **Finding cards**: Layout 2-column (40:60 ratio) — phone-frame screenshot trái, structured info phải
-4. **Bắt buộc**: Sanitize PII, viết đầy đủ không viết tắt, mỗi UXP có ảnh minh hoạ
-5. **Loại bỏ**: KHÔNG include quality gates, pipeline timestamps, internal tooling references — đây là internal metadata, không thuộc client-facing deliverable
-6. Mở trong browser để xác nhận rendering
+Script path: `tools/scripts/pitch-deck-gen.py`
+Design system: `.agents/skills/ux-audit-pitch-deck/references/design-system.md`
+
+### 6.1 Generate (single directory)
+
+```bash
+python3 tools/scripts/pitch-deck-gen.py generate {prd_folder}
+```
+
+### 6.2 Generate-all (batch — toàn bộ directories chứa ux-review-report.md)
+
+```bash
+# Dry-run trước
+python3 tools/scripts/pitch-deck-gen.py generate-all {base_dir} --dry
+
+# Generate thật
+python3 tools/scripts/pitch-deck-gen.py generate-all {base_dir}
+```
+
+### 6.3 Verify (structural check — all directories)
+
+```bash
+python3 tools/scripts/pitch-deck-gen.py verify {base_dir}
+```
+
+Verify checks: Hero, ExecSummary, Methodology, Findings, Scorecard, Gaps, Footer, Design System tokens.
+
+### 6.4 Audit (single directory — deep data integrity)
+
+```bash
+python3 tools/scripts/pitch-deck-gen.py audit {prd_folder}
+```
+
+Audit checks: gap count parity (source ↔ HTML), DDL context, screen inventory, screenshots.
+
+### Script Features
+
+| Feature | Detail |
+|:---|:---|
+| **Structure** | NNg-aligned 6 sections: Hero → ExecSummary → Methodology → Findings → Scorecard → Gaps |
+| **Design System** | Light theme, high contrast (Manrope font, severity color tokens, no Pass stats) |
+| **Finding cards** | 2-column grid (40:60) — phone-frame screenshot trái, structured info phải |
+| **Gap section** | Card-based layout: Tác động người dùng, Heuristic vi phạm, Bằng chứng |
+| **PII sanitization** | Auto-redact account numbers, phone numbers, transaction IDs |
+| **Abbreviation expansion** | Auto-expand TK→Tài khoản, GD→Giao dịch, etc. |
+| **Progressive disclosure** | DDL refs inside `<details>` tags |
+| **Score rings** | SVG-based, animated via IntersectionObserver |
+| **Responsive** | Mobile-first breakpoints, reduced-motion support |
+| **Deterministic** | Same input → same output, 100% data integrity |
+
+### Tại sao Script thay vì Inline Agent
+
+| Tiêu chí | Inline (cũ) | Script (mới) |
+|:---|:---:|:---:|
+| **Data integrity** | 22/28 corrupted | 28/28 ✅ (369/369 gaps) |
+| **Tốc độ** | ~2 giờ (28 files) | 15 giây |
+| **Consistency** | Non-deterministic | Pixel-perfect |
+| **Batch** | Từng file | 1 lệnh |
 
 **Anti-patterns:**
 - ❌ Bỏ qua Bước 6 vì "user không yêu cầu" — pitch-deck là MANDATORY, luôn tạo
+- ❌ Dùng inline agent generation thay vì script — agent tạo inline dễ bị lỗi khi chỉnh sửa
 - ❌ Dùng `*/ui/*.png` glob — luôn dùng `ui/*.png` (flat structure)
+- ❌ Chạy generate mà không verify sau — luôn chạy `verify` sau `generate-all`
 
-> **📌 CHECKPOINT #7:** Pitch deck on disk. Thông báo user để review.
+> **📌 CHECKPOINT #7:** Pitch deck on disk. Chạy `verify` xác nhận 28/28. Thông báo user để review.
 
 ---
 
@@ -753,7 +830,7 @@ Sử dụng skill `ux-audit-pitch-deck` để tạo HTML pitch deck chuyên nghi
 | **CP1** | Sau Gate A | `figma_raw` XML body | `provisional_boundaries`, `screen_ids`, artboard names |
 | **CP2** | Sau **Merged CP** confirm | `icon_inventory` raw, reasoning intermediate | `icon_trigger_edges`, `boundary_annotations`, `flow_graph`, `screen_boundaries` (locked) |
 | **CP3** | Sau Phase 2g | `ocr_round1_text`, `ocr_round2_icons` raw | `ocr_full_table`, `ocr_gaps`, `ocr_screen_context` |
-| **CP4** | Sau Gate F | **Tất cả Phase 2-5 in-memory** | Paths to `.handoff/` files |
+| **CP4** | Sau Gate F | **Tất cả Phase 2-5 in-memory** | Paths to `handoff/` files |
 | **CP5** | Sau Handoff prep | Toàn bộ Pipe 1 context | `consumer_payload` (from file) |
 | **CP6** | Sau Score | Toàn bộ | `ux-review-report.md` path |
 

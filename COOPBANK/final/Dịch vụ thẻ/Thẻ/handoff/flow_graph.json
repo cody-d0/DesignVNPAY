@@ -1,0 +1,102 @@
+{
+  "schema_version": "flow-graph-v1",
+  "product": "CoopBank Mobile Banking",
+  "module": "Dịch Vụ Thẻ / Thẻ",
+  "figma_file_key": "aYeSAVi94QlI4i4rL3xtmR",
+  "figma_node_id": "142:33334",
+  "generated_at": "2026-03-23T12:20:00Z",
+  "nodes": [
+    {
+      "id": "SCR-THE-001",
+      "label": "Dịch vụ thẻ › Danh sách thẻ",
+      "type": "list",
+      "is_entry": true
+    },
+    {
+      "id": "SCR-THE-002",
+      "label": "Thông tin thẻ › Chi tiết thẻ",
+      "type": "detail",
+      "is_entry": false
+    },
+    {
+      "id": "SCR-THE-003",
+      "label": "Lịch sử GD thẻ › Danh sách GD",
+      "type": "list",
+      "is_entry": false
+    },
+    {
+      "id": "SCR-THE-004",
+      "label": "Lịch sử GD thẻ › Chi tiết GD",
+      "type": "detail",
+      "is_entry": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "SCR-THE-001",
+      "to": "SCR-THE-002",
+      "trigger": "Chi tiết thẻ",
+      "trigger_type": "cta_button",
+      "confidence": 0.95,
+      "trigger_icon": null,
+      "note": "Primary CTA button at bottom of card management hub"
+    },
+    {
+      "from": "SCR-THE-001",
+      "to": "SCR-THE-003",
+      "trigger": "Lịch sử giao dịch",
+      "trigger_type": "quick_action",
+      "confidence": 0.95,
+      "trigger_icon": "ic_tthd_line",
+      "note": "Quick action grid item — navigate to transaction history"
+    },
+    {
+      "from": "SCR-THE-003",
+      "to": "SCR-THE-004",
+      "trigger": "tap_transaction_row",
+      "trigger_type": "list_item_tap",
+      "confidence": 0.9,
+      "trigger_icon": null,
+      "note": "Tap on any transaction row → view detail"
+    },
+    {
+      "from": "SCR-THE-003",
+      "to": "SCR-THE-003",
+      "trigger": "Khác (date range picker)",
+      "trigger_type": "overlay_trigger",
+      "confidence": 0.9,
+      "trigger_icon": "ic_calendar",
+      "note": "Date picker bottom sheet overlay — self-loop, same screen",
+      "is_overlay": true
+    },
+    {
+      "from": "SCR-THE-001",
+      "to": "SCR-THE-001",
+      "trigger": "Xác thực giao dịch (PIN sheet)",
+      "trigger_type": "overlay_trigger",
+      "confidence": 0.9,
+      "trigger_icon": "ic_lock",
+      "note": "PIN authentication overlay — self-loop on card management hub",
+      "is_overlay": true
+    },
+    {
+      "from": "SCR-THE-001",
+      "to": "SCR-THE-001",
+      "trigger": "Thông tin thẻ (card info sheet)",
+      "trigger_type": "overlay_trigger",
+      "confidence": 0.85,
+      "trigger_icon": null,
+      "note": "Card info disclosure bottom sheet — shows full card number/expiry",
+      "is_overlay": true
+    }
+  ],
+  "gate_e_assertions": {
+    "edges_count": 6,
+    "all_nodes_referenced": true,
+    "overlay_self_loops_count": 3,
+    "icon_edges_have_metadata": true,
+    "coverage_percent": 100,
+    "status": "PASS"
+  },
+  "overlay_events": []
+}

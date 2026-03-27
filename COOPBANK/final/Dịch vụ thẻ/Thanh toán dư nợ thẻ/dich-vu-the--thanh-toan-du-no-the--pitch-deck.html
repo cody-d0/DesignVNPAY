@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>UX Audit — Thanh toán dư nợ thẻ | Co-opBank Mobile Banking · Co-opBank</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+/* ═══ DESIGN TOKENS — Light Theme (WCAG AA) ═══ */
+:root {
+  --bg-base:#ffffff; --bg-surface:#f8fafc; --bg-card:#ffffff; --bg-card-hover:#f1f5f9;
+  --text-primary:#0f172a; --text-secondary:#475569; --text-muted:#64748b;
+  --accent-gold:#b45309; --accent-purple:#7c3aed; --accent-blue:#2563eb;
+  --sev-critical:#b91c1c; --sev-critical-bg:rgba(185,28,28,.08); --sev-critical-fg:#b91c1c;
+  --sev-major:#c2410c; --sev-major-bg:rgba(194,65,12,.08); --sev-major-fg:#c2410c;
+  --sev-minor:#92400e; --sev-minor-bg:rgba(146,64,14,.08); --sev-minor-fg:#92400e;
+  --sev-pass:#15803d; --sev-pass-bg:rgba(21,128,61,.08); --sev-pass-fg:#15803d;
+  --border:#e2e8f0; --border-light:#cbd5e1;
+  --font-sans:'Manrope',system-ui,-apple-system,sans-serif;
+  --font-display:'Manrope',system-ui,sans-serif;
+  --font-mono:'Manrope',system-ui,sans-serif;
+}
+
+/* ═══ RESET ═══ */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-primary);line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ═══ HERO ═══ */
+.hero{background:linear-gradient(135deg,#f8fafc 0%,#e0e7ff 40%,#dbeafe 70%,#f8fafc 100%);padding:64px 56px 72px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-120px;top:-120px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.06),transparent 70%)}
+.hero::after{content:'';position:absolute;left:-80px;bottom:-80px;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.04),transparent 70%)}
+.hero-label{font-family:var(--font-sans);font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--accent-purple);margin-bottom:12px;font-weight:700}
+.hero h1{font-family:var(--font-display);font-size:42px;font-weight:800;line-height:1.15;margin-bottom:8px;color:var(--text-primary)}
+.hero-sub{color:var(--text-secondary);font-size:15px;margin-bottom:40px}
+.hero-stats{display:flex;gap:48px;flex-wrap:wrap}
+.stat-item{text-align:center}
+.stat-num{font-family:var(--font-sans);font-size:44px;font-weight:800;line-height:1;display:block;color:var(--text-primary)}
+.stat-num.gap-c{color:var(--sev-critical)}
+.stat-label{font-family:var(--font-sans);font-size:10px;color:var(--text-secondary);margin-top:6px;text-transform:uppercase;letter-spacing:1.5px;font-weight:600}
+.hero-score{position:absolute;right:56px;top:50%;transform:translateY(-50%);z-index:1}
+
+/* ═══ NAV ═══ */
+.nav{background:var(--bg-base);border-bottom:1px solid var(--border);padding:0 56px;display:flex;gap:0;position:sticky;top:0;z-index:100}
+.nav a{color:var(--text-secondary);text-decoration:none;padding:14px 20px;font-size:12px;font-weight:600;letter-spacing:.3px;border-bottom:2px solid transparent;transition:all .25s}
+.nav a:hover{color:var(--accent-blue);border-bottom-color:var(--accent-blue)}
+
+/* ═══ SECTIONS ═══ */
+.section{max-width:1100px;margin:0 auto;padding:56px 56px 0}
+.section-title{font-family:var(--font-display);font-size:24px;font-weight:800;margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;color:var(--text-primary)}
+.section-title .icon{font-size:20px}
+
+/* ═══ BADGES ═══ */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-family:var(--font-sans);font-size:11px;font-weight:700;letter-spacing:.3px}
+.badge.critical{background:var(--sev-critical-bg);color:var(--sev-critical-fg)}
+.badge.major{background:var(--sev-major-bg);color:var(--sev-major-fg)}
+.badge.minor{background:var(--sev-minor-bg);color:var(--sev-minor-fg)}
+
+/* ═══ FINDING CARDS — 2fr:3fr phone-frame layout ═══ */
+.finding-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:24px;transition:all .25s}
+.finding-card:hover{background:var(--bg-card-hover);box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.finding-accent{height:4px}
+.finding-accent.critical{background:var(--sev-critical)}.finding-accent.major{background:var(--sev-major)}.finding-accent.minor{background:var(--sev-minor)}
+.card-layout{display:grid;grid-template-columns:2fr 3fr;gap:0}
+.card-visual{background:var(--bg-surface);padding:32px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
+.phone-frame{position:relative;border:3px solid var(--border-light);border-radius:24px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.08);max-width:160px;width:100%}
+.phone-frame img{width:100%;display:block}
+.shot-overlay{background:rgba(220,38,38,.9);color:#fff;font-size:10px;padding:6px 8px;text-align:center;font-weight:700;border-radius:6px;max-width:160px;width:100%;margin-top:6px}
+.shot-overlay.major{background:rgba(234,88,12,.9)}.shot-overlay.minor{background:rgba(202,138,4,.9)}
+.card-info{padding:24px 28px}
+.card-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.card-id{font-family:var(--font-sans);font-size:12px;font-weight:700;color:var(--accent-blue);background:rgba(37,99,235,.08);padding:2px 8px;border-radius:4px}
+.card-info h3{font-size:16px;font-weight:700;margin-bottom:16px;color:var(--text-primary);line-height:1.45}
+.finding-section{margin-bottom:14px}
+.finding-section h4{font-family:var(--font-sans);font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-muted);margin-bottom:6px;font-weight:700}
+.finding-section p{font-size:13.5px;color:var(--text-secondary);line-height:1.55}
+.proposed-box{background:rgba(22,163,74,.06);border-left:3px solid var(--sev-pass);border-radius:0 8px 8px 0;padding:12px 14px;margin-top:6px}
+.proposed-box ul{padding-left:16px}.proposed-box li{font-size:13px;color:#15803d;margin-bottom:4px}
+.finding-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.card-tag{background:rgba(37,99,235,.08);color:var(--accent-blue);font-family:var(--font-sans);font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600}
+
+/* ═══ DETAILS (Progressive disclosure) ═══ */
+details{margin-top:12px}details summary{cursor:pointer;font-family:var(--font-sans);font-size:11px;color:var(--accent-purple);font-weight:700;padding:4px 0}
+.detail-content{background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:8px;font-family:var(--font-sans);font-size:11px;color:var(--text-muted);line-height:1.6;word-break:break-all}
+
+/* ═══ METHODOLOGY ═══ */
+.method-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.method-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px 20px;transition:all .25s}
+.method-card:hover{background:var(--bg-card-hover);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.method-icon{font-size:28px;margin-bottom:12px}
+.method-card h4{font-size:13px;font-weight:700;margin-bottom:8px;color:var(--text-primary)}
+.method-card p{font-size:12px;color:var(--text-secondary);line-height:1.5}
+
+/* ═══ SCORECARD ═══ */
+.scorecard-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.score-item{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;align-items:center;gap:16px;transition:all .25s}
+.score-item:hover{background:var(--bg-card-hover)}
+.score-info h4{font-size:13px;font-weight:700;margin-bottom:4px;color:var(--text-primary)}
+.score-info p{font-size:12px;color:var(--text-secondary)}
+
+/* ═══ GAPS SECTION ═══ */
+.gap-screen{font-family:var(--font-sans);font-size:11px;font-weight:700;color:var(--accent-blue);background:rgba(37,99,235,.08);padding:3px 8px;border-radius:4px;white-space:nowrap}
+.gap-card{border:1px solid var(--border);border-radius:12px;padding:18px 22px;margin-bottom:12px;background:var(--bg-card);transition:all .25s}
+.gap-card:hover{background:var(--bg-card-hover);box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.gap-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--accent-blue);color:#fff;font-family:var(--font-sans);font-size:11px;font-weight:800;flex-shrink:0}
+.gap-ref{font-family:var(--font-sans);font-size:10px;color:var(--text-secondary);margin-left:6px;font-weight:600}
+.gap-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;font-size:12.5px;line-height:1.55;margin-top:12px}
+.gap-label{font-family:var(--font-sans);font-weight:700;color:var(--text-secondary);font-size:10px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
+.gap-full{grid-column:1/-1}
+/* ═══ IMAGE LIGHTBOX ═══ */
+.img-cite{display:inline-block;background:#EFF6FF;color:#2563EB;font-size:10px;padding:1px 6px;border-radius:4px;font-family:var(--font-mono);margin-left:4px;cursor:pointer;transition:all .2s}
+.img-cite:hover{background:#DBEAFE;transform:scale(1.05);box-shadow:0 1px 4px rgba(37,99,235,.25)}
+.phone-frame{cursor:pointer;transition:transform .2s}
+.phone-frame:hover{transform:scale(1.03)}
+.lightbox-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;flex-direction:column;opacity:0;transition:opacity .3s}
+.lightbox-overlay.active{display:flex;opacity:1}
+.lightbox-overlay img{max-width:90vw;max-height:80vh;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.5);object-fit:contain}
+.lightbox-close{position:absolute;top:20px;right:28px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.12);border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.lightbox-close:hover{background:rgba(255,255,255,.25)}
+.lightbox-caption{color:rgba(255,255,255,.8);font-size:13px;font-family:var(--font-mono);margin-top:12px;padding:4px 16px;background:rgba(255,255,255,.08);border-radius:8px}
+
+/* ═══ FOOTER ═══ */
+footer{background:var(--bg-surface);border-top:1px solid var(--border);color:var(--text-muted);text-align:center;padding:28px 56px;margin-top:72px;font-size:12px}
+footer strong{color:var(--text-secondary)}
+
+/* ═══ ANIMATION ═══ */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:768px){
+  .card-layout{grid-template-columns:1fr}.hero-score{display:none}
+  .scorecard-grid,.method-grid{grid-template-columns:1fr}
+  .hero{padding:32px 24px}.section{padding:32px 24px 0}.nav{padding:0 16px;overflow-x:auto}
+  .gap-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  .reveal{transition-duration:.01ms!important}.finding-card,.method-card,.score-item,.gap-card{transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="#summary">Tổng quan</a>
+  <a href="#method">Phương pháp</a>
+  <a href="#findings">Phát hiện</a>
+  <a href="#scorecard">Scorecard</a>
+  <a href="#gaps">Gaps</a>
+</nav>
+
+<section class="hero" id="top">
+  <div class="hero-label">UX Audit Report</div>
+  <h1>Co-opBank · Thanh toán dư nợ thẻ</h1>
+  <p class="hero-sub">Co-opBank Mobile Banking</p>
+  <div class="hero-stats">
+    <div class="stat-item"><span class="stat-num">7</span><span class="stat-label">Màn hình</span></div>
+    <div class="stat-item"><span class="stat-num">49</span><span class="stat-label">Tổng kiểm tra</span></div>
+    <div class="stat-item"><span class="stat-num gap-c">19</span><span class="stat-label">Cần cải thiện</span></div>
+    <div class="stat-item"><span class="stat-num">12</span><span class="stat-label">Đề xuất</span></div>
+  </div>
+  <div class="hero-score"><svg width="110" height="110" viewBox="0 0 110 110"><circle cx="55" cy="55" r="51" fill="none" stroke="#e2e8f0" stroke-width="8"/><circle cx="55" cy="55" r="51" fill="none" stroke="#b91c1c" stroke-width="8" stroke-dasharray="320" stroke-dashoffset="170" stroke-linecap="round" transform="rotate(-90 55 55)"/><text x="55" y="60" text-anchor="middle" font-family="var(--font-sans)" font-size="24" font-weight="800" fill="#b91c1c">47%</text></svg></div>
+</section>
+
+<section class="section" id="summary">
+  <div class="section-title"><span class="icon">📊</span> 01 · Tổng quan kết quả kiểm tra</div>
+  <div style="display:flex;gap:12px;margin-bottom:28px">
+    <span class="badge critical">🔴 4 Critical</span><span class="badge major">🟡 6 Major</span><span class="badge minor">⚪ 2 Minor</span>
+  </div>
+  <div class="scorecard-grid">
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#b91c1c" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="97" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#b91c1c">38%</text></svg></div>
+      <div class="score-info">
+        <h4>SCR-TDN-001 — Danh sách thẻ › Danh sách</h4>
+        <p>SCR-TDN-001 · list · <span style="color:var(--sev-critical-fg)">3 Gap</span></p>
+      </div>
+    </div>
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#c2410c" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="69" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#c2410c">56%</text></svg></div>
+      <div class="score-info">
+        <h4>SCR-TDN-002 — Thanh toán dư nợ › Form nhập thông tin</h4>
+        <p>SCR-TDN-002 · form · <span style="color:var(--sev-critical-fg)">2 Gap</span></p>
+      </div>
+    </div>
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#b91c1c" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="97" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#b91c1c">38%</text></svg></div>
+      <div class="score-info">
+        <h4>SCR-TDN-003 — Thanh toán dư nợ - Nhập số tiền › Form nhập thông tin</h4>
+        <p>SCR-TDN-003 · form · <span style="color:var(--sev-critical-fg)">4 Gap</span></p>
+      </div>
+    </div>
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#b91c1c" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="86" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#b91c1c">45%</text></svg></div>
+      <div class="score-info">
+        <h4>SCR-TDN-004 — Thanh toán dư nợ - Xác nhận › Xác nhận giao dịch</h4>
+        <p>SCR-TDN-004 · confirm · <span style="color:var(--sev-critical-fg)">5 Gap</span></p>
+      </div>
+    </div>
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#b91c1c" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="89" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#b91c1c">43%</text></svg></div>
+      <div class="score-info">
+        <h4>SCR-TDN-005 — Thanh toán dư nợ - Kết quả › Kết quả giao dịch</h4>
+        <p>SCR-TDN-005 · result · <span style="color:var(--sev-critical-fg)">3 Gap</span></p>
+      </div>
+    </div>
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#c2410c" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="78" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#c2410c">50%</text></svg></div>
+      <div class="score-info">
+        <h4>SCR-TDN-006 — Danh sách sao kê thẻ › Danh sách</h4>
+        <p>SCR-TDN-006 · list · <span style="color:var(--sev-critical-fg)">3 Gap</span></p>
+      </div>
+    </div>
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#b91c1c" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="157" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#b91c1c">0%</text></svg></div>
+      <div class="score-info">
+        <h4>SCR-TDN-007 — Chi tiết sao kê - Hệ thống › Chi tiết</h4>
+        <p>SCR-TDN-007 · detail · <span style="color:var(--sev-critical-fg)">4 Gap</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section reveal" id="method">
+  <div class="section-title"><span class="icon">🔬</span> 02 · Phương pháp đánh giá</div>
+  <div class="method-grid">
+    <div class="method-card"><div class="method-icon">🔍</div><h4>Heuristic Evaluation</h4><p>Đánh giá theo 10 heuristics của Nielsen Norman Group. Mỗi phát hiện được liên kết với heuristic cụ thể bị vi phạm.</p></div>
+    <div class="method-card"><div class="method-icon">🧩</div><h4>Component Spec Analysis</h4><p>So sánh thiết kế Figma với DDL component specifications để phát hiện gap về states, props và behavior.</p></div>
+    <div class="method-card"><div class="method-icon">👁️</div><h4>Vision Inspection</h4><p>Phân tích trực quan từng màn hình: alignment, contrast, typography, touch targets, overlay detection.</p></div>
+    <div class="method-card"><div class="method-icon">⚖️</div><h4>UX Law Cross-Reference</h4><p>Áp dụng Fitts's Law, Hick's Law, Peak-End Rule và các nguyên tắc thiết kế vào từng màn hình.</p></div>
+  </div>
+</section>
+
+<section class="section" id="findings">
+  <div class="section-title"><span class="icon">🔎</span> 03 · Các vấn đề được phát hiện</div>
+  <div style="margin-bottom:36px">
+    <div style="background:var(--sev-critical-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-critical-fg);margin-bottom:20px;letter-spacing:.3px">🔴 Critical — Cần xử lý ngay</div>
+    <div class="finding-card reveal">
+      <div class="finding-accent critical"></div>
+      <div class="card-layout">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/thanh-toan-du-no.png')"><img src="ui/thanh-toan-du-no.png" alt="PIN overlay thiếu &quot;Gửi lại&quot; button — DDL otp-input-1 spec requires canResend sta" loading="lazy"></div>
+          <div class="shot-overlay critical">⚠️ PIN overlay thiếu &quot;Gửi lại&quot; button — DDL otp-input-1 spec re</div>
+        </div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-001</span><span class="badge critical">Critical</span></div>
+          <h3>PIN overlay thiếu &quot;Gửi lại&quot; button — DDL otp-input-1 spec requires canResend state</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>PIN overlay thiếu &quot;Gửi lại&quot; button — DDL otp-input-1 spec requires canResend state</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>COMP:otp-input-1 (canResend state)</p></div>
+          <div class="proposed-box"><ul><li>Thêm &quot;Gửi lại mã&quot; button dưới 6 ô PIN (disabled 60s đầu) + countdown timer</li></ul></div>
+          <div class="finding-tags"><span class="card-tag">Thanh toán dư nợ - Xác nhận › Xác nhận giao dịch (SCR-TDN-004)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">COMP:otp-input-1 (canResend state)<br>Gap ref: Check #25 (SCR-TDN-004)</div></details>
+        </div>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent critical"></div>
+      <div class="card-layout">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/thanh-toan-du-no.png')"><img src="ui/thanh-toan-du-no.png" alt="Thiếu remaining-attempts counter trước PIN lockout — user không biết còn mấy lần" loading="lazy"></div>
+          <div class="shot-overlay critical">⚠️ Thiếu remaining-attempts counter trước PIN lockout — user kh</div>
+        </div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-002</span><span class="badge critical">Critical</span></div>
+          <h3>Thiếu remaining-attempts counter trước PIN lockout — user không biết còn mấy lần thử</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>Thiếu remaining-attempts counter trước PIN lockout — user không biết còn mấy lần thử</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>UXG security_banking</p></div>
+          <div class="proposed-box"><ul><li>Thay text tĩnh &quot;PIN sẽ bị khóa nếu nhập sai 5 lần&quot; bằng dynamic &quot;Còn X lần thử&quot; counter</li></ul></div>
+          <div class="finding-tags"><span class="card-tag">Thanh toán dư nợ - Xác nhận › Xác nhận giao dịch (SCR-TDN-004)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">UXG security_banking<br>Gap ref: Check #30 (SCR-TDN-004)</div></details>
+        </div>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent critical"></div>
+      <div class="card-layout">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/thanh-toan-du-no.png')"><img src="ui/thanh-toan-du-no.png" alt="Amount mismatch: header &quot;500,000 VND&quot; vs detail &quot;1,500,000 VND&quot; — data inconsist" loading="lazy"></div>
+          <div class="shot-overlay critical">⚠️ Amount mismatch: header &quot;500,000 VND&quot; vs detail &quot;1,500,000 V</div>
+        </div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-003</span><span class="badge critical">Critical</span></div>
+          <h3>Amount mismatch: header &quot;500,000 VND&quot; vs detail &quot;1,500,000 VND&quot; — data inconsistency nghiêm trọng</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>Amount mismatch: header &quot;500,000 VND&quot; vs detail &quot;1,500,000 VND&quot; — data inconsistency nghiêm trọng</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>UXG-165 (data consistency)</p></div>
+          <div class="proposed-box"><ul><li>Header amount PHẢI sync từ cùng 1 source với detail amount. Thêm chữ viết dưới số tiền</li></ul></div>
+          <div class="finding-tags"><span class="card-tag">Thanh toán dư nợ - Kết quả › Kết quả giao dịch (SCR-TDN-005)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">UXG-165 (data consistency)<br>Gap ref: Check #38 (SCR-TDN-005)</div></details>
+        </div>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent critical"></div>
+      <div class="card-layout">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/chi-tiet-sao-ke-he-thong.png')"><img src="ui/chi-tiet-sao-ke-he-thong.png" alt="PDF viewer mất app navigation bar — blank screen chỉ có text, user mất context" loading="lazy"></div>
+          <div class="shot-overlay critical">⚠️ PDF viewer mất app navigation bar — blank screen chỉ có text</div>
+        </div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-004</span><span class="badge critical">Critical</span></div>
+          <h3>PDF viewer mất app navigation bar — blank screen chỉ có text, user mất context</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>PDF viewer mất app navigation bar — blank screen chỉ có text, user mất context</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>UXG (navigation persistence)</p></div>
+          <div class="proposed-box"><ul><li>Giữ app-header-1 với back button + title &quot;Sao kê tháng XX/YYYY&quot; trên PDF viewer</li></ul></div>
+          <div class="finding-tags"><span class="card-tag">Chi tiết sao kê - Hệ thống › Chi tiết (SCR-TDN-007)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">UXG (navigation persistence)<br>Gap ref: Check #50 (SCR-TDN-007)</div></details>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-bottom:36px">
+    <div style="background:var(--sev-major-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-major-fg);margin-bottom:20px;letter-spacing:.3px">🟡 Major — Ưu tiên cao</div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-layout">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/thanh-toan-du-no.png')"><img src="ui/thanh-toan-du-no.png" alt="Prefilled text typo &quot;Thanh toán the tin dung&quot; — thiếu diacritics" loading="lazy"></div>
+          <div class="shot-overlay major">⚠️ Prefilled text typo &quot;Thanh toán the tin dung&quot; — thiếu diacri</div>
+        </div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-005</span><span class="badge major">Major</span></div>
+          <h3>Prefilled text typo &quot;Thanh toán the tin dung&quot; — thiếu diacritics</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>Prefilled text typo &quot;Thanh toán the tin dung&quot; — thiếu diacritics</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>UXG-165 (content accuracy)</p></div>
+          <div class="proposed-box"><ul><li>Sửa default text: &quot;Thanh toán thẻ tín dụng&quot;</li></ul></div>
+          <div class="finding-tags"><span class="card-tag">Thanh toán dư nợ › Form nhập thông tin (SCR-TDN-002)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">UXG-165 (content accuracy)<br>Gap ref: Check #11 (SCR-TDN-002)</div></details>
+        </div>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-layout">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/thanh-toan-du-no.png')"><img src="ui/thanh-toan-du-no.png" alt="&quot;sẽ được cập nhật trong n giờ&quot; — &quot;n&quot; là literal placeholder, vi phạm Doherty Thr" loading="lazy"></div>
+          <div class="shot-overlay major">⚠️ &quot;sẽ được cập nhật trong n giờ&quot; — &quot;n&quot; là literal placeholder,</div>
+        </div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-006</span><span class="badge major">Major</span></div>
+          <h3>&quot;sẽ được cập nhật trong n giờ&quot; — &quot;n&quot; là literal placeholder, vi phạm Doherty Threshold</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>&quot;sẽ được cập nhật trong n giờ&quot; — &quot;n&quot; là literal placeholder, vi phạm Doherty Threshold</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>Doherty Threshold</p></div>
+          <div class="proposed-box"><ul><li>Thay &quot;n giờ&quot; bằng timeframe cụ thể: &quot;2-4 giờ làm việc&quot;</li></ul></div>
+          <div class="finding-tags"><span class="card-tag">Thanh toán dư nợ - Kết quả › Kết quả giao dịch (SCR-TDN-005)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">Doherty Threshold<br>Gap ref: Check #39 (SCR-TDN-005)</div></details>
+        </div>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-layout">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/danh-sach-sao-ke-the.png')"><img src="ui/danh-sach-sao-ke-the.png" alt="Empty state thiếu illustration và action button — DDL empty-state-1 requires ico" loading="lazy"></div>
+          <div class="shot-overlay major">⚠️ Empty state thiếu illustration và action button — DDL empty-</div>
+        </div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-007</span><span class="badge major">Major</span></div>
+          <h3>Empty state thiếu illustration và action button — DDL empty-state-1 requires icon + CTA</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>Empty state thiếu illustration và action button — DDL empty-state-1 requires icon + CTA</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>COMP:empty-state-1 (hasCta, icon states)</p></div>
+          <div class="proposed-box"><ul><li>Thêm illustration icon + &quot;Xem thẻ khác&quot; CTA button theo DDL spec</li></ul></div>
+          <div class="finding-tags"><span class="card-tag">Danh sách sao kê thẻ › Danh sách (SCR-TDN-006)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">COMP:empty-state-1 (hasCta, icon states)<br>Gap ref: Check #45, #46 (SCR-TDN-006)</div></details>
+        </div>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-layout">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/chi-tiet-sao-ke-he-thong.png')"><img src="ui/chi-tiet-sao-ke-he-thong.png" alt="Không có loading indicator và error state cho PDF viewer" loading="lazy"></div>
+          <div class="shot-overlay major">⚠️ Không có loading indicator và error state cho PDF viewer</div>
+        </div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-008</span><span class="badge major">Major</span></div>
+          <h3>Không có loading indicator và error state cho PDF viewer</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>Không có loading indicator và error state cho PDF viewer</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>UXG-221 (loading indicators) · UXG error_recovery</p></div>
+          <div class="proposed-box"><ul><li>(1) Loading skeleton/spinner khi tải PDF, (2) Error state &quot;Không thể tải file&quot; + &quot;Thử lại&quot; button</li></ul></div>
+          <div class="finding-tags"><span class="card-tag">Chi tiết sao kê - Hệ thống › Chi tiết (SCR-TDN-007)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">UXG-221 (loading indicators) · UXG error_recovery<br>Gap ref: Check #51, #52 (SCR-TDN-007)</div></details>
+        </div>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-layout">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/thanh-toan-du-no.png')"><img src="ui/thanh-toan-du-no.png" alt="Error dialog &quot;Thông báo&quot; + &quot;Đóng&quot; — ambiguous recovery action" loading="lazy"></div>
+          <div class="shot-overlay major">⚠️ Error dialog &quot;Thông báo&quot; + &quot;Đóng&quot; — ambiguous recovery actio</div>
+        </div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-009</span><span class="badge major">Major</span></div>
+          <h3>Error dialog &quot;Thông báo&quot; + &quot;Đóng&quot; — ambiguous recovery action</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>Error dialog &quot;Thông báo&quot; + &quot;Đóng&quot; — ambiguous recovery action</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>UXG error_recovery</p></div>
+          <div class="proposed-box"><ul><li>Đổi CTA &quot;Đóng&quot; thành &quot;Nhập lại&quot; để retain context, tránh form reset</li></ul></div>
+          <div class="finding-tags"><span class="card-tag">Thanh toán dư nợ - Nhập số tiền › Form nhập thông tin (SCR-TDN-003)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">UXG error_recovery<br>Gap ref: Check #21 (SCR-TDN-003)</div></details>
+        </div>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-layout">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/thanh-toan-du-no.png')"><img src="ui/thanh-toan-du-no.png" alt="Numpad layout inconsistent: key &quot;0&quot; spans double width + 2 style khác nhau trong" loading="lazy"></div>
+          <div class="shot-overlay major">⚠️ Numpad layout inconsistent: key &quot;0&quot; spans double width + 2 s</div>
+        </div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-010</span><span class="badge major">Major</span></div>
+          <h3>Numpad layout inconsistent: key &quot;0&quot; spans double width + 2 style khác nhau trong cùng flow</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>Numpad layout inconsistent: key &quot;0&quot; spans double width + 2 style khác nhau trong cùng flow</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>COMP:numpad-1 (uniform 3×4 grid)</p></div>
+          <div class="proposed-box"><ul><li>Chuẩn hóa numpad 3×4 grid nhất quán: key &quot;0&quot; standard single width, 1 style duy nhất cho Amount + PIN</li></ul></div>
+          <div class="finding-tags"><span class="card-tag">Thanh toán dư nợ - Nhập số tiền › Form nhập thông tin (SCR-TDN-003)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">COMP:numpad-1 (uniform 3×4 grid)<br>Gap ref: Check #25 (SCR-TDN-003)</div></details>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-bottom:36px">
+    <div style="background:var(--sev-minor-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-minor-fg);margin-bottom:20px;letter-spacing:.3px">⚪ Minor — Cải thiện</div>
+    <div class="finding-card reveal">
+      <div class="finding-accent minor"></div>
+      <div class="card-layout">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/thanh-toan-du-no.png')"><img src="ui/thanh-toan-du-no.png" alt="Transaction ID không có tap-to-copy" loading="lazy"></div>
+          <div class="shot-overlay minor">⚠️ Transaction ID không có tap-to-copy</div>
+        </div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-011</span><span class="badge minor">Minor</span></div>
+          <h3>Transaction ID không có tap-to-copy</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>Transaction ID không có tap-to-copy</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>UXG (copy affordance)</p></div>
+          <div class="proposed-box"><ul><li>Thêm copy icon bên cạnh mã GD + tap-to-copy + toast &quot;Đã sao chép&quot;</li></ul></div>
+          <div class="finding-tags"><span class="card-tag">Thanh toán dư nợ - Kết quả › Kết quả giao dịch (SCR-TDN-005)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">UXG (copy affordance)<br>Gap ref: Check #40 (SCR-TDN-005)</div></details>
+        </div>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent minor"></div>
+      <div class="card-layout">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/danh-sach-sao-ke-the.png')"><img src="ui/danh-sach-sao-ke-the.png" alt="Thiếu ngày publication cho sao kê — chỉ có month/year" loading="lazy"></div>
+          <div class="shot-overlay minor">⚠️ Thiếu ngày publication cho sao kê — chỉ có month/year</div>
+        </div>
+        <div class="card-info">
+          <div class="card-top"><span class="card-id">UXP-012</span><span class="badge minor">Minor</span></div>
+          <h3>Thiếu ngày publication cho sao kê — chỉ có month/year</h3>
+          <div class="finding-section"><h4>Hiện trạng</h4><p>Thiếu ngày publication cho sao kê — chỉ có month/year</p></div>
+          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>—</p></div>
+          <div class="proposed-box"><ul><li>Thêm &quot;Ngày tạo: dd/mm/yyyy&quot; hoặc file size cho mỗi sao kê item</li></ul></div>
+          <div class="finding-tags"><span class="card-tag">Danh sách sao kê thẻ › Danh sách (SCR-TDN-006)</span></div>
+          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">—<br>Gap ref: Check #49 (SCR-TDN-006)</div></details>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="scorecard">
+  <div class="section-title"><span class="icon">📊</span> 04 · Đánh giá theo danh mục heuristic</div>
+  <div class="scorecard-grid">
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#c2410c" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="79" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#c2410c">62%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Luồng người dùng</h4><p>Flow &amp; Navigation</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#c2410c" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="68" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#c2410c">67%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Xử lý lỗi</h4><p>Error Handling</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#c2410c" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="79" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#c2410c">62%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Trạng thái hệ thống</h4><p>System Status</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#15803d" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="52" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#15803d">75%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Điểm chạm &amp; Mục tiêu</h4><p>Touch &amp; Target</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#c2410c" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="79" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#c2410c">62%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Nhất quán &amp; Tiêu chuẩn</h4><p>Consistency</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#15803d" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#15803d">100%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Nội dung &amp; Trình bày</h4><p>Content &amp; Layout</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="gaps" style="padding-top:48px">
+  <div class="section-title"><span class="icon">📋</span> Tổng hợp Gap (19 hạng mục)</div>
+  <p style="color:var(--text-muted);font-size:14px;margin-bottom:20px">Các hạng mục kiểm tra chưa đạt chuẩn theo từng màn hình — checklist cải thiện từ ux-review-report</p>
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">SCR-TDN-001</span>
+      <strong style="font-size:14px">SCR-TDN-001 — Danh sách thẻ › Danh sách</strong> · <em>list</em>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">1</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">&quot;Thẻ tín dụng ③&quot; badge is dynamic</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Minor</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Evidence: badge count appears hardcoded in Figma design. Should reflect actual card count.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Fitts's Law</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">Evidence: badge count appears hardcoded in Figma design. Should reflect actual card count.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">SCR-TDN-002</span>
+      <strong style="font-size:14px">SCR-TDN-002 — Thanh toán dư nợ › Form nhập thông tin</strong> · <em>form</em>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">1</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Prefilled text &quot;Thanh toán the tin dung&quot; — correct spelling</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Major</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Vision: &quot;Thanh toán the tin dung&quot; clearly visible — missing diacritics. Should be &quot;Thanh toán thẻ tín dụng&quot;.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Fitts's Law</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">Vision: &quot;Thanh toán the tin dung&quot; clearly visible — missing diacritics. Should be &quot;Thanh toán thẻ tín dụng&quot;.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">SCR-TDN-003</span>
+      <strong style="font-size:14px">SCR-TDN-003 — Thanh toán dư nợ - Nhập số tiền › Form nhập thông tin</strong> · <em>form</em>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">1</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Amount input: auto-format with thousand separators</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Major</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Vision: input field shows cursor only — no format preview. No comma separator visible in design.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Fitts's Law</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">Vision: input field shows cursor only — no format preview. No comma separator visible in design.</div>
+        </div>
+      </div>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">2</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Max amount hint visible and prominent</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Major</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Vision (Skill C actual): &quot;Tối đa...&quot; color appears very light gray on white — low contrast. Est. contrast ratio fails WCAG AA (4.5:1).</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Major</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">Vision (Skill C actual): &quot;Tối đa...&quot; color appears very light gray on white — low contrast. Est. contrast ratio fails WCAG AA (4.5:1).</div>
+        </div>
+      </div>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">3</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Numpad layout: consistent 3×4 grid across flow</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Major</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Vision (Skill C — NEW): numpad-1 spec requires uniform 3×4 grid. Actual: key &quot;0&quot; spans double width. Also: 2 different numpad styles used in same flow (Amount vs PIN) — inconsistency.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Major</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">Vision (Skill C — NEW): numpad-1 spec requires uniform 3×4 grid. Actual: key &quot;0&quot; spans double width. Also: 2 different numpad styles used in same flow (Amount vs PIN) — inconsistency.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">SCR-TDN-004</span>
+      <strong style="font-size:14px">SCR-TDN-004 — Thanh toán dư nợ - Xác nhận › Xác nhận giao dịch</strong> · <em>confirm</em>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">1</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">[DDL otp-input-1] `canResend` state: resend button visible</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Critical</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">DDL `otp-input-1` spec requires `canResend` state + 'Gửi lại'/resend button. Vision: PIN overlay has 6 cells + numpad + &quot;Xác nhận&quot; only. NO resend UI.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Fitts's Law</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">DDL `otp-input-1` spec requires `canResend` state + 'Gửi lại'/resend button. Vision: PIN overlay has 6 cells + numpad + &quot;Xác nhận&quot; only. NO resend UI.</div>
+        </div>
+      </div>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">2</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">[DDL otp-input-1] `timeLeft` state: countdown timer visible</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Major</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">DDL `otp-input-1` spec has `timeLeft: 60` default. Vision: no countdown timer visible in PIN overlay.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Major</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">DDL `otp-input-1` spec has `timeLeft: 60` default. Vision: no countdown timer visible in PIN overlay.</div>
+        </div>
+      </div>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">3</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Remaining attempts counter after incorrect PIN</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Critical</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Vision: warning text static — no dynamic &quot;Còn X lần&quot; counter. Critical for trust.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Critical</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">Vision: warning text static — no dynamic &quot;Còn X lần&quot; counter. Critical for trust.</div>
+        </div>
+      </div>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">4</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Transaction note spelling error on confirm screen</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Minor</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Vision: &quot;Thanh toán the tin dung&quot; — carries over from form. Must fix upstream.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Minor</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">Vision: &quot;Thanh toán the tin dung&quot; — carries over from form. Must fix upstream.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">SCR-TDN-005</span>
+      <strong style="font-size:14px">SCR-TDN-005 — Thanh toán dư nợ - Kết quả › Kết quả giao dịch</strong> · <em>result</em>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">1</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Transaction amount matches confirmed amount</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Critical</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Vision: &quot;500,000 VND&quot; on result. Confirmed amount on SCR-TDN-004 was &quot;1,500,000 VND&quot;. Data inconsistency — must verify with real API data.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Fitts's Law</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">Vision: &quot;500,000 VND&quot; on result. Confirmed amount on SCR-TDN-004 was &quot;1,500,000 VND&quot;. Data inconsistency — must verify with real API data.</div>
+        </div>
+      </div>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">2</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">&quot;n giờ&quot; processing time: should be specific</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Major</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Vision: &quot;sẽ được cập nhật trong n giờ&quot; — &quot;n&quot; is literal placeholder. Doherty Threshold: users need specific timeframe. Should show &quot;2-4 giờ làm việc&quot;.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Major</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">Vision: &quot;sẽ được cập nhật trong n giờ&quot; — &quot;n&quot; is literal placeholder. Doherty Threshold: users need specific timeframe. Should show &quot;2-4 giờ làm việc&quot;.</div>
+        </div>
+      </div>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">3</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Transaction ID: copyable</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Minor</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Vision: &quot;12312323&quot; displayed in red. Copy icon not visible. Should have tap-to-copy.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Minor</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">Vision: &quot;12312323&quot; displayed in red. Copy icon not visible. Should have tap-to-copy.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">SCR-TDN-006</span>
+      <strong style="font-size:14px">SCR-TDN-006 — Danh sách sao kê thẻ › Danh sách</strong> · <em>list</em>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">1</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">[DDL empty-state-1] Empty state: has illustration</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Major</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">DDL `empty-state-1` spec requires icon + title + description + optional CTA. Vision: empty state has text only — NO illustration, NO action button.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Fitts's Law</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">DDL `empty-state-1` spec requires icon + title + description + optional CTA. Vision: empty state has text only — NO illustration, NO action button.</div>
+        </div>
+      </div>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">2</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Empty state: action button for next step</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Major</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Vision: empty state &quot;Quý khách chưa có sao kê...&quot; — no action. Should have &quot;Xem thẻ khác&quot; or expected date.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Major</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">Vision: empty state &quot;Quý khách chưa có sao kê...&quot; — no action. Should have &quot;Xem thẻ khác&quot; or expected date.</div>
+        </div>
+      </div>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">3</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">No date of statement publication shown</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Minor</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Vision: only month/year label (e.g., &quot;Sao kê tháng 11/2025&quot;). No file size, no date.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Minor</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">Vision: only month/year label (e.g., &quot;Sao kê tháng 11/2025&quot;). No file size, no date.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">SCR-TDN-007</span>
+      <strong style="font-size:14px">SCR-TDN-007 — Chi tiết sao kê - Hệ thống › Chi tiết</strong> · <em>detail</em>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">1</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">App navigation bar retained in system viewer</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Critical</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Vision: blank screen with only &quot;Xem file sao kê thẻ&quot; text. No app header, no back button. User loses navigation context.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Fitts's Law</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">Vision: blank screen with only &quot;Xem file sao kê thẻ&quot; text. No app header, no back button. User loses navigation context.</div>
+        </div>
+      </div>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">2</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Loading state for PDF content</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Major</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Vision: placeholder only. No loading indicator visible in design.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Major</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">Vision: placeholder only. No loading indicator visible in design.</div>
+        </div>
+      </div>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">3</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Error state if PDF fails to load</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Major</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Vision: no error state designed. Need: &quot;Không thể tải file&quot; + &quot;Thử lại&quot; button.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Major</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">Vision: no error state designed. Need: &quot;Không thể tải file&quot; + &quot;Thử lại&quot; button.</div>
+        </div>
+      </div>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">4</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Breadcrumb: which statement user is viewing</strong>
+        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">Major</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Vision: no title showing &quot;Sao kê tháng 11/2025&quot;. User loses context.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
+          <div style="color:#444">Major</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích </div>
+          <div style="color:#444">Vision: no title showing &quot;Sao kê tháng 11/2025&quot;. User loses context.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><strong>Co-opBank Mobile Banking</strong> · Thanh toán dư nợ thẻ · Đánh giá DDL-grounded</p>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})
+  },{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+});
+</script>
+<script>
+function openLightbox(src){
+  var lb=document.getElementById('lightbox'),img=document.getElementById('lightbox-img'),cap=document.getElementById('lightbox-caption');
+  img.src=src;cap.textContent=src.split('/').pop();
+  lb.classList.add('active');document.body.style.overflow='hidden';
+}
+function closeLightbox(e){
+  if(e.target.tagName==='IMG')return;
+  document.getElementById('lightbox').classList.remove('active');document.body.style.overflow='';
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLightbox({target:{tagName:''}});});
+</script>
+
+<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox(event)" aria-label="Close">&times;</button>
+  <img id="lightbox-img" src="" alt="Evidence screenshot">
+  <div class="lightbox-caption" id="lightbox-caption"></div>
+</div>
+</body>
+</html>

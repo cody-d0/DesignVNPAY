@@ -1,0 +1,61 @@
+{
+  "schema_version": "figma-prd-handoff-v1",
+  "section": "đăng nhập báo lỗi",
+  "edges": [
+    {
+      "from_screen": "SCR-DLB-001",
+      "to_screen": "SCR-DLB-001",
+      "trigger": "face-id biometric error / popup overlay",
+      "type": "overlay_trigger",
+      "trigger_icon": "face-id",
+      "confidence": 0.8,
+      "evidence": "overlay_self_loop - popup/noti variants show error states on same base screen"
+    },
+    {
+      "from_screen": "SCR-DLB-001",
+      "to_screen": "SCR-DLB-002",
+      "trigger": "Đăng nhập (khi phiên hết hạn)",
+      "type": "conditional_flow",
+      "trigger_icon": "buttons-login",
+      "confidence": 0.75,
+      "evidence": "login-expired artboard has same background as login screen with session expired popup"
+    },
+    {
+      "from_screen": "SCR-DLB-002",
+      "to_screen": "SCR-DLB-003",
+      "trigger": "popup Đặt lại mật khẩu → Cài mã PIN / change password action",
+      "type": "text_trigger",
+      "trigger_icon": "popup-cta",
+      "confidence": 0.85,
+      "evidence": "popup-3 text: 'Đề nghị Quý khách thay đổi mật khẩu mới' → change-password screen"
+    },
+    {
+      "from_screen": "SCR-DLB-003",
+      "to_screen": "SCR-DLB-004",
+      "trigger": "Tiếp tục sau đổi mật khẩu thành công",
+      "type": "text_trigger",
+      "trigger_icon": "buttons-xacnhan",
+      "confidence": 0.9,
+      "evidence": "noti.png shows 'Đổi mật khẩu thành công. Vui lòng đăng nhập lại' → re-login"
+    },
+    {
+      "from_screen": "SCR-DLB-004",
+      "to_screen": "HOME",
+      "trigger": "Đăng nhập thành công",
+      "type": "exit_flow",
+      "trigger_icon": "buttons-login",
+      "confidence": 0.85,
+      "evidence": "re-login screen leads to home dashboard after successful authentication"
+    }
+  ],
+  "overlay_events": [
+    {
+      "host_screen": "SCR-DLB-001",
+      "overlay_name": "face-id biometric error / popup overlay",
+      "overlay_type": "bottom_sheet",
+      "trigger": "face-id biometric error / popup overlay",
+      "trigger_icon": "face-id",
+      "evidence": "overlay_self_loop - popup/noti variants show error states on same base screen"
+    }
+  ]
+}

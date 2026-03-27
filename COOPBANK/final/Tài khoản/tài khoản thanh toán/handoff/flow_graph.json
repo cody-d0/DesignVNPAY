@@ -1,0 +1,103 @@
+{
+  "schema_version": "flow-graph-v1",
+  "section": "tài khoản thanh toán",
+  "edges": [
+    {
+      "from": "SCR-TAT-001",
+      "to": "SCR-TAT-002",
+      "trigger": "tap_account_card",
+      "trigger_icon": null,
+      "label_vi": "Tap vào card tài khoản",
+      "confidence": 0.95,
+      "edge_type": "navigation"
+    },
+    {
+      "from": "SCR-TAT-002",
+      "to": "SCR-TAT-004",
+      "trigger": "bottom_nav_history",
+      "trigger_icon": "history-icon",
+      "label_vi": "Tap 'Lịch sử giao dịch' ở bottom nav",
+      "confidence": 0.95,
+      "edge_type": "bottom_nav"
+    },
+    {
+      "from": "SCR-TAT-002",
+      "to": "SCR-TAT-003",
+      "trigger": "my_qr_action",
+      "trigger_icon": "wallet",
+      "label_vi": "Mở My QR từ tài khoản (inferred)",
+      "confidence": 0.85,
+      "edge_type": "navigation_inferred"
+    },
+    {
+      "from": "SCR-TAT-003",
+      "to": "SCR-TAT-002",
+      "trigger": "close_x",
+      "trigger_icon": "close-x",
+      "label_vi": "Đóng My QR bằng nút X",
+      "confidence": 0.9,
+      "edge_type": "back_navigation"
+    },
+    {
+      "from": "SCR-TAT-002",
+      "to": "SCR-TAT-002",
+      "trigger": "set_default_action",
+      "trigger_icon": "radio-button",
+      "label_vi": "Tap 'Đặt làm TK mặc định' → modal xác nhận",
+      "confidence": 0.95,
+      "edge_type": "overlay_trigger",
+      "overlay_type": "confirm_modal"
+    },
+    {
+      "from": "SCR-TAT-004",
+      "to": "SCR-TAT-004",
+      "trigger": "chip_khac",
+      "trigger_icon": "chip-dropdown",
+      "label_vi": "Tap chip 'Khác' → bottom-sheet chọn ngày",
+      "confidence": 0.9,
+      "edge_type": "overlay_trigger",
+      "overlay_type": "bottom_sheet_filter"
+    },
+    {
+      "from": "SCR-TAT-004",
+      "to": "SCR-TAT-004",
+      "trigger": "calendar_icon",
+      "trigger_icon": "calendar",
+      "label_vi": "Tap calendar icon trong filter → date picker",
+      "confidence": 0.85,
+      "edge_type": "overlay_trigger",
+      "overlay_type": "calendar_picker"
+    }
+  ],
+  "gate_e": {
+    "result": "PASS",
+    "assertions": [
+      {
+        "id": "E1",
+        "pass": true,
+        "note": "edges.length = 7 > 0"
+      },
+      {
+        "id": "E2",
+        "pass": true,
+        "note": "All from/to screen IDs exist in boundaries"
+      },
+      {
+        "id": "E3",
+        "pass": true,
+        "note": "2 overlay self-loops (allowed: overlay_trigger type)"
+      },
+      {
+        "id": "E4",
+        "pass": true,
+        "note": "Icon edges have trigger_icon + confidence"
+      },
+      {
+        "id": "E5",
+        "pass": true,
+        "note": "Coverage: 4/4 screens appear in edges"
+      }
+    ]
+  },
+  "overlay_events": []
+}

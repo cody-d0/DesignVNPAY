@@ -1,0 +1,89 @@
+{
+  "schema_version": "flow-graph-v1",
+  "generated_at": "2026-03-23T12:20:00Z",
+  "section": "Thanh toán dư nợ thẻ",
+  "edges": [
+    {
+      "from_screen": "SCR-TDN-001",
+      "to_screen": "SCR-TDN-002",
+      "trigger": "tab Thanh toán thẻ tín dụng",
+      "trigger_label": "Thanh toán thẻ tín dụng",
+      "type": "tab_navigation",
+      "evidence": "text_inference",
+      "confidence": 0.95
+    },
+    {
+      "from_screen": "SCR-TDN-001",
+      "to_screen": "SCR-TDN-006",
+      "trigger": "tab Sao kê",
+      "trigger_label": "Sao kê",
+      "type": "tab_navigation",
+      "evidence": "text_inference",
+      "confidence": 0.95
+    },
+    {
+      "from_screen": "SCR-TDN-002",
+      "to_screen": "SCR-TDN-003",
+      "trigger": "Số tiền khác (radio) → nhập số tiền",
+      "trigger_label": "Số tiền khác",
+      "type": "conditional_navigation",
+      "evidence": "text_inference",
+      "trigger_icon": "radio_button",
+      "confidence": 0.85
+    },
+    {
+      "from_screen": "SCR-TDN-003",
+      "to_screen": "SCR-TDN-004",
+      "trigger": "Tiếp tục",
+      "trigger_label": "Tiếp tục",
+      "type": "button_navigation",
+      "evidence": "text_inference",
+      "confidence": 0.98
+    },
+    {
+      "from_screen": "SCR-TDN-004",
+      "to_screen": "SCR-TDN-004",
+      "trigger": "Xác nhận → overlay PIN",
+      "trigger_label": "Xác nhận",
+      "type": "overlay_trigger",
+      "evidence": "overlay_detect + text_inference",
+      "confidence": 0.92,
+      "overlay_note": "OVERLAY_SELF_LOOP: PIN auth bottom sheet opens within SCR-TDN-004"
+    },
+    {
+      "from_screen": "SCR-TDN-004",
+      "to_screen": "SCR-TDN-005",
+      "trigger": "PIN confirmed → kết quả",
+      "trigger_label": "Xác nhận (PIN)",
+      "type": "button_navigation",
+      "evidence": "text_inference + flow_stage",
+      "confidence": 0.95
+    },
+    {
+      "from_screen": "SCR-TDN-006",
+      "to_screen": "SCR-TDN-007",
+      "trigger": "tap statement item",
+      "trigger_label": "Sao kê tháng ...",
+      "type": "list_item_navigation",
+      "evidence": "text_inference + icon_trigger_inference",
+      "trigger_icon": "chevron_right",
+      "confidence": 0.9
+    }
+  ],
+  "boundary_flags": [],
+  "flow_coverage": {
+    "total_screens": 7,
+    "screens_in_edges": 6,
+    "coverage_pct": 86,
+    "note": "SCR-TDN-007 is leaf node - 1 incoming, 0 outgoing (OK)"
+  },
+  "overlay_events": [
+    {
+      "host_screen": "SCR-TDN-004",
+      "overlay_name": "Xác nhận → overlay PIN",
+      "overlay_type": "bottom_sheet",
+      "trigger": "Xác nhận → overlay PIN",
+      "evidence": "overlay_detect + text_inference"
+    }
+  ]
+}

@@ -174,18 +174,36 @@ function parseScreenSections(content) {
     const checks = [];
     let rowMatch;
     const localTableRegex = /^\|\s*(\d+)\s*\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|$/gm;
+
+    // Detect Verdict column index from header row
+    // Format A: | # | Check | Category | Severity | Evidence | Verdict |  → verdict=6
+    // Format B: | # | Check | Source   | DDL      | Verdict  | Evidence | → verdict=5
+    const headerMatch = section.match(/^\|[^|]*\|[^|]*\|[^|]*\|[^|]*\|([^|]*)\|([^|]*)\|$/m);
+    let verdictColIdx = 6; // default: last column
+    if (headerMatch) {
+      const col5 = headerMatch[1].trim();
+      const col6 = headerMatch[2].trim();
+      if (col5 === 'Verdict') verdictColIdx = 5;
+      else if (col6 === 'Verdict') verdictColIdx = 6;
+    }
+
     while ((rowMatch = localTableRegex.exec(section)) !== null) {
-      const verdict = rowMatch[5].trim();
-      // Skip header row pattern
-      if (verdict === 'Verdict' || verdict === '---' || verdict.startsWith(':')) continue;
+      const col5 = rowMatch[5].trim();
+      const col6 = rowMatch[6].trim();
+      // Skip header/separator rows
+      if (col5 === 'Verdict' || col6 === 'Verdict' || col5 === '---' || col6 === '---' || col5.startsWith(':') || col6.startsWith(':')) continue;
+      if (col5 === 'Evidence' || col6 === 'Evidence') continue;
+
+      const verdictVal = verdictColIdx === 5 ? col5 : col6;
+      const evidenceVal = verdictColIdx === 5 ? col6 : col5;
 
       checks.push({
         check_num: parseInt(rowMatch[1]),
         check_name: rowMatch[2].trim(),
-        source: rowMatch[3].trim(),
-        ddl_ref: rowMatch[4].trim(),
-        verdict: normalizeVerdict(verdict),
-        evidence: rowMatch[6].trim(),
+        category: rowMatch[3].trim(),
+        severity: rowMatch[4].trim(),
+        evidence: evidenceVal,
+        verdict: normalizeVerdict(verdictVal),
       });
     }
 

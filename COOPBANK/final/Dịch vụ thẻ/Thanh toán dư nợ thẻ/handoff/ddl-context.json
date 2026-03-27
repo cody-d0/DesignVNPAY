@@ -1,0 +1,4031 @@
+{
+  "_generated": "2026-03-23T12:32:02.663Z",
+  "_script": "ddl-prefetch v1.0.0",
+  "_product_type": "banking",
+  "_mode": "Light",
+  "_platform": "Mobile",
+  "product_context": {
+    "id": 140,
+    "product_name": "Banking/Traditional Finance",
+    "primary_style": "Minimalism + Accessible & Ethical",
+    "secondary_style": "Trust & Authority, Dark Mode (OLED)",
+    "landing_pattern": "Trust & Authority + Feature-Rich",
+    "dashboard_style": "Financial Dashboard",
+    "color_palette": "Navy (#0A1628) + Trust Blue + Gold accents",
+    "key_considerations": "Security-first. Account overview. Transaction history. Mobile banking. Accessibility critical. Trust paramount.",
+    "extra_json": null
+  },
+  "color_palette": [
+    {
+      "id": 140,
+      "product_type": "Banking/Traditional Finance",
+      "palette_name": null,
+      "primary_color": "#0F172A",
+      "secondary_color": "#1E3A8A",
+      "text_color": "#020617",
+      "bg_color": "#F8FAFC",
+      "notes": "Trust navy + premium gold",
+      "extra_json": "{\"CTA (Hex)\":\"#CA8A04\",\"Border (Hex)\":\"#E2E8F0\"}"
+    }
+  ],
+  "screen_components": {
+    "SCR-TDN-001": [
+      "text-input-1",
+      "empty-state-1",
+      "app-header-1"
+    ],
+    "SCR-TDN-002": [
+      "text-input-1",
+      "app-header-1",
+      "numpad-1"
+    ],
+    "SCR-TDN-003": [
+      "text-input-1",
+      "app-header-1",
+      "numpad-1"
+    ],
+    "SCR-TDN-004": [
+      "otp-input-1",
+      "text-input-1",
+      "app-header-1",
+      "numpad-1"
+    ],
+    "SCR-TDN-005": [
+      "text-input-1",
+      "loading-spinner-1",
+      "receipt-preview-1",
+      "numpad-1",
+      "bottom-tab-bar-1"
+    ],
+    "SCR-TDN-006": [
+      "empty-state-1",
+      "app-header-1"
+    ]
+  },
+  "component_specs": {
+    "text-input-1": {
+      "blockId": "text-input-1",
+      "tier": "composition",
+      "category": "pos-input",
+      "description": "Enhanced text input with label, validation, icon adornments",
+      "schema": {
+        "$schema": "../../component.schema.json",
+        "id": "text-input-1",
+        "tier": "composition",
+        "category": "pos-input",
+        "description": "Enhanced text input with label, helper text, error message, icon, and character count",
+        "shadcn_deps": [
+          "Input",
+          "Label"
+        ],
+        "tokens": {
+          "errorColor": "{base.destructive}",
+          "helperColor": "{base.muted-foreground}"
+        },
+        "overridable": {
+          "label": {
+            "type": "string",
+            "default": ""
+          },
+          "placeholder": {
+            "type": "string",
+            "default": ""
+          },
+          "helperText": {
+            "type": "string",
+            "default": ""
+          },
+          "required": {
+            "type": "boolean",
+            "default": false
+          },
+          "maxLength": {
+            "type": "number",
+            "default": 0
+          },
+          "icon": {
+            "type": "string",
+            "default": ""
+          },
+          "type": {
+            "type": "string",
+            "default": "text"
+          }
+        },
+        "state": {
+          "value": {
+            "type": "string",
+            "default": ""
+          },
+          "error": {
+            "type": "string",
+            "default": ""
+          },
+          "focused": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "layout": {
+          "type": "form-field",
+          "tokens": {
+            "gap": "{spacing.1}"
+          },
+          "children": [
+            {
+              "id": "label-row",
+              "type": "stack-horizontal",
+              "showIf": "{overridable.label}",
+              "tokens": {
+                "justifyContent": "space-between"
+              },
+              "children": [
+                {
+                  "type": "label",
+                  "content": "{overridable.label}",
+                  "tokens": {
+                    "fontSize": "{text.sm.font-size}",
+                    "fontWeight": "{font-weight.medium}"
+                  }
+                },
+                {
+                  "type": "text",
+                  "showIf": "{overridable.required}",
+                  "content": "*",
+                  "tokens": {
+                    "color": "{base.destructive}"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "{overridable.type}",
+              "placeholder": "{overridable.placeholder}",
+              "icon": "{overridable.icon}",
+              "tokens": {
+                "borderColor": "{base.border}",
+                "focusBorderColor": "{base.ring}",
+                "errorBorderColor": "{base.destructive}"
+              }
+            },
+            {
+              "id": "footer",
+              "type": "stack-horizontal",
+              "tokens": {
+                "justifyContent": "space-between"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "{state.error || overridable.helperText}",
+                  "tokens": {
+                    "fontSize": "{text.xs.font-size}",
+                    "color": "{state.error ? base.destructive : base.muted-foreground}"
+                  }
+                },
+                {
+                  "type": "text",
+                  "showIf": "{overridable.maxLength > 0}",
+                  "content": "char count",
+                  "tokens": {
+                    "fontSize": "{text.xs.font-size}",
+                    "color": "{base.muted-foreground}"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "sourceLines": null,
+      "shadcnDeps": [
+        "Input",
+        "Label"
+      ],
+      "iconsUsed": [],
+      "tokenRefs": [
+        "base.border",
+        "base.destructive",
+        "base.muted-foreground",
+        "base.ring",
+        "font-weight.medium",
+        "spacing.1",
+        "state.error ? base.destructive : base.muted-foreground",
+        "state.error || overridable.helperText",
+        "text.sm.font-size",
+        "text.xs.font-size"
+      ],
+      "platformHints": {}
+    },
+    "empty-state-1": {
+      "blockId": "empty-state-1",
+      "tier": "primitive",
+      "category": "pos-feedback",
+      "description": "Empty state with icon, title, description, and optional CTA button",
+      "schema": {
+        "$schema": "../../component.schema.json",
+        "id": "empty-state-1",
+        "tier": "primitive",
+        "category": "pos-feedback",
+        "description": "Empty state with icon, title, description, and optional CTA button",
+        "shadcn_deps": [
+          "Button"
+        ],
+        "tokens": {
+          "iconColor": "{base.muted-foreground}",
+          "iconSize": 48
+        },
+        "overridable": {
+          "icon": {
+            "type": "string",
+            "default": "inbox"
+          },
+          "title": {
+            "type": "string",
+            "default": "Không có dữ liệu"
+          },
+          "description": {
+            "type": "string",
+            "default": "Chưa có mục nào."
+          },
+          "ctaLabel": {
+            "type": "string",
+            "default": ""
+          },
+          "ctaAction": {
+            "type": "string",
+            "default": ""
+          }
+        },
+        "layout": {
+          "type": "stack-vertical",
+          "alignment": "center",
+          "tokens": {
+            "gap": "{spacing.4}",
+            "padding": "{spacing.8}"
+          },
+          "children": [
+            {
+              "type": "icon",
+              "name": "{overridable.icon}",
+              "tokens": {
+                "size": 48,
+                "color": "{base.muted-foreground}"
+              }
+            },
+            {
+              "type": "heading",
+              "content": "{overridable.title}",
+              "tokens": {
+                "fontSize": "{text.lg.font-size}",
+                "fontWeight": "{font-weight.semibold}",
+                "color": "{base.foreground}"
+              }
+            },
+            {
+              "type": "text",
+              "content": "{overridable.description}",
+              "tokens": {
+                "fontSize": "{text.sm.font-size}",
+                "color": "{base.muted-foreground}",
+                "textAlign": "center"
+              }
+            },
+            {
+              "type": "button",
+              "showIf": "{overridable.ctaLabel}",
+              "variant": "default",
+              "content": "{overridable.ctaLabel}",
+              "action": "{overridable.ctaAction}"
+            }
+          ]
+        }
+      },
+      "sourceLines": null,
+      "shadcnDeps": [
+        "Button"
+      ],
+      "iconsUsed": [],
+      "tokenRefs": [
+        "base.foreground",
+        "base.muted-foreground",
+        "font-weight.semibold",
+        "spacing.4",
+        "spacing.8",
+        "text.lg.font-size",
+        "text.sm.font-size"
+      ],
+      "platformHints": {}
+    },
+    "app-header-1": {
+      "blockId": "app-header-1",
+      "tier": "pattern",
+      "category": "pos-navbars",
+      "description": "Mobile app header with back button, title, and action icons",
+      "schema": {
+        "$schema": "../../component.schema.json",
+        "id": "app-header-1",
+        "tier": "pattern",
+        "category": "pos-navbars",
+        "description": "Mobile app header with back button, title, and action buttons",
+        "shadcn_deps": [
+          "Button"
+        ],
+        "tokens": {
+          "height": 56,
+          "bg": "{base.background}",
+          "borderBottom": "{base.border}"
+        },
+        "overridable": {
+          "title": {
+            "type": "string",
+            "default": "Tiêu đề"
+          },
+          "showBack": {
+            "type": "boolean",
+            "default": true
+          },
+          "variant": {
+            "type": "string",
+            "default": "default"
+          }
+        },
+        "layout": {
+          "type": "app-header",
+          "tokens": {
+            "height": 56,
+            "paddingX": "{spacing.4}",
+            "background": "{base.background}",
+            "borderBottom": "1px solid {base.border}"
+          },
+          "children": [
+            {
+              "id": "left",
+              "type": "stack-horizontal",
+              "alignment": "center",
+              "children": [
+                {
+                  "type": "button",
+                  "showIf": "{overridable.showBack}",
+                  "variant": "ghost",
+                  "icon": "chevron-left",
+                  "action": "goBack",
+                  "accessibility": {
+                    "aria-label": "Go back"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "center",
+              "type": "heading",
+              "content": "{overridable.title}",
+              "tokens": {
+                "fontSize": "{text.lg.font-size}",
+                "fontWeight": "{font-weight.semibold}",
+                "textAlign": "center",
+                "flex": 1
+              }
+            },
+            {
+              "id": "right",
+              "type": "slot",
+              "name": "actions"
+            }
+          ]
+        },
+        "accessibility": {
+          "role": "banner",
+          "aria-label": "App header"
+        }
+      },
+      "sourceLines": null,
+      "shadcnDeps": [
+        "Button"
+      ],
+      "iconsUsed": [],
+      "tokenRefs": [
+        "base.background",
+        "base.border",
+        "font-weight.semibold",
+        "spacing.4",
+        "text.lg.font-size"
+      ],
+      "platformHints": {}
+    },
+    "numpad-1": {
+      "blockId": "numpad-1",
+      "tier": "primitive",
+      "category": "pos-input",
+      "description": "Numeric keypad with backspace and optional confirm button for amount entry",
+      "schema": {
+        "$schema": "../../component.schema.json",
+        "id": "numpad-1",
+        "tier": "primitive",
+        "category": "pos-input",
+        "description": "3×4 numeric keypad with quick amount buttons and C/DEL keys for POS cash input",
+        "shadcn_deps": [
+          "Button"
+        ],
+        "tokens": {
+          "gap": "{spacing.2}",
+          "buttonBg": "{base.muted}",
+          "buttonText": "{base.foreground}",
+          "quickAmountBg": "{base.accent}",
+          "buttonRadius": "{radius.lg}"
+        },
+        "overridable": {
+          "quickAmounts": {
+            "type": "array",
+            "default": [
+              10000,
+              20000,
+              50000,
+              100000,
+              200000,
+              500000
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "default": "VND"
+          },
+          "showQuickAmounts": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "state": {
+          "value": {
+            "type": "string",
+            "default": "0"
+          }
+        },
+        "layout": {
+          "type": "stack-vertical",
+          "tokens": {
+            "gap": "{spacing.3}"
+          },
+          "children": [
+            {
+              "id": "display",
+              "type": "stack-horizontal",
+              "tokens": {
+                "padding": "{spacing.4}",
+                "background": "{base.card}",
+                "borderRadius": "{radius.lg}"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "{state.value}",
+                  "tokens": {
+                    "fontSize": "{text.2xl.font-size}",
+                    "fontWeight": "{font-weight.bold}",
+                    "color": "{base.foreground}",
+                    "textAlign": "right",
+                    "flex": 1
+                  }
+                }
+              ]
+            },
+            {
+              "id": "quick-amounts",
+              "type": "grid",
+              "showIf": "{overridable.showQuickAmounts}",
+              "columns": 3,
+              "tokens": {
+                "gap": "{spacing.2}"
+              },
+              "children": [
+                {
+                  "type": "button",
+                  "variant": "outline",
+                  "content": "{overridable.quickAmounts[n]}",
+                  "action": "setQuickAmount"
+                }
+              ]
+            },
+            {
+              "id": "keypad",
+              "type": "grid",
+              "columns": 3,
+              "tokens": {
+                "gap": "{spacing.2}"
+              },
+              "children": [
+                {
+                  "type": "button",
+                  "variant": "ghost",
+                  "content": "1",
+                  "action": "appendDigit"
+                },
+                {
+                  "type": "button",
+                  "variant": "ghost",
+                  "content": "2",
+                  "action": "appendDigit"
+                },
+                {
+                  "type": "button",
+                  "variant": "ghost",
+                  "content": "3",
+                  "action": "appendDigit"
+                },
+                {
+                  "type": "button",
+                  "variant": "ghost",
+                  "content": "4",
+                  "action": "appendDigit"
+                },
+                {
+                  "type": "button",
+                  "variant": "ghost",
+                  "content": "5",
+                  "action": "appendDigit"
+                },
+                {
+                  "type": "button",
+                  "variant": "ghost",
+                  "content": "6",
+                  "action": "appendDigit"
+                },
+                {
+                  "type": "button",
+                  "variant": "ghost",
+                  "content": "7",
+                  "action": "appendDigit"
+                },
+                {
+                  "type": "button",
+                  "variant": "ghost",
+                  "content": "8",
+                  "action": "appendDigit"
+                },
+                {
+                  "type": "button",
+                  "variant": "ghost",
+                  "content": "9",
+                  "action": "appendDigit"
+                },
+                {
+                  "type": "button",
+                  "variant": "destructive",
+                  "content": "C",
+                  "action": "clear"
+                },
+                {
+                  "type": "button",
+                  "variant": "ghost",
+                  "content": "0",
+                  "action": "appendDigit"
+                },
+                {
+                  "type": "button",
+                  "variant": "outline",
+                  "icon": "delete",
+                  "action": "backspace"
+                }
+              ]
+            }
+          ]
+        },
+        "accessibility": {
+          "role": "group",
+          "aria-label": "Numeric keypad",
+          "keyboard": {
+            "0-9": "appendDigit",
+            "Backspace": "backspace",
+            "Escape": "clear"
+          }
+        },
+        "platform_hints": {
+          "ios": {
+            "haptic": "light_impact"
+          },
+          "android": {
+            "ripple": true
+          }
+        }
+      },
+      "sourceLines": null,
+      "shadcnDeps": [
+        "Button"
+      ],
+      "iconsUsed": [],
+      "tokenRefs": [
+        "base.accent",
+        "base.card",
+        "base.foreground",
+        "base.muted",
+        "font-weight.bold",
+        "radius.lg",
+        "spacing.2",
+        "spacing.3",
+        "spacing.4",
+        "state.value",
+        "text.2xl.font-size"
+      ],
+      "platformHints": {
+        "ios": {
+          "haptic": "light_impact"
+        },
+        "android": {
+          "ripple": true
+        }
+      }
+    },
+    "otp-input-1": {
+      "blockId": "otp-input-1",
+      "tier": "primitive",
+      "category": "pos-input",
+      "description": "6-digit OTP input with auto-advance, paste support, and resend timer",
+      "schema": {
+        "$schema": "../../component.schema.json",
+        "id": "otp-input-1",
+        "tier": "primitive",
+        "category": "pos-input",
+        "description": "OTP/PIN input with auto-focus, paste support, and resend timer",
+        "shadcn_deps": [
+          "Input",
+          "Button"
+        ],
+        "tokens": {
+          "gap": "{spacing.2}",
+          "cellBg": "{base.card}",
+          "cellBorder": "{base.border}",
+          "cellActiveBorder": "{base.primary}",
+          "cellSize": 48,
+          "fontSize": "{text.xl.font-size}"
+        },
+        "overridable": {
+          "digitCount": {
+            "type": "number",
+            "default": 6
+          },
+          "title": {
+            "type": "string",
+            "default": "Nhập mã OTP"
+          },
+          "resendTimeout": {
+            "type": "number",
+            "default": 60
+          }
+        },
+        "state": {
+          "digits": {
+            "type": "array",
+            "default": []
+          },
+          "activeIndex": {
+            "type": "number",
+            "default": 0
+          },
+          "canResend": {
+            "type": "boolean",
+            "default": false
+          },
+          "timeLeft": {
+            "type": "number",
+            "default": 60
+          }
+        },
+        "layout": {
+          "type": "stack-vertical",
+          "alignment": "center",
+          "tokens": {
+            "gap": "{spacing.6}",
+            "padding": "{spacing.6}"
+          },
+          "children": [
+            {
+              "type": "heading",
+              "content": "{overridable.title}",
+              "tokens": {
+                "fontSize": "{text.lg.font-size}",
+                "fontWeight": "{font-weight.semibold}"
+              }
+            },
+            {
+              "id": "cells",
+              "type": "stack-horizontal",
+              "tokens": {
+                "gap": "{spacing.2}"
+              },
+              "children": [
+                {
+                  "type": "otp-input",
+                  "cellCount": "{overridable.digitCount}"
+                }
+              ]
+            },
+            {
+              "id": "resend",
+              "type": "stack-horizontal",
+              "tokens": {
+                "gap": "{spacing.2}"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Không nhận được mã?",
+                  "tokens": {
+                    "color": "{base.muted-foreground}",
+                    "fontSize": "{text.sm.font-size}"
+                  }
+                },
+                {
+                  "type": "button",
+                  "variant": "link",
+                  "content": "Gửi lại",
+                  "disabled": {
+                    "when": "!canResend"
+                  },
+                  "action": "resend"
+                }
+              ]
+            },
+            {
+              "id": "countdown",
+              "type": "countdown-timer",
+              "showIf": "!canResend",
+              "duration": "{overridable.resendTimeout}"
+            }
+          ]
+        },
+        "accessibility": {
+          "role": "group",
+          "aria-label": "OTP input",
+          "auto-focus": "first-cell",
+          "keyboard": {
+            "ArrowLeft": "prevCell",
+            "ArrowRight": "nextCell",
+            "Backspace": "clearAndPrev"
+          }
+        }
+      },
+      "sourceLines": null,
+      "shadcnDeps": [
+        "Input",
+        "Button"
+      ],
+      "iconsUsed": [],
+      "tokenRefs": [
+        "base.border",
+        "base.card",
+        "base.muted-foreground",
+        "base.primary",
+        "font-weight.semibold",
+        "spacing.2",
+        "spacing.6",
+        "text.lg.font-size",
+        "text.sm.font-size",
+        "text.xl.font-size"
+      ],
+      "platformHints": {}
+    },
+    "loading-spinner-1": {
+      "blockId": "loading-spinner-1",
+      "tier": "primitive",
+      "category": "pos-feedback",
+      "description": "Animated loading spinner with optional label and full-screen overlay mode",
+      "schema": {
+        "$schema": "../../component.schema.json",
+        "id": "loading-spinner-1",
+        "tier": "primitive",
+        "category": "pos-feedback",
+        "description": "Animated loading spinner with optional label and full-screen overlay mode",
+        "shadcn_deps": [],
+        "source_cds": "loading-spinner.tsx",
+        "tokens": {
+          "spinnerColor": "{base.primary}",
+          "labelColor": "{base.muted-foreground}",
+          "overlayBg": "{semantic-colors.overlay-light}",
+          "overlayBlur": "{blur.xs}"
+        },
+        "overridable": {
+          "size": {
+            "type": "enum",
+            "options": [
+              "sm",
+              "default",
+              "lg",
+              "xl"
+            ],
+            "default": "default"
+          },
+          "variant": {
+            "type": "enum",
+            "options": [
+              "default",
+              "muted",
+              "white"
+            ],
+            "default": "default"
+          },
+          "label": {
+            "type": "string",
+            "default": "Đang tải"
+          },
+          "overlay": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "state": {
+          "idle": {
+            "description": "Spinner visible, animating continuously"
+          }
+        },
+        "layout": {
+          "type": "stack-vertical",
+          "alignment": "center",
+          "tokens": {
+            "gap": "{spacing.3}"
+          },
+          "children": [
+            {
+              "type": "spinner-circle",
+              "tokens": {
+                "size.sm": 16,
+                "size.default": 24,
+                "size.lg": 40,
+                "size.xl": 64,
+                "borderWidth.sm": 2,
+                "borderWidth.default": 2,
+                "borderWidth.lg": 3,
+                "borderWidth.xl": 4,
+                "color": "{overridable.variant → token}",
+                "animation": "spin {animation.duration-slow} linear infinite"
+              }
+            },
+            {
+              "type": "text",
+              "showIf": "{overridable.label}",
+              "content": "{overridable.label}",
+              "tokens": {
+                "fontSize": "{text.sm.font-size}",
+                "fontWeight": "{font-weight.medium}",
+                "color": "{tokens.labelColor}"
+              }
+            },
+            {
+              "type": "sr-only",
+              "content": "{overridable.label}"
+            }
+          ]
+        },
+        "accessibility": {
+          "role": "status",
+          "aria-label": "{overridable.label}",
+          "sr-only-text": "{overridable.label}"
+        },
+        "platform_hints": {
+          "react": "cva variants, overlay uses fixed + backdrop-blur-sm",
+          "swiftui": "ProgressView(.circular) + .scaleEffect for sizes",
+          "compose": "CircularProgressIndicator + sizing modifier",
+          "flutter": "CircularProgressIndicator + SizedBox"
+        }
+      },
+      "sourceLines": null,
+      "shadcnDeps": [],
+      "iconsUsed": [],
+      "tokenRefs": [
+        "animation.duration-slow",
+        "base.muted-foreground",
+        "base.primary",
+        "blur.xs",
+        "font-weight.medium",
+        "semantic-colors.overlay-light",
+        "spacing.3",
+        "text.sm.font-size",
+        "tokens.labelColor"
+      ],
+      "platformHints": {
+        "react": "cva variants, overlay uses fixed + backdrop-blur-sm",
+        "swiftui": "ProgressView(.circular) + .scaleEffect for sizes",
+        "compose": "CircularProgressIndicator + sizing modifier",
+        "flutter": "CircularProgressIndicator + SizedBox"
+      }
+    },
+    "receipt-preview-1": {
+      "blockId": "receipt-preview-1",
+      "tier": "composition",
+      "category": "pos-documents",
+      "description": "Receipt preview with line items, totals, print and share actions",
+      "schema": {
+        "$schema": "../../component.schema.json",
+        "id": "receipt-preview-1",
+        "tier": "composition",
+        "category": "pos-documents",
+        "description": "Receipt preview with paper-style layout, store info, line items, totals, and print/share actions",
+        "shadcn_deps": [
+          "Button",
+          "Card",
+          "Separator"
+        ],
+        "tokens": {
+          "paperBg": "{base.card}",
+          "paperShadow": "{shadow.md}",
+          "paperRadius": "{radius.lg}"
+        },
+        "overridable": {
+          "showPrint": {
+            "type": "boolean",
+            "default": true
+          },
+          "showShare": {
+            "type": "boolean",
+            "default": true
+          },
+          "storeName": {
+            "type": "string",
+            "default": "xPOS Store"
+          },
+          "storeAddress": {
+            "type": "string",
+            "default": ""
+          }
+        },
+        "state": {
+          "items": {
+            "type": "array",
+            "default": []
+          },
+          "subtotal": {
+            "type": "number",
+            "default": 0
+          },
+          "tax": {
+            "type": "number",
+            "default": 0
+          },
+          "total": {
+            "type": "number",
+            "default": 0
+          },
+          "paymentMethod": {
+            "type": "string",
+            "default": "cash"
+          }
+        },
+        "layout": {
+          "type": "stack-vertical",
+          "tokens": {
+            "gap": "{spacing.4}",
+            "padding": "{spacing.4}"
+          },
+          "children": [
+            {
+              "id": "paper",
+              "type": "receipt",
+              "tokens": {
+                "background": "{base.card}",
+                "padding": "{spacing.6}",
+                "borderRadius": "{radius.lg}",
+                "shadow": "{shadow.md}"
+              },
+              "children": [
+                {
+                  "id": "header",
+                  "type": "stack-vertical",
+                  "alignment": "center",
+                  "tokens": {
+                    "gap": "{spacing.2}",
+                    "marginBottom": "{spacing.4}"
+                  },
+                  "children": [
+                    {
+                      "type": "heading",
+                      "content": "{overridable.storeName}",
+                      "tokens": {
+                        "fontSize": "{text.lg.font-size}",
+                        "fontWeight": "{font-weight.bold}",
+                        "textAlign": "center"
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "content": "{overridable.storeAddress}",
+                      "tokens": {
+                        "fontSize": "{text.xs.font-size}",
+                        "color": "{base.muted-foreground}",
+                        "textAlign": "center"
+                      }
+                    },
+                    {
+                      "type": "separator"
+                    }
+                  ]
+                },
+                {
+                  "id": "items",
+                  "type": "stack-vertical",
+                  "tokens": {
+                    "gap": "{spacing.2}"
+                  },
+                  "children": [
+                    {
+                      "type": "stack-horizontal",
+                      "tokens": {
+                        "justifyContent": "space-between"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Item name × qty",
+                          "tokens": {
+                            "fontSize": "{text.sm.font-size}"
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "content": "Price",
+                          "tokens": {
+                            "fontSize": "{text.sm.font-size}",
+                            "fontWeight": "{font-weight.medium}"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "separator",
+                  "tokens": {
+                    "marginY": "{spacing.3}"
+                  }
+                },
+                {
+                  "id": "totals",
+                  "type": "stack-vertical",
+                  "tokens": {
+                    "gap": "{spacing.1}"
+                  },
+                  "children": [
+                    {
+                      "type": "stack-horizontal",
+                      "tokens": {
+                        "justifyContent": "space-between"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Tạm tính",
+                          "tokens": {
+                            "fontSize": "{text.sm.font-size}",
+                            "color": "{base.muted-foreground}"
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "content": "{state.subtotal}",
+                          "tokens": {
+                            "fontSize": "{text.sm.font-size}"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "stack-horizontal",
+                      "tokens": {
+                        "justifyContent": "space-between"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Thuế",
+                          "tokens": {
+                            "fontSize": "{text.sm.font-size}",
+                            "color": "{base.muted-foreground}"
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "content": "{state.tax}",
+                          "tokens": {
+                            "fontSize": "{text.sm.font-size}"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "separator"
+                    },
+                    {
+                      "type": "stack-horizontal",
+                      "tokens": {
+                        "justifyContent": "space-between"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "TỔNG CỘNG",
+                          "tokens": {
+                            "fontSize": "{text.base.font-size}",
+                            "fontWeight": "{font-weight.bold}"
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "content": "{state.total}",
+                          "tokens": {
+                            "fontSize": "{text.lg.font-size}",
+                            "fontWeight": "{font-weight.bold}",
+                            "color": "{base.primary}"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "actions",
+              "type": "stack-horizontal",
+              "tokens": {
+                "gap": "{spacing.3}"
+              },
+              "children": [
+                {
+                  "type": "button",
+                  "showIf": "{overridable.showPrint}",
+                  "variant": "default",
+                  "icon": "printer",
+                  "content": "In hoá đơn",
+                  "action": "print",
+                  "tokens": {
+                    "flex": 1
+                  }
+                },
+                {
+                  "type": "button",
+                  "showIf": "{overridable.showShare}",
+                  "variant": "outline",
+                  "icon": "share",
+                  "content": "Chia sẻ",
+                  "action": "share",
+                  "tokens": {
+                    "flex": 1
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "accessibility": {
+          "role": "document",
+          "aria-label": "Receipt preview"
+        }
+      },
+      "sourceLines": null,
+      "shadcnDeps": [
+        "Button",
+        "Card",
+        "Separator"
+      ],
+      "iconsUsed": [],
+      "tokenRefs": [
+        "base.card",
+        "base.muted-foreground",
+        "base.primary",
+        "font-weight.bold",
+        "font-weight.medium",
+        "radius.lg",
+        "shadow.md",
+        "spacing.1",
+        "spacing.2",
+        "spacing.3",
+        "spacing.4",
+        "spacing.6",
+        "state.subtotal",
+        "state.tax",
+        "state.total",
+        "text.base.font-size",
+        "text.lg.font-size",
+        "text.sm.font-size",
+        "text.xs.font-size"
+      ],
+      "platformHints": {}
+    },
+    "bottom-tab-bar-1": {
+      "blockId": "bottom-tab-bar-1",
+      "tier": "pattern",
+      "category": "pos-navbars",
+      "description": "Bottom tab navigation bar with icon+label items and active state",
+      "schema": {
+        "$schema": "../../component.schema.json",
+        "id": "bottom-tab-bar-1",
+        "tier": "pattern",
+        "category": "pos-navbars",
+        "description": "Bottom tab bar with 5 tabs, badges, and safe area padding for mobile POS",
+        "shadcn_deps": [
+          "Badge"
+        ],
+        "tokens": {
+          "height": 56,
+          "bg": "{base.background}",
+          "activeColor": "{base.primary}",
+          "inactiveColor": "{base.muted-foreground}",
+          "borderTop": "{base.border}"
+        },
+        "overridable": {
+          "tabs": {
+            "type": "array",
+            "default": [
+              {
+                "icon": "home",
+                "label": "Trang chủ",
+                "route": "/dashboard"
+              },
+              {
+                "icon": "shopping-cart",
+                "label": "Bán hàng",
+                "route": "/sale"
+              },
+              {
+                "icon": "list",
+                "label": "Đơn hàng",
+                "route": "/orders",
+                "badge": 3
+              },
+              {
+                "icon": "box",
+                "label": "Sản phẩm",
+                "route": "/products"
+              },
+              {
+                "icon": "user",
+                "label": "Tài khoản",
+                "route": "/account"
+              }
+            ]
+          }
+        },
+        "state": {
+          "activeTab": {
+            "type": "number",
+            "default": 0
+          }
+        },
+        "layout": {
+          "type": "bottom-tab-bar",
+          "tokens": {
+            "height": 56,
+            "background": "{base.background}",
+            "borderTop": "1px solid {base.border}",
+            "paddingBottom": "env(safe-area-inset-bottom)"
+          },
+          "children": [
+            {
+              "type": "stack-horizontal",
+              "tokens": {
+                "justifyContent": "space-around",
+                "height": "100%"
+              },
+              "children": [
+                {
+                  "type": "nav-item",
+                  "icon": "{tab.icon}",
+                  "label": "{tab.label}",
+                  "active": "{state.activeTab === index}",
+                  "badge": "{tab.badge}"
+                }
+              ]
+            }
+          ]
+        },
+        "accessibility": {
+          "role": "navigation",
+          "aria-label": "Main navigation"
+        }
+      },
+      "sourceLines": null,
+      "shadcnDeps": [
+        "Badge"
+      ],
+      "iconsUsed": [],
+      "tokenRefs": [
+        "base.background",
+        "base.border",
+        "base.muted-foreground",
+        "base.primary",
+        "state.activeTab === index",
+        "tab.badge",
+        "tab.icon",
+        "tab.label"
+      ],
+      "platformHints": {}
+    }
+  },
+  "component_tokens": {
+    "text-input-1": {
+      "blockId": "text-input-1",
+      "mode": "Light",
+      "platform": "Mobile",
+      "brand": "default",
+      "resolved": {
+        "base.border": {
+          "path": "base.border",
+          "value": "#e5e5e5",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.border",
+            "colors.border-light",
+            "tailwind colors.neutral.200"
+          ],
+          "source": "Mode"
+        },
+        "base.destructive": {
+          "path": "base.destructive",
+          "value": "#dc2626",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.destructive",
+            "colors.destructive-light",
+            "tailwind colors.red.600"
+          ],
+          "source": "Mode"
+        },
+        "base.muted-foreground": {
+          "path": "base.muted-foreground",
+          "value": "#737373",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.muted-foreground",
+            "colors.muted-foreground-light",
+            "tailwind colors.neutral.500"
+          ],
+          "source": "Mode"
+        },
+        "base.ring": {
+          "path": "base.ring",
+          "value": "#a1a1aa",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.ring",
+            "colors.ring-light",
+            "tailwind colors.zinc.400"
+          ],
+          "source": "Mode"
+        },
+        "font-weight.medium": {
+          "path": "font-weight.medium",
+          "value": 500,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "font-weight.medium"
+          ],
+          "source": "Theme"
+        },
+        "spacing.1": {
+          "path": "spacing.1",
+          "value": 4,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "spacing.1"
+          ],
+          "source": "TailwindCSS"
+        },
+        "text.sm.font-size": {
+          "path": "text.sm.font-size",
+          "value": 14,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "text.sm.font-size"
+          ],
+          "source": "Theme"
+        },
+        "text.xs.font-size": {
+          "path": "text.xs.font-size",
+          "value": 12,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "text.xs.font-size"
+          ],
+          "source": "Theme"
+        }
+      },
+      "missing": [
+        "state.error ? base.destructive : base.muted-foreground",
+        "state.error || overridable.helperText"
+      ],
+      "totalRefs": 10,
+      "resolvedCount": 8,
+      "missingCount": 2
+    },
+    "empty-state-1": {
+      "blockId": "empty-state-1",
+      "mode": "Light",
+      "platform": "Mobile",
+      "brand": "default",
+      "resolved": {
+        "base.foreground": {
+          "path": "base.foreground",
+          "value": "#0a0a0a",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.foreground",
+            "colors.foreground-light",
+            "tailwind colors.neutral.950"
+          ],
+          "source": "Mode"
+        },
+        "base.muted-foreground": {
+          "path": "base.muted-foreground",
+          "value": "#737373",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.muted-foreground",
+            "colors.muted-foreground-light",
+            "tailwind colors.neutral.500"
+          ],
+          "source": "Mode"
+        },
+        "font-weight.semibold": {
+          "path": "font-weight.semibold",
+          "value": 600,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "font-weight.semibold"
+          ],
+          "source": "Theme"
+        },
+        "spacing.4": {
+          "path": "spacing.4",
+          "value": 16,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "spacing.4"
+          ],
+          "source": "TailwindCSS"
+        },
+        "spacing.8": {
+          "path": "spacing.8",
+          "value": 32,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "spacing.8"
+          ],
+          "source": "TailwindCSS"
+        },
+        "text.lg.font-size": {
+          "path": "text.lg.font-size",
+          "value": 18,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "text.lg.font-size"
+          ],
+          "source": "Theme"
+        },
+        "text.sm.font-size": {
+          "path": "text.sm.font-size",
+          "value": 14,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "text.sm.font-size"
+          ],
+          "source": "Theme"
+        }
+      },
+      "missing": [],
+      "totalRefs": 7,
+      "resolvedCount": 7,
+      "missingCount": 0
+    },
+    "app-header-1": {
+      "blockId": "app-header-1",
+      "mode": "Light",
+      "platform": "Mobile",
+      "brand": "default",
+      "resolved": {
+        "base.background": {
+          "path": "base.background",
+          "value": "#ffffff",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.background",
+            "colors.background-light",
+            "tailwind colors.base.white"
+          ],
+          "source": "Mode"
+        },
+        "base.border": {
+          "path": "base.border",
+          "value": "#e5e5e5",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.border",
+            "colors.border-light",
+            "tailwind colors.neutral.200"
+          ],
+          "source": "Mode"
+        },
+        "font-weight.semibold": {
+          "path": "font-weight.semibold",
+          "value": 600,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "font-weight.semibold"
+          ],
+          "source": "Theme"
+        },
+        "spacing.4": {
+          "path": "spacing.4",
+          "value": 16,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "spacing.4"
+          ],
+          "source": "TailwindCSS"
+        },
+        "text.lg.font-size": {
+          "path": "text.lg.font-size",
+          "value": 18,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "text.lg.font-size"
+          ],
+          "source": "Theme"
+        }
+      },
+      "missing": [],
+      "totalRefs": 5,
+      "resolvedCount": 5,
+      "missingCount": 0
+    },
+    "numpad-1": {
+      "blockId": "numpad-1",
+      "mode": "Light",
+      "platform": "Mobile",
+      "brand": "default",
+      "resolved": {
+        "base.accent": {
+          "path": "base.accent",
+          "value": "#f5f5f5",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.accent",
+            "colors.accent-light",
+            "tailwind colors.neutral.100"
+          ],
+          "source": "Mode"
+        },
+        "base.card": {
+          "path": "base.card",
+          "value": "#ffffff",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.card",
+            "colors.card-light",
+            "tailwind colors.base.white"
+          ],
+          "source": "Mode"
+        },
+        "base.foreground": {
+          "path": "base.foreground",
+          "value": "#0a0a0a",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.foreground",
+            "colors.foreground-light",
+            "tailwind colors.neutral.950"
+          ],
+          "source": "Mode"
+        },
+        "base.muted": {
+          "path": "base.muted",
+          "value": "#f5f5f5",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.muted",
+            "colors.muted-light",
+            "tailwind colors.neutral.100"
+          ],
+          "source": "Mode"
+        },
+        "font-weight.bold": {
+          "path": "font-weight.bold",
+          "value": 700,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "font-weight.bold"
+          ],
+          "source": "Theme"
+        },
+        "radius.lg": {
+          "path": "radius.lg",
+          "value": 16,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "radius.lg"
+          ],
+          "source": "Theme"
+        },
+        "spacing.2": {
+          "path": "spacing.2",
+          "value": 8,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "spacing.2"
+          ],
+          "source": "TailwindCSS"
+        },
+        "spacing.3": {
+          "path": "spacing.3",
+          "value": 12,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "spacing.3"
+          ],
+          "source": "TailwindCSS"
+        },
+        "spacing.4": {
+          "path": "spacing.4",
+          "value": 16,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "spacing.4"
+          ],
+          "source": "TailwindCSS"
+        },
+        "text.2xl.font-size": {
+          "path": "text.2xl.font-size",
+          "value": 24,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "text.2xl.font-size"
+          ],
+          "source": "Theme"
+        }
+      },
+      "missing": [
+        "state.value"
+      ],
+      "totalRefs": 11,
+      "resolvedCount": 10,
+      "missingCount": 1
+    },
+    "otp-input-1": {
+      "blockId": "otp-input-1",
+      "mode": "Light",
+      "platform": "Mobile",
+      "brand": "default",
+      "resolved": {
+        "base.border": {
+          "path": "base.border",
+          "value": "#e5e5e5",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.border",
+            "colors.border-light",
+            "tailwind colors.neutral.200"
+          ],
+          "source": "Mode"
+        },
+        "base.card": {
+          "path": "base.card",
+          "value": "#ffffff",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.card",
+            "colors.card-light",
+            "tailwind colors.base.white"
+          ],
+          "source": "Mode"
+        },
+        "base.muted-foreground": {
+          "path": "base.muted-foreground",
+          "value": "#737373",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.muted-foreground",
+            "colors.muted-foreground-light",
+            "tailwind colors.neutral.500"
+          ],
+          "source": "Mode"
+        },
+        "base.primary": {
+          "path": "base.primary",
+          "value": "#18181b",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.primary",
+            "colors.primary-light",
+            "tailwind colors.zinc.900"
+          ],
+          "source": "Mode"
+        },
+        "font-weight.semibold": {
+          "path": "font-weight.semibold",
+          "value": 600,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "font-weight.semibold"
+          ],
+          "source": "Theme"
+        },
+        "spacing.2": {
+          "path": "spacing.2",
+          "value": 8,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "spacing.2"
+          ],
+          "source": "TailwindCSS"
+        },
+        "spacing.6": {
+          "path": "spacing.6",
+          "value": 24,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "spacing.6"
+          ],
+          "source": "TailwindCSS"
+        },
+        "text.lg.font-size": {
+          "path": "text.lg.font-size",
+          "value": 18,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "text.lg.font-size"
+          ],
+          "source": "Theme"
+        },
+        "text.sm.font-size": {
+          "path": "text.sm.font-size",
+          "value": 14,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "text.sm.font-size"
+          ],
+          "source": "Theme"
+        },
+        "text.xl.font-size": {
+          "path": "text.xl.font-size",
+          "value": 20,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "text.xl.font-size"
+          ],
+          "source": "Theme"
+        }
+      },
+      "missing": [],
+      "totalRefs": 10,
+      "resolvedCount": 10,
+      "missingCount": 0
+    },
+    "loading-spinner-1": {
+      "blockId": "loading-spinner-1",
+      "mode": "Light",
+      "platform": "Mobile",
+      "brand": "default",
+      "resolved": {
+        "animation.duration-slow": {
+          "path": "animation.duration-slow",
+          "value": "300ms",
+          "type": "duration",
+          "unit": null,
+          "chain": [
+            "animation.duration-slow"
+          ],
+          "source": "Theme"
+        },
+        "base.muted-foreground": {
+          "path": "base.muted-foreground",
+          "value": "#737373",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.muted-foreground",
+            "colors.muted-foreground-light",
+            "tailwind colors.neutral.500"
+          ],
+          "source": "Mode"
+        },
+        "base.primary": {
+          "path": "base.primary",
+          "value": "#18181b",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.primary",
+            "colors.primary-light",
+            "tailwind colors.zinc.900"
+          ],
+          "source": "Mode"
+        },
+        "blur.xs": {
+          "path": "blur.xs",
+          "value": 4,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "blur.xs"
+          ],
+          "source": "Theme"
+        },
+        "font-weight.medium": {
+          "path": "font-weight.medium",
+          "value": 500,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "font-weight.medium"
+          ],
+          "source": "Theme"
+        },
+        "semantic-colors.overlay-light": {
+          "path": "semantic-colors.overlay-light",
+          "value": "rgba(0,0,0,0.5)",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "semantic-colors.overlay-light"
+          ],
+          "source": "Theme"
+        },
+        "spacing.3": {
+          "path": "spacing.3",
+          "value": 12,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "spacing.3"
+          ],
+          "source": "TailwindCSS"
+        },
+        "text.sm.font-size": {
+          "path": "text.sm.font-size",
+          "value": 14,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "text.sm.font-size"
+          ],
+          "source": "Theme"
+        }
+      },
+      "missing": [
+        "tokens.labelColor"
+      ],
+      "totalRefs": 9,
+      "resolvedCount": 8,
+      "missingCount": 1
+    },
+    "receipt-preview-1": {
+      "blockId": "receipt-preview-1",
+      "mode": "Light",
+      "platform": "Mobile",
+      "brand": "default",
+      "resolved": {
+        "base.card": {
+          "path": "base.card",
+          "value": "#ffffff",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.card",
+            "colors.card-light",
+            "tailwind colors.base.white"
+          ],
+          "source": "Mode"
+        },
+        "base.muted-foreground": {
+          "path": "base.muted-foreground",
+          "value": "#737373",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.muted-foreground",
+            "colors.muted-foreground-light",
+            "tailwind colors.neutral.500"
+          ],
+          "source": "Mode"
+        },
+        "base.primary": {
+          "path": "base.primary",
+          "value": "#18181b",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.primary",
+            "colors.primary-light",
+            "tailwind colors.zinc.900"
+          ],
+          "source": "Mode"
+        },
+        "font-weight.bold": {
+          "path": "font-weight.bold",
+          "value": 700,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "font-weight.bold"
+          ],
+          "source": "Theme"
+        },
+        "font-weight.medium": {
+          "path": "font-weight.medium",
+          "value": 500,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "font-weight.medium"
+          ],
+          "source": "Theme"
+        },
+        "radius.lg": {
+          "path": "radius.lg",
+          "value": 16,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "radius.lg"
+          ],
+          "source": "Theme"
+        },
+        "shadow.md": {
+          "path": "shadow.md",
+          "value": "[composite]",
+          "type": "shadow",
+          "unit": null,
+          "chain": [
+            "shadow.md"
+          ],
+          "source": "Theme",
+          "unresolved": false
+        },
+        "spacing.1": {
+          "path": "spacing.1",
+          "value": 4,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "spacing.1"
+          ],
+          "source": "TailwindCSS"
+        },
+        "spacing.2": {
+          "path": "spacing.2",
+          "value": 8,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "spacing.2"
+          ],
+          "source": "TailwindCSS"
+        },
+        "spacing.3": {
+          "path": "spacing.3",
+          "value": 12,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "spacing.3"
+          ],
+          "source": "TailwindCSS"
+        },
+        "spacing.4": {
+          "path": "spacing.4",
+          "value": 16,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "spacing.4"
+          ],
+          "source": "TailwindCSS"
+        },
+        "spacing.6": {
+          "path": "spacing.6",
+          "value": 24,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "spacing.6"
+          ],
+          "source": "TailwindCSS"
+        },
+        "text.base.font-size": {
+          "path": "text.base.font-size",
+          "value": 16,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "text.base.font-size"
+          ],
+          "source": "Theme"
+        },
+        "text.lg.font-size": {
+          "path": "text.lg.font-size",
+          "value": 18,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "text.lg.font-size"
+          ],
+          "source": "Theme"
+        },
+        "text.sm.font-size": {
+          "path": "text.sm.font-size",
+          "value": 14,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "text.sm.font-size"
+          ],
+          "source": "Theme"
+        },
+        "text.xs.font-size": {
+          "path": "text.xs.font-size",
+          "value": 12,
+          "type": "float",
+          "unit": null,
+          "chain": [
+            "text.xs.font-size"
+          ],
+          "source": "Theme"
+        }
+      },
+      "missing": [
+        "state.subtotal",
+        "state.tax",
+        "state.total"
+      ],
+      "totalRefs": 19,
+      "resolvedCount": 16,
+      "missingCount": 3
+    },
+    "bottom-tab-bar-1": {
+      "blockId": "bottom-tab-bar-1",
+      "mode": "Light",
+      "platform": "Mobile",
+      "brand": "default",
+      "resolved": {
+        "base.background": {
+          "path": "base.background",
+          "value": "#ffffff",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.background",
+            "colors.background-light",
+            "tailwind colors.base.white"
+          ],
+          "source": "Mode"
+        },
+        "base.border": {
+          "path": "base.border",
+          "value": "#e5e5e5",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.border",
+            "colors.border-light",
+            "tailwind colors.neutral.200"
+          ],
+          "source": "Mode"
+        },
+        "base.muted-foreground": {
+          "path": "base.muted-foreground",
+          "value": "#737373",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.muted-foreground",
+            "colors.muted-foreground-light",
+            "tailwind colors.neutral.500"
+          ],
+          "source": "Mode"
+        },
+        "base.primary": {
+          "path": "base.primary",
+          "value": "#18181b",
+          "type": "color",
+          "unit": null,
+          "chain": [
+            "base.primary",
+            "colors.primary-light",
+            "tailwind colors.zinc.900"
+          ],
+          "source": "Mode"
+        }
+      },
+      "missing": [
+        "state.activeTab === index",
+        "tab.badge",
+        "tab.icon",
+        "tab.label"
+      ],
+      "totalRefs": 8,
+      "resolvedCount": 4,
+      "missingCount": 4
+    }
+  },
+  "guidelines": {
+    "high_severity": [
+      {
+        "id": 235,
+        "source_file": "ux-guidelines",
+        "category": "AI Interaction",
+        "platform": "All",
+        "issue": "Disclaimer",
+        "description": "Users need to know they talk to AI",
+        "do_example": "Clearly label AI generated content",
+        "dont_example": "Present AI as human",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"AI Assistant label\",\"Code Example Bad\":\"Fake human name without label\"}"
+      },
+      {
+        "id": 180,
+        "source_file": "ux-guidelines",
+        "category": "Accessibility",
+        "platform": "All",
+        "issue": "Color Only",
+        "description": "Don't convey information by color alone",
+        "do_example": "Use icons/text in addition to color",
+        "dont_example": "Red/green only for error/success",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"Red text + error icon\",\"Code Example Bad\":\"Red border only for error\"}"
+      },
+      {
+        "id": 181,
+        "source_file": "ux-guidelines",
+        "category": "Accessibility",
+        "platform": "All",
+        "issue": "Alt Text",
+        "description": "Images need text alternatives",
+        "do_example": "Descriptive alt text for meaningful images",
+        "dont_example": "Empty or missing alt attributes",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"alt='Dog playing in park'\",\"Code Example Bad\":\"alt='' for content images\"}"
+      },
+      {
+        "id": 183,
+        "source_file": "ux-guidelines",
+        "category": "Accessibility",
+        "platform": "All",
+        "issue": "ARIA Labels",
+        "description": "Interactive elements need accessible names",
+        "do_example": "Add aria-label for icon-only buttons",
+        "dont_example": "Icon buttons without labels",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"aria-label='Close menu'\",\"Code Example Bad\":\"<button><Icon/></button>\"}"
+      },
+      {
+        "id": 184,
+        "source_file": "ux-guidelines",
+        "category": "Accessibility",
+        "platform": "Web",
+        "issue": "Keyboard Navigation",
+        "description": "All functionality accessible via keyboard",
+        "do_example": "Tab order matches visual order",
+        "dont_example": "Keyboard traps or illogical tab order",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"tabIndex for custom order\",\"Code Example Bad\":\"Unreachable elements\"}"
+      },
+      {
+        "id": 186,
+        "source_file": "ux-guidelines",
+        "category": "Accessibility",
+        "platform": "All",
+        "issue": "Form Labels",
+        "description": "Inputs must have associated labels",
+        "do_example": "Use label with for attribute or wrap input",
+        "dont_example": "Placeholder-only inputs",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<label for='email'>\",\"Code Example Bad\":\"placeholder='Email' only\"}"
+      },
+      {
+        "id": 187,
+        "source_file": "ux-guidelines",
+        "category": "Accessibility",
+        "platform": "All",
+        "issue": "Error Messages",
+        "description": "Error messages must be announced",
+        "do_example": "Use aria-live or role=alert for errors",
+        "dont_example": "Visual-only error indication",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"role='alert'\",\"Code Example Bad\":\"Red border only\"}"
+      },
+      {
+        "id": 242,
+        "source_file": "ux-guidelines",
+        "category": "Accessibility",
+        "platform": "All",
+        "issue": "Motion Sensitivity",
+        "description": "Parallax/Scroll-jacking causes nausea",
+        "do_example": "Respect prefers-reduced-motion",
+        "dont_example": "Force scroll effects",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"@media (prefers-reduced-motion)\",\"Code Example Bad\":\"ScrollTrigger.create()\"}"
+      },
+      {
+        "id": 245,
+        "source_file": "web-interface",
+        "category": "Accessibility",
+        "platform": "Web",
+        "issue": "Keyboard Handlers",
+        "description": "Interactive elements must support keyboard interaction",
+        "do_example": "Add onKeyDown alongside onClick",
+        "dont_example": "Click-only interaction",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<div onClick={fn} onKeyDown={fn} tabIndex={0}>\",\"Code Example Bad\":\"<div onClick={fn}>\"}"
+      },
+      {
+        "id": 246,
+        "source_file": "web-interface",
+        "category": "Accessibility",
+        "platform": "Web",
+        "issue": "Semantic HTML",
+        "description": "Use semantic HTML before ARIA attributes",
+        "do_example": "Use button/a/label elements",
+        "dont_example": "Div with role attribute",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<button onClick={fn}>Submit</button>\",\"Code Example Bad\":\"<div role='button' onClick={fn}>Submit</div>\"}"
+      },
+      {
+        "id": 150,
+        "source_file": "ux-guidelines",
+        "category": "Animation",
+        "platform": "All",
+        "issue": "Excessive Motion",
+        "description": "Too many animations cause distraction and motion sickness",
+        "do_example": "Animate 1-2 key elements per view maximum",
+        "dont_example": "Animate everything that moves",
+        "severity": "High",
+        "ux_law_ref": "cognitive-load",
+        "extra_json": "{\"Code Example Good\":\"Single hero animation\",\"Code Example Bad\":\"animate-bounce on 5+ elements\"}"
+      },
+      {
+        "id": 152,
+        "source_file": "ux-guidelines",
+        "category": "Animation",
+        "platform": "All",
+        "issue": "Reduced Motion",
+        "description": "Respect user's motion preferences",
+        "do_example": "Check prefers-reduced-motion media query",
+        "dont_example": "Ignore accessibility motion settings",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"@media (prefers-reduced-motion: reduce)\",\"Code Example Bad\":\"No motion query check\"}"
+      },
+      {
+        "id": 153,
+        "source_file": "ux-guidelines",
+        "category": "Animation",
+        "platform": "All",
+        "issue": "Loading States",
+        "description": "Show feedback during async operations",
+        "do_example": "Use skeleton screens or spinners",
+        "dont_example": "Leave UI frozen with no feedback",
+        "severity": "High",
+        "ux_law_ref": "doherty",
+        "extra_json": "{\"Code Example Good\":\"animate-pulse skeleton\",\"Code Example Bad\":\"Blank screen while loading\"}"
+      },
+      {
+        "id": 154,
+        "source_file": "ux-guidelines",
+        "category": "Animation",
+        "platform": "All",
+        "issue": "Hover vs Tap",
+        "description": "Hover effects don't work on touch devices",
+        "do_example": "Use click/tap for primary interactions",
+        "dont_example": "Rely only on hover for important actions",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"onClick handler\",\"Code Example Bad\":\"onMouseEnter only\"}"
+      },
+      {
+        "id": 221,
+        "source_file": "ux-guidelines",
+        "category": "Feedback",
+        "platform": "All",
+        "issue": "Loading Indicators",
+        "description": "Show system status during waits",
+        "do_example": "Show spinner/skeleton for operations > 300ms",
+        "dont_example": "No feedback during loading",
+        "severity": "High",
+        "ux_law_ref": "doherty",
+        "extra_json": "{\"Code Example Good\":\"Skeleton or spinner\",\"Code Example Bad\":\"Frozen UI\"}"
+      },
+      {
+        "id": 197,
+        "source_file": "ux-guidelines",
+        "category": "Forms",
+        "platform": "All",
+        "issue": "Input Labels",
+        "description": "Every input needs a visible label",
+        "do_example": "Always show label above or beside input",
+        "dont_example": "Placeholder as only label",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<label>Email</label><input>\",\"Code Example Bad\":\"placeholder='Email' only\"}"
+      },
+      {
+        "id": 204,
+        "source_file": "ux-guidelines",
+        "category": "Forms",
+        "platform": "All",
+        "issue": "Submit Feedback",
+        "description": "Confirm form submission status",
+        "do_example": "Show loading then success/error state",
+        "dont_example": "No feedback after submit",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"Loading -> Success message\",\"Code Example Bad\":\"Button click with no response\"}"
+      },
+      {
+        "id": 252,
+        "source_file": "web-interface",
+        "category": "Forms",
+        "platform": "Web",
+        "issue": "Autocomplete Attribute",
+        "description": "Inputs need autocomplete attribute for autofill",
+        "do_example": "Add appropriate autocomplete value",
+        "dont_example": "Missing autocomplete",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<input autocomplete='email' type='email' />\",\"Code Example Bad\":\"<input type='email' />\"}"
+      },
+      {
+        "id": 254,
+        "source_file": "web-interface",
+        "category": "Forms",
+        "platform": "Web",
+        "issue": "Never Block Paste",
+        "description": "Never prevent paste functionality",
+        "do_example": "Allow paste on all inputs",
+        "dont_example": "Block paste on password/code",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<input type='password' />\",\"Code Example Bad\":\"<input onPaste={e => e.preventDefault()} />\"}"
+      },
+      {
+        "id": 257,
+        "source_file": "web-interface",
+        "category": "Forms",
+        "platform": "Web",
+        "issue": "Inline Errors",
+        "description": "Show error messages inline near the problem field",
+        "do_example": "Inline error with focus on first error",
+        "dont_example": "Single error at top",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<input /><span class='text-red-500'>{error}</span>\",\"Code Example Bad\":\"<div class='error'>{allErrors}</div> // at top\"}"
+      },
+      {
+        "id": 171,
+        "source_file": "ux-guidelines",
+        "category": "Interaction",
+        "platform": "All",
+        "issue": "Focus States",
+        "description": "Keyboard users need visible focus indicators",
+        "do_example": "Use visible focus rings on interactive elements",
+        "dont_example": "Remove focus outline without replacement",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"focus:ring-2 focus:ring-blue-500\",\"Code Example Bad\":\"outline-none without alternative\"}"
+      },
+      {
+        "id": 175,
+        "source_file": "ux-guidelines",
+        "category": "Interaction",
+        "platform": "All",
+        "issue": "Loading Buttons",
+        "description": "Prevent double submission during async actions",
+        "do_example": "Disable button and show loading state",
+        "dont_example": "Allow multiple clicks during processing",
+        "severity": "High",
+        "ux_law_ref": "doherty",
+        "extra_json": "{\"Code Example Good\":\"disabled={loading} spinner\",\"Code Example Bad\":\"Button clickable while loading\"}"
+      },
+      {
+        "id": 176,
+        "source_file": "ux-guidelines",
+        "category": "Interaction",
+        "platform": "All",
+        "issue": "Error Feedback",
+        "description": "Users need to know when something fails",
+        "do_example": "Show clear error messages near problem",
+        "dont_example": "Silent failures with no feedback",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"Red border + error message\",\"Code Example Bad\":\"No indication of error\"}"
+      },
+      {
+        "id": 178,
+        "source_file": "ux-guidelines",
+        "category": "Interaction",
+        "platform": "All",
+        "issue": "Confirmation Dialogs",
+        "description": "Prevent accidental destructive actions",
+        "do_example": "Confirm before delete/irreversible actions",
+        "dont_example": "Delete without confirmation",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"Are you sure modal\",\"Code Example Bad\":\"Direct delete on click\"}"
+      },
+      {
+        "id": 158,
+        "source_file": "ux-guidelines",
+        "category": "Layout",
+        "platform": "Web",
+        "issue": "Z-Index Management",
+        "description": "Stacking context conflicts cause hidden elements",
+        "do_example": "Define z-index scale system (10 20 30 50)",
+        "dont_example": "Use arbitrary large z-index values",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"z-10 z-20 z-50\",\"Code Example Bad\":\"z-[9999]\"}"
+      },
+      {
+        "id": 162,
+        "source_file": "ux-guidelines",
+        "category": "Layout",
+        "platform": "Web",
+        "issue": "Content Jumping",
+        "description": "Layout shift when content loads is jarring",
+        "do_example": "Reserve space for async content",
+        "dont_example": "Let images/content push layout around",
+        "severity": "High",
+        "ux_law_ref": "peak-end",
+        "extra_json": "{\"Code Example Good\":\"aspect-ratio or fixed height\",\"Code Example Bad\":\"No dimensions on images\"}"
+      },
+      {
+        "id": 144,
+        "source_file": "ux-guidelines",
+        "category": "Navigation",
+        "platform": "Web",
+        "issue": "Smooth Scroll",
+        "description": "Anchor links should scroll smoothly to target section",
+        "do_example": "Use scroll-behavior: smooth on html element",
+        "dont_example": "Jump directly without transition",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"html { scroll-behavior: smooth; }\",\"Code Example Bad\":\"<a href='#section'> without CSS\"}"
+      },
+      {
+        "id": 147,
+        "source_file": "ux-guidelines",
+        "category": "Navigation",
+        "platform": "Mobile",
+        "issue": "Back Button",
+        "description": "Users expect back to work predictably",
+        "do_example": "Preserve navigation history properly",
+        "dont_example": "Break browser/app back button behavior",
+        "severity": "High",
+        "ux_law_ref": "jakob",
+        "extra_json": "{\"Code Example Good\":\"history.pushState()\",\"Code Example Bad\":\"location.replace()\"}"
+      },
+      {
+        "id": 189,
+        "source_file": "ux-guidelines",
+        "category": "Performance",
+        "platform": "All",
+        "issue": "Image Optimization",
+        "description": "Large images slow page load",
+        "do_example": "Use appropriate size and format (WebP)",
+        "dont_example": "Unoptimized full-size images",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"srcset with multiple sizes\",\"Code Example Bad\":\"4000px image for 400px display\"}"
+      },
+      {
+        "id": 258,
+        "source_file": "web-interface",
+        "category": "Performance",
+        "platform": "Web",
+        "issue": "Virtualize Lists",
+        "description": "Virtualize lists exceeding 50 items",
+        "do_example": "Use virtual list for large datasets",
+        "dont_example": "Render all items",
+        "severity": "High",
+        "ux_law_ref": "miller",
+        "extra_json": "{\"Code Example Good\":\"<VirtualList items={items} />\",\"Code Example Bad\":\"items.map(item => <Item />)\"}"
+      },
+      {
+        "id": 209,
+        "source_file": "ux-guidelines",
+        "category": "Responsive",
+        "platform": "Web",
+        "issue": "Touch Friendly",
+        "description": "Mobile layouts need touch-sized targets",
+        "do_example": "Increase touch targets on mobile",
+        "dont_example": "Same tiny buttons on mobile",
+        "severity": "High",
+        "ux_law_ref": "fitts",
+        "extra_json": "{\"Code Example Good\":\"Larger buttons on mobile\",\"Code Example Bad\":\"Desktop-sized targets on mobile\"}"
+      },
+      {
+        "id": 210,
+        "source_file": "ux-guidelines",
+        "category": "Responsive",
+        "platform": "All",
+        "issue": "Readable Font Size",
+        "description": "Text must be readable on all devices",
+        "do_example": "Minimum 16px body text on mobile",
+        "dont_example": "Tiny text on mobile",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"text-base or larger\",\"Code Example Bad\":\"text-xs for body text\"}"
+      },
+      {
+        "id": 211,
+        "source_file": "ux-guidelines",
+        "category": "Responsive",
+        "platform": "Web",
+        "issue": "Viewport Meta",
+        "description": "Set viewport for mobile devices",
+        "do_example": "Use width=device-width initial-scale=1",
+        "dont_example": "Missing or incorrect viewport",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<meta name='viewport'...>\",\"Code Example Bad\":\"No viewport meta tag\"}"
+      },
+      {
+        "id": 212,
+        "source_file": "ux-guidelines",
+        "category": "Responsive",
+        "platform": "Web",
+        "issue": "Horizontal Scroll",
+        "description": "Avoid horizontal scrolling",
+        "do_example": "Ensure content fits viewport width",
+        "dont_example": "Content wider than viewport",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"max-w-full overflow-x-hidden\",\"Code Example Bad\":\"Horizontal scrollbar on mobile\"}"
+      },
+      {
+        "id": 237,
+        "source_file": "ux-guidelines",
+        "category": "Spatial UI",
+        "platform": "VisionOS",
+        "issue": "Gaze Hover",
+        "description": "Elements should respond to eye tracking before pinch",
+        "do_example": "Scale/highlight element on look",
+        "dont_example": "Static element until pinch",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"hoverEffect()\",\"Code Example Bad\":\"onTap only\"}"
+      },
+      {
+        "id": 263,
+        "source_file": "web-interface",
+        "category": "State",
+        "platform": "Web",
+        "issue": "URL Reflects State",
+        "description": "URL should reflect current UI state",
+        "do_example": "Sync filters/tabs/pagination to URL",
+        "dont_example": "State only in memory",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"?tab=settings&page=2\",\"Code Example Bad\":\"useState only // lost on refresh\"}"
+      },
+      {
+        "id": 265,
+        "source_file": "web-interface",
+        "category": "State",
+        "platform": "Web",
+        "issue": "Confirm Destructive Actions",
+        "description": "Destructive actions require confirmation",
+        "do_example": "Show confirmation dialog before delete",
+        "dont_example": "Delete without confirmation",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"if (confirm('Delete?')) delete()\",\"Code Example Bad\":\"onClick={delete} // no confirmation\"}"
+      },
+      {
+        "id": 165,
+        "source_file": "ux-guidelines",
+        "category": "Touch",
+        "platform": "Mobile",
+        "issue": "Touch Target Size",
+        "description": "Small buttons are hard to tap accurately",
+        "do_example": "Minimum 44x44px touch targets",
+        "dont_example": "Tiny clickable areas",
+        "severity": "High",
+        "ux_law_ref": "fitts",
+        "extra_json": "{\"Code Example Good\":\"min-h-[44px] min-w-[44px]\",\"Code Example Bad\":\"w-6 h-6 buttons\"}"
+      },
+      {
+        "id": 219,
+        "source_file": "ux-guidelines",
+        "category": "Typography",
+        "platform": "All",
+        "issue": "Contrast Readability",
+        "description": "Body text needs good contrast",
+        "do_example": "Use darker text on light backgrounds",
+        "dont_example": "Gray text on gray background",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"text-gray-900 on white\",\"Code Example Bad\":\"text-gray-400 on gray-100\"}"
+      }
+    ],
+    "web_interface": [
+      {
+        "id": 243,
+        "source_file": "web-interface",
+        "category": "Accessibility",
+        "platform": "Web",
+        "issue": "Icon Button Labels",
+        "description": "Icon-only buttons must have accessible names",
+        "do_example": "Add aria-label to icon buttons",
+        "dont_example": "Icon button without label",
+        "severity": "Critical",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<button aria-label='Close'><XIcon /></button>\",\"Code Example Bad\":\"<button><XIcon /></button>\"}"
+      },
+      {
+        "id": 244,
+        "source_file": "web-interface",
+        "category": "Accessibility",
+        "platform": "Web",
+        "issue": "Form Control Labels",
+        "description": "All form controls need labels or aria-label",
+        "do_example": "Use label element or aria-label",
+        "dont_example": "Input without accessible name",
+        "severity": "Critical",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<label for='email'>Email</label><input id='email' />\",\"Code Example Bad\":\"<input placeholder='Email' />\"}"
+      },
+      {
+        "id": 245,
+        "source_file": "web-interface",
+        "category": "Accessibility",
+        "platform": "Web",
+        "issue": "Keyboard Handlers",
+        "description": "Interactive elements must support keyboard interaction",
+        "do_example": "Add onKeyDown alongside onClick",
+        "dont_example": "Click-only interaction",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<div onClick={fn} onKeyDown={fn} tabIndex={0}>\",\"Code Example Bad\":\"<div onClick={fn}>\"}"
+      },
+      {
+        "id": 246,
+        "source_file": "web-interface",
+        "category": "Accessibility",
+        "platform": "Web",
+        "issue": "Semantic HTML",
+        "description": "Use semantic HTML before ARIA attributes",
+        "do_example": "Use button/a/label elements",
+        "dont_example": "Div with role attribute",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<button onClick={fn}>Submit</button>\",\"Code Example Bad\":\"<div role='button' onClick={fn}>Submit</div>\"}"
+      },
+      {
+        "id": 247,
+        "source_file": "web-interface",
+        "category": "Accessibility",
+        "platform": "Web",
+        "issue": "Aria Live",
+        "description": "Async updates need aria-live for screen readers",
+        "do_example": "Add aria-live='polite' for dynamic content",
+        "dont_example": "Silent async updates",
+        "severity": "Medium",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<div aria-live='polite'>{status}</div>\",\"Code Example Bad\":\"<div>{status}</div> // no announcement\"}"
+      },
+      {
+        "id": 248,
+        "source_file": "web-interface",
+        "category": "Accessibility",
+        "platform": "Web",
+        "issue": "Decorative Icons",
+        "description": "Decorative icons should be hidden from screen readers",
+        "do_example": "Add aria-hidden='true' to decorative icons",
+        "dont_example": "Decorative icon announced",
+        "severity": "Medium",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<Icon aria-hidden='true' />\",\"Code Example Bad\":\"<Icon /> // announced as 'image'\"}"
+      },
+      {
+        "id": 269,
+        "source_file": "web-interface",
+        "category": "Anti-Pattern",
+        "platform": "Web",
+        "issue": "No Zoom Disable",
+        "description": "Never disable zoom in viewport meta",
+        "do_example": "Allow user zoom",
+        "dont_example": "<meta name='viewport' content='width=device-width'>",
+        "severity": null,
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<meta name='viewport' content='maximum-scale=1'>\",\"Code Example Bad\":\"Critical\"}"
+      },
+      {
+        "id": 270,
+        "source_file": "web-interface",
+        "category": "Anti-Pattern",
+        "platform": "Web",
+        "issue": "No Transition All",
+        "description": "Avoid transition: all - specify properties",
+        "do_example": "Transition specific properties",
+        "dont_example": "transition: all",
+        "severity": "Medium",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"transition-colors duration-200\",\"Code Example Bad\":\"transition-all duration-200\"}"
+      },
+      {
+        "id": 271,
+        "source_file": "web-interface",
+        "category": "Anti-Pattern",
+        "platform": "Web",
+        "issue": "Outline Replacement",
+        "description": "Never use outline-none without replacement",
+        "do_example": "Provide visible focus replacement",
+        "dont_example": "Remove outline with nothing",
+        "severity": "Critical",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"focus:outline-none focus:ring-2 focus:ring-blue-500\",\"Code Example Bad\":\"focus:outline-none // alone\"}"
+      },
+      {
+        "id": 272,
+        "source_file": "web-interface",
+        "category": "Anti-Pattern",
+        "platform": "Web",
+        "issue": "No Hardcoded Dates",
+        "description": "Use Intl for date/number formatting",
+        "do_example": "Use Intl.DateTimeFormat",
+        "dont_example": "Hardcoded date format",
+        "severity": "Medium",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"new Intl.DateTimeFormat('en').format(date)\",\"Code Example Bad\":\"date.toLocaleDateString() // or manual format\"}"
+      },
+      {
+        "id": 249,
+        "source_file": "web-interface",
+        "category": "Focus",
+        "platform": "Web",
+        "issue": "Visible Focus States",
+        "description": "All interactive elements need visible focus states",
+        "do_example": "Use :focus-visible with ring/outline",
+        "dont_example": "No focus indication",
+        "severity": "Critical",
+        "ux_law_ref": "von-restorff",
+        "extra_json": "{\"Code Example Good\":\"focus-visible:ring-2 focus-visible:ring-blue-500\",\"Code Example Bad\":\"outline-none // no replacement\"}"
+      },
+      {
+        "id": 250,
+        "source_file": "web-interface",
+        "category": "Focus",
+        "platform": "Web",
+        "issue": "Never Remove Outline",
+        "description": "Never remove outline without providing replacement",
+        "do_example": "Replace outline with visible alternative",
+        "dont_example": "Remove outline completely",
+        "severity": "Critical",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"focus:outline-none focus:ring-2\",\"Code Example Bad\":\"focus:outline-none // nothing else\"}"
+      },
+      {
+        "id": 251,
+        "source_file": "web-interface",
+        "category": "Focus",
+        "platform": "Web",
+        "issue": "Checkbox Radio Hit Target",
+        "description": "Checkbox/radio must share hit target with label",
+        "do_example": "Wrap input and label together",
+        "dont_example": "Separate tiny checkbox",
+        "severity": "Medium",
+        "ux_law_ref": "fitts",
+        "extra_json": "{\"Code Example Good\":\"<label class='flex gap-2'><input type='checkbox' /><span>Option</span></label>\",\"Code Example Bad\":\"<input type='checkbox' id='x' /><label for='x'>Option</label>\"}"
+      },
+      {
+        "id": 252,
+        "source_file": "web-interface",
+        "category": "Forms",
+        "platform": "Web",
+        "issue": "Autocomplete Attribute",
+        "description": "Inputs need autocomplete attribute for autofill",
+        "do_example": "Add appropriate autocomplete value",
+        "dont_example": "Missing autocomplete",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<input autocomplete='email' type='email' />\",\"Code Example Bad\":\"<input type='email' />\"}"
+      },
+      {
+        "id": 253,
+        "source_file": "web-interface",
+        "category": "Forms",
+        "platform": "Web",
+        "issue": "Semantic Input Types",
+        "description": "Use semantic input type attributes",
+        "do_example": "Use email/tel/url/number types",
+        "dont_example": "text type for everything",
+        "severity": "Medium",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<input type='email' />\",\"Code Example Bad\":\"<input type='text' /> // for email\"}"
+      },
+      {
+        "id": 254,
+        "source_file": "web-interface",
+        "category": "Forms",
+        "platform": "Web",
+        "issue": "Never Block Paste",
+        "description": "Never prevent paste functionality",
+        "do_example": "Allow paste on all inputs",
+        "dont_example": "Block paste on password/code",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<input type='password' />\",\"Code Example Bad\":\"<input onPaste={e => e.preventDefault()} />\"}"
+      },
+      {
+        "id": 255,
+        "source_file": "web-interface",
+        "category": "Forms",
+        "platform": "Web",
+        "issue": "Spellcheck Disable",
+        "description": "Disable spellcheck on emails and codes",
+        "do_example": "Set spellcheck='false' on codes",
+        "dont_example": "Spellcheck on technical input",
+        "severity": "Low",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<input spellCheck='false' type='email' />\",\"Code Example Bad\":\"<input type='email' /> // red squiggles\"}"
+      },
+      {
+        "id": 256,
+        "source_file": "web-interface",
+        "category": "Forms",
+        "platform": "Web",
+        "issue": "Submit Button Enabled",
+        "description": "Keep submit enabled and show spinner during requests",
+        "do_example": "Show loading spinner keep enabled",
+        "dont_example": "Disable button during submit",
+        "severity": "Medium",
+        "ux_law_ref": "doherty",
+        "extra_json": "{\"Code Example Good\":\"<button>{loading ? <Spinner /> : 'Submit'}</button>\",\"Code Example Bad\":\"<button disabled={loading}>Submit</button>\"}"
+      },
+      {
+        "id": 257,
+        "source_file": "web-interface",
+        "category": "Forms",
+        "platform": "Web",
+        "issue": "Inline Errors",
+        "description": "Show error messages inline near the problem field",
+        "do_example": "Inline error with focus on first error",
+        "dont_example": "Single error at top",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<input /><span class='text-red-500'>{error}</span>\",\"Code Example Bad\":\"<div class='error'>{allErrors}</div> // at top\"}"
+      },
+      {
+        "id": 258,
+        "source_file": "web-interface",
+        "category": "Performance",
+        "platform": "Web",
+        "issue": "Virtualize Lists",
+        "description": "Virtualize lists exceeding 50 items",
+        "do_example": "Use virtual list for large datasets",
+        "dont_example": "Render all items",
+        "severity": "High",
+        "ux_law_ref": "miller",
+        "extra_json": "{\"Code Example Good\":\"<VirtualList items={items} />\",\"Code Example Bad\":\"items.map(item => <Item />)\"}"
+      },
+      {
+        "id": 259,
+        "source_file": "web-interface",
+        "category": "Performance",
+        "platform": "Web",
+        "issue": "Avoid Layout Reads",
+        "description": "Avoid layout reads during render phase",
+        "do_example": "Read layout in effects or callbacks",
+        "dont_example": "getBoundingClientRect in render",
+        "severity": "Medium",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"useEffect(() => { el.getBoundingClientRect() })\",\"Code Example Bad\":\"const rect = el.getBoundingClientRect() // in render\"}"
+      },
+      {
+        "id": 260,
+        "source_file": "web-interface",
+        "category": "Performance",
+        "platform": "Web",
+        "issue": "Batch DOM Operations",
+        "description": "Group DOM operations to minimize reflows",
+        "do_example": "Batch writes then reads",
+        "dont_example": "Interleave reads and writes",
+        "severity": "Medium",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"writes.forEach(w => w()); reads.forEach(r => r())\",\"Code Example Bad\":\"write(); read(); write(); read(); // thrashing\"}"
+      },
+      {
+        "id": 261,
+        "source_file": "web-interface",
+        "category": "Performance",
+        "platform": "Web",
+        "issue": "Preconnect CDN",
+        "description": "Add preconnect links for CDN domains",
+        "do_example": "Preconnect to known domains",
+        "dont_example": "<link rel='preconnect' href='https://cdn.example.com' />",
+        "severity": null,
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"// no preconnect hint\",\"Code Example Bad\":\"Low\"}"
+      },
+      {
+        "id": 262,
+        "source_file": "web-interface",
+        "category": "Performance",
+        "platform": "Web",
+        "issue": "Lazy Load Images",
+        "description": "Lazy-load images below the fold",
+        "do_example": "Use loading='lazy' for below-fold images",
+        "dont_example": "Load all images eagerly",
+        "severity": "Medium",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<img loading='lazy' src='...' />\",\"Code Example Bad\":\"<img src='...' /> // above fold only\"}"
+      },
+      {
+        "id": 263,
+        "source_file": "web-interface",
+        "category": "State",
+        "platform": "Web",
+        "issue": "URL Reflects State",
+        "description": "URL should reflect current UI state",
+        "do_example": "Sync filters/tabs/pagination to URL",
+        "dont_example": "State only in memory",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"?tab=settings&page=2\",\"Code Example Bad\":\"useState only // lost on refresh\"}"
+      },
+      {
+        "id": 264,
+        "source_file": "web-interface",
+        "category": "State",
+        "platform": "Web",
+        "issue": "Deep Linking",
+        "description": "Stateful components should support deep-linking",
+        "do_example": "Enable sharing current view via URL",
+        "dont_example": "No shareable state",
+        "severity": "Medium",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"router.push({ query: { ...filters } })\",\"Code Example Bad\":\"setFilters(f) // not in URL\"}"
+      },
+      {
+        "id": 265,
+        "source_file": "web-interface",
+        "category": "State",
+        "platform": "Web",
+        "issue": "Confirm Destructive Actions",
+        "description": "Destructive actions require confirmation",
+        "do_example": "Show confirmation dialog before delete",
+        "dont_example": "Delete without confirmation",
+        "severity": "High",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"if (confirm('Delete?')) delete()\",\"Code Example Bad\":\"onClick={delete} // no confirmation\"}"
+      },
+      {
+        "id": 266,
+        "source_file": "web-interface",
+        "category": "Typography",
+        "platform": "Web",
+        "issue": "Proper Unicode",
+        "description": "Use proper Unicode characters",
+        "do_example": "Use ... curly quotes proper dashes",
+        "dont_example": "ASCII approximations",
+        "severity": "Low",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"'Hello...' with proper ellipsis\",\"Code Example Bad\":\"'Hello...' with three dots\"}"
+      },
+      {
+        "id": 267,
+        "source_file": "web-interface",
+        "category": "Typography",
+        "platform": "Web",
+        "issue": "Text Overflow",
+        "description": "Handle text overflow properly",
+        "do_example": "Use truncate/line-clamp/break-words",
+        "dont_example": "Text overflows container",
+        "severity": "Medium",
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"<p class='truncate'>Long text...</p>\",\"Code Example Bad\":\"<p>Long text...</p> // overflows\"}"
+      },
+      {
+        "id": 268,
+        "source_file": "web-interface",
+        "category": "Typography",
+        "platform": "Web",
+        "issue": "Non-Breaking Spaces",
+        "description": "Use non-breaking spaces for units and brand names",
+        "do_example": "Use &nbsp; between number and unit",
+        "dont_example": "10&nbsp;kg or Next.js&nbsp;14",
+        "severity": null,
+        "ux_law_ref": null,
+        "extra_json": "{\"Code Example Good\":\"10 kg // may wrap\",\"Code Example Bad\":\"Low\"}"
+      }
+    ],
+    "total_count": 69
+  },
+  "ux_laws": {
+    "all": [
+      {
+        "id": 92,
+        "name": "Operable (WCAG POUR)",
+        "source": "W3C Web Accessibility Initiative",
+        "statement": "UI components and navigation must be operable. All functionality available from keyboard; users have enough time; no seizure-inducing content; navigable and input-modality agnostic.",
+        "keywords": "accessibility operable keyboard navigation w3c",
+        "category": "Accessibility",
+        "trigger_conditions": null
+      },
+      {
+        "id": 91,
+        "name": "Perceivable (WCAG POUR)",
+        "source": "W3C Web Accessibility Initiative",
+        "statement": "Information and UI components must be presentable to users in ways they can perceive. Provide text alternatives for non-text content; captions; content can be presented in different ways.",
+        "keywords": "accessibility perceivable alt text senses w3c",
+        "category": "Accessibility",
+        "trigger_conditions": null
+      },
+      {
+        "id": 94,
+        "name": "Robust (WCAG POUR)",
+        "source": "W3C Web Accessibility Initiative",
+        "statement": "Content must be robust enough for reliable interpretation by assistive technologies and across user agents. Use valid markup and well-adopted standards.",
+        "keywords": "accessibility robust compatible assistive tech w3c",
+        "category": "Accessibility",
+        "trigger_conditions": null
+      },
+      {
+        "id": 114,
+        "name": "This Is for Everyone (GOV.UK)",
+        "source": "UK Government Digital Service",
+        "statement": "Design inclusively and accessibly for all users. Include those who find services hardest to use; accessibility is not optional.",
+        "keywords": "inclusive accessibility everyone government digital",
+        "category": "Accessibility",
+        "trigger_conditions": null
+      },
+      {
+        "id": 93,
+        "name": "Understandable (WCAG POUR)",
+        "source": "W3C Web Accessibility Initiative",
+        "statement": "Information and operation of the UI must be understandable. Readable text; predictable behavior; input assistance and error identification/suggestion.",
+        "keywords": "accessibility understandable readable predictable w3c",
+        "category": "Accessibility",
+        "trigger_conditions": null
+      },
+      {
+        "id": 112,
+        "name": "Do the Hard Work to Make It Simple (GOV.UK)",
+        "source": "UK Government Digital Service",
+        "statement": "Simplicity requires effort. Take complexity out of the system so that the user experience is simple especially when the underlying systems are complex.",
+        "keywords": "simplicity complexity government digital",
+        "category": "Complexity",
+        "trigger_conditions": null
+      },
+      {
+        "id": 77,
+        "name": "Occam's Razor",
+        "source": null,
+        "statement": "Among competing hypotheses the simplest solution is usually the best. Prefer minimal UI.",
+        "keywords": "simplicity minimal reduce",
+        "category": "Complexity",
+        "trigger_conditions": null
+      },
+      {
+        "id": 65,
+        "name": "Tesler's Law (Conservation of Complexity)",
+        "source": "Larry Tesler",
+        "statement": "For any system there is a certain amount of complexity that cannot be reduced. It can only be moved.",
+        "keywords": "complexity tradeoff inherent",
+        "category": "Complexity",
+        "trigger_conditions": null
+      },
+      {
+        "id": 119,
+        "name": "Choice Overload",
+        "source": "Laws of UX",
+        "statement": "When people are given too many options they can become overwhelmed and find it harder to make a decision. Reduce options or chunk and guide.",
+        "keywords": "choices options overload decision",
+        "category": "Interaction",
+        "trigger_conditions": null
+      },
+      {
+        "id": 98,
+        "name": "Consistency and Standards (Nielsen)",
+        "source": "Nielsen Norman Group",
+        "statement": "Users should not wonder whether different words situations or actions mean the same thing. Follow platform and industry conventions.",
+        "keywords": "consistency standards convention heuristic",
+        "category": "Interaction",
+        "trigger_conditions": null
+      },
+      {
+        "id": 66,
+        "name": "Doherty Threshold",
+        "source": "Walter J. Doherty",
+        "statement": "Productivity soars when a computer and its users interact at a pace under 400ms so neither has to wait on the other.",
+        "keywords": "response time 400ms feedback delay",
+        "category": "Interaction",
+        "trigger_conditions": "{\"state_signal\":[\"loading\",\"syncing\",\"async\",\"offline\"]}"
+      },
+      {
+        "id": 99,
+        "name": "Error Prevention (Nielsen)",
+        "source": "Nielsen Norman Group",
+        "statement": "Prevent problems before they occur. Eliminate error-prone conditions or check for them; confirm before destructive or irreversible actions.",
+        "keywords": "prevention confirmation destructive heuristic",
+        "category": "Interaction",
+        "trigger_conditions": null
+      },
+      {
+        "id": 61,
+        "name": "Fitts's Law",
+        "source": "Paul Fitts",
+        "statement": "The time to acquire a target is a function of the distance to and size of the target. Larger closer elements are selected more quickly.",
+        "keywords": "target size distance tap click touch",
+        "category": "Interaction",
+        "trigger_conditions": "{\"min_interactive\":3,\"component_signal\":[\"button\",\"iconbutton\",\"link\",\"switch\"]}"
+      },
+      {
+        "id": 101,
+        "name": "Flexibility and Efficiency of Use (Nielsen)",
+        "source": "Nielsen Norman Group",
+        "statement": "Accelerators for expert users may speed up interaction. Allow users to tailor frequent actions. Cater to both inexperienced and experienced users.",
+        "keywords": "shortcuts accelerators expert novice heuristic",
+        "category": "Interaction",
+        "trigger_conditions": null
+      },
+      {
+        "id": 103,
+        "name": "Help Users Recognize Diagnose Recover from Errors (Nielsen)",
+        "source": "Nielsen Norman Group",
+        "statement": "Error messages should be expressed in plain language; indicate the problem; and suggest a constructive solution. Avoid error codes only.",
+        "keywords": "error message plain language solution heuristic",
+        "category": "Interaction",
+        "trigger_conditions": null
+      },
+      {
+        "id": 104,
+        "name": "Help and Documentation (Nielsen)",
+        "source": "Nielsen Norman Group",
+        "statement": "Provide help and documentation when needed. Easy to search; focused on the user's task; list concrete steps; and not too large.",
+        "keywords": "help documentation search task heuristic",
+        "category": "Interaction",
+        "trigger_conditions": null
+      },
+      {
+        "id": 62,
+        "name": "Hick's Law",
+        "source": "William Edmund Hick",
+        "statement": "The time it takes to make a decision increases with the number and complexity of choices. Too many options overwhelm users.",
+        "keywords": "choices options menu complexity decision",
+        "category": "Interaction",
+        "trigger_conditions": "{\"min_interactive\":5,\"component_signal\":[\"dropdown\",\"select\",\"list\",\"tabbar\",\"menu\"]}"
+      },
+      {
+        "id": 63,
+        "name": "Jakob's Law",
+        "source": "Jakob Nielsen",
+        "statement": "Users spend most of their time on other sites and prefer your site to work the same way as sites they already know. Familiarity enhances UX.",
+        "keywords": "familiarity convention consistency expectation",
+        "category": "Interaction",
+        "trigger_conditions": null
+      },
+      {
+        "id": 96,
+        "name": "Match System and Real World (Nielsen)",
+        "source": "Nielsen Norman Group",
+        "statement": "Use language and concepts familiar to the user. Follow real-world conventions; information appears in natural order. Metaphors from everyday life.",
+        "keywords": "familiar language convention metaphor heuristic",
+        "category": "Interaction",
+        "trigger_conditions": null
+      },
+      {
+        "id": 89,
+        "name": "Material Motion Responsive",
+        "source": "Material Design",
+        "statement": "Motion reacts quickly to user input (150–400ms). Feedback and transitions feel immediate and natural.",
+        "keywords": "responsive motion delay feedback android",
+        "category": "Interaction",
+        "trigger_conditions": null
+      },
+      {
+        "id": 85,
+        "name": "Minimum Touch Target (Apple HIG)",
+        "source": "Apple Human Interface Guidelines",
+        "statement": "On touchscreen interactive elements need a hit target of at least 44×44 points to accommodate a fingertip. Include padding so controls are distinguishable.",
+        "keywords": "touch target 44pt 44px ios apple accessibility",
+        "category": "Interaction",
+        "trigger_conditions": null
+      },
+      {
+        "id": 88,
+        "name": "Motion Provides Meaning",
+        "source": "Material Design",
+        "statement": "Motion respects the user as prime mover. Transitions are meaningful efficient coherent. Responsive 150–400ms; natural (gravity/friction); aware; intentional.",
+        "keywords": "motion transition animation android 150ms 400ms",
+        "category": "Interaction",
+        "trigger_conditions": null
+      },
+      {
+        "id": 118,
+        "name": "Paradox of the Active User",
+        "source": "John Carroll",
+        "statement": "Users prefer to do rather than read or learn. They start using before mastering; design for immediate use and progressive disclosure.",
+        "keywords": "active user learn by doing documentation",
+        "category": "Interaction",
+        "trigger_conditions": null
+      },
+      {
+        "id": 78,
+        "name": "Postel's Law (Robustness)",
+        "source": "Jon Postel",
+        "statement": "Be liberal in what you accept and conservative in what you send. Tolerate varied input; output consistently.",
+        "keywords": "robustness input validation tolerance",
+        "category": "Interaction",
+        "trigger_conditions": null
+      },
+      {
+        "id": 97,
+        "name": "User Control and Freedom (Nielsen)",
+        "source": "Nielsen Norman Group",
+        "statement": "Users often choose system functions by mistake. Support undo and redo; provide a clear emergency exit; allow reversal of actions.",
+        "keywords": "undo exit cancel control heuristic",
+        "category": "Interaction",
+        "trigger_conditions": null
+      },
+      {
+        "id": 95,
+        "name": "Visibility of System Status (Nielsen)",
+        "source": "Nielsen Norman Group",
+        "statement": "Keep users informed about what is going on through appropriate feedback within a reasonable time. System status and progress should be visible.",
+        "keywords": "feedback status progress visibility heuristic",
+        "category": "Interaction",
+        "trigger_conditions": null
+      },
+      {
+        "id": 76,
+        "name": "Chunking",
+        "source": null,
+        "statement": "Group related information into small meaningful units (about 4-7 items) to aid memory and scanning.",
+        "keywords": "chunk group digest scan",
+        "category": "Memory",
+        "trigger_conditions": null
+      },
+      {
+        "id": 75,
+        "name": "Cognitive Load",
+        "source": null,
+        "statement": "The amount of mental resources needed to understand and interact with an interface. Minimize unnecessary load.",
+        "keywords": "cognitive load mental effort simplicity",
+        "category": "Memory",
+        "trigger_conditions": null
+      },
+      {
+        "id": 64,
+        "name": "Miller's Law",
+        "source": "George Miller",
+        "statement": "The average person can only keep 7 (plus or minus 2) items in their working memory.",
+        "keywords": "memory chunking items working memory",
+        "category": "Memory",
+        "trigger_conditions": "{\"min_components\":7,\"component_signal\":[\"card\",\"list\",\"section\"]}"
+      },
+      {
+        "id": 100,
+        "name": "Recognition Rather Than Recall (Nielsen)",
+        "source": "Nielsen Norman Group",
+        "statement": "Minimize the user's memory load. Make objects actions and options visible. User should not have to remember information from one part of the dialogue to another.",
+        "keywords": "recognition recall memory visible heuristic",
+        "category": "Memory",
+        "trigger_conditions": null
+      },
+      {
+        "id": 79,
+        "name": "Serial Position Effect",
+        "source": null,
+        "statement": "Users best remember the first and last items in a list. Primacy and recency.",
+        "keywords": "first last list order primacy recency",
+        "category": "Memory",
+        "trigger_conditions": "{\"component_signal\":[\"list\",\"flatlist\",\"scroll\",\"infinitescroll\"]}"
+      },
+      {
+        "id": 74,
+        "name": "Von Restorff Effect (Isolation Effect)",
+        "source": "Hedwig Von Restorff",
+        "statement": "Items that stand out are more likely to be remembered.",
+        "keywords": "isolation distinct highlight salient",
+        "category": "Memory",
+        "trigger_conditions": null
+      },
+      {
+        "id": 73,
+        "name": "Zeigarnik Effect",
+        "source": "Bluma Zeigarnik",
+        "statement": "People remember uncompleted or interrupted tasks better than completed ones.",
+        "keywords": "incomplete task progress reminder",
+        "category": "Memory",
+        "trigger_conditions": "{\"state_signal\":[\"progress\",\"step\",\"wizard\",\"onboarding\"]}"
+      },
+      {
+        "id": 102,
+        "name": "Aesthetic and Minimalist Design (Nielsen)",
+        "source": "Nielsen Norman Group",
+        "statement": "Dialogues should not contain irrelevant or rarely needed information. Every extra unit of information competes with relevant units and diminishes their visibility.",
+        "keywords": "minimal clutter focus heuristic",
+        "category": "Perception",
+        "trigger_conditions": null
+      },
+      {
+        "id": 72,
+        "name": "Aesthetic-Usability Effect",
+        "source": null,
+        "statement": "Users perceive aesthetically pleasing design as more usable.",
+        "keywords": "aesthetic beauty perceived usability",
+        "category": "Perception",
+        "trigger_conditions": null
+      },
+      {
+        "id": 87,
+        "name": "Bold Graphic Intentional",
+        "source": "Material Design",
+        "statement": "Print-based design—typography grids space scale color imagery—creates hierarchy meaning and focus. Bold graphic choices immerse users.",
+        "keywords": "typography grid scale color hierarchy android",
+        "category": "Perception",
+        "trigger_conditions": null
+      },
+      {
+        "id": 120,
+        "name": "Flow (Csikszentmihalyi)",
+        "source": "Mihaly Csikszentmihalyi",
+        "statement": "A state of focused engagement where the user is fully immersed. Design for clear goals immediate feedback and matched challenge to skill.",
+        "keywords": "flow engagement focus immersion",
+        "category": "Perception",
+        "trigger_conditions": null
+      },
+      {
+        "id": 80,
+        "name": "Goal-Gradient Effect",
+        "source": null,
+        "statement": "People are more motivated as they get closer to a goal. Progress indicators increase completion.",
+        "keywords": "progress goal motivation completion",
+        "category": "Perception",
+        "trigger_conditions": null
+      },
+      {
+        "id": 70,
+        "name": "Law of Common Region (Gestalt)",
+        "source": "Gestalt psychology",
+        "statement": "Elements sharing a clearly defined boundary are perceived as groups.",
+        "keywords": "boundary region container card",
+        "category": "Perception",
+        "trigger_conditions": "{\"component_signal\":[\"card\",\"container\",\"section\",\"group\"]}"
+      },
+      {
+        "id": 68,
+        "name": "Law of Proximity (Gestalt)",
+        "source": "Gestalt psychology",
+        "statement": "Objects near each other tend to be grouped together.",
+        "keywords": "proximity grouping layout spacing",
+        "category": "Perception",
+        "trigger_conditions": "{\"min_components\":4}"
+      },
+      {
+        "id": 71,
+        "name": "Law of Prägnanz (Gestalt)",
+        "source": "Gestalt psychology",
+        "statement": "People perceive ambiguous images as the simplest form possible.",
+        "keywords": "simplicity clarity minimal",
+        "category": "Perception",
+        "trigger_conditions": null
+      },
+      {
+        "id": 69,
+        "name": "Law of Similarity (Gestalt)",
+        "source": "Gestalt psychology",
+        "statement": "Similar elements are perceived as a complete group.",
+        "keywords": "similarity visual group pattern",
+        "category": "Perception",
+        "trigger_conditions": null
+      },
+      {
+        "id": 116,
+        "name": "Law of Uniform Connectedness (Gestalt)",
+        "source": "Gestalt psychology",
+        "statement": "Elements that are visually connected (e.g. by line or color) are perceived as more related than elements with no connection.",
+        "keywords": "connectedness line color relation gestalt",
+        "category": "Perception",
+        "trigger_conditions": null
+      },
+      {
+        "id": 117,
+        "name": "Mental Model",
+        "source": "Don Norman / NN/g",
+        "statement": "Users form a mental model of how the system works. Design so that the system model matches the user's mental model to reduce errors and confusion.",
+        "keywords": "mental model expectation affordance",
+        "category": "Perception",
+        "trigger_conditions": null
+      },
+      {
+        "id": 67,
+        "name": "Peak-End Rule",
+        "source": "Daniel Kahneman",
+        "statement": "People judge an experience largely based on how they felt at its peak and at its end rather than the total sum of every moment.",
+        "keywords": "peak end experience memory satisfaction",
+        "category": "Perception",
+        "trigger_conditions": "{\"state_signal\":[\"success\",\"error\",\"complete\",\"result\",\"receipt\"]}"
+      },
+      {
+        "id": 90,
+        "name": "Adaptivity (Apple HIG)",
+        "source": "Apple Human Interface Guidelines",
+        "statement": "Interfaces adapt to different devices orientations and screen sizes. Maintain focus on content; use visual weight for importance; support portrait and landscape.",
+        "keywords": "adaptivity responsive orientation ios",
+        "category": "Platform",
+        "trigger_conditions": null
+      },
+      {
+        "id": 115,
+        "name": "Be Consistent Not Uniform (GOV.UK)",
+        "source": "UK Government Digital Service",
+        "statement": "Use common patterns and language while allowing flexibility for different circumstances. Consistency helps users; uniformity can constrain.",
+        "keywords": "consistency patterns government digital",
+        "category": "Platform",
+        "trigger_conditions": null
+      },
+      {
+        "id": 81,
+        "name": "Clarity (Apple HIG)",
+        "source": "Apple Human Interface Guidelines",
+        "statement": "Interfaces should be easily understood so users can navigate and interact without confusion. Text is legible; icons are precise; functionality is obvious.",
+        "keywords": "clarity legibility obvious ios apple",
+        "category": "Platform",
+        "trigger_conditions": null
+      },
+      {
+        "id": 84,
+        "name": "Consistency (Apple HIG)",
+        "source": "Apple Human Interface Guidelines",
+        "statement": "Maintain familiar patterns across Apple platforms. Standard controls and paradigms reduce cognitive load and match user expectations.",
+        "keywords": "consistency pattern familiar ios apple",
+        "category": "Platform",
+        "trigger_conditions": null
+      },
+      {
+        "id": 82,
+        "name": "Deference (Apple HIG)",
+        "source": "Apple Human Interface Guidelines",
+        "statement": "Focus on content over UI chrome. Content takes center stage; interface recedes. Fluidity and deference to user control.",
+        "keywords": "content first chrome minimal ios apple",
+        "category": "Platform",
+        "trigger_conditions": null
+      },
+      {
+        "id": 83,
+        "name": "Depth (Apple HIG)",
+        "source": "Apple Human Interface Guidelines",
+        "statement": "Use visual layers and motion to communicate hierarchy and organization. Depth and fluid motion connect interface elements and clarify structure.",
+        "keywords": "depth hierarchy layers motion ios apple",
+        "category": "Platform",
+        "trigger_conditions": null
+      },
+      {
+        "id": 86,
+        "name": "Material is the Metaphor",
+        "source": "Material Design",
+        "statement": "Surfaces and edges provide visual cues grounded in tactile reality (paper and ink). Light surface and movement convey how objects interact in space.",
+        "keywords": "material surface paper ink android metaphor",
+        "category": "Platform",
+        "trigger_conditions": null
+      },
+      {
+        "id": 105,
+        "name": "Design Based on Understanding (ISO 9241-210)",
+        "source": "ISO",
+        "statement": "Design is based on an explicit understanding of users tasks and environments. Design decisions are grounded in who will use the system and in what context.",
+        "keywords": "human-centred design context tasks users iso",
+        "category": "Process",
+        "trigger_conditions": null
+      },
+      {
+        "id": 107,
+        "name": "Evaluation-Driven Design (ISO 9241-210)",
+        "source": "ISO",
+        "statement": "Design is driven and refined by user-centred evaluation. The design is validated and improved through testing and feedback with users.",
+        "keywords": "human-centred design evaluation test iso",
+        "category": "Process",
+        "trigger_conditions": null
+      },
+      {
+        "id": 113,
+        "name": "Iterate. Then Iterate Again (GOV.UK)",
+        "source": "UK Government Digital Service",
+        "statement": "Release minimum viable products early; test with users; and continuously refine. Iteration reduces risk and improves outcomes.",
+        "keywords": "iterate mvp test government digital",
+        "category": "Process",
+        "trigger_conditions": null
+      },
+      {
+        "id": 108,
+        "name": "Iterative Design (ISO 9241-210)",
+        "source": "ISO",
+        "statement": "The design process is iterative. Progress through repeated cycles of refinement based on evaluation results.",
+        "keywords": "human-centred design iterate cycle iso",
+        "category": "Process",
+        "trigger_conditions": null
+      },
+      {
+        "id": 110,
+        "name": "Multidisciplinary Team (ISO 9241-210)",
+        "source": "ISO",
+        "statement": "The design team includes diverse skills and perspectives necessary to address human factors and system requirements.",
+        "keywords": "human-centred design team iso",
+        "category": "Process",
+        "trigger_conditions": null
+      },
+      {
+        "id": 111,
+        "name": "Start with User Needs (GOV.UK)",
+        "source": "UK Government Digital Service",
+        "statement": "Research and understand what users actually need. Do not make assumptions; start with user needs not government or technology constraints.",
+        "keywords": "user needs research government digital",
+        "category": "Process",
+        "trigger_conditions": null
+      },
+      {
+        "id": 106,
+        "name": "User Involvement (ISO 9241-210)",
+        "source": "ISO",
+        "statement": "Users are involved throughout design and development. Active participation across all stages of the design process.",
+        "keywords": "human-centred design participation iso",
+        "category": "Process",
+        "trigger_conditions": null
+      },
+      {
+        "id": 109,
+        "name": "Whole User Experience (ISO 9241-210)",
+        "source": "ISO",
+        "statement": "Design addresses the whole user experience. Consider all aspects of how users interact with and experience the system.",
+        "keywords": "human-centred design experience iso",
+        "category": "Process",
+        "trigger_conditions": null
+      }
+    ],
+    "with_triggers": [
+      {
+        "id": 66,
+        "name": "Doherty Threshold",
+        "source": "Walter J. Doherty",
+        "statement": "Productivity soars when a computer and its users interact at a pace under 400ms so neither has to wait on the other.",
+        "keywords": "response time 400ms feedback delay",
+        "category": "Interaction",
+        "trigger_conditions": "{\"state_signal\":[\"loading\",\"syncing\",\"async\",\"offline\"]}"
+      },
+      {
+        "id": 61,
+        "name": "Fitts's Law",
+        "source": "Paul Fitts",
+        "statement": "The time to acquire a target is a function of the distance to and size of the target. Larger closer elements are selected more quickly.",
+        "keywords": "target size distance tap click touch",
+        "category": "Interaction",
+        "trigger_conditions": "{\"min_interactive\":3,\"component_signal\":[\"button\",\"iconbutton\",\"link\",\"switch\"]}"
+      },
+      {
+        "id": 62,
+        "name": "Hick's Law",
+        "source": "William Edmund Hick",
+        "statement": "The time it takes to make a decision increases with the number and complexity of choices. Too many options overwhelm users.",
+        "keywords": "choices options menu complexity decision",
+        "category": "Interaction",
+        "trigger_conditions": "{\"min_interactive\":5,\"component_signal\":[\"dropdown\",\"select\",\"list\",\"tabbar\",\"menu\"]}"
+      },
+      {
+        "id": 64,
+        "name": "Miller's Law",
+        "source": "George Miller",
+        "statement": "The average person can only keep 7 (plus or minus 2) items in their working memory.",
+        "keywords": "memory chunking items working memory",
+        "category": "Memory",
+        "trigger_conditions": "{\"min_components\":7,\"component_signal\":[\"card\",\"list\",\"section\"]}"
+      },
+      {
+        "id": 79,
+        "name": "Serial Position Effect",
+        "source": null,
+        "statement": "Users best remember the first and last items in a list. Primacy and recency.",
+        "keywords": "first last list order primacy recency",
+        "category": "Memory",
+        "trigger_conditions": "{\"component_signal\":[\"list\",\"flatlist\",\"scroll\",\"infinitescroll\"]}"
+      },
+      {
+        "id": 73,
+        "name": "Zeigarnik Effect",
+        "source": "Bluma Zeigarnik",
+        "statement": "People remember uncompleted or interrupted tasks better than completed ones.",
+        "keywords": "incomplete task progress reminder",
+        "category": "Memory",
+        "trigger_conditions": "{\"state_signal\":[\"progress\",\"step\",\"wizard\",\"onboarding\"]}"
+      },
+      {
+        "id": 70,
+        "name": "Law of Common Region (Gestalt)",
+        "source": "Gestalt psychology",
+        "statement": "Elements sharing a clearly defined boundary are perceived as groups.",
+        "keywords": "boundary region container card",
+        "category": "Perception",
+        "trigger_conditions": "{\"component_signal\":[\"card\",\"container\",\"section\",\"group\"]}"
+      },
+      {
+        "id": 68,
+        "name": "Law of Proximity (Gestalt)",
+        "source": "Gestalt psychology",
+        "statement": "Objects near each other tend to be grouped together.",
+        "keywords": "proximity grouping layout spacing",
+        "category": "Perception",
+        "trigger_conditions": "{\"min_components\":4}"
+      },
+      {
+        "id": 67,
+        "name": "Peak-End Rule",
+        "source": "Daniel Kahneman",
+        "statement": "People judge an experience largely based on how they felt at its peak and at its end rather than the total sum of every moment.",
+        "keywords": "peak end experience memory satisfaction",
+        "category": "Perception",
+        "trigger_conditions": "{\"state_signal\":[\"success\",\"error\",\"complete\",\"result\",\"receipt\"]}"
+      }
+    ],
+    "auto_matches_per_screen": {
+      "SCR-TDN-001": [
+        {
+          "law": "Fitts's Law",
+          "category": "Interaction",
+          "statement": "The time to acquire a target is a function of the distance to and size of the target. Larger closer elements are selected more quickly.",
+          "trigger": {
+            "min_interactive": 3,
+            "component_signal": [
+              "button",
+              "iconbutton",
+              "link",
+              "switch"
+            ]
+          }
+        },
+        {
+          "law": "Hick's Law",
+          "category": "Interaction",
+          "statement": "The time it takes to make a decision increases with the number and complexity of choices. Too many options overwhelm users.",
+          "trigger": {
+            "min_interactive": 5,
+            "component_signal": [
+              "dropdown",
+              "select",
+              "list",
+              "tabbar",
+              "menu"
+            ]
+          }
+        }
+      ],
+      "SCR-TDN-002": [
+        {
+          "law": "Fitts's Law",
+          "category": "Interaction",
+          "statement": "The time to acquire a target is a function of the distance to and size of the target. Larger closer elements are selected more quickly.",
+          "trigger": {
+            "min_interactive": 3,
+            "component_signal": [
+              "button",
+              "iconbutton",
+              "link",
+              "switch"
+            ]
+          }
+        },
+        {
+          "law": "Hick's Law",
+          "category": "Interaction",
+          "statement": "The time it takes to make a decision increases with the number and complexity of choices. Too many options overwhelm users.",
+          "trigger": {
+            "min_interactive": 5,
+            "component_signal": [
+              "dropdown",
+              "select",
+              "list",
+              "tabbar",
+              "menu"
+            ]
+          }
+        }
+      ],
+      "SCR-TDN-003": [
+        {
+          "law": "Fitts's Law",
+          "category": "Interaction",
+          "statement": "The time to acquire a target is a function of the distance to and size of the target. Larger closer elements are selected more quickly.",
+          "trigger": {
+            "min_interactive": 3,
+            "component_signal": [
+              "button",
+              "iconbutton",
+              "link",
+              "switch"
+            ]
+          }
+        },
+        {
+          "law": "Hick's Law",
+          "category": "Interaction",
+          "statement": "The time it takes to make a decision increases with the number and complexity of choices. Too many options overwhelm users.",
+          "trigger": {
+            "min_interactive": 5,
+            "component_signal": [
+              "dropdown",
+              "select",
+              "list",
+              "tabbar",
+              "menu"
+            ]
+          }
+        }
+      ],
+      "SCR-TDN-004": [
+        {
+          "law": "Fitts's Law",
+          "category": "Interaction",
+          "statement": "The time to acquire a target is a function of the distance to and size of the target. Larger closer elements are selected more quickly.",
+          "trigger": {
+            "min_interactive": 3,
+            "component_signal": [
+              "button",
+              "iconbutton",
+              "link",
+              "switch"
+            ]
+          }
+        },
+        {
+          "law": "Hick's Law",
+          "category": "Interaction",
+          "statement": "The time it takes to make a decision increases with the number and complexity of choices. Too many options overwhelm users.",
+          "trigger": {
+            "min_interactive": 5,
+            "component_signal": [
+              "dropdown",
+              "select",
+              "list",
+              "tabbar",
+              "menu"
+            ]
+          }
+        }
+      ],
+      "SCR-TDN-005": [
+        {
+          "law": "Doherty Threshold",
+          "category": "Interaction",
+          "statement": "Productivity soars when a computer and its users interact at a pace under 400ms so neither has to wait on the other.",
+          "trigger": {
+            "state_signal": [
+              "loading",
+              "syncing",
+              "async",
+              "offline"
+            ]
+          }
+        },
+        {
+          "law": "Fitts's Law",
+          "category": "Interaction",
+          "statement": "The time to acquire a target is a function of the distance to and size of the target. Larger closer elements are selected more quickly.",
+          "trigger": {
+            "min_interactive": 3,
+            "component_signal": [
+              "button",
+              "iconbutton",
+              "link",
+              "switch"
+            ]
+          }
+        },
+        {
+          "law": "Hick's Law",
+          "category": "Interaction",
+          "statement": "The time it takes to make a decision increases with the number and complexity of choices. Too many options overwhelm users.",
+          "trigger": {
+            "min_interactive": 5,
+            "component_signal": [
+              "dropdown",
+              "select",
+              "list",
+              "tabbar",
+              "menu"
+            ]
+          }
+        },
+        {
+          "law": "Peak-End Rule",
+          "category": "Perception",
+          "statement": "People judge an experience largely based on how they felt at its peak and at its end rather than the total sum of every moment.",
+          "trigger": {
+            "state_signal": [
+              "success",
+              "error",
+              "complete",
+              "result",
+              "receipt"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "wcag": null,
+  "resolved_tokens": {
+    "base.primary": {
+      "path": "base.primary",
+      "value": "#18181b",
+      "type": "color",
+      "unit": null,
+      "chain": [
+        "base.primary",
+        "colors.primary-light",
+        "tailwind colors.zinc.900"
+      ],
+      "source": "Mode"
+    },
+    "base.destructive": {
+      "path": "base.destructive",
+      "value": "#dc2626",
+      "type": "color",
+      "unit": null,
+      "chain": [
+        "base.destructive",
+        "colors.destructive-light",
+        "tailwind colors.red.600"
+      ],
+      "source": "Mode"
+    },
+    "base.ring": {
+      "path": "base.ring",
+      "value": "#a1a1aa",
+      "type": "color",
+      "unit": null,
+      "chain": [
+        "base.ring",
+        "colors.ring-light",
+        "tailwind colors.zinc.400"
+      ],
+      "source": "Mode"
+    },
+    "base.border": {
+      "path": "base.border",
+      "value": "#e5e5e5",
+      "type": "color",
+      "unit": null,
+      "chain": [
+        "base.border",
+        "colors.border-light",
+        "tailwind colors.neutral.200"
+      ],
+      "source": "Mode"
+    },
+    "base.background": {
+      "path": "base.background",
+      "value": "#ffffff",
+      "type": "color",
+      "unit": null,
+      "chain": [
+        "base.background",
+        "colors.background-light",
+        "tailwind colors.base.white"
+      ],
+      "source": "Mode"
+    },
+    "base.foreground": {
+      "path": "base.foreground",
+      "value": "#0a0a0a",
+      "type": "color",
+      "unit": null,
+      "chain": [
+        "base.foreground",
+        "colors.foreground-light",
+        "tailwind colors.neutral.950"
+      ],
+      "source": "Mode"
+    },
+    "base.muted-foreground": {
+      "path": "base.muted-foreground",
+      "value": "#737373",
+      "type": "color",
+      "unit": null,
+      "chain": [
+        "base.muted-foreground",
+        "colors.muted-foreground-light",
+        "tailwind colors.neutral.500"
+      ],
+      "source": "Mode"
+    },
+    "base.card": {
+      "path": "base.card",
+      "value": "#ffffff",
+      "type": "color",
+      "unit": null,
+      "chain": [
+        "base.card",
+        "colors.card-light",
+        "tailwind colors.base.white"
+      ],
+      "source": "Mode"
+    },
+    "base.secondary": {
+      "path": "base.secondary",
+      "value": "#f5f5f5",
+      "type": "color",
+      "unit": null,
+      "chain": [
+        "base.secondary",
+        "colors.secondary-light",
+        "tailwind colors.neutral.100"
+      ],
+      "source": "Mode"
+    },
+    "spacing.2": {
+      "path": "spacing.2",
+      "value": 8,
+      "type": "float",
+      "unit": null,
+      "chain": [
+        "spacing.2"
+      ],
+      "source": "TailwindCSS"
+    },
+    "spacing.4": {
+      "path": "spacing.4",
+      "value": 16,
+      "type": "float",
+      "unit": null,
+      "chain": [
+        "spacing.4"
+      ],
+      "source": "TailwindCSS"
+    },
+    "spacing.6": {
+      "path": "spacing.6",
+      "value": 24,
+      "type": "float",
+      "unit": null,
+      "chain": [
+        "spacing.6"
+      ],
+      "source": "TailwindCSS"
+    }
+  },
+  "summary": {
+    "components_detected": 8,
+    "components_with_specs": 8,
+    "guidelines_total": 69,
+    "laws_total": 60,
+    "laws_auto_triggered": 12,
+    "tokens_resolved": 12
+  }
+}
