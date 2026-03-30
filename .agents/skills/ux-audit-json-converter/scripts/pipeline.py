@@ -2,7 +2,7 @@
 """
 pipeline.py — Full end-to-end pipeline orchestrator.
 
-Runs: Index → Convert → Validate → Enrich Images → Enrich Refs → Render
+Runs: Index → Convert → Validate → Template Check (human gate) → Enrich → Render
 
 Usage:
   python3 pipeline.py --module /path/to/module/
@@ -25,9 +25,12 @@ SCRIPTS_DIR = SKILL_DIR / 'scripts'
 EVIDENCE_IMG_SCRIPT = SKILL_DIR.parent / 'evidence-img' / 'scripts' / 'enrich_images.py'
 EVIDENCE_INFO_SCRIPT = SKILL_DIR.parent / 'evidence-info' / 'scripts' / 'enrich_refs.py'
 RENDER_SCRIPT = SKILL_DIR.parent / 'ux-audit-pitch-deck' / 'scripts' / 'render_report.py'
+ENRICH_INLINE_SCRIPT = SCRIPTS_DIR / 'enrich_inline.py'
+ENRICH_LLM_SCRIPT = SCRIPTS_DIR / 'enrich_llm.py'
+MERGE_LLM_SCRIPT = SCRIPTS_DIR / 'merge_llm.py'
 
 
-STEPS = ['index', 'convert', 'validate', 'enrich-img', 'enrich-ref', 'render']
+STEPS = ['index', 'convert', 'validate', 'tpl-check', 'enrich-inline', 'enrich-llm', 'enrich-img', 'enrich-ref', 'render']
 
 
 def _run_step(name: str, cmd: list[str], module_dir: Path, critical: bool = True) -> bool:
@@ -82,6 +85,30 @@ def run_pipeline(module_dir: Path, skip_render: bool = False,
         elif step == 'validate':
             cmd = [python, str(SCRIPTS_DIR / 'validate.py'),
                    '--module', str(module_dir)]
+        elif step == 'tpl-check':
+            cmd = [python, str(SCRIPTS_DIR / 'template_check.py'),
+                   '--module', str(module_dir), '-v']
+        elif step == 'enrich-inline':
+            cmd = [python, str(ENRICH_INLINE_SCRIPT),
+                   '--module', str(module_dir)]
+            if dry_run:
+                cmd.append('--dry-run')
+        elif step == 'enrich-llm':
+            # Step 1: Generate manifest
+            cmd = [python, str(ENRICH_LLM_SCRIPT),
+                   '--module', str(module_dir)]
+            ok = _run_step('enrich-llm:manifest', cmd, module_dir, critical=False)
+            # Step 2: Merge if llm-enriched.json exists (from prior agent run)
+            if (module_dir / 'llm-enriched.json').exists():
+                merge_cmd = [python, str(MERGE_LLM_SCRIPT),
+                             '--module', str(module_dir)]
+                if dry_run:
+                    merge_cmd.append('--dry-run')
+                _run_step('enrich-llm:merge', merge_cmd, module_dir, critical=False)
+            else:
+                print(f'      ℹ️  No llm-enriched.json — run agent to generate, then re-run from enrich-llm')
+            result['steps'][step] = 'ok' if ok else 'failed'
+            continue  # Skip the common _run_step below
         elif step == 'enrich-img':
             if not EVIDENCE_IMG_SCRIPT.exists():
                 result['steps'][step] = 'not-installed'
@@ -108,7 +135,7 @@ def run_pipeline(module_dir: Path, skip_render: bool = False,
             continue
 
         # Index/Convert/Validate are critical; enrichment is non-critical
-        critical = step in ('index', 'convert', 'validate')
+        critical = step in ('index', 'convert', 'validate', 'tpl-check')
         ok = _run_step(step, cmd, module_dir, critical=critical)
 
         if ok:

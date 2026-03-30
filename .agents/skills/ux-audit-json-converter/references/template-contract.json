@@ -1,0 +1,126 @@
+{
+  "_contract_version": "2026-03-29",
+  "_source": "ux-audit-pitch-deck/assets/template.html",
+  "_description": "Golden reference JSON — every field maps to a {{PLACEHOLDER}} in template.html. Used by template_check.py to validate converter output.",
+
+  "meta": {
+    "client_name":   {"type": "string", "required": true,  "template_ref": "L6,L189 {{CLIENT_NAME}}",    "min_len": 2,  "example": "Co-opBank"},
+    "product_name":  {"type": "string", "required": true,  "template_ref": "L6,L190,L389 {{PRODUCT_NAME}}", "min_len": 2,  "example": "Co-opBank Mobile Banking"},
+    "module_name":   {"type": "string", "required": true,  "template_ref": "L6,L189,L389 {{MODULE_NAME}}", "min_len": 2,  "example": "Chuyển tiền ngoài Co-opBank"},
+    "section":       {"type": "string", "required": false, "template_ref": "N/A (folder context)",        "min_len": 0,  "example": "Chuyển tiền"}
+  },
+
+  "stats": {
+    "screen_count":       {"type": "int",    "required": true,  "template_ref": "L192 {{SCREEN_COUNT}}",        "min": 1},
+    "check_count":        {"type": "int",    "required": true,  "template_ref": "L193 {{CHECK_COUNT}}",         "min": 1},
+    "gap_count":          {"type": "int",    "required": true,  "template_ref": "L194 {{GAP_COUNT}}, L333 {{TOTAL_GAP_COUNT}}", "min": 0},
+    "proposal_count":     {"type": "int",    "required": true,  "template_ref": "L195 {{PROPOSAL_COUNT}}",      "min": 0},
+    "overall_score":      {"type": "int",    "required": true,  "template_ref": "L198 {{OVERALL_SCORE}}",       "min": 0, "max": 100},
+    "overall_score_color": {"type": "string", "required": true,  "template_ref": "L198 {{OVERALL_SCORE_COLOR}}", "pattern": "^#[0-9a-fA-F]{6}$"},
+    "overall_score_offset": {"type": "int",  "required": true,  "template_ref": "L198 {{OVERALL_SCORE_OFFSET}}", "formula": "round(320 * (1 - score/100))"},
+    "severity_counts": {
+      "critical": {"type": "int", "required": true, "template_ref": "L206 {{CRITICAL_COUNT}}", "min": 0},
+      "major":    {"type": "int", "required": true, "template_ref": "L207 {{MAJOR_COUNT}}",    "min": 0},
+      "minor":    {"type": "int", "required": true, "template_ref": "L208 {{MINOR_COUNT}}",    "min": 0}
+    }
+  },
+
+  "screens": {
+    "_type": "array",
+    "_min_items": 1,
+    "_template_ref": "L211-221 scorecard-grid",
+    "item": {
+      "id":           {"type": "string", "required": true,  "template_ref": "L217 {{SCREEN_ID}}",          "pattern": "^SCR-"},
+      "name":         {"type": "string", "required": true,  "template_ref": "L216 {{SCREEN_NAME}}",        "min_len": 2},
+      "type":         {"type": "string", "required": false, "template_ref": "L217 {{SCREEN_TYPE}}"},
+      "score":        {"type": "int",    "required": true,  "template_ref": "L214 {{SCREEN_SCORE}}",       "min": 0, "max": 100},
+      "score_color":  {"type": "string", "required": true,  "template_ref": "L214 {{SCREEN_SCORE_COLOR}}", "pattern": "^#[0-9a-fA-F]{6}$"},
+      "score_offset": {"type": "int",    "required": true,  "template_ref": "L214 {{SCREEN_SCORE_OFFSET}}", "formula": "round(157 * (1 - score/100))"},
+      "gap_count":    {"type": "int",    "required": true,  "template_ref": "L217 {{SCREEN_GAP_COUNT}}",   "min": 0}
+    }
+  },
+
+  "uxps": {
+    "_type": "array",
+    "_min_items": 0,
+    "_template_ref": "L249-305 findings section",
+    "item": {
+      "id":                {"type": "string", "required": true,  "template_ref": "L260 UXP-{{ID}}",           "pattern": "^UXP-\\d+$"},
+      "severity":          {"type": "string", "required": true,  "template_ref": "L261 badge class",          "enum": ["Critical", "Major", "Minor"]},
+      "title":             {"type": "string", "required": false, "template_ref": "L262 {{FINDING_TITLE}}",    "min_len": 5, "note": "Optional: renderer uses problem field for <h3> when title absent"},
+      "problem":           {"type": "string", "required": true,  "template_ref": "L262+L271 {{FINDING_TITLE}} + {{CURRENT_STATE}}", "min_len": 10, "label_vi": "Hiện trạng", "note": "Primary: used for both card heading and current-state row"},
+      "user_impact":       {"type": "string", "required": false, "source": "enrich_inline", "template_ref": "L275 {{USER_IMPACT}}",      "label_vi": "Tác động"},
+      "heuristic":         {"type": "string", "required": false, "source": "enrich_inline", "template_ref": "L279 {{HEURISTIC_VIOLATION}}", "label_vi": "Nguyên tắc"},
+      "solution":          {"type": "string", "required": false, "template_ref": "L282 {{PROPOSAL_TEXT}}",    "label_vi": "Đề xuất"},
+      "ddl_ref":           {"type": "string", "required": false, "template_ref": "L288 {{DDL_REFS}}",         "label_vi": "Tham chiếu kỹ thuật"},
+      "screenshot_path":   {"type": "string", "required": false, "template_ref": "L266 {{SCREENSHOT_PATH}}", "note": "ui/ relative path"},
+      "screen_tag":        {"type": "string", "required": false, "template_ref": "L287 {{SCREEN_TAG}}"},
+      "screen_id":         {"type": "string", "required": false, "template_ref": "L287 card-tag link"},
+      "ref_count":         {"type": "int",    "required": false, "source": "enrich_inline", "template_ref": "footer ref count"},
+      "references":        {"type": "array",  "required": false, "template_ref": "L288 {{REF_SOURCE}} {{REF_QUOTE}} {{REF_URL}}", "note": "Array of {name, url, quote, source} from heuristic-db.json lookup"}
+    }
+  },
+
+  "gaps_by_screen": {
+    "_type": "array",
+    "_min_items": 0,
+    "_template_ref": "L332-385 gaps section",
+    "screen_item": {
+      "screen_id":   {"type": "string", "required": true,  "template_ref": "L339 {{SCREEN_ID}}"},
+      "screen_name": {"type": "string", "required": true,  "template_ref": "L340 {{SCREEN_NAME}}"},
+      "screen_type": {"type": "string", "required": false, "template_ref": "L340 {{SCREEN_TYPE}}"}
+    },
+    "gap_item": {
+      "num":             {"type": "int",    "required": true,  "template_ref": "L346 {{GAP_NUMBER}}",       "min": 1},
+      "title":           {"type": "string", "required": true,  "template_ref": "L347 {{GAP_TITLE}}",        "min_len": 5},
+      "ref":             {"type": "string", "required": false, "template_ref": "L348 {{GAP_REF}}",          "pattern": "^UXG-"},
+      "evidence":        {"type": "string", "required": true,  "template_ref": "L353 {{GAP_CURRENT_STATE}}", "min_len": 5, "label_vi": "Hiện trạng"},
+      "description":     {"type": "string", "required": false, "template_ref": "L353 {{GAP_CURRENT_STATE}} fallback", "note": "Alias: evidence || title. Renderer uses for 'Hiện trạng' row."},
+      "user_impact":     {"type": "string", "required": false, "source": "enrich_inline", "template_ref": "L357 {{GAP_USER_IMPACT}}",  "label_vi": "Tác động"},
+      "heuristic":       {"type": "string", "required": false, "template_ref": "L361 {{GAP_HEURISTIC}}",    "label_vi": "Nguyên tắc"},
+      "screenshot_path": {"type": "string", "required": false, "template_ref": "L365 {{GAP_SCREENSHOT_PATH}}", "label_vi": "Bằng chứng"},
+      "ddl_evidence":    {"type": "string", "required": false, "template_ref": "L372 {{DDL_PRINCIPLE}}",    "label_vi": "DDL principle"},
+      "ref_count":       {"type": "int",    "required": false, "source": "convert", "template_ref": "L371 {{REF_COUNT}}", "note": "Explicit count from converter. Renderer fallback: len(references)"},
+      "references":      {"type": "array",  "required": false, "template_ref": "L374 {{REF_SOURCE}} {{REF_QUOTE}} {{REF_URL}}", "note": "Array of {name, url, quote, source} from heuristic-db.json lookup"}
+    }
+  },
+
+  "heuristics": {
+    "_type": "array",
+    "_min_items": 6,
+    "_template_ref": "L307-317 (commented out / hidden)",
+    "_status": "optional_hidden",
+    "item": {
+      "name_vi":     {"type": "string", "required": true,  "template_ref": "L313 {{HEURISTIC_NAME_VI}}"},
+      "name_en":     {"type": "string", "required": true,  "template_ref": "L313 {{HEURISTIC_NAME_EN}}"},
+      "score":       {"type": "int",    "required": true,  "template_ref": "L312 {{HEURISTIC_SCORE}}",  "min": 0, "max": 100}
+    }
+  },
+
+  "_image_contract": {
+    "_description": "Image coverage rules for converter output",
+    "uxp_screenshot_required": true,
+    "gap_screenshot_optional": true,
+    "path_prefix": "ui/",
+    "allowed_extensions": [".png", ".jpg", ".jpeg", ".webp"],
+    "lightbox_support": true,
+    "cite_format": "📸 filename.png"
+  },
+
+  "_label_contract": {
+    "_description": "Vietnamese labels that MUST appear in rendered HTML",
+    "severity_labels": {
+      "Critical": "Nghiêm trọng",
+      "Major":    "Quan trọng",
+      "Minor":    "Cải thiện"
+    },
+    "severity_headers": {
+      "Critical": "🔴 Critical — Cần xử lý ngay",
+      "Major":    "🟡 Major — Ưu tiên cao",
+      "Minor":    "⚪ Minor — Cải thiện"
+    },
+    "table_labels": ["Hiện trạng", "Tác động", "Nguyên tắc", "Đề xuất", "Bằng chứng", "Tham chiếu"],
+    "stat_labels": ["Màn hình", "Tổng kiểm tra", "Cần cải thiện", "Đề xuất"],
+    "gap_count_label": "hạng mục cần cải thiện"
+  }
+}

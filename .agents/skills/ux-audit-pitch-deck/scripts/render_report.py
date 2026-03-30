@@ -57,6 +57,21 @@ def _severity_badge(severity: str) -> str:
     return f'<span class="badge {cls}">{label}</span>'
 
 
+def _strip_ddl(text: str) -> str:
+    """Strip internal DDL codes from stakeholder-facing text."""
+    text = re.sub(r'\s*theo\s+UXG-\d+\s*\(([^)]+)\)', r' (\1)', text)
+    text = re.sub(r'\s*theo\s+UXG-\d+', '', text)
+    text = re.sub(r'\s*theo\s+COMP:[a-z0-9-]+', '', text)
+    text = re.sub(r'UXG-\d+\s*·?\s*', '', text)
+    text = re.sub(r'COMP:[a-z0-9-]+\s*·?\s*', '', text)
+    text = re.sub(r'Law:[a-z-]+\s*·?\s*', '', text)
+    text = re.sub(r'Check\s*#\d+\s*·?\s*', '', text)
+    text = re.sub(r'\s*·\s*$', '', text)
+    text = re.sub(r'^\s*·\s*', '', text)
+    text = re.sub(r'\s{2,}', ' ', text)
+    return text.strip()
+
+
 def _escape(text: str) -> str:
     """Escape HTML special characters."""
     return (text
@@ -100,11 +115,11 @@ def _build_summary(data: dict) -> str:
 
     badges = ''
     if sev['critical']:
-        badges += f'<span class="badge critical">🔴 {sev["critical"]} Critical</span>'
+        badges += f'<span class="badge critical">🔴 {sev["critical"]} Nghiêm trọng</span>'
     if sev['major']:
-        badges += f'<span class="badge major">🟡 {sev["major"]} Major</span>'
+        badges += f'<span class="badge major">🟡 {sev["major"]} Quan trọng</span>'
     if sev['minor']:
-        badges += f'<span class="badge minor">⚪ {sev["minor"]} Minor</span>'
+        badges += f'<span class="badge minor">⚪ {sev["minor"]} Cải thiện</span>'
 
     screen_cards = ''
     for screen in data['screens']:
@@ -149,7 +164,11 @@ def _build_methodology() -> str:
 
 
 def _build_findings(data: dict) -> str:
-    """Build Section 4: Detailed Findings (UXP cards)."""
+    """Build Section 4: Detailed Findings (UXP cards).
+
+    Uses .card-body (grid), .card-header, .card-table layout matching template.html CSS.
+    Consumes enriched fields: user_impact, heuristic, solution_steps, references.
+    """
     uxps = data['uxps']
     if not uxps:
         return ''
@@ -166,13 +185,19 @@ def _build_findings(data: dict) -> str:
   <div class="section-title"><span class="icon">🔎</span> 03 · Các vấn đề được phát hiện</div>
 '''
 
+    sev_labels = {
+        'Critical': '🔴 Nghiêm trọng — Cần xử lý ngay',
+        'Major': '🟡 Quan trọng — Ưu tiên cao',
+        'Minor': '⚪ Cải thiện — Nâng cao trải nghiệm',
+    }
+
     for severity in ['Critical', 'Major', 'Minor']:
         items = groups.get(severity, [])
         if not items:
             continue
 
         cls = _severity_class(severity)
-        label = _severity_label(severity)
+        label = sev_labels.get(severity, severity)
 
         html += f'''  <div style="margin-bottom:36px">
     <div style="background:var(--sev-{cls}-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-{cls}-fg);margin-bottom:20px;letter-spacing:.3px">{label}</div>
@@ -180,70 +205,75 @@ def _build_findings(data: dict) -> str:
 
         for uxp in items:
             img_src = uxp.get('screenshot_path', '')
-            img_alt = _escape(uxp.get('problem', '')[:80])
             problem = _escape(uxp.get('problem', ''))
             solution = uxp.get('solution', '')
+            solution_steps = uxp.get('solution_steps', [])
             screen_tag = _escape(uxp.get('screen_tag', ''))
             ddl_ref = _escape(uxp.get('ddl_ref', ''))
             uxp_id = uxp['id']
 
-            # Enriched fields (from evidence-info)
-            narrative = _escape(uxp.get('_enriched_narrative', ''))
-            sev_justification = _escape(uxp.get('_enriched_severity', ''))
-            enriched_ref = uxp.get('_enriched_ref', {})
-            enriched_practices = uxp.get('_enriched_practices', [])
+            # Enriched fields — prefer enrich_inline.py canonical fields
+            user_impact = _escape(_strip_ddl(uxp.get('user_impact', '') or ''))
+            heuristic_text = _escape(_strip_ddl(uxp.get('heuristic', '') or ''))
+            refs = uxp.get('references', [])
 
-            # Use narrative as richer "hiện trạng" if available
+            # Fallback: _enriched_narrative for richer description
+            narrative = _escape(uxp.get('_enriched_narrative', ''))
             hien_trang = narrative if narrative else problem
 
             # Image section
             img_html = ''
             if img_src:
                 onclick = f'onclick="openLightbox(\'{img_src}\')"'
-                img_html = f'<div class="phone-frame" {onclick}><img src="{img_src}" alt="{img_alt}" loading="lazy"></div>'
-                img_html += f'\n          <div class="shot-overlay {cls}">⚠️ {_escape(uxp.get("problem", "")[:60])}</div>'
+                img_html = f'<div class="phone-frame" {onclick}><img src="{img_src}" alt="{_escape(problem[:80])}" loading="lazy"></div>'
             else:
                 img_html = '<div style="color:var(--text-muted);font-size:12px;text-align:center">Ảnh không khả dụng</div>'
 
-            # Solution list
+            # Solution list — prefer solution_steps[] over raw solution
             solution_html = ''
-            if solution:
-                sol_items = solution.split(';')
-                li_items = ''.join(f'<li>{_escape(s.strip())}</li>' for s in sol_items if s.strip())
+            if solution_steps and isinstance(solution_steps, list):
+                li_items = ''.join(f'<li>{_escape(_strip_ddl(s))}</li>' for s in solution_steps if s)
                 if li_items:
-                    solution_html = f'<div class="proposed-box"><ul>{li_items}</ul></div>'
+                    solution_html = f'''<tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul>{li_items}</ul></td></tr>'''
+            elif solution:
+                sol_items = solution.split(';')
+                li_items = ''.join(f'<li>{_escape(_strip_ddl(s.strip()))}</li>' for s in sol_items if s.strip())
+                if li_items:
+                    solution_html = f'''<tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul>{li_items}</ul></td></tr>'''
 
-            # Enriched reference citation
+            # Reference citations
             ref_cite_html = ''
-            if enriched_ref and isinstance(enriched_ref, dict):
-                ref_name = _escape(enriched_ref.get('name', ''))
-                ref_url = enriched_ref.get('url', '')
-                ref_quote = _escape(enriched_ref.get('quote', ''))
-                ref_source = _escape(enriched_ref.get('source', ''))
-                if ref_url:
-                    ref_cite_html = f'<div style="margin-top:8px;padding:8px 12px;background:#f0f9ff;border-left:3px solid #2563eb;border-radius:4px;font-size:11.5px"><strong>{ref_name}</strong>'
-                    if ref_quote:
-                        ref_cite_html += f'<br><em style="color:#64748b">"{ref_quote}"</em>'
-                    ref_cite_html += f'<br><a href="{ref_url}" target="_blank" style="color:#2563eb;text-decoration:none">{ref_source} →</a></div>'
+            if refs and isinstance(refs, list):
+                ref_items = ''
+                for r in refs:
+                    if isinstance(r, dict) and r.get('url'):
+                        ref_items += f'<li><a href="{r["url"]}" target="_blank"><strong>{_escape(r.get("name", ""))}</strong></a>'
+                        if r.get('quote'):
+                            ref_items += f' — <em>{_escape(r["quote"])}</em>'
+                        ref_items += '</li>'
+                if ref_items:
+                    ref_cite_html = f'<ul class="ref-sources">{ref_items}</ul>'
 
-            # DDL section with enriched ref
-            ddl_section = ddl_ref if ddl_ref else '—'
-
+            # Build card using correct CSS: .card-body (grid) + .card-table
             html += f'''    <div class="finding-card reveal">
       <div class="finding-accent {cls}"></div>
-      <div class="card-layout">
+      <div class="card-header"><span class="card-id">{uxp_id}</span><h3>{_escape(_strip_ddl(problem))}</h3>{_severity_badge(severity)}</div>
+      <div class="card-body">
         <div class="card-visual">
           {img_html}
         </div>
-        <div class="card-info">
-          <div class="card-top"><span class="card-id">{uxp_id}</span>{_severity_badge(severity)}</div>
-          <h3>{problem}</h3>
-          <div class="finding-section"><h4>Hiện trạng</h4><p>{hien_trang}</p></div>
-          <div class="finding-section"><h4>Nguyên tắc bị vi phạm</h4><p>{ddl_section}</p>{ref_cite_html}</div>
-          {solution_html}
-          <div class="finding-tags"><span class="card-tag">{screen_tag}</span></div>
-          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">{ddl_ref}<br>Gap ref: {_escape(uxp.get('gap_ref', ''))}{('<br>Severity: ' + sev_justification) if sev_justification else ''}</div></details>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">{hien_trang}</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">{user_impact if user_impact else '—'}</td></tr>
+            <tr><td class="td-label">Nguyên tắc</td><td class="td-value">{heuristic_text if heuristic_text else '—'}{ref_cite_html}</td></tr>
+            {solution_html}
+          </table>
         </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">{screen_tag}</span></div>
+        <details><summary>Tham chiếu kỹ thuật →</summary><div class="detail-content">{ddl_ref}<br>Gap ref: {_escape(uxp.get('gap_ref', ''))}</div></details>
       </div>
     </div>
 '''
@@ -306,12 +336,11 @@ def _build_gaps(data: dict) -> str:
         for gap in sg['gaps']:
             num = gap['num']
             title = _escape(gap['title'])
-            ref = _escape(gap.get('ref', ''))
-            # Enriched impact overrides baseline
-            impact = _escape(gap.get('_enriched_impact', '') or gap.get('user_impact', ''))
-            # Enriched heuristic name overrides if richer
-            heuristic = _escape(gap.get('heuristic', ''))
-            evidence = _escape(gap.get('evidence', ''))
+            # Enriched impact overrides baseline — strip DDL codes
+            impact = _escape(_strip_ddl(gap.get('_enriched_impact', '') or gap.get('user_impact', '')))
+            # Enriched heuristic — strip DDL codes
+            heuristic = _escape(_strip_ddl(gap.get('heuristic', '')))
+            evidence = _escape(_strip_ddl(gap.get('evidence', '')))
             screenshot = gap.get('screenshot', '')
             screenshot_path = gap.get('screenshot_path', '')
 
@@ -342,11 +371,56 @@ def _build_gaps(data: dict) -> str:
                 src_tags = ' '.join(f'<span style="background:#e2e8f0;padding:1px 5px;border-radius:3px;font-size:9px;margin-left:3px">{_escape(str(s))}</span>' for s in enriched_sources[:2])
                 heuristic_display = f'{heuristic} {src_tags}'
 
+            # Technical reference for gap — resolved references + raw DDL
+            gap_ddl = _escape(gap.get('ddl_evidence', '') or gap.get('ref', ''))
+            gap_refs = gap.get('references', [])
+
+            # Build formatted reference citations
+            ref_citations_html = ''
+            if gap_refs and isinstance(gap_refs, list):
+                ref_lines = []
+                for ref in gap_refs:
+                    ref_name = _escape(ref.get('source', '') or ref.get('name', ''))
+                    ref_url = ref.get('url', '')
+                    ref_quote = _escape(ref.get('quote', ''))
+                    if ref_url and ref_quote:
+                        ref_lines.append(
+                            f'<div style="margin-bottom:6px">'
+                            f'<a href="{ref_url}" target="_blank" '
+                            f'style="color:#2563eb;text-decoration:none;font-weight:600">'
+                            f'{ref_name} →</a>'
+                            f'<div style="color:#64748b;font-style:italic;margin-top:2px">'
+                            f'"{ref_quote}"</div></div>'
+                        )
+                    elif ref_url:
+                        ref_lines.append(
+                            f'<div style="margin-bottom:4px">'
+                            f'<a href="{ref_url}" target="_blank" '
+                            f'style="color:#2563eb;text-decoration:none;font-weight:600">'
+                            f'{ref_name} →</a></div>'
+                        )
+                if ref_lines:
+                    ref_citations_html = ''.join(ref_lines)
+
+            # Build collapsible content: references + raw DDL tag
+            if ref_citations_html:
+                detail_inner = (
+                    f'<div style="padding:8px 0;font-size:11.5px;line-height:1.6">'
+                    f'{ref_citations_html}'
+                    f'<div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;'
+                    f'padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">'
+                    f'{gap_ddl}</span></div></div>'
+                )
+            else:
+                detail_inner = (
+                    f'<div style="font-size:11px;color:#94a3b8;padding:6px 0;'
+                    f'font-family:var(--font-mono)">{gap_ddl}</div>'
+                )
+
             html += f'''    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">{num}</span>
-        <strong style="font-size:13.5px;color:#1a1a2e">{title}</strong>
-        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">{ref}{gap_ref_cite}</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">{title}</strong>{gap_ref_cite}
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
         <div>
@@ -362,6 +436,7 @@ def _build_gaps(data: dict) -> str:
           <div style="color:#444">{evidence}</div>
         </div>
       </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">Tham chiếu kỹ thuật →</summary>{detail_inner}</details>
     </div>
 '''
 

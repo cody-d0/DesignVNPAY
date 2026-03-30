@@ -2,9 +2,9 @@
 """audit.py — Validate pitch deck output quality.
 
 Quick validation of generated HTML for:
-1. UXP card structure (4-block: Hiện trạng → Tác động → Heuristic → Đề xuất)
+1. UXP card structure (Hiện trạng → Nguyên tắc → Proposed)
 2. Vietnamese coverage (remaining English labels)
-3. Image uniqueness
+3. Image coverage (UXP cards with screenshots)
 4. Impact text uniqueness
 5. Heuristic quality (no generic "Check #N")
 
@@ -23,24 +23,20 @@ def audit_html(html_path: Path) -> dict[str, Any]:
     issues: list[str] = []
     stats: dict[str, int] = {}
 
-    # 1. UXP Card Structure
+    # 1. UXP Card Structure — match actual renderer sections
     finding_cards = re.findall(r'<div class="finding-card[\s\S]*?</div>\s*</div>\s*</div>', html)
     n_cards = len(finding_cards)
     n_hien_trang = len(re.findall(r'<h4>Hiện trạng</h4>', html))
-    n_tac_dong = len(re.findall(r'<h4>Tác động</h4>', html))
     n_heuristic = len(re.findall(r'<h4>Nguyên tắc bị vi phạm</h4>', html))
-    n_de_xuat = len(re.findall(r'<h4>Đề xuất cải thiện</h4>', html))
+    n_proposed = len(re.findall(r'class="proposed-box"', html))
 
     stats['uxp_cards'] = n_cards
     stats['hien_trang'] = n_hien_trang
-    stats['tac_dong'] = n_tac_dong
     stats['heuristic'] = n_heuristic
-    stats['de_xuat'] = n_de_xuat
+    stats['proposed_box'] = n_proposed
 
     if n_hien_trang < n_cards:
         issues.append(f'CARD_STRUCTURE: {n_cards - n_hien_trang} UXP cards missing "Hiện trạng" section')
-    if n_tac_dong < n_cards:
-        issues.append(f'CARD_STRUCTURE: {n_cards - n_tac_dong} UXP cards missing "Tác động" section')
     if n_heuristic < n_cards:
         issues.append(f'CARD_STRUCTURE: {n_cards - n_heuristic} UXP cards missing "Nguyên tắc bị vi phạm" section')
 
@@ -52,8 +48,7 @@ def audit_html(html_path: Path) -> dict[str, Any]:
     if en_labels:
         issues.append(f'I18N: {len(en_labels)} gap labels still in English: {list(en_labels[:3])}')  # type: ignore[index]
 
-    # 3. Image Uniqueness (UXP cards specifically)
-    # UXP cards: images inside finding-card divs
+    # 3. Image Coverage — check UXP cards have screenshots
     finding_cards_raw = re.findall(r'<div class="finding-card[\s\S]*?</div>\s*</div>\s*</div>', html)
     uxp_imgs: list[str] = []
     for fc in finding_cards_raw:
@@ -65,12 +60,13 @@ def audit_html(html_path: Path) -> dict[str, Any]:
     # All images (UXP + Gap)
     all_imgs = re.findall(r'src="ui/([^"]+)"', html)
     stats['total_img_tags'] = len(all_imgs)
-    stats['unique_images'] = len(unique_uxp_imgs)  # Report UXP-specific
+    stats['unique_images'] = len(unique_uxp_imgs)
     stats['uxp_img_count'] = len(uxp_imgs)
-    if len(uxp_imgs) > 0:
-        ratio = len(unique_uxp_imgs) / len(uxp_imgs)
-        if ratio < 0.5:
-            issues.append(f'IMAGE_DIVERSITY: Only {len(unique_uxp_imgs)}/{len(uxp_imgs)} unique images ({ratio:.0%})')
+    stats['uxp_no_img'] = n_cards - len(uxp_imgs)
+    if n_cards > 0 and len(uxp_imgs) == 0:
+        issues.append(f'IMAGE_COVERAGE: All {n_cards} UXP cards have no screenshots')
+    elif n_cards > 0 and len(uxp_imgs) < n_cards:
+        issues.append(f'IMAGE_COVERAGE: {n_cards - len(uxp_imgs)}/{n_cards} UXP cards missing screenshots')
 
     # 4. Impact Text Uniqueness (in gap cards)
     gap_impacts = re.findall(r'Tác động đến người dùng</div>\s*<div[^>]*>([^<]+)', html)
@@ -92,8 +88,8 @@ def audit_html(html_path: Path) -> dict[str, Any]:
     if generic_heur:
         issues.append(f'HEURISTIC: {len(generic_heur)} generic "Check #N" patterns (should use full heuristic names)')
 
-    # 6. Gap card count
-    gap_cards = re.findall(r'<div class="gap-card', html)
+    # 6. Gap card count (uses 'gap-card' class added by renderer)
+    gap_cards = re.findall(r'class="gap-card"', html)
     stats['gap_cards'] = len(gap_cards)
 
     return {
@@ -118,10 +114,11 @@ def print_report(result: dict, verbose: bool = False):
 
     if verbose or issues:
         # Card structure
-        print(f'      📊 Cards: {stats["hien_trang"]}× Hiện trạng, {stats["tac_dong"]}× Tác động, '
-              f'{stats["heuristic"]}× Heuristic, {stats["de_xuat"]}× Đề xuất')
+        print(f'      📊 Cards: {stats["hien_trang"]}× Hiện trạng, '
+              f'{stats["heuristic"]}× Heuristic, {stats["proposed_box"]}× Proposed')
         # Image stats
-        print(f'      🖼️  Images: {stats["total_img_tags"]} tags, {stats["unique_images"]} unique')
+        no_img = stats.get('uxp_no_img', 0)
+        print(f'      🖼️  Images: {stats["total_img_tags"]} tags, {stats["unique_images"]} unique, {no_img} missing')
         # Impact stats
         print(f'      📝 Impacts: {stats["gap_impacts"]} total, {stats["unique_impacts"]} unique, {stats["dup_impacts"]} duplicated')
         # Generic heuristics

@@ -66,12 +66,59 @@ Google Fonts: https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;
 - **No title truncation**: Finding card h3 titles display full content
 - **No content truncation**: Hiện trạng and proposal sections display full text
 
+## Layout — Finding Cards (Section 4)
+
+Table-based scannable layout with side-by-side phone + data:
+
+| Class | Purpose | Spec |
+|-------|---------|------|
+| `.finding-card` | Card container | border-radius:12px, hover shadow |
+| `.finding-accent.{sev}` | Top color bar | height:3px, severity color |
+| `.card-header` | Header row | flex, bg-surface, border-bottom |
+| `.card-id` | UXP-ID badge | blue bg, rounded |
+| `.card-body` | Main content | `grid-template-columns: 420px 1fr` |
+| `.card-visual` | Screenshot panel | bg-surface, border-right |
+| `.phone-frame` | Clickable image | border-radius:16px, hover scale |
+| `.card-table` | Data rows | border-collapse, full width |
+| `.td-label` | Label column | width:110px, uppercase 10.5px |
+| `.td-value.proposal` | Solution cells | green-tinted bg, ul padding |
+| `.card-footer` | Tags + refs | flex-column, bg-surface |
+
+## Layout — Gap Cards (Section 6)
+
+Table-based scannable layout:
+
+| Class | Purpose | Spec |
+|-------|---------|------|
+| `.gap-card` | Card container | border-radius:10px, hover shadow |
+| `.gap-header` | Header row | flex, bg-surface, border-bottom |
+| `.gap-num` | Circle number | 24×24 blue circle, white text |
+| `.gap-ref` | Ref badge | purple bg, 10px font |
+| `.gap-screen` | Screen ID badge | blue bg, white-space:nowrap |
+| `.gap-table` | Data rows | border-collapse, full width |
+| `.gap-table .td-label` | Label column | width:120px, uppercase |
+| `.gap-table .td-ddl` | DDL evidence | italic, muted color |
+| `.gap-table .td-ref` | Reference cell | reduced padding |
+
+## Lightbox System
+
+Fullscreen image viewer triggered by clicking phone frames or 📸 citations:
+
+| Class | Purpose | Spec |
+|-------|---------|------|
+| `.img-cite` | Clickable citation | blue bg, hover scale+shadow |
+| `.lightbox-overlay` | Backdrop | fixed, rgba(0,0,0,.85), blur(8px) |
+| `.lightbox-overlay.active` | Visible state | display:flex, opacity:1 |
+| `.lightbox-overlay img` | Large image | max-width:90vw, max-height:80vh |
+| `.lightbox-close` | Close button | 40×40 circle, top-right |
+| `.lightbox-caption` | Filename | monospace, semi-transparent bg |
+
 ## Motion
 
 | Element | Duration | Trigger |
 |---------|----------|---------|
 | Scroll-reveal | 0.7s | IntersectionObserver (threshold: 0.12) |
-| Card hover | 0.25s | hover + translateY(-2px) |
+| Card hover | 0.2s-0.25s | hover + translateY(-2px) or shadow |
 | Reduced motion | 0.01ms | prefers-reduced-motion: reduce |
 
 ## Severity Badges
@@ -95,4 +142,17 @@ Color thresholds:
   <50%  → --sev-critical (#b91c1c)
   50-69% → --sev-major (#c2410c)
   ≥70%  → --sev-pass (#15803d)
+```
+
+## Responsive Breakpoint
+
+```css
+@media (max-width: 960px) {
+  /* Card body: single column */
+  /* Phone frame: max-width 420px centered */
+  /* Hero score ring: hidden */
+  /* Grids: single column */
+  /* Padding reduced: 32px 24px */
+  /* Table labels: 90px width */
+}
 ```

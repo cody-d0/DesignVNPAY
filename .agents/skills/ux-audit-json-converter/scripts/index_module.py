@@ -396,9 +396,15 @@ def parse_screens_and_checks(lines: list[str]) -> list[dict]:
             if not any(kw in name_candidate.lower() for kw in ['critical', 'major', 'minor', 'đề xuất', 'methodology']):
                 if current_screen:
                     screens.append(current_screen)
+                # I-1: Extract SCR-ID embedded in screen_name
+                # e.g. "SCR-TDN-001 — Danh sách thẻ" → screen_id = "SCR-TDN-001"
+                extracted_id = ''
+                m_scr = re.search(r'(SCR-\w+-\d+)', name_candidate)
+                if m_scr:
+                    extracted_id = m_scr.group(1)
                 current_screen = {
                     'screen_name': name_candidate,
-                    'screen_id': '',
+                    'screen_id': extracted_id,
                     'screen_type': '',
                     'artboard_count': 0,
                     'score': 0,
@@ -615,10 +621,20 @@ def parse_scr_md_files(module_dir: Path) -> list[dict]:
         for line in lines:
             stripped = line.strip()
 
-            # Extract screen ID
-            m = re.match(r'\*\*Screen ID:\*\*\s*(SCR-\w+-\d+)', stripped)
-            if m:
-                entry['screen_id'] = m.group(1)
+            # Extract screen ID (multiple patterns)
+            if not entry['screen_id']:
+                # Pattern 1: **Screen ID:** SCR-XXX-NNN
+                m = re.match(r'\*\*Screen ID:\*\*\s*(SCR-\w+-\d+)', stripped)
+                if m:
+                    entry['screen_id'] = m.group(1)
+                # Pattern 2: # SCR-XXX-NNN — Title (H1 heading)
+                m2 = re.match(r'^#\s+(SCR-\w+-\d+)', stripped)
+                if m2:
+                    entry['screen_id'] = m2.group(1)
+                # Pattern 3: > `SCR-XXX-NNN` (blockquote)
+                m3 = re.match(r'^>\s*`(SCR-\w+-\d+)`', stripped)
+                if m3:
+                    entry['screen_id'] = m3.group(1)
 
             # Extract wireframe images: ![Alt text](ui/filename.png)
             m = re.match(r'!\[(.+?)\]\((.+?)\)', stripped)
@@ -691,89 +707,270 @@ def parse_handoff(module_dir: Path) -> dict:
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# IMAGE MAP BUILDER
+# IMAGE MAP BUILDER — v2: Per-screen Lookup Table
 # ═══════════════════════════════════════════════════════════════════════
+
+_OVERLAY_ALT_KW = ['popup', 'overlay', 'modal', 'dialog', 'bottom sheet',
+                   'otp', 'confirm', 'xác nhận', 'cảnh báo', 'alert',
+                   'picker', 'dropdown', 'action sheet']
+_ERROR_ALT_KW = ['error', 'lỗi', 'validation', 'case lỗi', 'case-loi',
+                 'sai', 'invalid']
+_SUCCESS_ALT_KW = ['success', 'thành công', 'hoàn tất', 'kết quả']
+
+
+def _infer_role_from_alt(alt_text: str, ordinal: int) -> str:
+    """Infer image role from alt text when inventory/artboard role missing."""
+    alt_lower = alt_text.lower()
+
+    for kw in _OVERLAY_ALT_KW:
+        if kw in alt_lower:
+            return f'overlay:{kw.replace(" ", "_")}'
+
+    if any(kw in alt_lower for kw in _ERROR_ALT_KW):
+        return 'error'
+    if any(kw in alt_lower for kw in _SUCCESS_ALT_KW):
+        return 'success'
+    if any(kw in alt_lower for kw in ['loading', 'processing', 'xử lý']):
+        return 'loading'
+    if ordinal == 1 or any(kw in alt_lower for kw in
+                           ['base', 'trống', 'empty', 'mặc định', 'default']):
+        return 'base'
+    if any(kw in alt_lower for kw in ['đã điền', 'filled', 'expanded',
+                                       'selected', 'đặt lịch', 'typing']):
+        return 'variant'
+    return ''
+
+
+def _extract_keywords(text: str) -> list[str]:
+    """Extract meaningful keywords from alt text."""
+    if not text:
+        return []
+    stop = {'của', 'và', 'có', 'với', 'cho', 'các', 'trong', 'khi', 'là',
+            'được', 'the', 'and', 'for', 'with', 'a', 'an', 'in', 'on',
+            'không', 'một', 'này', 'đó', 'từ', 'lên', 'về'}
+    words = re.findall(r'[a-zA-Z\u00C0-\u1EF9]{2,}', text.lower())
+    return [w for w in words if w not in stop]
+
 
 def build_image_map(module_dir: Path, screens: list[dict],
                     check_tables: list[dict],
                     inventory_screens: list[dict],
                     scr_md_data: list[dict]) -> dict:
-    """Build comprehensive image map from all sources."""
+    """Build per-screen image lookup table from all sources.
+
+    Image Mapping Engine v2: structured lookup with ordinal, role,
+    alt_text and keyword metadata for 5-tier resolution.
+    """
     ui_dir = module_dir / 'ui'
 
-    result = {
-        'disk_files': [],
-        'inventory_images': [],
-        'scr_md_images': [],
-        'evidence_refs': [],
-        'artboard_index': [],
-        'orphan_images': [],
-        'missing_images': [],
-    }
-
     # 1. Disk files
-    if ui_dir.exists():
-        result['disk_files'] = sorted(
-            f.name for f in ui_dir.iterdir()
-            if f.suffix.lower() in ('.png', '.jpg', '.jpeg', '.webp')
-            and not f.name.startswith('.')
-        )
+    disk_files = sorted(
+        f.name for f in ui_dir.iterdir()
+        if f.suffix.lower() in ('.png', '.jpg', '.jpeg', '.webp')
+        and not f.name.startswith('.')
+    ) if ui_dir.exists() else []
+    disk_set = set(disk_files)
 
-    disk_set = set(result['disk_files'])
-
-    # 2. Inventory images
-    referenced = set()
+    # 2. Per-screen inventory lookup
+    inv_by_screen: dict[str, list[dict]] = {}
     for scr in inventory_screens:
+        sid = scr.get('screen_id', '')
+        if not sid:
+            continue
+        inv_by_screen.setdefault(sid, [])
         for img in scr.get('wireframe_images', []):
             fn = img.get('filename', '')
             if fn:
-                result['inventory_images'].append({
-                    'screen_id': scr['screen_id'],
+                inv_by_screen[sid].append({
                     'filename': fn,
-                    'role': img.get('role', 'base'),
+                    'role': img.get('role', ''),
+                    'node_id': img.get('node_id', ''),
                 })
-                referenced.add(fn)
 
-    # 3. SCR-*.md images
+    # 3. Artboard-index lookup (if exists)
+    ai_data = _read_json(module_dir / 'artboard-index.json')
+    ai_by_screen: dict[str, dict[str, dict]] = {}
+    if ai_data and isinstance(ai_data, dict):
+        for scr_key, scr_info in ai_data.items():
+            if not isinstance(scr_info, dict):
+                continue
+            m_scr = re.match(r'(SCR-\w+-\d+)', scr_key)
+            scr_id = m_scr.group(1) if m_scr else scr_key
+            ai_by_screen.setdefault(scr_id, {})
+            for ab_fn, ab_info in scr_info.get('artboards', {}).items():
+                if isinstance(ab_info, dict):
+                    ai_by_screen[scr_id][ab_fn] = {
+                        'role': ab_info.get('role', ''),
+                        'artboard_name': ab_info.get('artboard_name', ''),
+                        'text_elements': ab_info.get('text_elements', []),
+                    }
+
+    # 4. SCR-*.md by screen (preserves order → ordinal)
+    scr_md_by_screen: dict[str, list[dict]] = {}
     for scr_md in scr_md_data:
-        for img in scr_md.get('images', []):
-            fn = img.get('filename', '')
-            if fn:
-                result['scr_md_images'].append({
-                    'screen_id': scr_md['screen_id'],
-                    'alt': img.get('alt', ''),
-                    'filename': fn,
-                })
-                referenced.add(fn)
+        sid = scr_md.get('screen_id', '')
+        if sid:
+            scr_md_by_screen[sid] = scr_md.get('images', [])
 
-    # 4. Evidence refs from check tables
+    # 5. Collect all screen_ids
+    all_screen_ids: set[str] = set()
+    for s in screens:
+        sid = s.get('screen_id', '')
+        if sid:
+            all_screen_ids.add(sid)
+    all_screen_ids.update(inv_by_screen.keys())
+    all_screen_ids.update(scr_md_by_screen.keys())
+    all_screen_ids.update(ai_by_screen.keys())
+
+    # 6. Build lookup table
+    lookup_table: dict[str, dict] = {}
+    all_referenced: set[str] = set()
+
+    for sid in sorted(all_screen_ids):
+        images: list[dict] = []
+        seen_fn: set[str] = set()
+
+        # Source A: SCR-*.md → ordinal + alt_text (golden source for order)
+        for ordinal, img in enumerate(scr_md_by_screen.get(sid, []), 1):
+            fn = img.get('filename', '')
+            if not fn or fn in seen_fn:
+                continue
+            alt = img.get('alt', '')
+
+            # Merge role from inventory
+            role = ''
+            for inv_img in inv_by_screen.get(sid, []):
+                if inv_img['filename'] == fn:
+                    role = inv_img.get('role', '')
+                    break
+
+            # Merge from artboard-index
+            ai_entry = ai_by_screen.get(sid, {}).get(fn, {})
+            if not role and ai_entry.get('role'):
+                role = ai_entry['role']
+
+            # Infer role from alt_text if still missing
+            if not role:
+                role = _infer_role_from_alt(alt, ordinal)
+
+            ab_match = re.match(r'^(\d{4})', fn.split('.')[0])
+            images.append({
+                'filename': fn,
+                'ordinal': ordinal,
+                'role': role,
+                'alt_text': alt,
+                'artboard_id': ab_match.group(1) if ab_match else None,
+                'keywords': _extract_keywords(alt),
+                'text_elements': ai_entry.get('text_elements', []),
+                'on_disk': fn in disk_set,
+            })
+            seen_fn.add(fn)
+            all_referenced.add(fn)
+
+        # Source B: inventory images NOT in SCR-MD
+        for inv_img in inv_by_screen.get(sid, []):
+            fn = inv_img['filename']
+            # Strip path prefix (inventory may store "ui/file.png")
+            fn = os.path.basename(fn)
+            if fn in seen_fn:
+                continue
+            role = inv_img.get('role', '')
+            ai_entry = ai_by_screen.get(sid, {}).get(fn, {})
+            if not role and ai_entry.get('role'):
+                role = ai_entry['role']
+            next_ord = len(images) + 1
+            ab_match = re.match(r'^(\d{4})', fn.split('.')[0])
+            images.append({
+                'filename': fn,
+                'ordinal': next_ord,
+                'role': role,
+                'alt_text': '',
+                'artboard_id': ab_match.group(1) if ab_match else None,
+                'keywords': [],
+                'text_elements': ai_entry.get('text_elements', []),
+                'on_disk': fn in disk_set,
+            })
+            seen_fn.add(fn)
+            all_referenced.add(fn)
+
+        # I-2: Source C — disk-only files when SCR-MD + inventory have 0 refs
+        # Distribute orphan disk files into this screen by filename prefix match
+        if not images and disk_files:
+            # Extract screen slug from screen_id: SCR-PIN-002 → "pin"
+            sid_slug = ''
+            sid_m = re.match(r'SCR-(\w+)-\d+', sid)
+            if sid_m:
+                sid_slug = sid_m.group(1).lower()
+            # Also get screen number: SCR-PIN-002 → "002" → 2
+            sid_num_m = re.search(r'(\d+)$', sid)
+            sid_num = int(sid_num_m.group(1)) if sid_num_m else 0
+
+            # Try to find disk files that belong to this screen
+            # Heuristic: distribute evenly or by filename pattern
+            candidate_files = [f for f in disk_files if f not in seen_fn]
+            if candidate_files:
+                for ordinal, fn in enumerate(candidate_files, 1):
+                    ab_match = re.match(r'^(\d{4})', fn.split('.')[0])
+                    images.append({
+                        'filename': fn,
+                        'ordinal': ordinal,
+                        'role': 'base' if ordinal == 1 else '',
+                        'alt_text': '',
+                        'artboard_id': ab_match.group(1) if ab_match else None,
+                        'keywords': _extract_keywords(fn.replace('-', ' ').replace('_', ' ')),
+                        'text_elements': [],
+                        'on_disk': True,
+                    })
+                    seen_fn.add(fn)
+                    all_referenced.add(fn)
+                # I-5: Log self-learning issue
+                _log_issue('empty_scr_md_disk_fallback', sid,
+                           f'SCR-MD and inventory had 0 image refs; '
+                           f'distributed {len(candidate_files)} disk files '
+                           f'as fallback')
+
+        # Build quick-access indexes
+        by_filename: dict[str, int] = {}
+        by_ordinal: dict[str, int] = {}
+        by_role: dict[str, list[int]] = {}
+        for idx, img in enumerate(images):
+            by_filename[img['filename']] = idx
+            by_ordinal[str(img['ordinal'])] = idx
+            r = img['role']
+            if r:
+                by_role.setdefault(r, [])
+                by_role[r].append(idx)
+
+        lookup_table[sid] = {
+            'images': images,
+            'by_filename': by_filename,
+            'by_ordinal': by_ordinal,
+            'by_role': by_role,
+        }
+
+    # 7. Evidence refs from check tables
+    evidence_refs: list[dict] = []
     for screen_data in check_tables:
         for check in screen_data.get('checks', []):
             for ref in check.get('_evidence_img_refs', []):
                 fn = ref.get('filename', '')
-                entry = {
+                evidence_refs.append({
                     'check_num': check.get('num', 0),
                     'screen_id': screen_data.get('screen_id', ''),
                     'image_ref': fn if fn else None,
                     'pattern': ref.get('pattern', ''),
-                }
-                result['evidence_refs'].append(entry)
+                })
                 if fn:
-                    referenced.add(fn)
+                    all_referenced.add(fn)
 
-    # 5. Artboard index
-    ai_path = module_dir / 'artboard-index.json'
-    ai_data = _read_json(ai_path)
-    if ai_data:
-        result['artboard_index'] = ai_data if isinstance(ai_data, list) else []
-
-    # 6. Orphan images (on disk, not referenced)
-    result['orphan_images'] = sorted(disk_set - referenced)
-
-    # 7. Missing images (referenced, not on disk)
-    result['missing_images'] = sorted(referenced - disk_set)
-
-    return result
+    # 8. Diagnostics
+    return {
+        'image_lookup_table': lookup_table,
+        'disk_files': disk_files,
+        'evidence_refs': evidence_refs,
+        'orphan_images': sorted(disk_set - all_referenced),
+        'missing_images': sorted(all_referenced - disk_set),
+    }
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -804,6 +1001,13 @@ def index_module(module_dir: Path) -> dict:
 
     # ── Resolve UXP screen_id from screen_tag vs screen names ──
     # When Màn hình field has no SCR-ID, fuzzy match against screen names
+    # I-3: Enhanced fuzzy match — lower threshold, normalize Vietnamese
+    def _normalize_vn(text: str) -> str:
+        """Normalize Vietnamese text for fuzzy matching."""
+        import unicodedata
+        nfkd = unicodedata.normalize('NFKD', text.lower())
+        return ''.join(c for c in nfkd if not unicodedata.combining(c))
+
     for uxp in uxp_blocks:
         if uxp['screen_id']:
             continue  # Already has SCR-ID from regex
@@ -811,19 +1015,36 @@ def index_module(module_dir: Path) -> dict:
         if not tag:
             continue
 
+        # First try: direct SCR-ID in screen_tag
+        m_direct = re.search(r'(SCR-\w+-\d+)', tag.upper())
+        if m_direct:
+            uxp['screen_id'] = m_direct.group(1)
+            continue
+
         best_match = ''
         best_score = 0
+        tag_normalized = _normalize_vn(tag)
+        tag_words = set(re.findall(r'\w+', tag_normalized))
+        # Remove very common stop words
+        tag_words -= {'cua', 'va', 'trong', 'cho', 'tai', 'den', 'la', 'danh', 'sach'}
+
         for scr in screen_checks:
             name = scr.get('screen_name', '').lower()
-            # Count word overlap
-            tag_words = set(re.findall(r'\w+', tag))
-            name_words = set(re.findall(r'\w+', name))
+            name_normalized = _normalize_vn(name)
+            name_words = set(re.findall(r'\w+', name_normalized))
+            name_words -= {'cua', 'va', 'trong', 'cho', 'tai', 'den', 'la', 'danh', 'sach'}
+
+            # Word overlap scoring
             overlap = len(tag_words & name_words)
+            # Bonus: substring match (e.g. "lịch sử giao dịch" ⊂ screen_name)
+            if tag_normalized in name_normalized or name_normalized in tag_normalized:
+                overlap += 3
+
             if overlap > best_score:
                 best_score = overlap
                 best_match = scr.get('screen_id', '')
 
-        if best_match and best_score >= 2:
+        if best_match and best_score >= 1:
             uxp['screen_id'] = best_match
         elif screen_checks:
             # Fallback: if only 1-2 screens, assign first screen

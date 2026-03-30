@@ -42,7 +42,8 @@ Consumer: `render_report.py` (ux-audit-pitch-deck skill)
 | `proposal_count` | int | len(uxps) | ✅ |
 | `overall_score` | int | pass/(pass+gap)*100 | ✅ |
 | `overall_score_color` | string | <50→red, <70→orange, ≥70→green | ✅ |
-| `overall_score_offset` | int | 314*(1-score/100) | ✅ |
+| `overall_score_offset` | int | 320*(1-score/100) — hero ring r=51 | ✅ |
+| `overall_weighted_score` | int | Weighted by severity (Crit=3, Maj=2, Min=1) | ✅ |
 | `severity_counts` | object | {critical, major, minor} | ✅ |
 
 ### screens[]
@@ -55,6 +56,7 @@ Consumer: `render_report.py` (ux-audit-pitch-deck skill)
 | `score` | int | ✅ |
 | `score_color` | string | ✅ |
 | `score_offset` | int | ✅ |
+| `weighted_score` | int (from score_engine) | ✅ |
 | `gap_count` | int | ✅ |
 | `artboard_count` | int | ✅ |
 
@@ -69,8 +71,12 @@ Consumer: `render_report.py` (ux-audit-pitch-deck skill)
 | `gap_ref` | string | ✅ |
 | `ddl_ref` | string | ✅ |
 | `solution` | string | ✅ |
-| `screenshot_path` | string | ❌ (enrichment) |
-| `_enriched_ref` | object | ❌ (enrichment) |
+| `screenshot_path` | string | ❌ (convert.py — image resolution) |
+| `user_impact` | string | ❌ (enrich_inline.py) |
+| `heuristic` | string | ❌ (enrich_inline.py — from references + ddl_ref) |
+| `ref_count` | int | ❌ (enrich_inline.py — count of matched sources) |
+| `references` | array[{name,url,quote,source}] | ❌ (convert.py — heuristic-db.json lookup) |
+| `_img_tier` | int (1-5) | ❌ (diagnostic: resolution tier used) |
 
 ### gaps_by_screen[]
 
@@ -84,7 +90,17 @@ Consumer: `render_report.py` (ux-audit-pitch-deck skill)
 | `gaps[].ref` | string | ✅ |
 | `gaps[].severity` | string | ✅ |
 | `gaps[].evidence` | string | ✅ |
-| `gaps[].screenshot_path` | string | ❌ |
+| `gaps[].screenshot` | string | ❌ (filename only, for cite display) |
+| `gaps[].screenshot_path` | string | ❌ (ui/ prefixed path for lightbox) |
+| `gaps[].user_impact` | string | ✅ (convert.py baseline → enrich_inline.py upgrade) |
+| `gaps[].heuristic` | string | ❌ (convert.py — category-based) |
+| `gaps[].ddl_evidence` | string | ❌ |
+| `gaps[].ref_count` | int | ❌ (enrich_inline.py) |
+| `gaps[].references` | array[{name,url,quote,source}] | ❌ (convert.py — heuristic-db.json lookup) |
+| `gaps[].screen_id` | string | ✅ |
+| `gaps[].screen_name` | string | ✅ |
+| `gaps[].screen_type` | string | ✅ |
+| `gaps[]._img_tier` | int (1-5) | ❌ (diagnostic) |
 
 ### heuristics[]
 
@@ -110,5 +126,32 @@ def score_color(score: int) -> str:
     return "#15803d"                   # green
 
 def score_offset(score: int) -> int:
-    return round(314 * (1 - score / 100))
+    return round(320 * (1 - score / 100))  # hero ring: r=51, C=320
+```
+
+## Weighted Score Model (from score_engine.py)
+
+Ported from `tools/ux-score-calculator.js`. Uses severity-aware penalty:
+
+```python
+SEVERITY_WEIGHTS = {'critical': 3.0, 'major': 2.0, 'minor': 1.0}
+
+# Weighted Score = (1 - weighted_penalty / max_possible_penalty) × 100
+# max_possible_penalty = verifiable_checks × 3.0 (if all were critical)
+```
+
+## Diagnostic Section: `_score_discrepancies`
+
+Optional. Present only when claimed values (from ux-review-report.md) differ
+from actual re-counted values by the score engine.
+
+```jsonc
+"_score_discrepancies": [
+  {
+    "screen_id": "SCR-XX-001",
+    "field": "pass_count",   // or "gap_count", "score"
+    "claimed": 8,
+    "actual": 7
+  }
+]
 ```

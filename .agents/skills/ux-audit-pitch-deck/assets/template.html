@@ -55,32 +55,56 @@ body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-pri
 .badge.major{background:var(--sev-major-bg);color:var(--sev-major-fg)}
 .badge.minor{background:var(--sev-minor-bg);color:var(--sev-minor-fg)}
 
-/* ═══ FINDING CARDS — 2fr:3fr phone-frame layout ═══ */
-.finding-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:24px;transition:all .25s}
-.finding-card:hover{background:var(--bg-card-hover);box-shadow:0 4px 24px rgba(0,0,0,.06)}
-.finding-accent{height:4px}
+/* ═══ FINDING CARDS — Table-based scannable layout ═══ */
+.finding-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;transition:all .2s}
+.finding-card:hover{box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.finding-accent{height:3px}
 .finding-accent.critical{background:var(--sev-critical)}.finding-accent.major{background:var(--sev-major)}.finding-accent.minor{background:var(--sev-minor)}
-.card-layout{display:grid;grid-template-columns:2fr 3fr;gap:0}
-.card-visual{background:var(--bg-surface);padding:32px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
-.phone-frame{position:relative;border:3px solid var(--border-light);border-radius:24px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.08);max-width:160px;width:100%}
-.phone-frame img{width:100%;display:block}
-.shot-overlay{background:rgba(220,38,38,.9);color:#fff;font-size:10px;padding:6px 8px;text-align:center;font-weight:700;border-radius:6px;max-width:160px;width:100%;margin-top:6px}
-.shot-overlay.major{background:rgba(234,88,12,.9)}.shot-overlay.minor{background:rgba(202,138,4,.9)}
-.card-info{padding:24px 28px}
-.card-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+
+/* Card header */
+.card-header{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--bg-surface)}
 .card-id{font-family:var(--font-sans);font-size:12px;font-weight:700;color:var(--accent-blue);background:rgba(37,99,235,.08);padding:2px 8px;border-radius:4px}
-.card-info h3{font-size:16px;font-weight:700;margin-bottom:16px;color:var(--text-primary);line-height:1.45}
-.finding-section{margin-bottom:14px}
-.finding-section h4{font-family:var(--font-sans);font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-muted);margin-bottom:6px;font-weight:700}
-.finding-section p{font-size:13.5px;color:var(--text-secondary);line-height:1.55}
-.proposed-box{background:rgba(22,163,74,.06);border-left:3px solid var(--sev-pass);border-radius:0 8px 8px 0;padding:12px 14px;margin-top:6px}
-.proposed-box ul{padding-left:16px}.proposed-box li{font-size:13px;color:#15803d;margin-bottom:4px}
-.finding-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
-.card-tag{background:rgba(37,99,235,.08);color:var(--accent-blue);font-family:var(--font-sans);font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600}
+.card-header h3{font-size:14px;font-weight:700;color:var(--text-primary);line-height:1.4;flex:1}
+
+/* Card body — screenshot + data table side by side */
+.card-body{display:grid;grid-template-columns:500px 1fr;gap:0}
+.card-visual{background:var(--bg-surface);padding:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid var(--border);min-width:500px}
+.phone-frame{position:relative;border:2px solid var(--border-light);border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);cursor:pointer;transition:transform .2s}
+.phone-frame:hover{transform:scale(1.02)}
+.phone-frame img{max-width:150px;width:100%;display:block}
+
+/* Data table inside card */
+.card-table{width:100%;border-collapse:collapse}
+.card-table tr{border-bottom:1px solid var(--border)}
+.card-table tr:last-child{border-bottom:none}
+.card-table td{padding:10px 16px;font-size:13px;line-height:1.5;vertical-align:top}
+.card-table .td-label{width:110px;font-family:var(--font-sans);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);white-space:nowrap;padding-top:12px}
+.card-table .td-value{color:var(--text-secondary)}
+.card-table .td-value.proposal{background:rgba(22,163,74,.04)}
+.card-table .td-value.proposal ul{padding-left:16px;margin:0}.card-table .td-value.proposal li{font-size:12.5px;color:#15803d;margin-bottom:2px}
+
+/* Card footer */
+.card-footer{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:10px 16px;border-top:1px solid var(--border);background:var(--bg-surface)}
+.card-footer details{width:100%}
+.finding-tags{display:flex;gap:6px;flex-wrap:wrap}
+.card-tag{background:rgba(37,99,235,.08);color:var(--accent-blue);font-family:var(--font-sans);font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+
+
+
+/* Proposed solution box */
+.proposed-box{background:rgba(22,163,74,.04);border-radius:6px;padding:8px 12px}
+.proposed-box ul{padding-left:16px;margin:0}.proposed-box li{font-size:12.5px;color:#15803d;margin-bottom:2px;line-height:1.5}
 
 /* ═══ DETAILS (Progressive disclosure) ═══ */
-details{margin-top:12px}details summary{cursor:pointer;font-family:var(--font-sans);font-size:11px;color:var(--accent-purple);font-weight:700;padding:4px 0}
-.detail-content{background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:8px;font-family:var(--font-sans);font-size:11px;color:var(--text-muted);line-height:1.6;word-break:break-all}
+details{margin:0}details summary{cursor:pointer;font-family:var(--font-sans);font-size:11px;color:var(--accent-purple);font-weight:700;padding:4px 0}
+.detail-content{width:100%;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;padding:10px;margin-top:6px;font-family:var(--font-sans);font-size:11px;color:var(--text-muted);line-height:1.6;word-break:break-all}
+
+/* ═══ REFERENCE SOURCES ═══ */
+.ref-sources{margin:6px 0 0;padding-left:16px;font-size:11px;list-style:none}
+.ref-sources li{margin-bottom:4px;line-height:1.4}
+.ref-sources a{color:var(--accent-blue);text-decoration:none;font-weight:600}
+.ref-sources a:hover{text-decoration:underline}
+.ref-sources em{color:var(--text-muted);font-style:italic}
 
 /* ═══ METHODOLOGY ═══ */
 .method-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
@@ -97,20 +121,29 @@ details{margin-top:12px}details summary{cursor:pointer;font-family:var(--font-sa
 .score-info h4{font-size:13px;font-weight:700;margin-bottom:4px;color:var(--text-primary)}
 .score-info p{font-size:12px;color:var(--text-secondary)}
 
-/* ═══ GAPS SECTION ═══ */
+/* ═══ GAP CARDS — Table-based scannable layout ═══ */
 .gap-screen{font-family:var(--font-sans);font-size:11px;font-weight:700;color:var(--accent-blue);background:rgba(37,99,235,.08);padding:3px 8px;border-radius:4px;white-space:nowrap}
-.gap-card{border:1px solid var(--border);border-radius:12px;padding:18px 22px;margin-bottom:12px;background:var(--bg-card);transition:all .25s}
-.gap-card:hover{background:var(--bg-card-hover);box-shadow:0 4px 16px rgba(0,0,0,.06)}
-.gap-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--accent-blue);color:#fff;font-family:var(--font-sans);font-size:11px;font-weight:800;flex-shrink:0}
-.gap-ref{font-family:var(--font-sans);font-size:10px;color:var(--text-secondary);margin-left:6px;font-weight:600}
-.gap-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;font-size:12.5px;line-height:1.55;margin-top:12px}
-.gap-label{font-family:var(--font-sans);font-weight:700;color:var(--text-secondary);font-size:10px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
-.gap-full{grid-column:1/-1}
+.gap-card{border:1px solid var(--border);border-radius:10px;margin-bottom:12px;background:var(--bg-card);overflow:hidden;transition:all .2s}
+.gap-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.05)}
+
+/* Gap card header */
+.gap-header{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bg-surface);border-bottom:1px solid var(--border)}
+.gap-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--accent-blue);color:#fff;font-family:var(--font-sans);font-size:11px;font-weight:800;flex-shrink:0}
+.gap-ref{font-family:var(--font-sans);font-size:10px;color:var(--accent-purple);background:rgba(124,58,237,.08);padding:1px 6px;border-radius:4px;font-weight:600;margin-left:auto}
+
+/* Gap data table */
+.gap-table{width:100%;border-collapse:collapse}
+.gap-table tr{border-bottom:1px solid var(--border)}
+.gap-table tr:last-child{border-bottom:none}
+.gap-table td{padding:8px 16px;font-size:12.5px;line-height:1.5;vertical-align:top}
+.gap-table .td-label{width:120px;font-family:var(--font-sans);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);white-space:nowrap;padding-top:10px}
+.gap-table .td-value{color:var(--text-secondary)}
+.gap-table .td-ddl{font-style:italic;color:var(--text-muted);font-size:12px}
+.gap-table .td-ref{padding:6px 16px}
+
 /* ═══ IMAGE LIGHTBOX ═══ */
 .img-cite{display:inline-block;background:#EFF6FF;color:#2563EB;font-size:10px;padding:1px 6px;border-radius:4px;font-family:var(--font-mono);margin-left:4px;cursor:pointer;transition:all .2s}
 .img-cite:hover{background:#DBEAFE;transform:scale(1.05);box-shadow:0 1px 4px rgba(37,99,235,.25)}
-.phone-frame{cursor:pointer;transition:transform .2s}
-.phone-frame:hover{transform:scale(1.03)}
 .lightbox-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;flex-direction:column;opacity:0;transition:opacity .3s}
 .lightbox-overlay.active{display:flex;opacity:1}
 .lightbox-overlay img{max-width:90vw;max-height:80vh;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.5);object-fit:contain}
@@ -127,11 +160,13 @@ footer strong{color:var(--text-secondary)}
 .reveal.visible{opacity:1;transform:translateY(0)}
 
 /* ═══ RESPONSIVE ═══ */
-@media(max-width:768px){
-  .card-layout{grid-template-columns:1fr}.hero-score{display:none}
+@media(max-width:960px){
+  .card-body{grid-template-columns:1fr}.card-visual{border-right:none;border-bottom:1px solid var(--border);padding:20px}
+  .phone-frame{min-width:unset;max-width:420px;margin:0 auto}
+  .hero-score{display:none}
   .scorecard-grid,.method-grid{grid-template-columns:1fr}
   .hero{padding:32px 24px}.section{padding:32px 24px 0}.nav{padding:0 16px;overflow-x:auto}
-  .gap-grid{grid-template-columns:1fr}
+  .card-table .td-label,.gap-table .td-label{width:90px}
 }
 @media(prefers-reduced-motion:reduce){
   .reveal{transition-duration:.01ms!important}.finding-card,.method-card,.score-item,.gap-card{transition-duration:.01ms!important}
@@ -142,16 +177,14 @@ footer strong{color:var(--text-secondary)}
 <!-- ═══ NAV ═══ -->
 <nav class="nav">
   <a href="#summary">Tổng quan</a>
-  <a href="#method">Phương pháp</a>
   <a href="#findings">Phát hiện</a>
-  <a href="#scorecard">Scorecard</a>
   <a href="#gaps">Gaps</a>
 </nav>
 
 <!-- ═══ SECTION 1: HERO / EXECUTIVE SUMMARY ═══ -->
 <section class="hero" id="top">
   <div class="hero-label">UX Audit Report</div>
-  <h1>{{CLIENT_NAME}} · {{MODULE_NAME}}</h1>
+  <h1>{{MODULE_NAME}} | {{CLIENT_NAME}}</h1>
   <p class="hero-sub">{{PRODUCT_NAME}}</p>
   <div class="hero-stats">
     <div class="stat-item"><span class="stat-num">{{SCREEN_COUNT}}</span><span class="stat-label">Màn hình</span></div>
@@ -166,12 +199,11 @@ footer strong{color:var(--text-secondary)}
 <!-- ═══ SECTION 2: SUMMARY (Screen scores + severity breakdown) ═══ -->
 <section class="section" id="summary">
   <div class="section-title"><span class="icon">📊</span> 01 · Tổng quan kết quả kiểm tra</div>
-  <!-- Severity breakdown badges -->
+  <!-- Severity breakdown badges — Vietnamese labels -->
   <div style="display:flex;gap:12px;margin-bottom:28px">
-    <!-- Only show badges for severities that have findings -->
-    <span class="badge critical">🔴 {{CRITICAL_COUNT}} Critical</span>
-    <span class="badge major">🟡 {{MAJOR_COUNT}} Major</span>
-    <span class="badge minor">⚪ {{MINOR_COUNT}} Minor</span>
+    <span class="badge critical">🔴 {{CRITICAL_COUNT}} Nghiêm trọng</span>
+    <span class="badge major">🟡 {{MAJOR_COUNT}} Quan trọng</span>
+    <span class="badge minor">⚪ {{MINOR_COUNT}} Cải thiện</span>
   </div>
   <!-- Screen score cards: r=25, circumference=157, offset = 157 × (1 - score/100) -->
   <div class="scorecard-grid">
@@ -180,145 +212,153 @@ footer strong{color:var(--text-secondary)}
       <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="{{SCREEN_SCORE_COLOR}}" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="{{SCREEN_SCORE_OFFSET}}" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="{{SCREEN_SCORE_COLOR}}">{{SCREEN_SCORE}}%</text></svg></div>
       <div class="score-info">
         <h4>{{SCREEN_NAME}}</h4>
-        <p>{{SCREEN_ID}} · {{SCREEN_TYPE}} · <span style="color:var(--sev-critical-fg)">{{SCREEN_GAP_COUNT}} Gap</span></p>
+        <p>{{SCREEN_ID}} · {{SCREEN_TYPE}} · <span style="color:var(--sev-critical-fg)">{{SCREEN_GAP_COUNT}} hạng mục cần cải thiện</span></p>
       </div>
     </div>
     <!-- ...repeat for each screen... -->
   </div>
 </section>
 
-<!-- ═══ SECTION 3: METHODOLOGY ═══ -->
-<section class="section reveal" id="method">
-  <div class="section-title"><span class="icon">🔬</span> 02 · Phương pháp đánh giá</div>
-  <div class="method-grid">
-    <div class="method-card"><div class="method-icon">🔍</div><h4>Heuristic Evaluation</h4><p>Đánh giá theo 10 heuristics của Nielsen Norman Group. Mỗi phát hiện được liên kết với heuristic cụ thể bị vi phạm.</p></div>
-    <div class="method-card"><div class="method-icon">🧩</div><h4>Component Spec Analysis</h4><p>So sánh thiết kế Figma với DDL component specifications để phát hiện gap về states, props và behavior.</p></div>
-    <div class="method-card"><div class="method-icon">👁️</div><h4>Vision Inspection</h4><p>Phân tích trực quan từng màn hình: alignment, contrast, typography, touch targets, overlay detection.</p></div>
-    <div class="method-card"><div class="method-icon">⚖️</div><h4>UX Law Cross-Reference</h4><p>Áp dụng Fitts's Law, Hick's Law, Peak-End Rule và các nguyên tắc thiết kế vào từng màn hình.</p></div>
-  </div>
-</section>
-
-<!-- ═══ SECTION 4: DETAILED FINDINGS ═══ -->
+<!-- ═══ SECTION 3: DETAILED FINDINGS — Table-based card structure ═══
+     CARD ANATOMY:
+     ┌─ .finding-accent (3px severity color bar) ─────────────────────┐
+     │ .card-header: [UXP-ID] [Badge] Title                          │
+     ├─ .card-body ────────────────────────────────────────────────────┤
+     │ 500px Phone │ <table .card-table>                              │
+     │  Screenshot │   Hiện trạng  │ description text                 │
+     │   (click    │   Tác động    │ impact text                      │
+     │  lightbox)  │   Nguyên tắc  │ heuristic violation              │
+     │             │   Đề xuất     │ green proposal box               │
+     ├─ .card-footer ──────────────────────────────────────────────────┤
+     │ [screen-tag]                         [Tham chiếu kỹ thuật →]  │
+     └─────────────────────────────────────────────────────────────────┘
+-->
 <section class="section" id="findings">
-  <div class="section-title"><span class="icon">🔎</span> 03 · Các vấn đề được phát hiện</div>
+  <div class="section-title"><span class="icon">🔎</span> 02 · Các vấn đề được phát hiện</div>
 
-  <!-- Group findings by severity. Each group has a colored label header. -->
+  <!-- ── Critical severity group ── -->
   <div style="margin-bottom:36px">
-    <!-- Severity group label -->
-    <div style="background:var(--sev-critical-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-critical-fg);margin-bottom:20px;letter-spacing:.3px">🔴 Critical — Cần xử lý ngay</div>
+    <div style="background:var(--sev-critical-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-critical-fg);margin-bottom:20px;letter-spacing:.3px">🔴 Nghiêm trọng — Cần xử lý ngay</div>
 
-    <!-- FINDING CARD TEMPLATE
-         Layout: 2fr (phone-frame screenshot) : 3fr (card-info)
-         Repeat for each UXP finding in this severity group -->
+    <!-- FINDING CARD — Table layout for fast scanning -->
     <div class="finding-card reveal">
       <div class="finding-accent critical"></div>
-      <div class="card-layout">
+      <div class="card-header">
+        <span class="card-id">UXP-{{ID}}</span>
+        <span class="badge critical">Nghiêm trọng</span>
+        <h3>{{FINDING_TITLE}}</h3>
+      </div>
+      <div class="card-body">
         <div class="card-visual">
-          <div class="phone-frame"><img src="{{SCREENSHOT_PATH}}" alt="{{SCREENSHOT_ALT}}" loading="lazy"></div>
-          <div class="shot-overlay">⚠️ {{OVERLAY_LABEL}}</div>
+          <div class="phone-frame" onclick="openLightbox('{{SCREENSHOT_PATH}}')"><img src="{{SCREENSHOT_PATH}}" alt="{{SCREENSHOT_ALT}}" loading="lazy"></div>
         </div>
-        <div class="card-info">
-          <div class="card-top"><span class="card-id">UXP-{{ID}}</span><span class="badge critical">Critical</span></div>
-          <h3>{{FINDING_TITLE}}</h3>
-          <div class="finding-section"><h4>Tác động đến người dùng</h4><p>{{USER_IMPACT}}</p></div>
-          <div class="finding-section"><h4>Heuristic vi phạm</h4><p>{{HEURISTIC_REFS}}</p></div>
-          <div class="proposed-box"><ul><li>{{PROPOSAL_TEXT}}</li></ul></div>
-          <div class="finding-tags"><span class="card-tag">{{SCREEN_TAG}}</span></div>
-          <details><summary>Xem tham chiếu kỹ thuật →</summary><div class="detail-content">{{DDL_REFS}}<br>Effort: —</div></details>
-        </div>
+        <table class="card-table">
+          <tr>
+            <td class="td-label">Hiện trạng</td>
+            <td class="td-value">{{CURRENT_STATE}}</td>
+          </tr>
+          <tr>
+            <td class="td-label">Tác động</td>
+            <td class="td-value">{{USER_IMPACT}}</td>
+          </tr>
+          <tr>
+            <td class="td-label">Nguyên tắc</td>
+            <td class="td-value">{{HEURISTIC_VIOLATION}}</td>
+          </tr>
+          <tr>
+            <td colspan="2" class="td-value proposal"><ul><li>{{PROPOSAL_TEXT}}</li></ul></td>
+          </tr>
+        </table>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">{{SCREEN_TAG}}</span></div>
+        <details><summary>Tham chiếu kỹ thuật →</summary><div class="detail-content">{{DDL_REFS}}<ul class="ref-sources"><li><a href="{{REF_URL}}" target="_blank" rel="noopener">{{REF_SOURCE}}</a> — <em>"{{REF_QUOTE}}"</em></li></ul></div></details>
       </div>
     </div>
     <!-- ...repeat finding cards... -->
   </div>
 
-  <!-- Major group -->
+  <!-- ── Major severity group ── -->
   <div style="margin-bottom:36px">
-    <div style="background:var(--sev-major-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-major-fg);margin-bottom:20px;letter-spacing:.3px">🟡 Major — Ưu tiên cao</div>
-    <!-- ...repeat finding cards with .finding-accent.major and .badge.major... -->
+    <div style="background:var(--sev-major-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-major-fg);margin-bottom:20px;letter-spacing:.3px">🟡 Quan trọng — Ưu tiên cao</div>
+    <!-- Repeat finding cards with .finding-accent.major / .badge.major / label "Quan trọng" -->
   </div>
 
-  <!-- Minor group (if any) -->
-  <!-- <div style="margin-bottom:36px">
-    <div style="background:var(--sev-minor-bg);padding:...">⚪ Minor — Cải thiện</div>
-    ...finding cards...
-  </div> -->
-</section>
-
-<!-- ═══ SECTION 5: HEURISTIC SCORECARD ═══ -->
-<section class="section" id="scorecard">
-  <div class="section-title"><span class="icon">📊</span> 04 · Đánh giá theo danh mục heuristic</div>
-  <div class="scorecard-grid">
-    <!-- Repeat for each heuristic category.
-         Score ring: r=33, circumference=207, offset = 207 × (1 - score/100)
-         Color: use --sev-critical for <50%, --sev-major for 50-69%, --sev-pass for ≥70%
-         Layout: flex-direction:column for centered display -->
-    <div class="score-item reveal" style="flex-direction:column;text-align:center">
-      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="{{HEURISTIC_COLOR}}" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="{{HEURISTIC_OFFSET}}" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="{{HEURISTIC_COLOR}}">{{HEURISTIC_SCORE}}%</text></svg>
-      <div class="score-info" style="margin-top:8px;text-align:center"><h4>{{HEURISTIC_NAME_VI}}</h4><p>{{HEURISTIC_NAME_EN}}</p></div>
-    </div>
-    <!-- Standard categories:
-         Luồng người dùng (Flow & Navigation)
-         Xử lý lỗi (Error Handling)
-         Trạng thái hệ thống (System Status)
-         Điểm chạm & Mục tiêu (Touch & Target)
-         Nhất quán & Tiêu chuẩn (Consistency)
-         Nội dung & Trình bày (Content & Layout) -->
+  <!-- ── Minor severity group ── -->
+  <div style="margin-bottom:36px">
+    <div style="background:var(--sev-minor-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-minor-fg);margin-bottom:20px;letter-spacing:.3px">⚪ Cải thiện — Nâng cao trải nghiệm</div>
+    <!-- Repeat finding cards with .finding-accent.minor / .badge.minor / label "Cải thiện" -->
   </div>
 </section>
 
-<!-- ═══ SECTION 6: GAPS DETAIL ═══ -->
+<!-- ═══ SECTION 4: GAPS DETAIL — Table-based scannable layout ═══
+     GAP CARD ANATOMY:
+     ┌─ .gap-header ──────────────────────────────────────────────────┐
+     │ [●N] Gap Title                                    [UXG-XXX]   │
+     ├─ <table .gap-table> ────────────────────────────────────────────┤
+     │ 📝 Hiện trạng  │ description text  [📸 screenshot.png]        │
+     │ 🎯 Tác động    │ user impact text                              │
+     │    Nguyên tắc  │ Nielsen #N — Name                             │
+     │    Tham chiếu  │ DDL ref + source links (direct)               │
+     └─────────────────────────────────────────────────────────────────┘
+-->
 <section class="section" id="gaps" style="padding-top:48px">
   <div class="section-title"><span class="icon">📋</span> Tổng hợp Gap ({{TOTAL_GAP_COUNT}} hạng mục)</div>
   <p style="color:var(--text-muted);font-size:14px;margin-bottom:20px">Các hạng mục kiểm tra chưa đạt chuẩn theo từng màn hình — checklist cải thiện từ ux-review-report</p>
 
   <!-- Repeat for each screen -->
-  <div class="gap-screen-group" style="margin-bottom:32px">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+  <div style="margin-bottom:36px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
       <span class="gap-screen">{{SCREEN_ID}}</span>
       <strong style="font-size:14px">{{SCREEN_NAME}}</strong> · <em>{{SCREEN_TYPE}}</em>
     </div>
 
-    <!-- Repeat for each gap item in this screen -->
-    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">{{GAP_NUMBER}}</span>
-        <strong style="font-size:13.5px;color:#1a1a2e">{{GAP_TITLE}}</strong>
-        <span class="gap-ref" style="margin-left:6px;font-size:10px;vertical-align:middle">{{GAP_REF}}</span>
+    <!-- GAP CARD — Table layout for fast scanning -->
+    <div class="gap-card reveal">
+      <div class="gap-header">
+        <span class="gap-num">{{GAP_NUMBER}}</span>
+        <strong style="font-size:13px;flex:1">{{GAP_TITLE}}</strong>
+        <span class="gap-ref">{{GAP_REF}}</span>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
-        <div>
-          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
-          <div style="color:#444">{{GAP_USER_IMPACT}}</div>
-        </div>
-        <div>
-          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Heuristic vi phạm</div>
-          <div style="color:#444">{{GAP_HEURISTIC}}</div>
-        </div>
-        <div style="grid-column:1/-1">
-          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng & Phân tích <span style="display:inline-block;background:#EFF6FF;color:#2563EB;font-size:10px;padding:1px 6px;border-radius:4px;font-family:monospace;margin-left:4px">📸 {{GAP_SCREENSHOT}}</span></div>
-          <div style="color:#444">{{GAP_EVIDENCE}}</div>
-        </div>
-      </div>
+      <table class="gap-table">
+        <tr>
+          <td class="td-label">📝 Hiện trạng</td>
+          <td class="td-value">{{GAP_CURRENT_STATE}} <span class="img-cite" onclick="openLightbox('{{GAP_SCREENSHOT_PATH}}')">📸 {{GAP_SCREENSHOT}}</span></td>
+        </tr>
+        <tr>
+          <td class="td-label">🎯 Tác động</td>
+          <td class="td-value">{{GAP_USER_IMPACT}}</td>
+        </tr>
+        <tr>
+          <td class="td-label">Nguyên tắc</td>
+          <td class="td-value">{{GAP_HEURISTIC}}</td>
+        </tr>
+        <tr>
+          <td class="td-label td-ref">Tham chiếu</td>
+          <td class="td-ref">
+            <details style="margin:0">
+              <summary style="cursor:pointer;font-size:11px;color:var(--accent-purple);font-weight:700">Tham chiếu kỹ thuật →</summary>
+              <div class="detail-content">
+                <div style="margin-bottom:6px;padding:6px 10px;background:#f8fafc;border-left:2px solid var(--border);border-radius:4px;font-style:italic;font-size:11.5px;color:var(--text-muted)">{{DDL_PRINCIPLE}}</div>
+                <ul class="ref-sources">
+                  <li><a href="{{REF_URL}}" target="_blank" rel="noopener">{{REF_SOURCE}}</a> — <em>"{{REF_QUOTE}}"</em></li>
+                  <!-- ...repeat for each reference source... -->
+                </ul>
+              </div>
+            </details>
+          </td>
+        </tr>
+      </table>
     </div>
     <!-- ...repeat gap items... -->
   </div>
   <!-- ...repeat screen groups... -->
 </section>
 
-<!-- ═══ FOOTER — No dates, no pipeline refs ═══ -->
+<!-- ═══ FOOTER ═══ -->
 <footer>
-  <p><strong>{{PRODUCT_NAME}}</strong> · {{MODULE_NAME}} · Đánh giá DDL-grounded</p>
+  <p><strong>{{PRODUCT_NAME}}</strong> · {{MODULE_NAME}} · Đánh giá trải nghiệm người dùng dựa trên thông số thiết kế (DDL)</p>
 </footer>
-
-<!-- ═══ ANIMATION SCRIPT ═══ -->
-<script>
-document.addEventListener('DOMContentLoaded',()=>{
-  const obs=new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})
-  },{threshold:0.12});
-  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-});
-</script>
 
 <!-- ═══ LIGHTBOX ═══ -->
 <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox(event)">
@@ -327,16 +367,31 @@ document.addEventListener('DOMContentLoaded',()=>{
   <div class="lightbox-caption" id="lightbox-caption"></div>
 </div>
 <script>
+document.addEventListener('DOMContentLoaded',()=>{
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})
+  },{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+});
+
 function openLightbox(src){
-  var lb=document.getElementById('lightbox'),img=document.getElementById('lightbox-img'),cap=document.getElementById('lightbox-caption');
-  img.src=src;cap.textContent=src.split('/').pop();
-  lb.classList.add('active');document.body.style.overflow='hidden';
+  const lb=document.getElementById('lightbox');
+  const img=document.getElementById('lightbox-img');
+  const cap=document.getElementById('lightbox-caption');
+  img.src=src;
+  cap.textContent=src.split('/').pop();
+  lb.classList.add('active');
+  document.body.style.overflow='hidden';
 }
 function closeLightbox(e){
   if(e.target.tagName==='IMG')return;
-  document.getElementById('lightbox').classList.remove('active');document.body.style.overflow='';
+  const lb=document.getElementById('lightbox');
+  lb.classList.remove('active');
+  document.body.style.overflow='';
 }
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLightbox({target:{tagName:''}});});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeLightbox({target:{tagName:''}});
+});
 </script>
 
 </body>
