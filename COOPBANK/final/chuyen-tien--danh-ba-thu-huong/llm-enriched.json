@@ -1,0 +1,449 @@
+[
+  {
+    "id": "UXP-001",
+    "hiện_trạng": "Màn hình Danh sách (contact.png) hiển thị toast hướng dẫn \"Chọn danh bạ mà Qúy khách muốn xóa\" ngay khi vào delete mode. Toast không có nút dismiss (×), không auto-dismiss, và chứa lỗi chính tả \"Qúy\" thay vì \"Quý\". Thanh toast nằm phía trên danh sách contact với nền trắng viền bo tròn.",
+    "tác_động": "Người dùng không thể tự tắt toast hướng dẫn, toast chiếm diện tích hiển thị và che khuất phần đầu danh sách. Lỗi chính tả \"Qúy\" trong ứng dụng ngân hàng làm giảm mức độ tin tưởng của khách hàng vào tính chuyên nghiệp của hệ thống — yếu tố then chốt trong dịch vụ tài chính.",
+    "nguyên_tắc": "Nielsen #3 — người dùng Control and Freedom: \"người dùng often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.\" Toast không có dismiss action vi phạm quyền kiểm soát của người dùng — họ không thể loại bỏ thông báo khi đã đọc xong. Fitts's Law cũng bị vi phạm vì thiếu target (×) để tương tác.",
+    "đề_xuất_steps": [
+      "Thêm icon × (close) ở bên phải toast, kích thước tối thiểu 44×44px theo WCAG 2.5.8",
+      "triển khai auto-dismiss sau 5 giây với animation fade-out 300ms",
+      "Sửa lỗi chính tả: \"Qúy\" → \"Quý\" trên toàn bộ ứng dụng",
+      "Cân nhắc chuyển toast sang dạng inline banner để không che khuất nội dung"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+        "source": "Laws of UX"
+      },
+      {
+        "name": "WCAG 2.5.8 — Target Size Minimum (Level AA)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html",
+        "quote": "The size of the target for pointer inputs is at least 24 by 24 CSS pixels.",
+        "source": "W3C"
+      }
+    ]
+  },
+  {
+    "id": "UXP-002",
+    "hiện_trạng": "Màn hình Chi tiết danh bạ (contact-details.png) hiển thị 4 hàng thông tin với layout label-value ngang: \"Loại chuyển tiền\" bị truncate thành \"Loại chuyển\" do cùng dòng với giá trị \"Chuyển tiền nhanh 24/7 qua tài khoản\". Label và value chồng lấn nhau, gây khó đọc — đặc biệt với giá trị dài như tên ngân hàng \"BIDV - Ngân hàng đầu tư và phát triển Việt Nam\".",
+    "tác_động": "Người dùng không thể đọc đầy đủ thông tin danh bạ thụ hưởng trước khi thực hiện giao dịch. Trong ngân hàng app, thông tin bị cắt xén có thể dẫn đến chuyển tiền nhầm người nhận, gây hậu quả tài chính nghiêm trọng và khó hoàn lại.",
+    "nguyên_tắc": "Nielsen #8 — Aesthetic and Minimalist Design: \"Giao diện không nên chứa thông tin không liên quan hoặc hiếm khi cần thiết.\" Ở đây ngược lại — thông tin CẦN THIẾT bị ẩn do layout không phù hợp. WCAG 1.4.12 (Text Spacing) cũng bị ảnh hưởng vì text overlap nhau.",
+    "đề_xuất_steps": [
+      "Chuyển sang layout 2-line (vertical stack): label phía trên (font-size: 13px, color: muted), value phía dưới (font-size: 15px, color: foreground)",
+      "Đảm bảo label \"Loại chuyển tiền\" hiển thị đầy đủ, không truncate",
+      "Value dài (tên ngân hàng) cho phép wrap multi-line thay vì ellipsis",
+      "Tăng row height tối thiểu lên 56px để chứa 2-line layout"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Peak-End Rule",
+        "url": "https://lawsofux.com/peak-end-rule/",
+        "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+        "source": "Laws of UX"
+      }
+    ]
+  },
+  {
+    "id": "UXP-003",
+    "hiện_trạng": "Màn hình Thêm mới danh bạ (thêm-new-3.png) hiển thị trạng thái lỗi khi số tài khoản không tồn tại: text lỗi \"Số tài khoản/Số thẻ không tồn tại\" màu đỏ (#dc2626) xuất hiện bên dưới input field. Tuy nhiên, border của input field vẫn giữ nguyên màu default (gray), không chuyển sang destructive state. Nút \"Thêm mới\" vẫn ở trạng thái enabled dù form invalid.",
+    "tác_động": "Người dùng có thể bỏ sót lỗi vì chỉ có text nhỏ báo lỗi mà không có visual cue mạnh (border đỏ, icon cảnh báo). Trong ngữ cảnh ngân hàng, submit form với dữ liệu sai có thể tạo danh bạ không hợp lệ, gây lỗi khi thực hiện chuyển tiền sau này.",
+    "nguyên_tắc": "Nielsen #9 — Help người dùng Recognize, Diagnose, and Recover from Errors: \"Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.\" trạng thái lỗi hiện tại thiếu 2/3 tín hiệu chuẩn (border color + icon), chỉ có text — giảm khả năng nhận diện lỗi.",
+    "đề_xuất_steps": [
+      "Đổi border input sang destructive color (#dc2626) khi error, sử dụng DDL token {base.destructive}",
+      "Thêm icon ⚠️ (16×16px) trước thông báo lỗi text",
+      "Disable nút \"Thêm mới\" khi form chứa validation error (opacity: 0.5, pointer-events: none)",
+      "Thêm aria-invalid=\"true\" và aria-describedby cho khả năng tiếp cận"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "WCAG 3.3.1 — Error Identification (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html",
+        "quote": "If an input error is automatically detected, the item that is in error is identified and the error is described to the user in text.",
+        "source": "W3C"
+      },
+      {
+        "name": "Doherty Threshold",
+        "url": "https://lawsofux.com/doherty-threshold/",
+        "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+        "source": "Laws of UX"
+      }
+    ]
+  },
+  {
+    "id": "UXP-004",
+    "hiện_trạng": "Màn hình Tìm kiếm (search-3.png) hiển thị trạng thái trống khi chưa có danh bạ thụ hưởng: chỉ có dòng text nhỏ \"Quý khách chưa có danh bạ thụ hưởng\" (font-size ~14px, color muted) ở giữa màn hình trống. Không có illustration/icon, không có CTA button hướng dẫn thêm mới. Phía dưới có callout bubble \"Nhấn vào đây để thêm mới danh bạ thụ hưởng\" trỏ vào FAB (+) nhưng đây là annotation design, không phải UI element.",
+    "tác_động": "Người dùng mới lần đầu vào màn hình Danh bạ sẽ thấy giao diện trống với thông điệp tối thiểu, không biết bước tiếp theo là gì. Thiếu visual engagement và guidance rõ ràng làm tăng tỷ lệ thoát (bounce rate) tại điểm onboarding quan trọng của tính năng chuyển tiền.",
+    "nguyên_tắc": "Nielsen #6 — Recognition Rather Than Recall: \"Giảm thiểu tải nhớ của người dùng bằng cách hiển thị rõ ràng các phần tử, hành động và tùy chọn.\" trạng thái trống thiếu visual cue (icon, illustration) và CTA inline — buộc người dùng phải tự tìm cách thêm danh bạ thay vì được hướng dẫn trực tiếp.",
+    "đề_xuất_steps": [
+      "Thêm illustration icon 48×48px (hình contact/address book) phía trên text",
+      "Đổi heading thành bold: \"Chưa có danh bạ thụ hưởng\" (font-weight: 600)",
+      "Thêm subtitle: \"Thêm người thụ hưởng để chuyển tiền nhanh hơn\" (color: muted)",
+      "Thêm CTA button inline: \"+ Thêm danh bạ\" bên dưới subtitle, style outline hoặc primary"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-005",
+    "hiện_trạng": "Màn hình Chi tiết danh bạ ở edit mode (contact-details-2.png) hiển thị keyboard số và cursor đang active tại trường \"Tên gợi nhớ\". Footer chỉ có một nút \"Cập nhật\" (primary button), không có nút \"Hủy\" hoặc option cancel. Nút \"Thực hiện giao dịch\" đã biến mất khi vào edit mode. Back button (←) ở header vẫn hiện nhưng không rõ behavior khi có unsaved changes.",
+    "tác_động": "Người dùng đang chỉnh sửa tên gợi nhớ không có cách nào hủy thay đổi ngoài việc nhấn back — nhưng không rõ back sẽ save hay discard. Trong ngân hàng app, thay đổi thông tin danh bạ ảnh hưởng trực tiếp đến giao dịch chuyển tiền, cần có cơ chế undo/cancel rõ ràng để tránh sai sót.",
+    "nguyên_tắc": "Nielsen #3 — người dùng Control and Freedom: \"người dùng often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.\" Edit mode thiếu exit rõ ràng — chỉ có \"Cập nhật\" (commit) mà không có \"Hủy\" (abort), vi phạm nguyên tắc emergency exit.",
+    "đề_xuất_steps": [
+      "Thêm nút \"Hủy\" (outline style) bên trái nút \"Cập nhật\" trong footer",
+      "Khi nhấn back (←) với unsaved changes → hiển thị xác nhận dialog: \"Bạn có muốn lưu thay đổi?\" với 3 options: Lưu / Không lưu / Tiếp tục chỉnh sửa",
+      "Cân nhắc giữ nút \"Thực hiện giao dịch\" visible (disabled) để context không mất đột ngột"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-006",
+    "hiện_trạng": "Màn hình Danh sách (contact-2.png) hiển thị danh sách dài với chiều cao 1222px, bao gồm 4 sections (Chuyển tiền nội bộ, 24/7 qua tài khoản, 24/7 qua thẻ, Chuyển tiền nội bộ). Tất cả sections đều đang expand, cùng với toast hướng dẫn xóa ở trên. Khi scroll xuống, section headers không sticky — người dùng mất context đang ở section nào.",
+    "tác_động": "Với danh sách dài >1200px, người dùng phải scroll nhiều lần và mất định hướng vị trí trong danh sách. Khi cần tìm contact thuộc loại chuyển tiền cụ thể, phải scroll ngược lên để xác nhận section header — tăng thời gian thao tác và tải nhận thức.",
+    "nguyên_tắc": "Hick's Law: \"Thời gian ra quyết định tăng theo số lượng và độ phức tạp của các lựa chọn.\" Tất cả sections expand đồng thời + không sticky headers tạo ra quá nhiều choices visible cùng lúc, làm chậm quá trình tìm kiếm contact.",
+    "đề_xuất_steps": [
+      "triển khai sticky section headers (position: sticky, top: 0) khi scroll — header section hiện tại luôn visible",
+      "Mặc định collapse các sections, chỉ expand section đầu tiên hoặc section được người dùng tap",
+      "Thêm count badge bên cạnh section header: \"Chuyển tiền nội bộ (3)\" để người dùng biết số lượng trước khi expand"
+    ],
+    "references": [
+      {
+        "name": "Hick's Law",
+        "url": "https://lawsofux.com/hicks-law/",
+        "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+        "source": "Laws of UX"
+      },
+      {
+        "name": "Miller's Law",
+        "url": "https://lawsofux.com/millers-law/",
+        "quote": "The average person can only keep 7 (plus or minus 2) items in their working memory.",
+        "source": "Laws of UX"
+      }
+    ]
+  },
+  {
+    "id": "UXP-007",
+    "hiện_trạng": "Màn hình Thêm mới danh bạ (thêm-new-2.png) hiển thị tên chủ tài khoản \"NGUYEN HOANG HIEU\" được auto-resolve từ số tài khoản. Tên hiển thị bằng chữ in hoa hoàn toàn (ALL CAPS), không có label giải thích phía trên, xuất hiện như một dòng text độc lập giữa input \"Số tài khoản\" và \"Tên gợi nhớ\". Không rõ đây là thông tin read-only hay editable.",
+    "tác_động": "Người dùng không biết dòng text ALL CAPS là gì — tên chủ tài khoản, tên gợi nhớ, hay kết quả xác minh. Thiếu label tạo ambiguity, đặc biệt nguy hiểm trong ngân hàng app nơi người dùng cần xác nhận chính xác danh tính người nhận tiền trước khi lưu.",
+    "nguyên_tắc": "Nielsen #2 — Match Between System and Real World: \"The design should speak the người dùng' language. Use words, phrases, and concepts familiar to người dùng.\" Tên ALL CAPS không khớp cách người dùng đọc tên trong đời thực. WCAG 3.3.2 (Labels or Instructions) cũng bị vi phạm vì thiếu label cho trường dữ liệu.",
+    "đề_xuất_steps": [
+      "Thêm label \"Tên chủ tài khoản\" (font-size: 13px, color: muted) phía trên dòng tên",
+      "Chuyển tên sang Title Case (\"Nguyen Hoang Hieu\") hoặc thêm note \"(theo ngân hàng)\" để giải thích format ALL CAPS",
+      "Thêm icon ✓ xanh bên cạnh tên để indicate đây là kết quả xác minh thành công từ hệ thống ngân hàng"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+        "quote": "Labels or instructions are provided when content requires user input.",
+        "source": "W3C"
+      }
+    ]
+  },
+  {
+    "id": "UXP-008",
+    "hiện_trạng": "Màn hình Danh sách ở multi-select mode (contact-3.png) hiển thị FAB (+) ở vị trí bottom-right (y≈744px) trong khi bottom navigation bar bắt đầu ở y≈740px. FAB chồng lấn trực tiếp lên icon \"Xóa (2)\" ở bottom bar. Khoảng cách giữa FAB và nav bar < 4px, không có padding/margin phân cách.",
+    "tác_động": "Vùng touch target của FAB và bottom nav chồng lấn, gây mis-tap khi người dùng muốn nhấn FAB nhưng vô tình kích hoạt nav item hoặc ngược lại. Với independent touch area < 44px, risk mis-tap tăng đáng kể trên thiết bị có màn hình nhỏ.",
+    "nguyên_tắc": "Fitts's Law: \"Thời gian để đạt tới mục tiêu phụ thuộc vào khoảng cách và kích thước của mục tiêu.\" Khi 2 interactive targets quá gần nhau (overlap), thời gian acquire target chính xác tăng exponentially — đặc biệt bất tiện trên mobile với ngón tay lớn hơn cursor.",
+    "đề_xuất_steps": [
+      "Nâng FAB lên trên bottom nav với khoảng cách tối thiểu 16px (y ≤ 680px)",
+      "Đảm bảo independent touch area giữa FAB và nav bar ≥ 8px theo WCAG 2.5.8",
+      "Cân nhắc ẩn FAB khi ở delete/multi-select mode vì thao tác \"thêm mới\" không liên quan đến flow \"xóa\""
+    ],
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+        "source": "Laws of UX"
+      },
+      {
+        "name": "WCAG 2.5.8 — Target Size Minimum (Level AA)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html",
+        "quote": "The size of the target for pointer inputs is at least 24 by 24 CSS pixels.",
+        "source": "W3C"
+      }
+    ]
+  },
+  {
+    "id": "Gap#8@SCR-DB-001",
+    "hiện_trạng": "Toast thông báo \"Chọn danh bạ mà Qúy khách muốn xóa\" hiển thị trên màn hình Danh sách khi vào delete mode, nhưng không có nút dismiss (×) và chứa lỗi chính tả \"Qúy\".",
+    "tác_động": "Toast không tắt được chiếm diện tích và gây phiền nhiễu. Lỗi chính tả trong ứng dụng ngân hàng ảnh hưởng trực tiếp đến ấn tượng chuyên nghiệp và độ tin cậy của hệ thống.",
+    "nguyên_tắc": "Nielsen #3 — người dùng Control and Freedom: \"người dùng often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.\" Toast không dismiss được vi phạm quyền kiểm soát của người dùng.",
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung nút dismiss (×) và chứa lỗi chính tả \"Qúy\" vào thiết kế màn hình",
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow"
+    ]
+  },
+  {
+    "id": "Gap#12@SCR-DB-001",
+    "hiện_trạng": "FAB (+) ở vị trí y=744px trùng với bottom navigation bar bắt đầu ở y=740px, tạo overlap 4px giữa 2 interactive elements trên màn hình Danh sách.",
+    "tác_động": "Vùng touch chồng lấn giữa FAB và bottom nav gây mis-tap, đặc biệt trên thiết bị màn hình nhỏ. Người dùng muốn thêm danh bạ mới có thể vô tình navigate sang tab khác.",
+    "nguyên_tắc": "Fitts's Law: \"Thời gian để đạt tới mục tiêu phụ thuộc vào khoảng cách và kích thước của mục tiêu.\" Overlap giữa 2 touch targets vi phạm nguyên tắc — khoảng cách giữa targets quá nhỏ làm tăng error rate.",
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Tăng kích thước vùng chạm tối thiểu 44×44dp theo chuẩn WCAG 2.5.5",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow"
+    ]
+  },
+  {
+    "id": "Gap#13@SCR-DB-001",
+    "hiện_trạng": "Danh sách contact đạt chiều cao 1222px với tất cả sections expand đồng thời. Section headers (\"Chuyển tiền nội bộ\", \"24/7 qua tài khoản\", \"24/7 qua thẻ\") không sticky — biến mất khi scroll xuống.",
+    "tác_động": "Người dùng mất context loại chuyển tiền khi scroll qua danh sách dài, phải scroll ngược để xác nhận section hiện tại. Tăng thời gian tìm kiếm và tải nhận thức.",
+    "nguyên_tắc": "Hick's Law: \"Thời gian ra quyết định tăng theo số lượng và độ phức tạp của các lựa chọn.\" Hiển thị tất cả contacts từ mọi section cùng lúc mà không có sticky header tạo cognitive overload.",
+    "references": [
+      {
+        "name": "Hick's Law",
+        "url": "https://lawsofux.com/hicks-law/",
+        "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Thêm tính năng tìm kiếm/lọc cho danh sách dài — hỗ trợ tìm nhanh theo keyword"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-DB-002",
+    "hiện_trạng": "trạng thái trống trên màn hình Tìm kiếm (search-3.png) chỉ hiển thị dòng text \"Quý khách chưa có danh bạ thụ hưởng\" cỡ nhỏ, không có illustration, icon, hay CTA button hướng dẫn bước tiếp theo.",
+    "tác_động": "Màn hình trống với thông điệp tối thiểu không cung cấp guidance cho người dùng mới. Thiếu engagement point làm tăng tỷ lệ thoát tại bước onboarding tính năng quản lý danh bạ — một tính năng quan trọng để tăng tốc chuyển tiền.",
+    "nguyên_tắc": "Nielsen #6 — Recognition Rather Than Recall: \"Giảm thiểu tải nhớ của người dùng bằng cách hiển thị rõ ràng các phần tử, hành động và tùy chọn.\" trạng thái trống thiếu actionable CTA buộc người dùng phải nhớ/tìm FAB (+) ở góc màn hình thay vì được hướng dẫn trực tiếp.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung illustration vào thiết kế màn hình",
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Thiết kế trạng thái trống với illustration, message hướng dẫn và CTA rõ ràng",
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-DB-003",
+    "hiện_trạng": "Màn hình Chi tiết danh bạ (contact-details.png) hiển thị label \"Loại chuyển\" bị truncate (thiếu \"tiền\"), value \"Chuyển tiền nhanh 24/7 qua tài khoản\" chồng lấn lên label do layout ngang single-line.",
+    "tác_động": "Thông tin bị cắt xén khiến người dùng không thể xác nhận đầy đủ loại hình chuyển tiền của danh bạ. Trong ngân hàng, kiểm tra thông tin người nhận trước giao dịch là bước bắt buộc — label truncate gây uncertainty.",
+    "nguyên_tắc": "Nielsen #8 — Aesthetic and Minimalist Design: \"Giao diện không nên chứa thông tin không liên quan hoặc hiếm khi cần thiết.\" Thông tin cần thiết bị ẩn do layout constraint — cần restructure để hiển thị đầy đủ.",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung thành phần còn thiếu vào giao diện hiện tại",
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-DB-003",
+    "hiện_trạng": "Edit mode trên màn hình Chi tiết (contact-details-2.png) chỉ có nút \"Cập nhật\" (primary) trong footer, không có nút \"Hủy\" (secondary/outline). Back button (←) ở header là exit duy nhất nhưng behavior không rõ ràng khi có unsaved changes.",
+    "tác_động": "Thiếu cancel option buộc người dùng phải commit (Cập nhật) hoặc dùng back button mà không biết thay đổi có bị mất hay không. Uncertainty này đặc biệt nghiêm trọng trong ngân hàng app nơi thao tác sai có thể ảnh hưởng đến giao dịch tài chính.",
+    "nguyên_tắc": "Nielsen #3 — người dùng Control and Freedom: \"người dùng often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.\" Thiếu nút Hủy rõ ràng vi phạm nguyên tắc emergency exit.",
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung nút \"Hủy\" (secondary/outline) vào thiết kế màn hình",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-DB-004",
+    "hiện_trạng": "trạng thái lỗi trên form Thêm mới (thêm-new-3.png): text lỗi \"Số tài khoản/Số thẻ không tồn tại\" hiển thị màu đỏ nhưng border input field vẫn giữ màu default (gray). Nút \"Thêm mới\" vẫn enabled dù form invalid.",
+    "tác_động": "Error signal yếu (chỉ text, thiếu border + icon) khiến người dùng dễ bỏ qua lỗi và nhấn submit. Trong ngân hàng app, tạo danh bạ với số tài khoản không hợp lệ gây lỗi cascade khi thực hiện chuyển tiền.",
+    "nguyên_tắc": "WCAG 3.3.1 — Error Identification: \"If an input error is automatically detected, the item that is in error is identified and the error is described to người dùng in text.\" trạng thái lỗi cần multi-channel feedback (text + visual + state) để đảm bảo nhận diện.",
+    "references": [
+      {
+        "name": "WCAG 3.3.1 — Error Identification (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html",
+        "quote": "If an input error is automatically detected, the item that is in error is identified and the error is described to the user in text.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo"
+    ]
+  },
+  {
+    "id": "Gap#7@SCR-DB-004",
+    "hiện_trạng": "Trên form Thêm mới (thêm-new-2.png), tên chủ tài khoản \"NGUYEN HOANG HIEU\" hiển thị ALL CAPS, không có label giải thích, xuất hiện như một dòng text độc lập giữa input \"Số tài khoản\" và \"Tên gợi nhớ\".",
+    "tác_động": "Người dùng không biết dòng text ALL CAPS đại diện cho thông tin gì — tên chủ tài khoản hay trường nhập liệu. Ambiguity này gây confusion trong quy trình xác minh người nhận tiền — bước quan trọng nhất của tính năng thêm danh bạ.",
+    "nguyên_tắc": "WCAG 3.3.2 — Labels or Instructions: \"Labels or instructions are provided when content requires người dùng input.\" Dù đây là read-only field, vẫn cần label để người dùng hiểu ý nghĩa của dữ liệu hiển thị.",
+    "references": [
+      {
+        "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+        "quote": "Labels or instructions are provided when content requires user input.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung label giải thích vào thiết kế màn hình",
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "UXP-009",
+    "hiện_trạng": "Bulk delete flow yêu cầu nhấn icon 🗑 trước khi chọn contacts — sai thứ tự cognitive Select-then-Act.",
+    "tác_động": "người dùng phải học mode trước khi hành động. Đúng: chọn trước → action sau (Gmail pattern).",
+    "nguyên_tắc": "Nielsen #7: Select-then-act pattern.",
+    "references": [
+      {
+        "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+        "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+        "quote": "Shortcuts speed up interaction.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đổi sang Select-first: long-press để enter selection mode → chọn contacts → contextual action bar hiện \"Xóa\" + \"Hủy\" + count badge",
+      "Clear visual differentiation: header đổi màu + contextual actions thay thế default toolbar",
+      "Exit path rõ ràng: \"Hủy chọn\" button hoặc back gesture → trở về normal mode"
+    ]
+  },
+  {
+    "id": "UXP-010",
+    "hiện_trạng": "Delete mode không có visual state change — header/background không đổi, FAB (+) vẫn visible gây mode confusion.",
+    "tác_động": "người dùng không biết đang ở delete mode hay normal mode. Nhấn + có thể thêm thay vì xóa.",
+    "nguyên_tắc": "Nielsen #1: Mode state phải visible. Header đổi màu/text khi delete mode.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Header đổi background (darker/accent) + count badge \"Đã chọn N\" + FAB ẩn + back button → \"Hủy chọn\"",
+      "Clear visual differentiation: header đổi màu + contextual actions thay thế default toolbar",
+      "Exit path rõ ràng: \"Hủy chọn\" button hoặc back gesture → trở về normal mode"
+    ]
+  },
+  {
+    "id": "UXP-011",
+    "hiện_trạng": "xác nhận dialog: title generic \"Thông báo\", button \"Đồng ý\" positive framing cho destructive action.",
+    "tác_động": "\"Đồng ý\" = positive. Destructive xác nhận phải dùng specific language: \"Xóa 3 người thụ hưởng\".",
+    "nguyên_tắc": "Nielsen #5: Destructive actions = specific xác nhận. Primary: \"Giữ lại\", Secondary: \"Xóa\".",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent problems.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Title → \"Xóa N danh bạ thụ hưởng?\"",
+      "Body → mô tả hậu quả",
+      "Buttons: [Hủy] [Xóa] (red/destructive ở trái)"
+    ]
+  },
+  {
+    "id": "UXP-012",
+    "hiện_trạng": "Sau xóa không có undo — xóa vĩnh viễn ngay lập tức. Danh bạ thụ hưởng chứa thông tin đã xác minh.",
+    "tác_động": "Xóa người thụ hưởng = xóa verified account info. Phải re-xác minh nếu cần lại. Undo snackbar 10s = safety net.",
+    "nguyên_tắc": "Nielsen #3: Undo = emergency exit. Snackbar \"Đã xóa. Hoàn tác\" trong 10s.",
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Emergency exit needed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Toast sau xóa: \"Đã xóa N danh bạ · Hoàn tác\" — tap \"Hoàn tác\" trong 5s để recover",
+      "Timeout 5-10s — auto-dismiss sau khi hết thời gian undo",
+      "Soft delete: giữ data 30 ngày trước khi permanent delete"
+    ]
+  }
+]

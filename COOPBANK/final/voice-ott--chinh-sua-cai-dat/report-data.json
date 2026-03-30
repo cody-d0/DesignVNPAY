@@ -1,0 +1,831 @@
+{
+  "meta": {
+    "client_name": "Co-opBank",
+    "product_name": "Co-opBank Mobile Banking",
+    "module_name": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+    "domain": "Banking",
+    "section": "Cài đặt voice OTT › Chỉnh sửa cài đặt Voice",
+    "module_dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/voice-ott--chinh-sua-cai-dat"
+  },
+  "stats": {
+    "screen_count": 2,
+    "check_count": 24,
+    "gap_count": 11,
+    "pass_count": 12,
+    "proposal_count": 8,
+    "overall_score": 50,
+    "overall_score_color": "#c2410c",
+    "overall_score_offset": 160,
+    "overall_weighted_score": 78,
+    "severity_counts": {
+      "critical": 1,
+      "major": 5,
+      "minor": 2
+    }
+  },
+  "screens": [
+    {
+      "id": "SCR-VCE-001",
+      "name": "Cài đặt Voice OTT › Form nhập thông tin (`SCR-VCE-001`)",
+      "type": "form",
+      "score": 70,
+      "score_color": "#15803d",
+      "score_offset": 47,
+      "weighted_score": 87,
+      "gap_count": 3,
+      "artboard_count": 2
+    },
+    {
+      "id": "SCR-VCE-002",
+      "name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin (`SCR-VCE-002`)",
+      "type": "form",
+      "score": 36,
+      "score_color": "#b91c1c",
+      "score_offset": 100,
+      "weighted_score": 72,
+      "gap_count": 8,
+      "artboard_count": 2
+    }
+  ],
+  "uxps": [
+    {
+      "id": "UXP-001",
+      "severity": "Critical",
+      "screen_tag": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+      "problem": "OTP bottom sheet (7203) thiếu hoàn toàn \"Gửi lại OTP\" button và countdown timer",
+      "gap_ref": "Check #12, #13",
+      "ddl_ref": "COMP:otp-input-1 (canResend, timeLeft states)",
+      "solution": "Thêm: (1) Countdown \"Gửi lại sau 01:30\" và (2) Link \"Gửi lại\" sau khi hết timeout. Đặt ngay dưới instruction text trong bottom sheet",
+      "screenshot_path": "ui/7203-chinh-sua-voice.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "Keep users informed about what is going on.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Precisely indicate the problem.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Voice OTT settings change requires OTP. No resend → người dùng stuck if OTP not received. No timer → silent expiry → rejection without explanation.",
+      "heuristic": "Nielsen #1: OTP timer = time-critical status. DDL spec mandates canResend + timeLeft.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "OTP bottom sheet (artboard 7203) thiếu hoàn toàn 'Gửi lại OTP' button và countdown timer — vi phạm DDL otp-input-1 spec.",
+      "solution_steps": [
+        "Countdown: 02:00 visible",
+        "Resend after 30s cooldown",
+        "Error: red cells + specific message",
+        "Auto-focus first cell"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-002",
+      "severity": "Major",
+      "screen_tag": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+      "problem": "Time picker fields \"Từ\"/\"Đến\" dùng Calendar icon thay vì Clock icon — semantic mismatch",
+      "gap_ref": "Check #11",
+      "ddl_ref": "UXG-197 (Input Labels)",
+      "solution": "Thay Calendar icon (📅) bằng Clock icon (🕐) cho 2 time-picker fields \"Từ\" và \"Đến\" trong màn hình 7202",
+      "screenshot_path": "ui/7202-chinh-sua-voice.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Nielsen #2 — Match Between System and Real World",
+          "url": "https://www.nngroup.com/articles/match-system-real-world/",
+          "quote": "Speak the users' language with words, phrases, and concepts familiar to the user.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Calendar icon on time field = cognitive mismatch. người dùng kỳ vọng date picker, sees time options → confused. Clock icon = universal time symbol.",
+      "heuristic": "Nielsen #2: Icons must match content semantics. Clock ≠ Calendar.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Time picker fields 'Từ'/'Đến' dùng Calendar icon thay vì Clock icon — semantic mismatch. Time input showing date icon.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thay Calendar icon (📅) bằng Clock icon (🕐) cho 2 time-picker fields \"Từ\"",
+        "\"Đến\" trong màn hình 7202"
+      ]
+    },
+    {
+      "id": "UXP-003",
+      "severity": "Major",
+      "screen_tag": "SCR-VCE-001 + SCR-VCE-002",
+      "problem": "Số tài khoản hiển thị đầy đủ trên cả view (7201) và edit (7202) — không mask PII",
+      "gap_ref": "Check #4, #18",
+      "ddl_ref": "UXG-180 (Color Only) — security principle Banking",
+      "solution": "Mask account numbers: \"212312312313\" → \"****2313\". Nhất quán với phone masking tại OTP screen",
+      "screenshot_path": "ui/7201-chinh-sua-voice.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "The best designs carefully prevent problems from occurring in the first place.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Account numbers exposed on both view and edit screens. Edit screen = more dangerous: người dùng may screenshot settings for reference → PII leaked.",
+      "heuristic": "Nielsen #5: Default masking. View: '2123***2313'. Edit: masked unless actively editing.",
+      "ref_count": 2,
+      "hiện_trạng": "Số tài khoản hiển thị đầy đủ trên cả view (7201: '212312312313') và edit (7202: '12312312313123') — PII không mask.",
+      "solution_steps": [
+        "Mask in view: '2123***2313'",
+        "Mask in edit: reveal only when field focused",
+        "nhất quán policy across view/edit"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-004",
+      "severity": "Major",
+      "screen_tag": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+      "problem": "Thiếu inline error cho time picker khi \"Từ\" > \"Đến\" (invalid range)",
+      "gap_ref": "Check #17",
+      "ddl_ref": "UXG-257 (Inline Errors) · COMP:text-input-1 (error state)",
+      "solution": "Thêm error state dưới time picker: \"Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc\". Dùng red border + error text pattern",
+      "screenshot_path": "ui/7202-chinh-sua-voice.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Prevent problems.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "người dùng sets 'Từ: 18:00' and 'Đến: 08:00' → invalid range submitted → server-side error or unexpected behavior.",
+      "heuristic": "Nielsen #5: ngăn chặn invalid time range. Inline error: 'Giờ bắt đầu phải trước giờ kết thúc'.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Time picker thiếu inline error khi 'Từ' > 'Đến' (invalid range). No validation for start > end time.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm trạng thái lỗi dưới time picker: \"Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc\". Dùng red border + error text pattern",
+        "Thêm inline validation realtime — không chờ người dùng submit mới báo lỗi",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-005",
+      "severity": "Major",
+      "screen_tag": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+      "problem": "Xóa tài khoản khỏi danh sách không có confirmation dialog — destructive action không được bảo vệ",
+      "gap_ref": "Check #19",
+      "ddl_ref": "UXG-265 (Confirm Destructive Actions)",
+      "solution": "Khi tap (−): hiện confirmation bottom sheet \"Xóa tài khoản ****2313 khỏi danh sách Voice OTT?\" với CTA \"Xóa\" (destructive) + \"Huỷ\"",
+      "screenshot_path": "ui/7202-chinh-sua-voice.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Prevent problems.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "One-tap delete on account = irreversible. Accidental tap → account removed from Voice OTT → người dùng phải re-thêm and re-configure.",
+      "heuristic": "Nielsen #5: Destructive actions require xác nhận. 'Xóa TK ***2313 khỏi Voice OTT?'",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Xóa tài khoản khỏi danh sách (icon −) không có xác nhận dialog — destructive action không protected.",
+      "solution_steps": [
+        "xác nhận dialog: 'Bạn có chắc muốn xóa TK ***2313?'",
+        "Primary: 'Giữ lại', Secondary: 'Xóa'",
+        "Undo option within 5s after delete"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-006",
+      "severity": "Major",
+      "screen_tag": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+      "problem": "\"Lưu chỉnh sửa\" thiếu loading state sau khi submit — nguy cơ double-submit",
+      "gap_ref": "Check #22",
+      "ddl_ref": "UXG-175 (Loading Buttons)",
+      "solution": "Sau tap \"Lưu chỉnh sửa\": button chuyển sang loading state (spinner + disabled) trong khi OTP bottom sheet loading",
+      "screenshot_path": "ui/7202-chinh-sua-voice.png",
+      "_img_tier": 3,
+      "references": [
+        {
+          "name": "Doherty Threshold",
+          "url": "https://lawsofux.com/doherty-threshold/",
+          "quote": "Productivity soars when neither has to wait.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "No loading → double-tap → potential duplicate API calls. Settings may apply twice or conflict.",
+      "heuristic": "Doherty Threshold: Processing indicator within 400ms.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "'Lưu chỉnh sửa' thiếu trạng thái tải sau submit — no processing feedback.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Sau tap \"Lưu chỉnh sửa\": button chuyển sang trạng thái tải (spinner + disabled) trong khi OTP bottom sheet loading",
+        "xác minh implementation trên cả iOS và Android — đảm bảo nhất quán",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-007",
+      "severity": "Minor",
+      "screen_tag": "Cài đặt Voice OTT › Form nhập thông tin",
+      "problem": "Nút \"Đóng\" trong success popup (7204) là text-link, thiếu button affordance",
+      "gap_ref": "Check #6",
+      "ddl_ref": "UXG-204 (Submit Feedback)",
+      "solution": "Style \"Đóng\" dưới dạng outlined button (border + padding) để rõ ràng là tappable element",
+      "screenshot_path": "ui/7204-chinh-sua-voice.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Nielsen #6 — Recognition Rather Than Recall",
+          "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+          "quote": "Minimize the user's memory load by making elements visible.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Text-link in popup = unclear CTAction. Button style needed for popup dismiss action.",
+      "heuristic": "Nielsen #6: Interactive elements need visible tín hiệu tương tác.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+        "source": "Laws of UX"
+      },
+      "hiện_trạng": "Nút 'Đóng' trong success popup (7204) là text-link — thiếu button tín hiệu tương tác. Looks like regular text.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Style \"Đóng\" dưới dạng outlined button (border + padding) để rõ ràng là tappable element",
+        "Audit toàn bộ app cho cùng pattern — đảm bảo wording nhất quán",
+        "Tạo content guideline: bảng từ chuẩn (VD: \"Đóng\" vs \"Hủy\" vs \"Thoát\") cho team"
+      ]
+    },
+    {
+      "id": "UXP-008",
+      "severity": "Minor",
+      "screen_tag": "Cài đặt Voice OTT › Form nhập thông tin",
+      "problem": "Warning \"Lưu ý: KHÔNG để thiết bị ở chế độ im lặng\" không đủ nổi bật",
+      "gap_ref": "Check #3",
+      "ddl_ref": "UXG-219 (Contrast Readability)",
+      "solution": "Thêm icon cảnh báo (⚠️ amber) trước text, hoặc dùng warning text color (#D97706 amber) để phân biệt với body text",
+      "screenshot_path": "ui/7201-chinh-sua-voice.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Von Restorff Effect",
+          "url": "https://lawsofux.com/von-restorff-effect/",
+          "quote": "The one that differs from the rest is most likely to be remembered.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "Device on silent = Voice OTT won't work. This warning is functionally critical but visually unremarkable → người dùng miss it.",
+      "heuristic": "Von Restorff: Critical warnings must visually stand out. Yellow/amber background + warning icon.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Von Restorff Effect",
+        "url": "https://lawsofux.com/von-restorff-effect/",
+        "quote": "When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.",
+        "source": "Laws of UX"
+      },
+      "hiện_trạng": "Warning 'Lưu ý: KHÔNG để thiết bị ở chế độ im lặng' — text không đủ nổi bật. Critical warning looks like regular body text.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm icon cảnh báo (⚠️ amber) trước text",
+        "hoặc dùng warning text color (#D97706 amber) để phân biệt với body text"
+      ]
+    }
+  ],
+  "gaps_by_screen": [
+    {
+      "screen_id": "SCR-VCE-001",
+      "screen_name": "Cài đặt Voice OTT › Form nhập thông tin (`SCR-VCE-001`)",
+      "screen_type": "form",
+      "gaps": [
+        {
+          "num": 3,
+          "title": "Warning text \"Lưu ý: KHÔNG\" đủ nổi bật, không chỉ dựa vào chữ in hoa",
+          "ref": "UXG-219",
+          "severity": "Minor",
+          "user_impact": "Critical warning missed.",
+          "heuristic": "Von Restorff.",
+          "evidence": "Từ ảnh 7201-chinh-sua-voice.png: Text \"Lưu ý: KHÔNG...\" cùng màu body text, không có màu cảnh báo (amber/đỏ). Chỉ caps không đủ để phân biệt — rủi ro bị bỏ qua",
+          "screenshot": "7201-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-001",
+          "screen_name": "Cài đặt Voice OTT › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7201-chinh-sua-voice.png",
+          "_img_tier": 1,
+          "description": "Warning text not prominent enough.",
+          "ddl_evidence": "UXG-219",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Von Restorff Effect",
+              "url": "https://lawsofux.com/von-restorff-effect/",
+              "quote": "Item that differs is remembered.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Von Restorff Effect",
+            "url": "https://lawsofux.com/von-restorff-effect/",
+            "quote": "When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.",
+            "source": "Laws of UX"
+          },
+          "hiện_trạng": "Warning text not prominent enough.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 4,
+          "title": "Số tài khoản trong danh sách được masking (PII protection)",
+          "ref": "UXG-180",
+          "severity": "Minor",
+          "user_impact": "PII exposed.",
+          "heuristic": "Nielsen #5.",
+          "evidence": "Từ ảnh 7201-chinh-sua-voice.png: \"212312312313\" / \"312312312313\" hiển thị đầy đủ. Banking: account numbers phải masked (e.g., ****2313). Inconsistent với OTP screen (mask phone)",
+          "screenshot": "7201-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-001",
+          "screen_name": "Cài đặt Voice OTT › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7201-chinh-sua-voice.png",
+          "_img_tier": 1,
+          "description": "Account numbers not masked in list.",
+          "ddl_evidence": "UXG-180",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Prevent problems.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Account numbers not masked in list.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "Success popup \"Thông báo\" (7204): nút \"Đóng\" có affordance rõ dạng button",
+          "ref": "UXG-204",
+          "severity": "Minor",
+          "user_impact": "Weak CTA.",
+          "heuristic": "Nielsen #6.",
+          "evidence": "Từ ảnh 7204-chinh-sua-voice.png: \"Đóng\" được render dạng text-link màu xanh, không có border/background. Giảm affordance — user có thể không nhận ra là bấm được",
+          "screenshot": "7204-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-001",
+          "screen_name": "Cài đặt Voice OTT › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7204-chinh-sua-voice.png",
+          "_img_tier": 1,
+          "description": "'Đóng' rendered as text-link in success popup.",
+          "ddl_evidence": "UXG-204",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Visible.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Fitts's Law",
+            "url": "https://lawsofux.com/fittss-law/",
+            "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+            "source": "Laws of UX"
+          },
+          "hiện_trạng": "'Đóng' rendered as text-link in success popup.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-VCE-002",
+      "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin (`SCR-VCE-002`)",
+      "screen_type": "form",
+      "gaps": [
+        {
+          "num": 11,
+          "title": "Time picker fields dùng Clock icon (không phải Calendar)",
+          "ref": "UXG-197",
+          "severity": "Minor",
+          "user_impact": "Icon semantic mismatch.",
+          "heuristic": "Nielsen #2.",
+          "evidence": "Từ ảnh 7202-chinh-sua-voice.png: Các field \"Từ\"/\"Đến\" kèm **Calendar icon (📅)** — semantic mismatch. Time selection phải dùng Clock icon 🕐, không phải date picker icon",
+          "screenshot": "7202-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-002",
+          "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7202-chinh-sua-voice.png",
+          "_img_tier": 1,
+          "description": "Calendar icon instead of Clock for time fields.",
+          "ddl_evidence": "UXG-197",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #2 — Match Between System and Real World",
+            "url": "https://www.nngroup.com/articles/match-system-real-world/",
+            "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Calendar icon instead of Clock for time fields.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 12,
+          "title": "`otp-input-1` DDL spec: có \"Gửi lại OTP\" (canResend) trong bottom sheet",
+          "ref": "COMP:otp-input-1",
+          "severity": "Minor",
+          "user_impact": "người dùng stuck.",
+          "heuristic": "Nielsen #1.",
+          "evidence": "Từ ảnh 7203-chinh-sua-voice.png: Bottom sheet OTP chỉ có 6 ô + \"Xác nhận\". **Thiếu hoàn toàn** \"Gửi lại\" trigger. DDL `otp-input-1` spec: `canResend` state là mandatory",
+          "screenshot": "7203-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-002",
+          "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7203-chinh-sua-voice.png",
+          "_img_tier": 1,
+          "description": "OTP thiếu resend button.",
+          "ddl_evidence": "COMP:otp-input-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Keep informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "OTP thiếu resend button.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 13,
+          "title": "`otp-input-1` DDL spec: có countdown timer (timeLeft)",
+          "ref": "COMP:otp-input-1",
+          "severity": "Minor",
+          "user_impact": "No time feedback.",
+          "heuristic": "Nielsen #1.",
+          "evidence": "Từ ảnh 7203-chinh-sua-voice.png: Không có countdown \"Gửi lại sau Xs\". DDL `otp-input-1` spec: `timeLeft` state là mandatory. User không biết khi nào resend",
+          "screenshot": "7203-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-002",
+          "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7203-chinh-sua-voice.png",
+          "_img_tier": 1,
+          "description": "OTP thiếu countdown timer.",
+          "ddl_evidence": "COMP:otp-input-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Keep informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "OTP thiếu countdown timer.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 17,
+          "title": "Time picker: error state khi \"Từ\" > \"Đến\" invalid range",
+          "ref": "UXG-257",
+          "severity": "Minor",
+          "user_impact": "Invalid range submitted.",
+          "heuristic": "Nielsen #5.",
+          "evidence": "Từ ảnh 7202-chinh-sua-voice.png: Không có error state visible cho invalid time range. DDL `text-input-1` spec có `error` state — thiếu trong Figma variants",
+          "screenshot": "7202-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-002",
+          "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7202-chinh-sua-voice.png",
+          "_img_tier": 1,
+          "description": "No trạng thái lỗi for invalid time range.",
+          "ddl_evidence": "UXG-257",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Prevent.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No trạng thái lỗi for invalid time range.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 18,
+          "title": "Số tài khoản trong edit form được masking",
+          "ref": "UXG-180",
+          "severity": "Minor",
+          "user_impact": "PII in edit context.",
+          "heuristic": "Nielsen #5.",
+          "evidence": "Từ ảnh 7202-chinh-sua-voice.png: \"12312312313123\" hiển thị đầy đủ trong list. Inconsistent: phone masked ở 7203 nhưng account không masked ở 7202",
+          "screenshot": "7202-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-002",
+          "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7202-chinh-sua-voice.png",
+          "_img_tier": 1,
+          "description": "Account numbers not masked in edit form.",
+          "ddl_evidence": "UXG-180",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Prevent.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Account numbers not masked in edit form.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 19,
+          "title": "Xóa tài khoản (−) có confirmation dialog trước khi xóa",
+          "ref": "UXG-265",
+          "severity": "Minor",
+          "user_impact": "Accidental delete unprotected.",
+          "heuristic": "Nielsen #5.",
+          "evidence": "Từ ảnh 7202-chinh-sua-voice.png: Icon (−) per account row, không rõ có confirm step. UXG-265 (Confirm Destructive Actions) — xóa tài khoản là destructive action",
+          "screenshot": "7202-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-002",
+          "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7202-chinh-sua-voice.png",
+          "_img_tier": 1,
+          "description": "Delete (−) icon without xác nhận dialog.",
+          "ddl_evidence": "UXG-265",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Von Restorff Effect",
+              "url": "https://lawsofux.com/von-restorff-effect/",
+              "quote": "When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 2,
+          "_enriched_ref": {
+            "name": "Nielsen #5 — Error Prevention",
+            "url": "https://www.nngroup.com/articles/slips/",
+            "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Delete (−) icon without xác nhận dialog.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 22,
+          "title": "\"Lưu chỉnh sửa\" có loading state sau submit (tránh double-submit)",
+          "ref": "UXG-175",
+          "severity": "Minor",
+          "user_impact": "Double-submit risk.",
+          "heuristic": "Doherty Threshold.",
+          "evidence": "Không thấy loading button state trong Figma 7202. Banking: submit → OTP trigger cần loading indicator. DDL `text-input-1`: missing loading/submitting state",
+          "screenshot": "7202-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-002",
+          "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7202-chinh-sua-voice.png",
+          "_img_tier": 3,
+          "description": "'Lưu chỉnh sửa' no trạng thái tải.",
+          "ddl_evidence": "UXG-175",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Zeigarnik Effect",
+              "url": "https://lawsofux.com/zeigarnik-effect/",
+              "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Doherty Threshold",
+              "url": "https://lawsofux.com/doherty-threshold/",
+              "quote": "Neither waits.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 2,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "'Lưu chỉnh sửa' no trạng thái tải.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 24,
+          "title": "Hick's Law: form có nhiều interactive zones — cognitive load có thể cao",
+          "ref": "hick",
+          "severity": "Minor",
+          "user_impact": "Too many interactive areas simultaneously.",
+          "heuristic": "Hick's Law.",
+          "evidence": "Từ ảnh 7202-chinh-sua-voice.png: 5-6 interactive zones (add/remove accounts + time pickers + dual CTA). Hick's Law: cân nhắc visual grouping rõ hơn giữa sections để giảm cognitive load",
+          "screenshot": "7202-chinh-sua-voice.png",
+          "screen_id": "SCR-VCE-002",
+          "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7202-chinh-sua-voice.png",
+          "_img_tier": 1,
+          "description": "Form with 5-6 interactive zones — tải nhận thức.",
+          "ddl_evidence": "hick",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Hick's Law",
+              "url": "https://lawsofux.com/hicks-law/",
+              "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Hick's Law",
+            "url": "https://lawsofux.com/hicks-law/",
+            "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+            "source": "Laws of UX"
+          },
+          "hiện_trạng": "Form with 5-6 interactive zones — tải nhận thức.",
+          "_enriched_by": "llm"
+        }
+      ]
+    }
+  ],
+  "heuristics": [
+    {
+      "key": "flow",
+      "name_vi": "Luồng người dùng",
+      "name_en": "Flow & Navigation",
+      "score": 52,
+      "gap_count": 11
+    },
+    {
+      "key": "component",
+      "name_vi": "Thành phần",
+      "name_en": "Component & DDL",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "visual",
+      "name_vi": "Thiết kế trực quan",
+      "name_en": "Visual Design",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "content",
+      "name_vi": "Nội dung",
+      "name_en": "Content & Copy",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "a11y",
+      "name_vi": "Tiếp cận",
+      "name_en": "Accessibility",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "trust",
+      "name_vi": "Tin cậy & Bảo mật",
+      "name_en": "Trust & Security",
+      "score": 100,
+      "gap_count": 0
+    }
+  ],
+  "_ref_enrichment": {
+    "gap_enriched": 3,
+    "uxp_enriched": 4,
+    "sources": [
+      "enriched-data.json",
+      "official-urls.md"
+    ]
+  }
+}

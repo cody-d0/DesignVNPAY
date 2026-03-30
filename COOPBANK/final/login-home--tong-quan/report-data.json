@@ -1,0 +1,938 @@
+{
+  "meta": {
+    "client_name": "Co-opBank",
+    "product_name": "Co-opBank Mobile Banking",
+    "module_name": "Co-opBank (Login-Home)",
+    "domain": "Banking",
+    "section": "",
+    "module_dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/login-home--tong-quan"
+  },
+  "stats": {
+    "screen_count": 4,
+    "check_count": 42,
+    "gap_count": 9,
+    "pass_count": 28,
+    "proposal_count": 7,
+    "overall_score": 67,
+    "overall_score_color": "#c2410c",
+    "overall_score_offset": 106,
+    "overall_weighted_score": 87,
+    "severity_counts": {
+      "critical": 2,
+      "major": 3,
+      "minor": 2
+    }
+  },
+  "screens": [
+    {
+      "id": "SCR-LH-001",
+      "name": "Đăng nhập › Form đăng nhập (`SCR-LH-001`)",
+      "type": "login",
+      "score": 67,
+      "score_color": "#c2410c",
+      "score_offset": 52,
+      "weighted_score": 79,
+      "gap_count": 3,
+      "artboard_count": 4
+    },
+    {
+      "id": "SCR-LH-002",
+      "name": "Trang chủ › Bảng điều khiển (`SCR-LH-002`)",
+      "type": "dashboard",
+      "score": 67,
+      "score_color": "#c2410c",
+      "score_offset": 52,
+      "weighted_score": 90,
+      "gap_count": 2,
+      "artboard_count": 5
+    },
+    {
+      "id": "SCR-LH-003",
+      "name": "Cài đặt › Danh sách (`SCR-LH-003`)",
+      "type": "settings",
+      "score": 70,
+      "score_color": "#15803d",
+      "score_offset": 47,
+      "weighted_score": 93,
+      "gap_count": 2,
+      "artboard_count": 2
+    },
+    {
+      "id": "SCR-LH-004",
+      "name": "Thông tin cá nhân › Chi tiết (`SCR-LH-004`)",
+      "type": "detail",
+      "score": 62,
+      "score_color": "#c2410c",
+      "score_offset": 60,
+      "weighted_score": 90,
+      "gap_count": 2,
+      "artboard_count": 1
+    }
+  ],
+  "uxps": [
+    {
+      "id": "UXP-001",
+      "severity": "Critical",
+      "screen_tag": "Đăng nhập › Form đăng nhập",
+      "problem": "Form đăng nhập (login-with-phone-number",
+      "gap_ref": "Check #5",
+      "ddl_ref": "UXG-04 · UXG-78 · Law:Nielsen #9 (Help users recognize, diagnose, and recover from errors)",
+      "solution": "Thêm error state: border đỏ `{base.destructive}` + helper text \"Mật khẩu không đúng. Bạn còn X lần thử.\"; Thêm alert khi tài khoản bị khóa: \"Tài kh...",
+      "screenshot_path": "ui/login-with-phone-number.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Dev phải tự triển khai error UI → không nhất quán across team. người dùng gặp lỗi → unpredictable experience. Login errors là touchpoint phổ biến nhất — 10-20% người dùng gặp ít nhất 1 lần/tuần. Thiếu designed error states = UX debt lớn.",
+      "heuristic": "Nielsen #9 — Help người dùng Recognize, Diagnose, and Recover from Errors: Error states phải designed, không để default. Mỗi error cần: identify problem, explain cause, suggest recovery.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Form đăng nhập (login-with-phone-number) thiếu error states: không có artboard cho sai mật khẩu, tài khoản bị khóa, số điện thoại không đăng ký. Form chỉ có happy path — zero error handling designed.",
+      "solution_steps": [
+        "Design error states: sai mật khẩu (inline error + attempt counter), tài khoản khóa (full screen + recovery options), số không đăng ký (inline + 'Đăng ký ngay')",
+        "Inline errors dưới field lỗi — không dùng modal cho input validation",
+        "Error copy specific: 'Mật khẩu không đúng. Còn 3 lần thử.' thay vì generic 'Thông tin không hợp lệ'",
+        "Include 'Quên mật khẩu?' link prominent khi có error"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-002",
+      "severity": "Critical",
+      "screen_tag": "Đăng nhập › Form đăng nhập",
+      "problem": "Form login-with-phone-number",
+      "gap_ref": "Check #6, Check #10",
+      "ddl_ref": "UXG-10 · UXG-07 · Law:Fitts's Law",
+      "solution": "Thêm floating label \"Số điện thoại\" trên field, fontSize `{text.sm.font-size}`, fontWeight `{font-weight.medium}`; Thêm floating label \"Mật khẩu\" t...",
+      "screenshot_path": "ui/login-with-phone-number.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Fitts's Law",
+          "url": "https://lawsofux.com/fittss-law/",
+          "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+          "quote": "Labels or instructions are provided when content requires user input.",
+          "source": "W3C"
+        },
+        {
+          "name": "Nielsen #6 — Recognition Rather Than Recall",
+          "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+          "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "2 fields placeholder-only: người dùng typing mật khẩu quên mình đang ở field nào (cả 2 đều masked/text). Placeholder-as-label là documented anti-pattern — NN/g khuyến cáo tránh cho tất cả forms.",
+      "heuristic": "WCAG 3.3.2 — Labels or Instructions: Input fields phải có persistent labels. Placeholder không phải label replacement. Nielsen #6: persistent label = recognition, placeholder-only = recall.",
+      "ref_count": 4,
+      "_enriched_ref": {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+        "source": "Laws of UX"
+      },
+      "hiện_trạng": "Form login-with-phone-number: input fields chỉ dùng placeholder text — không có floating/persistent labels. Khi người dùng starts typing, label biến mất. 2 fields (Số điện thoại + Mật khẩu) đều cùng pattern.",
+      "solution_steps": [
+        "triển khai floating labels: placeholder → animate lên trên thành persistent label khi focus",
+        "Apply consistently trên tất cả forms trong app",
+        "Placeholder text dùng cho hints: 'VD: 0912345678'",
+        "đảm bảo label visible cả khi field has value"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-003",
+      "severity": "Major",
+      "screen_tag": "Trang chủ › Bảng điều khiển",
+      "problem": "Trang chủ expanded (homepage-expand-2",
+      "gap_ref": "Check #6",
+      "ddl_ref": "UXG-45 · UXG-12 · Law:Hick's Law",
+      "solution": "Hiển thị 6 items \"Hay dùng\" mặc định + \"Xem tất cả\" CTA. User tùy chỉnh danh sách; Collapse mặc định, hiện 3 items + \"Xem thêm (5)\". Reduce cogniti...",
+      "screenshot_path": "ui/homepage-shorten.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Hick's Law",
+          "url": "https://lawsofux.com/hicks-law/",
+          "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Miller's Law",
+          "url": "https://lawsofux.com/millers-law/",
+          "quote": "The average person can only keep 7 (plus or minus 2) items in their working memory.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "Information overload: 20+ items cùng visual weight → người dùng phải scan sequential → chậm. Top 5 services dùng 80% thời gian nhưng giống nhau prominence với services ít dùng. Hick's Law: nhiều options equal-weight = decision paralysis.",
+      "heuristic": "Hick's Law: Time to decide increases with number and complexity of choices. Grouping + phân cấp trực quan giảm perceived complexity. Miller's Law: chunk 20+ items thành 3-5 groups.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Hick's Law",
+        "url": "https://lawsofux.com/hicks-law/",
+        "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+        "source": "Laws of UX"
+      },
+      "hiện_trạng": "Trang chủ expanded (homepage-expand-2) hiển thị 20+ service items đồng nhất style — tất cả icons + labels cùng size, cùng spacing, không phân biệt primary vs secondary services. Không có phân cấp trực quan.",
+      "solution_steps": [
+        "Group services thành categories: 'Thường dùng', 'Chuyển tiền', 'Thanh toán', 'Tiết kiệm', 'Khác'",
+        "Personalized 'Thường dùng' row: top 4-6 services based on usage frequency",
+        "Visual differentiation: primary services lớn hơn, secondary nhỏ hơn",
+        "Search/filter: cho phép tìm service nhanh khi list dài"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-004",
+      "severity": "Major",
+      "screen_tag": "Thông tin cá nhân › Chi tiết",
+      "problem": "Màn hình basic-infor",
+      "gap_ref": "Check #4, Check #6",
+      "ddl_ref": "UXG-78 · UXG-55 · Law:Nielsen #7 (Flexibility and efficiency of use)",
+      "solution": "Thêm \"Yêu cầu cập nhật thông tin\" → mở form request online (mô tả thay đổi + upload giấy tờ); Thêm \"Gọi hotline 1900-xxxx\" link trực tiếp; Thêm edi...",
+      "screenshot_path": "ui/basic-infor.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+          "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+          "quote": "Shortcuts — hidden from novice users — may speed up the interaction for the expert user.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "PII exposure: CMND + ngày sinh đủ để identity theft. Screen này accessible sau login → bất kỳ ai mượn phone đã unlock đều thấy. Nên mask partial: '0125***88'. ngân hàng app phải treat PII như sensitive data.",
+      "heuristic": "Nielsen #5 — Error Prevention: Mask PII by default prevents accidental exposure. hiển thị full data chỉ khi người dùng explicitly tap 'Hiện'. Privacy by design = default mask.",
+      "ref_count": 4,
+      "_enriched_ref": {
+        "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+        "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+        "quote": "Shortcuts — hidden from novice users — may speed up the interaction for the expert user.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Màn hình basic-info (SCR-LH-004) hiển thị PII rõ ràng: CMND '012547288' và ngày sinh '12/05/1981' không masked. Sensitive personal data exposed trên screen thông tin cá nhân.",
+      "solution_steps": [
+        "Mask CMND: '0125***88' — hiển thị last 2 + mask middle",
+        "Mask ngày sinh: '12/05/****' — hoặc ẩn hoàn toàn",
+        "Tap-to-reveal: eye icon → hiển thị full data 5 giây → auto-ẩn",
+        "nhất quán masking policy cho tất cả PII fields trong app"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-005",
+      "severity": "Major",
+      "screen_tag": "Cài đặt › Danh sách",
+      "problem": "Mục \"Thoát ứng dụng\" trong settings",
+      "gap_ref": "Check #6, Check #7",
+      "ddl_ref": "UXG-04 · UXG-36 · Law:Nielsen #5 (Error prevention)",
+      "solution": "Đổi màu text sang `{base.destructive}` (đỏ), thêm icon logout riêng biệt; Thêm divider trước \"Thoát ứng dụng\" để tách khỏi menu thông thường; Thêm ...",
+      "screenshot_path": "ui/settings-2.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Von Restorff Effect",
+          "url": "https://lawsofux.com/von-restorff-effect/",
+          "quote": "When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "Destructive action (logout) looks identical to normal navigation items → accidental tap = session terminated. ngân hàng app: accidental logout = re-authenticate (Face ID/password) = friction. Without xác nhận dialog, single tap = immediate logout.",
+      "heuristic": "Nielsen #5 — Error Prevention: Destructive actions need xác nhận dialog. Nielsen #3 — người dùng Control: undo mechanism (nhưng logout không undoable → cần ngăn chặn). Von Restorff: dangerous action phải visually distinct.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Mục 'Thoát ứng dụng' trong settings (SCR-LH-003) cùng visual style với các menu items thường — không có visual differentiation. Không có xác nhận dialog designed cho action này.",
+      "solution_steps": [
+        "Visual differentiation: red text hoặc separate section cho 'Thoát'",
+        "xác nhận dialog: 'Bạn muốn đăng xuất?' + 'Đăng xuất' (red) / 'Hủy'",
+        "Position: bottom of settings list, separated by divider",
+        "Icon: distinct logout icon (door + arrow)"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-006",
+      "severity": "Minor",
+      "screen_tag": "Đăng nhập › Form đăng nhập",
+      "problem": "Popup Touch ID (popup-touch-id",
+      "gap_ref": "Check #10",
+      "ddl_ref": "UXG-07 · Law:Jakob's Law",
+      "solution": "Đổi thành \"ATM/Chi nhánh\" đầy đủ hoặc \"Điểm GD\" nếu cần ngắn; Cân nhắc thêm subtitle VN \"Xác thực vân tay\" bên dưới \"Touch ID\" để hỗ trợ user lớn tuổi",
+      "screenshot_path": "ui/popup-touch-id.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Jakob's Law",
+          "url": "https://lawsofux.com/jakobs-law/",
+          "quote": "Users spend most of their time on other sites. This means that users prefer your site to work the same way.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Nielsen #2 — Match Between System and Real World",
+          "url": "https://www.nngroup.com/articles/match-system-real-world/",
+          "quote": "The design should speak the users' language.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Minor confusion cho người dùng không biết tiếng Anh — 'Touch ID là gì?'. Nên thêm Vietnamese explanation hoặc description alongside English brand name.",
+      "heuristic": "Nielsen #2 — Match Real World: Nên giữ brand name (Touch ID) nhưng kèm Vietnamese context: 'Đăng nhập bằng vân tay (Touch ID)'.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Jakob's Law",
+        "url": "https://lawsofux.com/jakobs-law/",
+        "quote": "Users spend most of their time on other sites. This means that users prefer your site to work the same way.",
+        "source": "Laws of UX"
+      },
+      "hiện_trạng": "Popup Touch ID (SCR-LH-001) dùng 'Touch ID' (English) mixed với Vietnamese text. Language consistency issue — biometric feature name in English, surrounding text in Vietnamese.",
+      "solution_steps": [
+        "Format: 'Đăng nhập bằng vân tay (Touch ID)' — Vietnamese first, brand name in parentheses",
+        "nhất quán pattern: 'Khuôn mặt (Face ID)' cho Face ID screens",
+        "khả năng tiếp cận: full Vietnamese description cho screen readers"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-007",
+      "severity": "Minor",
+      "screen_tag": "Trang chủ › Bảng điều khiển",
+      "problem": "Banner quảng cáo (homepage-shorten",
+      "gap_ref": "Check #10",
+      "ddl_ref": "UXG-52 · Law:Aesthetic-Usability Effect",
+      "solution": "Thêm auto-scroll animation (3-5s interval) + swipe indicator (arrow hints); Tăng touch target ≥ 44×44px theo iOS HIG",
+      "screenshot_path": "ui/homepage-shorten.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Aesthetic-Usability Effect",
+          "url": "https://lawsofux.com/aesthetic-usability-effect/",
+          "quote": "Users often perceive aesthetically pleasing design as design that's more usable.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "WCAG 2.5.8 — Target Size (Level AA)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html",
+          "quote": "The size of the target for pointer inputs is at least 24 by 24 CSS pixels.",
+          "source": "W3C"
+        }
+      ],
+      "user_impact": "Small touch target → mistouch → frustration. Banner ads are already low-priority — small CTA makes them essentially unreachable on mobile. If showing ad, at least make it tappable.",
+      "heuristic": "WCAG 2.5.8 — Target Size: Interactive elements should be at least 44×44px. Targets below 24×24px are Level AA violation.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Banner quảng cáo trên homepage-shorten (SCR-LH-002) — CTA 'Chi tiết' button nhỏ (~60×30px), dưới minimum touch target 44px theo WCAG.",
+      "solution_steps": [
+        "Increase CTA touch target to minimum 44×44px",
+        "Or make entire banner card tappable — larger vùng chạm",
+        "đảm bảo adequate spacing between banner CTA and surrounding elements"
+      ],
+      "_enriched_by": "llm"
+    }
+  ],
+  "gaps_by_screen": [
+    {
+      "screen_id": "SCR-LH-001",
+      "screen_name": "Đăng nhập › Form đăng nhập (`SCR-LH-001`)",
+      "screen_type": "login",
+      "gaps": [
+        {
+          "num": 5,
+          "title": "Form có error state",
+          "ref": "UXG-04",
+          "severity": "Minor",
+          "user_impact": "Dev implements ad-hoc error UI → không nhất quán. Login errors = highest frequency touchpoint needing designed states.",
+          "heuristic": "Nielsen #9: Error states must be designed — specific, constructive, recovery-oriented.",
+          "evidence": "Không có artboard error — thiếu sai mật khẩu, tài khoản bị khóa, network error",
+          "screenshot": "login-with-phone-number.png",
+          "screen_id": "SCR-LH-001",
+          "screen_name": "Đăng nhập › Form đăng nhập",
+          "screen_type": "login",
+          "screenshot_path": "ui/login-with-phone-number.png",
+          "_img_tier": 5,
+          "description": "Login form thiếu trạng thái lỗi artboards — no designs for wrong password, locked account, unregistered phone.",
+          "ddl_evidence": "UXG-04",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+              "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+              "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "hiện_trạng": "Login form thiếu trạng thái lỗi artboards — no designs for wrong password, locked account, unregistered phone.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "Form fields có label (không chỉ placeholder)",
+          "ref": "UXG-10",
+          "severity": "Minor",
+          "user_impact": "Placeholder disappears on type → field purpose lost. Anti-pattern per NN/g research.",
+          "heuristic": "WCAG 3.3.2: Persistent labels bắt buộc for all input fields.",
+          "evidence": "Chỉ placeholder text, không có floating/fixed label trên field",
+          "screenshot": "login-with-phone-number.png",
+          "screen_id": "SCR-LH-001",
+          "screen_name": "Đăng nhập › Form đăng nhập",
+          "screen_type": "login",
+          "screenshot_path": "ui/login-with-phone-number.png",
+          "_img_tier": 5,
+          "description": "Form fields dùng placeholder-only — không có floating/fixed labels trên SCR-LH-001.",
+          "ddl_evidence": "UXG-10",
+          "ref_count": 6,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Hick's Law",
+              "url": "https://lawsofux.com/hicks-law/",
+              "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+              "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+              "quote": "Shortcuts — hidden from novice users — may speed up the interaction for the expert user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+              "quote": "Labels or instructions are provided when content requires user input.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Form fields dùng placeholder-only — không có floating/fixed labels trên SCR-LH-001.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 10,
+          "title": "Language consistency (VN/EN)",
+          "ref": "UXG-07",
+          "severity": "Minor",
+          "user_impact": "Minor readability issue for non-English speakers. Brand names acceptable but need Vietnamese context.",
+          "heuristic": "Nielsen #2: Speak người dùng's language. Brand names ok but thêm Vietnamese description.",
+          "evidence": "\"Touch ID\" (EN) mixed với text VN khác",
+          "screenshot": "login-with-touch-id.png",
+          "screen_id": "SCR-LH-001",
+          "screen_name": "Đăng nhập › Form đăng nhập",
+          "screen_type": "login",
+          "screenshot_path": "ui/login-with-touch-id.png",
+          "_img_tier": 4,
+          "description": "'Touch ID' (English) mixed với Vietnamese text trên popup SCR-LH-001. Language mixing.",
+          "ddl_evidence": "UXG-07",
+          "ref_count": 5,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Jakob's Law",
+              "url": "https://lawsofux.com/jakobs-law/",
+              "quote": "Users spend most of their time on other sites. This means that users prefer your site to work the same way.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Aesthetic-Usability Effect",
+              "url": "https://lawsofux.com/aesthetic-usability-effect/",
+              "quote": "Users often perceive aesthetically pleasing design as design that's more usable.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "hiện_trạng": "'Touch ID' (English) mixed với Vietnamese text trên popup SCR-LH-001. Language mixing.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-LH-002",
+      "screen_name": "Trang chủ › Bảng điều khiển (`SCR-LH-002`)",
+      "screen_type": "dashboard",
+      "gaps": [
+        {
+          "num": 6,
+          "title": "Information hierarchy cho 20+ service items",
+          "ref": "UXG-45",
+          "severity": "Minor",
+          "user_impact": "Information overload. người dùng phải scan all 20+ items sequentially to find desired service.",
+          "heuristic": "Hick's Law: Decision time increases with equal-weight options. Grouping reduces perceived complexity.",
+          "evidence": "Tất cả service items đồng nhất style, không phân biệt priority. Hick's Law violation",
+          "screenshot": "homepage-shorten.png",
+          "screen_id": "SCR-LH-002",
+          "screen_name": "Trang chủ › Bảng điều khiển",
+          "screen_type": "dashboard",
+          "screenshot_path": "ui/homepage-shorten.png",
+          "_img_tier": 5,
+          "description": "20+ service items trên SCR-LH-002 đồng nhất style — no phân cấp trực quan, no grouping, no primary/secondary distinction.",
+          "ddl_evidence": "UXG-45",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Hick's Law",
+              "url": "https://lawsofux.com/hicks-law/",
+              "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Fitts's Law",
+            "url": "https://lawsofux.com/fittss-law/",
+            "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+            "source": "Laws of UX"
+          },
+          "hiện_trạng": "20+ service items trên SCR-LH-002 đồng nhất style — no phân cấp trực quan, no grouping, no primary/secondary distinction.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 10,
+          "title": "Banner CTA touch target ≥ 44px",
+          "ref": "UXG-52",
+          "severity": "Minor",
+          "user_impact": "Small target = difficult to tap accurately on mobile. Below WCAG minimum.",
+          "heuristic": "WCAG 2.5.8: Minimum target size 24×24px (Level AA), recommended 44×44px.",
+          "evidence": "\"Chi tiết\" CTA trên banner nhỏ (~60×30), dưới 44px height",
+          "screenshot": "homepage-shorten.png",
+          "screen_id": "SCR-LH-002",
+          "screen_name": "Trang chủ › Bảng điều khiển",
+          "screen_type": "dashboard",
+          "screenshot_path": "ui/homepage-shorten.png",
+          "_img_tier": 5,
+          "description": "Banner CTA 'Chi tiết' trên SCR-LH-002 — touch target ~60×30px, below 44px minimum.",
+          "ddl_evidence": "UXG-52",
+          "ref_count": 5,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Jakob's Law",
+              "url": "https://lawsofux.com/jakobs-law/",
+              "quote": "Users spend most of their time on other sites. This means that users prefer your site to work the same way.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Aesthetic-Usability Effect",
+              "url": "https://lawsofux.com/aesthetic-usability-effect/",
+              "quote": "Users often perceive aesthetically pleasing design as design that's more usable.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "WCAG 2.5.8 — Target Size (Level AA)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html",
+              "quote": "The size of the target for pointer inputs is at least 24 by 24 CSS pixels.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #4 — Consistency and Standards",
+            "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+            "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Banner CTA 'Chi tiết' trên SCR-LH-002 — touch target ~60×30px, below 44px minimum.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-LH-003",
+      "screen_name": "Cài đặt › Danh sách (`SCR-LH-003`)",
+      "screen_type": "settings",
+      "gaps": [
+        {
+          "num": 6,
+          "title": "\"Thoát ứng dụng\" có visual differentiation",
+          "ref": "UXG-36",
+          "severity": "Minor",
+          "user_impact": "Accidental tap on logout = session terminated. No visual distinction = equal likelihood of mistouch.",
+          "heuristic": "Von Restorff: Destructive actions must be visually distinct from normal actions.",
+          "evidence": "Cùng style với các menu items thông thường, không có warning visual",
+          "screenshot": "settings.png",
+          "screen_id": "SCR-LH-003",
+          "screen_name": "Cài đặt › Danh sách",
+          "screen_type": "settings",
+          "screenshot_path": "ui/settings.png",
+          "_img_tier": 5,
+          "description": "'Thoát ứng dụng' trên SCR-LH-003 cùng style với normal menu items — no visual differentiation for destructive action.",
+          "ddl_evidence": "UXG-36",
+          "ref_count": 6,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Hick's Law",
+              "url": "https://lawsofux.com/hicks-law/",
+              "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+              "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+              "quote": "Shortcuts — hidden from novice users — may speed up the interaction for the expert user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Von Restorff Effect",
+              "url": "https://lawsofux.com/von-restorff-effect/",
+              "quote": "The one that differs from the rest is most likely to be remembered.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 1,
+          "hiện_trạng": "'Thoát ứng dụng' trên SCR-LH-003 cùng style với normal menu items — no visual differentiation for destructive action.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 7,
+          "title": "\"Thoát ứng dụng\" có confirmation dialog",
+          "ref": "UXG-04",
+          "severity": "Minor",
+          "user_impact": "Single tap = immediate logout. No undo. ngân hàng app logout = must re-authenticate = high-cost error.",
+          "heuristic": "Nielsen #5: Destructive actions need xác nhận. Irreversible actions require guard rails.",
+          "evidence": "Không có artboard confirmation — destructive action thiếu safeguard",
+          "screenshot": "settings.png",
+          "screen_id": "SCR-LH-003",
+          "screen_name": "Cài đặt › Danh sách",
+          "screen_type": "settings",
+          "screenshot_path": "ui/settings.png",
+          "_img_tier": 5,
+          "description": "'Thoát ứng dụng' trên SCR-LH-003 thiếu xác nhận dialog — no artboard designed for logout xác nhận.",
+          "ddl_evidence": "UXG-04",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #5 — Error Prevention",
+            "url": "https://www.nngroup.com/articles/slips/",
+            "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "'Thoát ứng dụng' trên SCR-LH-003 thiếu xác nhận dialog — no artboard designed for logout xác nhận.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-LH-004",
+      "screen_name": "Thông tin cá nhân › Chi tiết (`SCR-LH-004`)",
+      "screen_type": "detail",
+      "gaps": [
+        {
+          "num": 4,
+          "title": "PII (CMND, ngày sinh) hiển thị rõ ràng",
+          "ref": "UXG-55",
+          "severity": "Minor",
+          "user_impact": "Identity theft risk. CMND + DOB = sufficient for many fraudulent activities in Vietnam.",
+          "heuristic": "Nielsen #5: Default mask prevents accidental PII exposure. Reveal only on explicit người dùng action.",
+          "evidence": "CMND \"012547288\" và ngày sinh \"12/05/1981\" hiển thị plaintext, không có option ẩn",
+          "screenshot": "basic-infor.png",
+          "screen_id": "SCR-LH-004",
+          "screen_name": "Thông tin cá nhân › Chi tiết",
+          "screen_type": "detail",
+          "screenshot_path": "ui/basic-infor.png",
+          "_img_tier": 5,
+          "description": "CMND '012547288' và ngày sinh '12/05/1981' hiển thị full text trên SCR-LH-004 — PII không masked.",
+          "ddl_evidence": "UXG-55",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+              "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+              "quote": "Shortcuts — hidden from novice users — may speed up the interaction for the expert user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "The best designs carefully prevent problems from occurring in the first place.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "hiện_trạng": "CMND '012547288' và ngày sinh '12/05/1981' hiển thị full text trên SCR-LH-004 — PII không masked.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "CTA để yêu cầu cập nhật thông tin",
+          "ref": "UXG-78",
+          "severity": "Minor",
+          "user_impact": "người dùng sees outdated info → wants to update → no actionable CTA → must figure out how independently. Dead end.",
+          "heuristic": "Nielsen #6 — Recognition: Actionable CTA lets người dùng act immediately. Text-only instructions = recall-based navigation.",
+          "evidence": "Chỉ có footnote text, không có button hay link actionable",
+          "screenshot": "basic-infor.png",
+          "screen_id": "SCR-LH-004",
+          "screen_name": "Thông tin cá nhân › Chi tiết",
+          "screen_type": "detail",
+          "screenshot_path": "ui/basic-infor.png",
+          "_img_tier": 5,
+          "description": "SCR-LH-004 basic info — chỉ có footnote text, không có CTA button/link cho 'Yêu cầu cập nhật thông tin'. Text-only instruction.",
+          "ddl_evidence": "UXG-78",
+          "ref_count": 6,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Hick's Law",
+              "url": "https://lawsofux.com/hicks-law/",
+              "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+              "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+              "quote": "Shortcuts — hidden from novice users — may speed up the interaction for the expert user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #4 — Consistency and Standards",
+            "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+            "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "SCR-LH-004 basic info — chỉ có footnote text, không có CTA button/link cho 'Yêu cầu cập nhật thông tin'. Text-only instruction.",
+          "_enriched_by": "llm"
+        }
+      ]
+    }
+  ],
+  "heuristics": [
+    {
+      "key": "flow",
+      "name_vi": "Luồng người dùng",
+      "name_en": "Flow & Navigation",
+      "score": 76,
+      "gap_count": 9
+    },
+    {
+      "key": "component",
+      "name_vi": "Thành phần",
+      "name_en": "Component & DDL",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "visual",
+      "name_vi": "Thiết kế trực quan",
+      "name_en": "Visual Design",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "content",
+      "name_vi": "Nội dung",
+      "name_en": "Content & Copy",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "a11y",
+      "name_vi": "Tiếp cận",
+      "name_en": "Accessibility",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "trust",
+      "name_vi": "Tin cậy & Bảo mật",
+      "name_en": "Trust & Security",
+      "score": 100,
+      "gap_count": 0
+    }
+  ],
+  "_score_discrepancies": [
+    {
+      "screen_id": "SCR-LH-001",
+      "field": "pass_count",
+      "claimed": 0,
+      "actual": 8
+    },
+    {
+      "screen_id": "SCR-LH-001",
+      "field": "gap_count",
+      "claimed": 0,
+      "actual": 3
+    },
+    {
+      "screen_id": "SCR-LH-001",
+      "field": "score",
+      "claimed": "0%",
+      "actual": "67%"
+    },
+    {
+      "screen_id": "SCR-LH-002",
+      "field": "pass_count",
+      "claimed": 0,
+      "actual": 8
+    },
+    {
+      "screen_id": "SCR-LH-002",
+      "field": "gap_count",
+      "claimed": 0,
+      "actual": 2
+    },
+    {
+      "screen_id": "SCR-LH-002",
+      "field": "score",
+      "claimed": "0%",
+      "actual": "67%"
+    },
+    {
+      "screen_id": "SCR-LH-003",
+      "field": "pass_count",
+      "claimed": 0,
+      "actual": 7
+    },
+    {
+      "screen_id": "SCR-LH-003",
+      "field": "gap_count",
+      "claimed": 0,
+      "actual": 2
+    },
+    {
+      "screen_id": "SCR-LH-003",
+      "field": "score",
+      "claimed": "0%",
+      "actual": "70%"
+    },
+    {
+      "screen_id": "SCR-LH-004",
+      "field": "pass_count",
+      "claimed": 0,
+      "actual": 5
+    },
+    {
+      "screen_id": "SCR-LH-004",
+      "field": "gap_count",
+      "claimed": 0,
+      "actual": 2
+    },
+    {
+      "screen_id": "SCR-LH-004",
+      "field": "score",
+      "claimed": "0%",
+      "actual": "62%"
+    }
+  ],
+  "_ref_enrichment": {
+    "gap_enriched": 3,
+    "uxp_enriched": 1,
+    "sources": [
+      "enriched-data.json",
+      "official-urls.md"
+    ]
+  }
+}

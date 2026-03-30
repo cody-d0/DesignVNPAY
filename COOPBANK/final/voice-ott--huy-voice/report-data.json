@@ -1,0 +1,801 @@
+{
+  "meta": {
+    "client_name": "Co-opBank",
+    "product_name": "Co-opBank Mobile Banking",
+    "module_name": "Huỷ Voice OTT",
+    "domain": "Banking",
+    "section": "Cài đặt Voice OTT / Huỷ Voice OTT",
+    "module_dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/voice-ott--huy-voice"
+  },
+  "stats": {
+    "screen_count": 2,
+    "check_count": 32,
+    "gap_count": 10,
+    "pass_count": 18,
+    "proposal_count": 8,
+    "overall_score": 56,
+    "overall_score_color": "#c2410c",
+    "overall_score_offset": 141,
+    "overall_weighted_score": 82,
+    "severity_counts": {
+      "critical": 2,
+      "major": 3,
+      "minor": 3
+    }
+  },
+  "screens": [
+    {
+      "id": "SCR-VOT-001",
+      "name": "Huỷ Voice OTT › Chi tiết & Xác nhận (`SCR-VOT-001`)",
+      "type": "detail",
+      "score": 60,
+      "score_color": "#c2410c",
+      "score_offset": 63,
+      "weighted_score": 80,
+      "gap_count": 5,
+      "artboard_count": 5
+    },
+    {
+      "id": "SCR-VOT-002",
+      "name": "Huỷ Voice OTT › Form cài đặt (`SCR-VOT-002`)",
+      "type": "form",
+      "score": 50,
+      "score_color": "#c2410c",
+      "score_offset": 78,
+      "weighted_score": 85,
+      "gap_count": 5,
+      "artboard_count": 1
+    }
+  ],
+  "uxps": [
+    {
+      "id": "UXP-001",
+      "severity": "Critical",
+      "screen_tag": "Huỷ Voice OTT › Chi tiết & Xác nhận",
+      "problem": "OTP flow thiếu countdown timer và resend button",
+      "gap_ref": "Check #3, Check #4",
+      "ddl_ref": "COMP:otp-input-1 — `canResend`, `timeLeft`, `resendTimeout=60`; COMP:countdown-timer-1",
+      "solution": "Thêm countdown timer (DDL `countdown-timer-1`: `timeLeft` state, `isExpired`) bên dưới ô OTP. Thêm \"Gửi lại OTP\" button, disable cho đến khi hết 60...",
+      "screenshot_path": "ui/7103-huy-yang-ky-voice.png",
+      "_img_tier": 3,
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "Keep users informed about what is going on.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Precisely indicate the problem.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Huỷ Voice OTT = account-level action. Failed OTP → can't cancel service → stuck paying. Timer + resend = bắt buộc.",
+      "heuristic": "Nielsen #1: Timer = time-critical status. DDL otp-input-1 mandates canResend + timeLeft.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "OTP flow (artboard 7103) thiếu countdown timer và resend button — vi phạm DDL otp-input-1 spec. Only 6 cells visible, no feedback.",
+      "solution_steps": [
+        "Countdown: 02:00",
+        "Resend after 30s",
+        "Error: red cells + message",
+        "Auto-focus first cell"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-002",
+      "severity": "Critical",
+      "screen_tag": "Huỷ Voice OTT › Chi tiết & Xác nhận",
+      "problem": "Nội dung popup prerequisite (7100) có lỗi copy — câu lặp và thiếu rõ ràng",
+      "gap_ref": "Check #12, Check #1",
+      "ddl_ref": "UXG-243 — CTA label phải phản ánh đúng hành động; Banking product: Trust paramount",
+      "solution": "Rewrite: \"Quý khách cần đăng ký nhận thông báo BĐSD trước khi sử dụng tính năng Voice OTT. Vui lòng đăng ký tại mục Thông báo và Cảnh báo.\" Thêm CT...",
+      "screenshot_path": "ui/7100-huy-yang-ky-voice.png",
+      "_img_tier": 3,
+      "references": [
+        {
+          "name": "Nielsen #2 — Match Between System and Real World",
+          "url": "https://www.nngroup.com/articles/match-system-real-world/",
+          "quote": "Speak the users' language with words, phrases, and concepts familiar to the user.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Repeated phrase in popup = sloppy copywriting. người dùng confused: 'What do I need to do first?' Prerequisite must be crystal clear.",
+      "heuristic": "Nielsen #2: Clear, concise language. No redundancy in critical instructions.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Popup prerequisite (artboard 7100) — câu lặp phrase 'đăng ký nhận thông báo' và nội dung thiếu rõ ràng. Copy error on prerequisite dialog.",
+      "solution_steps": [
+        "Simplify: 'Để huỷ Voice OTT, bạn cần đăng ký nhận thông báo trước. Nhấn OK để tiếp tục.'",
+        "One clear instruction per popup"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-003",
+      "severity": "Major",
+      "screen_tag": "Huỷ Voice OTT › Form cài đặt",
+      "problem": "CTA label \"Đăng ký\" sai ngữ cảnh khi màn hình là chỉnh sửa",
+      "gap_ref": "Check #1, Check #12",
+      "ddl_ref": "UXG-243 — CTA clarity; COMP:app-header-1 — title context",
+      "solution": "Thay \"Đăng ký\" bằng \"Lưu thay đổi\" khi màn hình được mở từ context chỉnh sửa. Hoặc: \"Xác nhận\" nếu đơn giản hơn.",
+      "screenshot_path": "ui/7105-huy-yang-ky-voice.png",
+      "_img_tier": 3,
+      "references": [
+        {
+          "name": "Nielsen #2 — Match Between System and Real World",
+          "url": "https://www.nngroup.com/articles/match-system-real-world/",
+          "quote": "Speak the users' language.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "'Đăng ký' khi người dùng muốn huỷ = severe confusion. người dùng hesitates: 'Am I registering something new instead of cancelling?'",
+      "heuristic": "Nielsen #2: CTA label must match người dùng intent. Context: huỷ → 'Xác nhận huỷ' or 'Cập nhật'.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "CTA label 'Đăng ký' trên artboard 7105 — nhưng context là chỉnh sửa/huỷ, không phải đăng ký mới. Label mismatch.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thay \"Đăng ký\" bằng \"Lưu thay đổi\" khi màn hình được mở từ context chỉnh sửa. Hoặc: \"Xác nhận\" nếu đơn giản hơn.",
+        "Dùng ngôn ngữ và mô hình tâm lý quen thuộc với người dùng ngân hàng",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-004",
+      "severity": "Major",
+      "screen_tag": "Huỷ Voice OTT › Form cài đặt",
+      "problem": "Time-picker fields thiếu error state và placeholder",
+      "gap_ref": "Check #2, Check #3, Check #6",
+      "ddl_ref": "COMP:text-input-1 — `error` state, `helper text`; UXG-165",
+      "solution": "Thêm placeholder \"HH:mm\" cho cả 2 fields. Thêm inline error: \"Giờ bắt đầu phải nhỏ hơn giờ kết thúc\" khi Từ ≥ Đến. DDL `text-input-1` spec: `error`...",
+      "screenshot_path": "ui/7105-huy-yang-ky-voice.png",
+      "_img_tier": 3,
+      "references": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Prevent problems.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+          "quote": "Labels provided when content requires user input.",
+          "source": "W3C"
+        }
+      ],
+      "user_impact": "Empty time fields without placeholder → người dùng guesses format. Invalid range → no inline error → server reject.",
+      "heuristic": "Nielsen #5: ngăn chặn invalid input. WCAG 3.3.2: Placeholders/labels for input.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Time-picker fields 'Từ'/'Đến' (artboard 7105) — no trạng thái lỗi for invalid range, no placeholder hint for format.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm placeholder \"HH:mm\" cho cả 2 fields. Thêm inline error: \"Giờ bắt đầu phải nhỏ hơn giờ kết thúc\" khi Từ ≥ Đến. DDL `text-input-1` spec: `error`...",
+        "Thêm inline validation realtime — không chờ người dùng submit mới báo lỗi",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-005",
+      "severity": "Major",
+      "screen_tag": "Huỷ Voice OTT › Chi tiết & Xác nhận",
+      "problem": "Destructive action (huỷ dịch vụ) thiếu visual distinction — \"Đồng ý\" không có màu destructive",
+      "gap_ref": "Check #6",
+      "ddl_ref": "TOKEN:base.destructive; Banking: \"Trust paramount\" — destructive actions cần visual warning",
+      "solution": "Đổi màu button \"Đồng ý\" trong confirm dialog thành destructive color (DDL `base.destructive`). Hoặc đổi label thành \"Huỷ dịch vụ\" để rõ hơn ý định.",
+      "screenshot_path": "ui/7102-huy-yang-ky-voice.png",
+      "_img_tier": 3,
+      "references": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "The best designs carefully prevent problems from occurring in the first place.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Blue 'Đồng ý' on cancel-service dialog = no urgency signal. Destructive action should use red/warning color or at minimum secondary styling.",
+      "heuristic": "Nielsen #5: Destructive actions need visual differentiation. Red or warning color for irreversible service cancellation.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Destructive action 'Đồng ý' (huỷ dịch vụ, artboard 7102) dùng blue button — giống nhau as non-destructive CTAs. No visual distinction.",
+      "solution_steps": [
+        "'Đồng ý huỷ' → red/outlined destructive style",
+        "'Quay lại' → primary blue (safe default)",
+        "Clear consequence text: 'Dịch vụ Voice OTT sẽ bị huỷ vĩnh viễn'"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-006",
+      "severity": "Minor",
+      "screen_tag": "Huỷ Voice OTT › Chi tiết & Xác nhận",
+      "problem": "\"Nghe thử\" thiếu play state indicator",
+      "gap_ref": "Check #16, Check #8, Check #10",
+      "ddl_ref": "UXG-165 — System status visibility for media",
+      "solution": "Thêm playing state: icon đổi sang pause, text đổi sang \"Đang phát...\" với animated indicator. Stop state khi hoàn thành.",
+      "screenshot_path": "ui/7101-huy-yang-ky-voice.png",
+      "_img_tier": 3,
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "Keep users informed.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "người dùng taps play → no phản hồi trực quan → 'Is it playing? Should I tap again?' No progress indicator.",
+      "heuristic": "Nielsen #1: Play state = system status. Animation/pulse during playback.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "'Nghe thử' (artboard 7101) — chỉ static play_circle icon, không có play state indicator (playing animation, pause state).",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm playing state: icon đổi sang pause",
+        "text đổi sang \"Đang phát...\" với animated indicator. Stop state khi hoàn thành."
+      ]
+    },
+    {
+      "id": "UXP-007",
+      "severity": "Minor",
+      "screen_tag": "Huỷ Voice OTT › Chi tiết & Xác nhận; Huỷ Voice OTT › Form cài đặt",
+      "problem": "Intro box \"Nội dung giới thiệu\" lặp lại trên cả 2 màn hình",
+      "gap_ref": "Check #6, Check #16, Check #8",
+      "ddl_ref": "UXG-165 — Content density optimization",
+      "solution": "SCR-VOT-002 rút ngắn intro box: chỉ giữ warning \"Lưu ý: KHÔNG để thiết bị im lặng\" và \"Nghe thử\". Remove duplicated description text.",
+      "screenshot_path": "ui/7101-huy-yang-ky-voice.png",
+      "_img_tier": 3,
+      "references": [
+        {
+          "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+          "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+          "quote": "Every extra unit of information competes with relevant units of information.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Full intro text on form screen = wasted space. người dùng already read intro on previous screen. Form screen should be action-focused.",
+      "heuristic": "Nielsen #8: loại bỏ redundant content. Form screen needs minimal context, maximum action area.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Intro box 'Nội dung giới thiệu' lặp lại trên cả 2 màn hình (7101 + 7105) — redundant content on form screen.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "SCR-VOT-002 rút ngắn intro box: chỉ giữ warning \"Lưu ý: KHÔNG để thiết bị im lặng\"",
+        "\"Nghe thử\". loại bỏ duplicated description text."
+      ]
+    },
+    {
+      "id": "UXP-008",
+      "severity": "Minor",
+      "screen_tag": "Huỷ Voice OTT › Form cài đặt",
+      "problem": "Empty account section thiếu visual guidance",
+      "gap_ref": "Check #8, Check #6, Check #16",
+      "ddl_ref": "COMP:empty-state-1; UXG-165 — Empty state clarity",
+      "solution": "Thêm placeholder text: \"Chưa có tài khoản nào. Nhấn + để thêm tài khoản nhận đọc loa.\" Validation: require ≥1 tài khoản trước khi enable CTA.",
+      "screenshot_path": "ui/7105-huy-yang-ky-voice.png",
+      "_img_tier": 3,
+      "references": [
+        {
+          "name": "Nielsen #6 — Recognition Rather Than Recall",
+          "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+          "quote": "Minimize the user's memory load.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Empty area with just a link = uninviting. Should hiển thị guidance: 'Chưa có tài khoản nào. Thêm tài khoản để bắt đầu.'",
+      "heuristic": "Nielsen #6: Empty states need guidance content.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Empty account section (artboard 7105) chỉ có '+Thêm tài khoản' — thiếu visual guidance khi no accounts added yet.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm placeholder text: \"Chưa có tài khoản nào. Nhấn + để thêm tài khoản nhận đọc loa.\" Validation: require ≥1 tài khoản trước khi enable CTA.",
+        "Thêm illustration + message giải thích và CTA để người dùng bắt đầu",
+        "Differentiate giữa \"chưa có data\" vs \"đang loading\" vs \"lỗi load\""
+      ]
+    }
+  ],
+  "gaps_by_screen": [
+    {
+      "screen_id": "SCR-VOT-001",
+      "screen_name": "Huỷ Voice OTT › Chi tiết & Xác nhận (`SCR-VOT-001`)",
+      "screen_type": "detail",
+      "gaps": [
+        {
+          "num": 3,
+          "title": "OTP countdown timer visible",
+          "ref": "COMP:otp-input-1 timeLeft; COMP:countdown-timer-1",
+          "severity": "Minor",
+          "user_impact": "No time feedback.",
+          "heuristic": "Nielsen #1.",
+          "evidence": "Từ ảnh 7103: KHÔNG có countdown timer — chỉ có 6 cells + \"Xác nhận\" button. DDL spec yêu cầu timeLeft state",
+          "screenshot": "7103-huy-yang-ky-voice.png",
+          "screen_id": "SCR-VOT-001",
+          "screen_name": "Huỷ Voice OTT › Chi tiết & Xác nhận",
+          "screen_type": "detail",
+          "screenshot_path": "ui/7103-huy-yang-ky-voice.png",
+          "_img_tier": 3,
+          "description": "OTP no countdown timer.",
+          "ddl_evidence": "COMP:otp-input-1 timeLeft; COMP:countdown-timer-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "OTP no countdown timer.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 4,
+          "title": "OTP resend button visible",
+          "ref": "COMP:otp-input-1 canResend",
+          "severity": "Minor",
+          "user_impact": "người dùng stuck.",
+          "heuristic": "Nielsen #1.",
+          "evidence": "Từ ảnh 7103: KHÔNG có resend button. DDL `canResend` state không được implement trong Figma",
+          "screenshot": "7103-huy-yang-ky-voice.png",
+          "screen_id": "SCR-VOT-001",
+          "screen_name": "Huỷ Voice OTT › Chi tiết & Xác nhận",
+          "screen_type": "detail",
+          "screenshot_path": "ui/7103-huy-yang-ky-voice.png",
+          "_img_tier": 3,
+          "description": "OTP no resend button.",
+          "ddl_evidence": "COMP:otp-input-1 canResend",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "OTP no resend button.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "Destructive action color differentiation",
+          "ref": "TOKEN:base.destructive; UXG-165",
+          "severity": "Minor",
+          "user_impact": "No warning signal.",
+          "heuristic": "Nielsen #5.",
+          "evidence": "Từ ảnh 7102: \"Đồng ý\" button dùng màu blue giống non-destructive action — không phân biệt với destructive intent",
+          "screenshot": "7102-huy-yang-ky-voice.png",
+          "screen_id": "SCR-VOT-001",
+          "screen_name": "Huỷ Voice OTT › Chi tiết & Xác nhận",
+          "screen_type": "detail",
+          "screenshot_path": "ui/7102-huy-yang-ky-voice.png",
+          "_img_tier": 3,
+          "description": "'Đồng ý' for destructive cancel uses giống nhau blue as non-destructive.",
+          "ddl_evidence": "TOKEN:base.destructive; UXG-165",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Von Restorff Effect",
+              "url": "https://lawsofux.com/von-restorff-effect/",
+              "quote": "When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 2,
+          "_enriched_ref": {
+            "name": "Nielsen #5 — Error Prevention",
+            "url": "https://www.nngroup.com/articles/slips/",
+            "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "'Đồng ý' for destructive cancel uses giống nhau blue as non-destructive.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 12,
+          "title": "Prerequisite popup có hướng dẫn action",
+          "ref": "UXG-243; Banking: Trust",
+          "severity": "Minor",
+          "user_impact": "Confusing instruction.",
+          "heuristic": "Nielsen #2.",
+          "evidence": "Từ ảnh 7100: text lặp phrase \"đăng ký nhận thông báo BĐSD\" 2 lần. CTA \"Đồng ý\" không rõ user cần làm gì tiếp theo",
+          "screenshot": "7100-huy-yang-ky-voice.png",
+          "screen_id": "SCR-VOT-001",
+          "screen_name": "Huỷ Voice OTT › Chi tiết & Xác nhận",
+          "screen_type": "detail",
+          "screenshot_path": "ui/7100-huy-yang-ky-voice.png",
+          "_img_tier": 3,
+          "description": "Prerequisite popup text repetitive.",
+          "ddl_evidence": "UXG-243; Banking: Trust",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Prerequisite popup text repetitive.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 16,
+          "title": "\"Nghe thử\" play state indicator",
+          "ref": "UXG-165",
+          "severity": "Minor",
+          "user_impact": "No playback feedback.",
+          "heuristic": "Nielsen #1.",
+          "evidence": "Từ ảnh 7101: chỉ có icon play_circle tĩnh, không có playing/stopped state indication",
+          "screenshot": "7101-huy-yang-ky-voice.png",
+          "screen_id": "SCR-VOT-001",
+          "screen_name": "Huỷ Voice OTT › Chi tiết & Xác nhận",
+          "screen_type": "detail",
+          "screenshot_path": "ui/7101-huy-yang-ky-voice.png",
+          "_img_tier": 3,
+          "description": "'Nghe thử' no play state.",
+          "ddl_evidence": "UXG-165",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "'Nghe thử' no play state.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-VOT-002",
+      "screen_name": "Huỷ Voice OTT › Form cài đặt (`SCR-VOT-002`)",
+      "screen_type": "form",
+      "gaps": [
+        {
+          "num": 1,
+          "title": "CTA label phù hợp với context",
+          "ref": "UXG-243; COMP:app-header-1",
+          "severity": "Minor",
+          "user_impact": "Label-context mismatch.",
+          "heuristic": "Nielsen #2.",
+          "evidence": "Từ ảnh 7105: CTA \"Đăng ký\" khi màn hình được trigger từ \"Chỉnh sửa\". Label không phản ánh đúng action (nên là \"Lưu cài đặt\" hoặc \"Xác nhận\")",
+          "screenshot": "7105-huy-yang-ky-voice.png",
+          "screen_id": "SCR-VOT-002",
+          "screen_name": "Huỷ Voice OTT › Form cài đặt",
+          "screen_type": "form",
+          "screenshot_path": "ui/7105-huy-yang-ky-voice.png",
+          "_img_tier": 3,
+          "description": "CTA 'Đăng ký' wrong for cancel context.",
+          "ddl_evidence": "UXG-243; COMP:app-header-1",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "CTA 'Đăng ký' wrong for cancel context.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 2,
+          "title": "Time-picker fields có placeholder",
+          "ref": "COMP:text-input-1",
+          "severity": "Minor",
+          "user_impact": "No format hint.",
+          "heuristic": "WCAG 3.3.2.",
+          "evidence": "Từ ảnh 7105: fields \"Từ\" và \"Đến\" rỗng không có placeholder HH:mm — user không biết format nhập",
+          "screenshot": "7105-huy-yang-ky-voice.png",
+          "screen_id": "SCR-VOT-002",
+          "screen_name": "Huỷ Voice OTT › Form cài đặt",
+          "screen_type": "form",
+          "screenshot_path": "ui/7105-huy-yang-ky-voice.png",
+          "_img_tier": 3,
+          "description": "Time fields no placeholder.",
+          "ddl_evidence": "COMP:text-input-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+              "quote": "Labels provided.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Time fields no placeholder.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 3,
+          "title": "Time-picker error validation state",
+          "ref": "COMP:text-input-1 error state",
+          "severity": "Minor",
+          "user_impact": "Invalid range submitted.",
+          "heuristic": "Nielsen #5.",
+          "evidence": "DDL `text-input-1` có `error` state. Artboard 7105 không show error state khi Từ ≥ Đến. Figma thiếu validation error screen",
+          "screenshot": "7105-huy-yang-ky-voice.png",
+          "screen_id": "SCR-VOT-002",
+          "screen_name": "Huỷ Voice OTT › Form cài đặt",
+          "screen_type": "form",
+          "screenshot_path": "ui/7105-huy-yang-ky-voice.png",
+          "_img_tier": 3,
+          "description": "Time picker no error validation.",
+          "ddl_evidence": "COMP:text-input-1 error state",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Prevent.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Time picker no error validation.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 8,
+          "title": "Empty account state visual guidance",
+          "ref": "COMP:empty-state-1; UXG-165",
+          "severity": "Minor",
+          "user_impact": "Uninviting empty area.",
+          "heuristic": "Nielsen #6.",
+          "evidence": "Từ ảnh 7105: account section trống chỉ có \"+Thêm tài khoản\" — không có hint/empty state text mô tả cần thêm gì",
+          "screenshot": "7105-huy-yang-ky-voice.png",
+          "screen_id": "SCR-VOT-002",
+          "screen_name": "Huỷ Voice OTT › Form cài đặt",
+          "screen_type": "form",
+          "screenshot_path": "ui/7105-huy-yang-ky-voice.png",
+          "_img_tier": 3,
+          "description": "Empty account section no visual guidance.",
+          "ddl_evidence": "COMP:empty-state-1; UXG-165",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 2,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Empty account section no visual guidance.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 10,
+          "title": "Intro box length trên form screen",
+          "ref": "UXG-165 (aesthetic minimalism)",
+          "severity": "Minor",
+          "user_impact": "Redundant content.",
+          "heuristic": "Nielsen #8.",
+          "evidence": "Từ ảnh 7105: full intro box (description + warning + Nghe thử) lặp lại identically từ SCR-VOT-001. Redundant content tốn viewport",
+          "screenshot": "7105-huy-yang-ky-voice.png",
+          "screen_id": "SCR-VOT-002",
+          "screen_name": "Huỷ Voice OTT › Form cài đặt",
+          "screen_type": "form",
+          "screenshot_path": "ui/7105-huy-yang-ky-voice.png",
+          "_img_tier": 3,
+          "description": "Full intro box repeated on form screen.",
+          "ddl_evidence": "UXG-165 (aesthetic minimalism)",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Aesthetic-Usability Effect",
+              "url": "https://lawsofux.com/aesthetic-usability-effect/",
+              "quote": "Users often perceive aesthetically pleasing design as design that's more usable.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+              "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+              "quote": "No irrelevant info.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+            "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+            "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Full intro box repeated on form screen.",
+          "_enriched_by": "llm"
+        }
+      ]
+    }
+  ],
+  "heuristics": [
+    {
+      "key": "flow",
+      "name_vi": "Luồng người dùng",
+      "name_en": "Flow & Navigation",
+      "score": 64,
+      "gap_count": 10
+    },
+    {
+      "key": "component",
+      "name_vi": "Thành phần",
+      "name_en": "Component & DDL",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "visual",
+      "name_vi": "Thiết kế trực quan",
+      "name_en": "Visual Design",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "content",
+      "name_vi": "Nội dung",
+      "name_en": "Content & Copy",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "a11y",
+      "name_vi": "Tiếp cận",
+      "name_en": "Accessibility",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "trust",
+      "name_vi": "Tin cậy & Bảo mật",
+      "name_en": "Trust & Security",
+      "score": 100,
+      "gap_count": 0
+    }
+  ],
+  "_ref_enrichment": {
+    "gap_enriched": 3,
+    "uxp_enriched": 3,
+    "sources": [
+      "enriched-data.json",
+      "official-urls.md"
+    ]
+  }
+}

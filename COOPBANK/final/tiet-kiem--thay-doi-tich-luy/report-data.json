@@ -1,0 +1,1287 @@
+{
+  "meta": {
+    "client_name": "Co-opBank",
+    "product_name": "Co-opBank Mobile Banking",
+    "module_name": "Thay đổi thông tin tích luỹ",
+    "domain": "Banking",
+    "section": "Thay đổi thông tin tích luỹ định kỳ",
+    "module_dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/tiet-kiem--thay-doi-tich-luy"
+  },
+  "stats": {
+    "screen_count": 4,
+    "check_count": 38,
+    "gap_count": 16,
+    "pass_count": 15,
+    "proposal_count": 15,
+    "overall_score": 39,
+    "overall_score_color": "#b91c1c",
+    "overall_score_offset": 195,
+    "overall_weighted_score": 72,
+    "severity_counts": {
+      "critical": 3,
+      "major": 5,
+      "minor": 7
+    }
+  },
+  "screens": [
+    {
+      "id": "SCR-TK-001",
+      "name": "Thông tin tài khoản tiết kiệm › Chi tiết (`SCR-TK-001`)",
+      "type": "detail",
+      "score": 40,
+      "score_color": "#b91c1c",
+      "score_offset": 94,
+      "weighted_score": 67,
+      "gap_count": 3,
+      "artboard_count": 1
+    },
+    {
+      "id": "SCR-TK-002",
+      "name": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin (`SCR-TK-002`)",
+      "type": "form",
+      "score": 50,
+      "score_color": "#c2410c",
+      "score_offset": 78,
+      "weighted_score": 70,
+      "gap_count": 5,
+      "artboard_count": 4
+    },
+    {
+      "id": "SCR-TK-003",
+      "name": "Xác thực giao dịch › Xác nhận giao dịch (`SCR-TK-003`)",
+      "type": "confirm",
+      "score": 40,
+      "score_color": "#b91c1c",
+      "score_offset": 94,
+      "weighted_score": 78,
+      "gap_count": 5,
+      "artboard_count": 1
+    },
+    {
+      "id": "SCR-TK-004",
+      "name": "Kết quả thay đổi › Kết quả giao dịch (`SCR-TK-004`)",
+      "type": "result",
+      "score": 17,
+      "score_color": "#b91c1c",
+      "score_offset": 130,
+      "weighted_score": 75,
+      "gap_count": 3,
+      "artboard_count": 1
+    }
+  ],
+  "uxps": [
+    {
+      "id": "UXP-001",
+      "severity": "Critical",
+      "screen_tag": "Thông tin tài khoản tiết kiệm › Chi tiết",
+      "problem": "PII Exposure — 3 số tài khoản hiển thị đầy đủ không mask (012547288, 1231231232, 123123123123)",
+      "gap_ref": "Check #5",
+      "ddl_ref": "Product Context: \"Security-first. Trust paramount.\"",
+      "solution": "Mask partial: hiển thị dạng ****7288, ****1232, ****3123. Chỉ hiện đầy đủ sau xác thực biometrics/PIN",
+      "screenshot_path": "ui/thay-yoi-thong-tin-tltg-1.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "The best designs carefully prevent problems from occurring in the first place.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Multiple account numbers exposed on single screen = high social engineering risk. Attacker sees 3 accounts → comprehensive financial profile exposed.",
+      "heuristic": "Nielsen #5 — Error Prevention: Default masking for all account numbers. Reveal only on explicit tap.",
+      "ref_count": 2,
+      "hiện_trạng": "3 số tài khoản hiển thị đầy đủ không mask trên SCR-TK-001: '012547288', '1231231232', '123123123123'. PII fully exposed on savings detail screen.",
+      "solution_steps": [
+        "Mask all: '0125***88', '1231***232', '1231***3123'",
+        "Eye icon toggle per số tài khoản",
+        "Uniform masking policy across app"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-002",
+      "severity": "Critical",
+      "screen_tag": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+      "problem": "PII Exposure Form — Số tài khoản tiền gửi 9099798712313123 và TK trích tiền 12312313123133 hiển thị đầy đủ không mask",
+      "gap_ref": "Check #10",
+      "ddl_ref": "Product Context: \"Security-first. Trust paramount.\"",
+      "solution": "Mask partial: ****3123, ****3133. Dùng dropdown hiển thị masked + last 4 digits",
+      "screenshot_path": "ui/thay-yoi-thong-tin-tltg-5.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Prevent problems.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Account numbers in form fields even more exposed — editable context implies người dùng interaction. Must mask in dropdown/hiển thị, hiển thị full only in active edit.",
+      "heuristic": "Nielsen #5: PII masking in hiển thị contexts. Form fields showing account numbers need masking when not actively editing.",
+      "ref_count": 2,
+      "hiện_trạng": "Form screen: TK tiền gửi '9099798712313123' and TK trích tiền '12312313123133' fully visible in form fields — PII unmasked in input context.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Mask partial: ****3123, ****",
+        "Dùng dropdown hiển thị masked + last 4 digits"
+      ]
+    },
+    {
+      "id": "UXP-003",
+      "severity": "Critical",
+      "screen_tag": "Xác thực giao dịch › Xác nhận giao dịch",
+      "problem": "OTP Resend + Error Missing — DDL otp-input-1 spec yêu cầu canResend state + countdown timer + error state (red border, shake). Từ ảnh: chỉ có 6 ô tĩnh + nút Xác nhận, KHÔNG có nút Gửi lại, KHÔNG có artboard cho wrong PIN",
+      "gap_ref": "Check #6, Check #2, Check #1",
+      "ddl_ref": "COMP:otp-input-1 (canResend, timeLeft, error states)",
+      "solution": "Thêm: (1) Nút \"Gửi lại mã\" với countdown 60s; (2) Error state: 6 ô viền đỏ + shake animation + \"Mã PIN không đúng. Còn {N} lần thử\"; (3) Lock state...",
+      "screenshot_path": "ui/thay-yoi-thong-tin-tltg-6.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "Keep users informed.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Precisely indicate the problem.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Financial modification without full OTP UX = người dùng stuck if OTP not received. Timer expired silently → rejection without explanation.",
+      "heuristic": "Nielsen #1: Timer = time-critical status. Nielsen #9: OTP error must be specific.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "OTP input (TLTG-6): 6 cells but thiếu canResend button, countdown timer, trạng thái lỗi per DDL otp-input-1 spec. giống nhau systemic OTP gap.",
+      "solution_steps": [
+        "Countdown: 02:00 visible",
+        "Resend after 30s cooldown",
+        "Error: red cells + 'Mã PIN không đúng'",
+        "Auto-focus first cell"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-004",
+      "severity": "Major",
+      "screen_tag": "Thông tin tài khoản tiết kiệm › Chi tiết",
+      "problem": "Information Overload — Từ ảnh: 22 fields liệt kê liên tục không section divider, không visual grouping. Cognitive load cao",
+      "gap_ref": "Check #2",
+      "ddl_ref": "UXG-165, Hick's Law",
+      "solution": "Phân nhóm 4 sections với divider: (1) Thông tin cơ bản (Tên, Số TK, Chi nhánh, Loại SP), (2) Kỳ hạn & Lãi suất (Kỳ hạn, Ngày, Lãi suất, Lãi cộng dồ...",
+      "screenshot_path": "ui/thay-yoi-thong-tin-tltg-1.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Hick's Law",
+          "url": "https://lawsofux.com/hicks-law/",
+          "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Miller's Law",
+          "url": "https://lawsofux.com/millers-law/",
+          "quote": "7±2 items in working memory.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "22 flat rows = severe cognitive overload. người dùng cần to xác minh specific fields but must scan all 22 sequentially.",
+      "heuristic": "Miller's Law: Chunk 22 items vào 4-5 groups. Gestalt Proximity for visual grouping.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Hick's Law",
+        "url": "https://lawsofux.com/hicks-law/",
+        "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+        "source": "Laws of UX"
+      },
+      "hiện_trạng": "22 fields liệt kê liên tục trên SCR-TK-001 — no section dividers, no visual grouping. Thay đổi tích lũy detail flat list.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Phân nhóm 4 sections với divider:",
+        "Thông tin cơ bản (Tên, Số TK, Chi nhánh, Loại SP),",
+        "Kỳ hạn & Lãi suất (Kỳ hạn, Ngày, Lãi suất, Lãi cộng dồ..."
+      ]
+    },
+    {
+      "id": "UXP-005",
+      "severity": "Major",
+      "screen_tag": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+      "problem": "Input Validation Missing — Từ ảnh: Input \"Số tiền tích luỹ định kỳ\" chỉ có helper text tĩnh. DDL text-input-1 yêu cầu error state, helperText dynamic, validationState. Thiếu inline validation khi nhập < 1,000,000",
+      "gap_ref": "Check #2",
+      "ddl_ref": "COMP:text-input-1 (error, helperText, validationState, focused states)",
+      "solution": "Thêm: (1) Error border đỏ + \"Số tiền tối thiểu 1.000.000 đồng\" khi < 1M; (2) Auto-format VND khi nhập (1000000 → 1.000.000); (3) Focus state: highl...",
+      "screenshot_path": "ui/thay-yoi-thong-tin-tltg-2.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Precisely indicate the problem.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "WCAG 3.3.1 — Error Identification (Level A)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html",
+          "quote": "Item in error is identified.",
+          "source": "W3C"
+        }
+      ],
+      "user_impact": "người dùng nhập amount sai → no inline feedback → submit → server-side reject → restart. Real-time validation bắt buộc.",
+      "heuristic": "Nielsen #9: Inline errors per field. WCAG 3.3.1: Error identification at field level.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Input 'Số tiền tích luỹ định kỳ' chỉ có helper text tĩnh, thiếu real-time validation, no trạng thái lỗi design per DDL text-input-1 spec.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm:",
+        "Error border đỏ + \"Số tiền tối thiểu 1.000.000 đồng\" khi < 1M;",
+        "Auto-format VND khi nhập (1000000 → 1.000.000);",
+        "Focus state: highl..."
+      ]
+    },
+    {
+      "id": "UXP-006",
+      "severity": "Major",
+      "screen_tag": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+      "problem": "Toggle Label Accessibility — Từ ảnh: Toggle ON (xanh filled) vs OFF (xám outlined) có visual OK nhưng KHÔNG có text label \"Đang bật\"/\"Đang tắt\". Screen reader thiếu state info",
+      "gap_ref": "Check #1, Check #7",
+      "ddl_ref": "UXG-165: \"Labels should clearly indicate the current state\"",
+      "solution": "Thêm accessible label bên phải toggle: \"Đang bật\" (xanh) / \"Đã tắt\" (xám). ARIA: aria-checked + aria-label",
+      "screenshot_path": "ui/thay-yoi-thong-tin-tltg-2.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "WCAG 1.4.1 — Use of Color (Level A)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html",
+          "quote": "Color is not the only visual means of conveying information.",
+          "source": "W3C"
+        }
+      ],
+      "user_impact": "Color-blind người dùng: green vs grey may not contrast sufficiently. Screen readers need aria-checked state.",
+      "heuristic": "WCAG 1.4.1: Color not sole means of conveying info. thêm text label alongside toggle.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Toggle ON (green) / OFF (grey) — visual OK nhưng thiếu text label or ARIA state. Accessible name thiếu.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm accessible label bên phải toggle: \"Đang bật\" (xanh) / \"Đã tắt\" (xám). ARIA: aria-checked + aria-label",
+        "xác minh implementation trên cả iOS và Android — đảm bảo nhất quán",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-007",
+      "severity": "Major",
+      "screen_tag": "Xác thực giao dịch › Xác nhận giao dịch",
+      "problem": "OTP Cell Size Mismatch — DDL otp-input-1 spec: cellSize=48px. Từ ảnh: cells ước lượng ~44px. Thiếu active focus indicator trên cell đang nhập",
+      "gap_ref": "Check #1, Check #2, Check #6",
+      "ddl_ref": "COMP:otp-input-1 (cellSize=48px, activeIndex state)",
+      "solution": "Tăng cell size lên 48px theo DDL spec. Thêm active border (2px solid primary) cho cell đang focus (activeIndex). Filled cells hiển thị dot mask",
+      "screenshot_path": "ui/thay-yoi-thong-tin-tltg-6.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Nielsen #4 — Consistency and Standards",
+          "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+          "quote": "Consistency expected.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Below DDL specification. nhất quán sizing needed.",
+      "heuristic": "Nielsen #4: Follow design system specifications.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "OTP cells ~44px, DDL spec 48px. Minor sizing below spec.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Tăng cell size lên 48px theo DDL spec. Thêm active border (2px solid primary) cho cell đang focus (activeIndex). Filled cells hiển thị dot mask",
+        "Kiểm tra consistency pattern này với các flow tương tự trong app",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-008",
+      "severity": "Major",
+      "screen_tag": "Kết quả thay đổi › Kết quả giao dịch",
+      "problem": "Transaction Details Missing — Từ ảnh: Success popup chỉ có checkmark + message + \"Đóng\". DDL receipt-preview-1 spec (items, subtotal, paymentMethod) không được sử dụng. Thiếu mã giao dịch, thời gian, before/after values",
+      "gap_ref": "Check #2, Check #6",
+      "ddl_ref": "COMP:receipt-preview-1 (items, subtotal, paymentMethod), UXG-165",
+      "solution": "Hiển thị: mã GD (FT2603xxxxx), thời gian (15:30 23/03/2026), thay đổi: Số tiền tích luỹ 0→5.000.000, Trạng thái tích luỹ Tắt→Bật. Nút \"Lưu biên lai\"",
+      "screenshot_path": "ui/thay-yoi-thong-tin-tltg-7.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "Keep users informed.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Success without details → người dùng không thể xác minh what changed. 'Did my new amount register? What's the new schedule?'",
+      "heuristic": "Nielsen #1: trạng thái thành công must hiển thị result details.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Success popup (TLTG-7): chỉ checkmark + message + 'Đóng'. Thiếu giao dịch details: số tiền thay đổi, kỳ hạn mới, mã GD.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Hiển thị: mã GD (FT2603xxxxx)",
+        "thời gian (15:30 23/03/2026)",
+        "thay đổi: Số tiền tích luỹ 0→5.000.000",
+        "Trạng thái tích luỹ Tắt→Bật. Nút \"Lưu biên lai\""
+      ]
+    },
+    {
+      "id": "UXP-009",
+      "severity": "Minor",
+      "screen_tag": "Thông tin tài khoản tiết kiệm › Chi tiết",
+      "problem": "Bottom Navigation Active State — Từ ảnh: 4 tab bottom nav (Tất toán tiền gửi trực tuyến, Thay đổi thông tin tích luỹ, Lịch sử giao dịch, Chức năng khác). Không tab nào có active color/indicator nổi bật",
+      "gap_ref": "Check #4",
+      "ddl_ref": "COMP:bottom-tab-bar-1 (activeTabIndex), UXG-243",
+      "solution": "Tab \"Thay đổi thông tin tích luỹ\" cần active color (primary blue) + bottom indicator bar 2px",
+      "screenshot_path": "ui/thay-yoi-thong-tin-tltg-1.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "Keep informed about location.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "No active tab indicator → disoriented: 'Am I on Tất toán or Thay đổi?' Lost in navigation.",
+      "heuristic": "Nielsen #1: Active state = current location. Visual indicator bắt buộc.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Bottom nav 4 tabs — all giống nhau style, no active state differentiation. người dùng không thể tell which tab is current.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Tab \"Thay đổi thông tin tích luỹ\" cần active color (primary blue) + bottom indicator bar 2px",
+        "Highlight active state rõ ràng (bold + underline hoặc accent color)",
+        "Support swipe gesture giữa các tab trên mobile"
+      ]
+    },
+    {
+      "id": "UXP-010",
+      "severity": "Minor",
+      "screen_tag": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+      "problem": "Popup Button Hierarchy — Từ ảnh (TLTG-5): \"Huỷ\" và \"Đồng ý\" cùng style text button, không phân biệt primary/secondary action",
+      "gap_ref": "Check #7, Check #1",
+      "ddl_ref": "UXG-165",
+      "solution": "\"Đồng ý\": filled primary button (background-primary, text-white). \"Huỷ\": text-only hoặc outlined secondary",
+      "screenshot_path": "ui/thay-yoi-thong-tin-tltg-5.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Prevent problems.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Equal-weight buttons on financial change xác nhận. Accidental tap risk.",
+      "heuristic": "Nielsen #5: Button hierarchy for consequential actions.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Popup (TLTG-5): 'Huỷ' và 'Đồng ý' cùng text button style — no phân cấp trực quan cho financial xác nhận.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "\"Đồng ý\": filled primary button (background-primary",
+        "text-white). \"Huỷ\": text-only hoặc outlined secondary"
+      ]
+    },
+    {
+      "id": "UXP-011",
+      "severity": "Minor",
+      "screen_tag": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+      "problem": "Number Formatting Error — Metadata helper text \"23,1000,000\" sai comma grouping. Chuẩn VND: 23.100.000 hoặc 23,100,000",
+      "gap_ref": "Check #9",
+      "ddl_ref": "—",
+      "solution": "Chuẩn hoá theo locale vi-VN: dùng dấu chấm phân cách hàng nghìn (23.100.000 VND)",
+      "screenshot_path": "ui/thay-yoi-thong-tin-tltg-2.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #4 — Consistency and Standards",
+          "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+          "quote": "No confusion about meaning.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Wrong number formatting on financial helper text → người dùng confused about actual amount. '23,1000,000' = ambiguous: 23.1M or 231M?",
+      "heuristic": "Nielsen #4: Number formatting must follow Vietnamese financial conventions (dot separator).",
+      "ref_count": 2,
+      "hiện_trạng": "Helper text '23,1000,000' — sai comma grouping. Chuẩn VND: '23.100.000' (dot separator) hoặc '23,100,000'.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Chuẩn hoá theo locale vi-VN: dùng dấu chấm phân cách hàng nghìn (23.100.000 VND)",
+        "Kiểm tra consistency pattern này với các flow tương tự trong app",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-012",
+      "severity": "Minor",
+      "screen_tag": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+      "problem": "Dropdown Truncation Risk — Từ ảnh: TK trích tiền \"12312313123133\" hiển thị đầy đủ trong dropdown. Trên thiết bị nhỏ (320pt width) có thể bị cắt",
+      "gap_ref": "Check #10",
+      "ddl_ref": "—",
+      "solution": "Truncate giữa: \"1231...3133\" hoặc hiển thị masked ****3133. Expandable dropdown cho full number",
+      "screenshot_path": "ui/thay-yoi-thong-tin-tltg-5.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Prevent problems.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Truncated account numbers → người dùng selects wrong account. Full masking + last 4 digits better: '***3133'.",
+      "heuristic": "Nielsen #5: ngăn chặn wrong account selection via masking + identifiable suffix.",
+      "ref_count": 2,
+      "hiện_trạng": "TK trích tiền '12312313123133' displayed fully in dropdown — long number may truncate on smaller screens.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Truncate giữa: \"1231...3133\" hoặc hiển thị masked ****",
+        "Expandable dropdown cho full number"
+      ]
+    },
+    {
+      "id": "UXP-013",
+      "severity": "Minor",
+      "screen_tag": "Xác thực giao dịch › Xác nhận giao dịch",
+      "problem": "Loading State Missing — Không có artboard cho loading khi verify Soft OTP PIN. Doherty Threshold: feedback <400ms",
+      "gap_ref": "Check #7, Check #10",
+      "ddl_ref": "UXG-165, Doherty Threshold",
+      "solution": "Thêm loading indicator trên nút \"Xác nhận\" (spinner replace text) hoặc full-screen loading overlay với \"Đang xác thực...\"",
+      "screenshot_path": "ui/thay-yoi-thong-tin-tltg-6.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Doherty Threshold",
+          "url": "https://lawsofux.com/doherty-threshold/",
+          "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "Double-tap risk during verification → potential duplicate financial modification.",
+      "heuristic": "Doherty Threshold: Processing indicator within 400ms.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "No loading artboard for Soft OTP PIN verification. Doherty threshold requires feedback within 400ms.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm loading indicator trên nút \"Xác nhận\" (spinner thay thế text) hoặc full-screen loading overlay với \"Đang xác thực...\"",
+        "xác minh implementation trên cả iOS và Android — đảm bảo nhất quán",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-014",
+      "severity": "Minor",
+      "screen_tag": "Kết quả thay đổi › Kết quả giao dịch",
+      "problem": "Single Action — Từ ảnh: Chỉ có nút \"Đóng\". Thiếu secondary actions cho next task",
+      "gap_ref": "Check #3",
+      "ddl_ref": "—",
+      "solution": "Thêm: \"Xem chi tiết tài khoản\" (link text) hoặc \"Về trang chủ\" (secondary button) bên dưới nút Đóng",
+      "screenshot_path": "ui/thay-yoi-thong-tin-tltg-7.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #3 — User Control and Freedom",
+          "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+          "quote": "Emergency exit needed.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "'Đóng' → where do I go? người dùng returns to previous screen (which may be stale). Need navigation guidance.",
+      "heuristic": "Nielsen #3: Post-task navigation options.",
+      "ref_count": 2,
+      "hiện_trạng": "Success popup chỉ có 'Đóng'. Thiếu secondary actions: 'Xem chi tiết sổ' hoặc 'Về trang chủ'.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm: \"Xem chi tiết tài khoản\" (link text) hoặc \"Về trang chủ\" (secondary button) bên dưới nút Đóng",
+        "Audit toàn bộ app cho cùng pattern — đảm bảo wording nhất quán",
+        "Tạo content guideline: bảng từ chuẩn (VD: \"Đóng\" vs \"Hủy\" vs \"Thoát\") cho team"
+      ]
+    },
+    {
+      "id": "UXP-015",
+      "severity": "Minor",
+      "screen_tag": "Thông tin tài khoản tiết kiệm › Chi tiết",
+      "problem": "Scroll Indicator Missing — Từ ảnh: Screen dài ~1246px (gấp ~1.5x viewport), hiển thị nhiều fields nhưng không có visual scroll indicator hoặc \"xem thêm\"",
+      "gap_ref": "Check #2",
+      "ddl_ref": "UXG-165",
+      "solution": "Thêm subtle scroll indicator (gradient fade bottom edge) hoặc sticky header khi scroll",
+      "screenshot_path": "ui/thay-yoi-thong-tin-tltg-1.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #6 — Recognition Rather Than Recall",
+          "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+          "quote": "Minimize memory load.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "người dùng may not discover content below fold.",
+      "heuristic": "Nielsen #6: Scroll tín hiệu tương tác for long content.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Screen ~1246px (~1.5× viewport) — no scroll indicator visible at top or bottom.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm subtle scroll indicator (gradient fade bottom edge) hoặc sticky header khi scroll",
+        "hiển thị context đầy đủ on-screen — giảm memory load cho người dùng",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    }
+  ],
+  "gaps_by_screen": [
+    {
+      "screen_id": "SCR-TK-001",
+      "screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết (`SCR-TK-001`)",
+      "screen_type": "detail",
+      "gaps": [
+        {
+          "num": 2,
+          "title": "Information hierarchy & grouping",
+          "ref": "UXG-165, Hick's Law",
+          "severity": "Minor",
+          "user_impact": "Information overload.",
+          "heuristic": "Miller's Law: Chunk into sections.",
+          "evidence": "Từ ảnh: 22 fields liệt kê liên tục (Tên chủ TK → Phương thức tất toán) không section divider, không visual grouping, font size đồng nhất. Cognitive load cao",
+          "screenshot": "thay-yoi-thong-tin-tltg-1.png",
+          "screen_id": "SCR-TK-001",
+          "screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+          "screen_type": "detail",
+          "screenshot_path": "ui/thay-yoi-thong-tin-tltg-1.png",
+          "_img_tier": 5,
+          "description": "22 fields flat list — no grouping.",
+          "ddl_evidence": "UXG-165, Hick's Law",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Hick's Law",
+              "url": "https://lawsofux.com/hicks-law/",
+              "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Miller's Law",
+              "url": "https://lawsofux.com/millers-law/",
+              "quote": "7±2 items.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Hick's Law",
+            "url": "https://lawsofux.com/hicks-law/",
+            "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+            "source": "Laws of UX"
+          },
+          "hiện_trạng": "22 fields flat list — no grouping.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 4,
+          "title": "Bottom nav active state",
+          "ref": "COMP:bottom-tab-bar-1, UXG-243",
+          "severity": "Minor",
+          "user_impact": "Can't identify current location.",
+          "heuristic": "Nielsen #1: Active state visibility.",
+          "evidence": "Từ ảnh: 4 tab bottom nav — tất cả cùng style icon+label, không tab nào có active indicator hoặc highlight color. DDL spec yêu cầu activeTabIndex",
+          "screenshot": "thay-yoi-thong-tin-tltg-1.png",
+          "screen_id": "SCR-TK-001",
+          "screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+          "screen_type": "detail",
+          "screenshot_path": "ui/thay-yoi-thong-tin-tltg-1.png",
+          "_img_tier": 5,
+          "description": "4 tab bottom nav — no active state indicator.",
+          "ddl_evidence": "COMP:bottom-tab-bar-1, UXG-243",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+              "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+              "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Keep informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "4 tab bottom nav — no active state indicator.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 5,
+          "title": "Account number PII exposure",
+          "ref": "Product Context",
+          "severity": "Minor",
+          "user_impact": "Must mask by default.",
+          "heuristic": "Nielsen #5: Default masking.",
+          "evidence": "Từ ảnh: \"012547288\" (Số TK tiền gửi), \"1231231232\" (TK trích tiền), \"123123123123\" (TK nhận gốc lãi) — 3 số hiển thị đầy đủ. \"Security-first\" context yêu cầu partial masking",
+          "screenshot": "thay-yoi-thong-tin-tltg-1.png",
+          "screen_id": "SCR-TK-001",
+          "screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+          "screen_type": "detail",
+          "screenshot_path": "ui/thay-yoi-thong-tin-tltg-1.png",
+          "_img_tier": 5,
+          "description": "3 account numbers fully visible — PII.",
+          "ddl_evidence": "Product Context",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Prevent problems.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "3 account numbers fully visible — PII.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-TK-002",
+      "screen_name": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin (`SCR-TK-002`)",
+      "screen_type": "form",
+      "gaps": [
+        {
+          "num": 1,
+          "title": "Toggle state visual clarity",
+          "ref": "UXG-165",
+          "severity": "Minor",
+          "user_impact": "Color-blind + trình đọc màn hình gap.",
+          "heuristic": "WCAG 1.4.1: Color not sole indicator.",
+          "evidence": "Từ ảnh TLTG-2: Toggle ON = xanh filled circle. TLTG-3: Toggle OFF = xám outlined. Visual OK nhưng KHÔNG có text label \"Đang bật\"/\"Đã tắt\" bên cạnh. Screen reader thiếu state info",
+          "screenshot": "thay-yoi-thong-tin-tltg-3.png",
+          "screen_id": "SCR-TK-002",
+          "screen_name": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/thay-yoi-thong-tin-tltg-3.png",
+          "_img_tier": 4,
+          "description": "Toggle ON/OFF visual OK but lacks accessible label.",
+          "ddl_evidence": "UXG-165",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+              "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+              "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "WCAG 1.4.1 — Use of Color (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html",
+              "quote": "Color is not the only means.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Toggle ON/OFF visual OK but lacks accessible label.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 2,
+          "title": "Input field validation states",
+          "ref": "COMP:text-input-1",
+          "severity": "Minor",
+          "user_impact": "No inline phản hồi lỗi.",
+          "heuristic": "Nielsen #9: Inline errors.",
+          "evidence": "Từ ảnh TLTG-2: Input \"Số tiền tích luỹ định kỳ\" chỉ hiện helper text tĩnh \"Số tiền tối thiểu 1.000.000 đồng\". DDL spec: error (red border), validationState, focused highlight — tất cả missing",
+          "screenshot": "thay-yoi-thong-tin-tltg-4.png",
+          "screen_id": "SCR-TK-002",
+          "screen_name": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/thay-yoi-thong-tin-tltg-4.png",
+          "_img_tier": 4,
+          "description": "Input field thiếu validation/error states.",
+          "ddl_evidence": "COMP:text-input-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Hick's Law",
+              "url": "https://lawsofux.com/hicks-law/",
+              "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+              "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+              "quote": "Indicate problem.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Input field thiếu validation/error states.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 7,
+          "title": "Popup button hierarchy",
+          "ref": "UXG-165",
+          "severity": "Minor",
+          "user_impact": "Equal buttons on financial xác nhận.",
+          "heuristic": "Nielsen #5: Button hierarchy.",
+          "evidence": "Từ ảnh TLTG-5: \"Huỷ\" (left) và \"Đồng ý\" (right) cùng style text button, cùng font weight. Primary action thiếu visual prominence (filled vs outlined)",
+          "screenshot": "thay-yoi-thong-tin-tltg-5.png",
+          "screen_id": "SCR-TK-002",
+          "screen_name": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/thay-yoi-thong-tin-tltg-5.png",
+          "_img_tier": 4,
+          "description": "'Huỷ'/'Đồng ý' giống nhau style — no hierarchy.",
+          "ddl_evidence": "UXG-165",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Doherty Threshold",
+              "url": "https://lawsofux.com/doherty-threshold/",
+              "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Prevent problems.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+            "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+            "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "'Huỷ'/'Đồng ý' giống nhau style — no hierarchy.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 9,
+          "title": "Number formatting consistency",
+          "ref": "—",
+          "severity": "Minor",
+          "user_impact": "Ambiguous financial amount.",
+          "heuristic": "Nielsen #4: Correct number formatting.",
+          "evidence": "Từ ảnh TLTG-2: Helper text \"23,1000,000\" — comma placement sai (should be 23,100,000 hoặc 23.100.000). Inconsistency format gây confusion",
+          "screenshot": "thay-yoi-thong-tin-tltg-2.png",
+          "screen_id": "SCR-TK-002",
+          "screen_name": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/thay-yoi-thong-tin-tltg-2.png",
+          "_img_tier": 5,
+          "description": "Number formatting '23,1000,000' — wrong comma placement.",
+          "ddl_evidence": "—",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+              "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+              "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "No confusion.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Number formatting '23,1000,000' — wrong comma placement.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 10,
+          "title": "PII account numbers in form",
+          "ref": "Product Context",
+          "severity": "Minor",
+          "user_impact": "PII in editable context.",
+          "heuristic": "Nielsen #5: Mask when not editing.",
+          "evidence": "Từ ảnh TLTG-2: \"9099798712313123\" (TK tiền gửi), \"12312313123133\" (TK trích tiền) hiển thị đầy đủ không mask. Security-first context yêu cầu masking",
+          "screenshot": "thay-yoi-thong-tin-tltg-2.png",
+          "screen_id": "SCR-TK-002",
+          "screen_name": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/thay-yoi-thong-tin-tltg-2.png",
+          "_img_tier": 5,
+          "description": "Account numbers in form fields fully visible.",
+          "ddl_evidence": "Product Context",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Doherty Threshold",
+              "url": "https://lawsofux.com/doherty-threshold/",
+              "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Prevent problems.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "hiện_trạng": "Account numbers in form fields fully visible.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-TK-003",
+      "screen_name": "Xác thực giao dịch › Xác nhận giao dịch (`SCR-TK-003`)",
+      "screen_type": "confirm",
+      "gaps": [
+        {
+          "num": 1,
+          "title": "OTP input cell design",
+          "ref": "COMP:otp-input-1",
+          "severity": "Minor",
+          "user_impact": "Below DDL 48px spec. No active state.",
+          "heuristic": "Nielsen #4: Design system compliance.",
+          "evidence": "Từ ảnh TLTG-6: 6 ô outlined square ~44px, empty placeholder. DDL spec: cellSize=48px, activeIndex state (focus border), digit mask (dot). Vision: cells đều thiếu active focus indicator",
+          "screenshot": "thay-yoi-thong-tin-tltg-6.png",
+          "screen_id": "SCR-TK-003",
+          "screen_name": "Xác thực giao dịch › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/thay-yoi-thong-tin-tltg-6.png",
+          "_img_tier": 4,
+          "description": "OTP cells ~44px outlined, empty placeholder.",
+          "ddl_evidence": "COMP:otp-input-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Consistency.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 2,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "OTP cells ~44px outlined, empty placeholder.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 2,
+          "title": "OTP resend mechanism",
+          "ref": "COMP:otp-input-1",
+          "severity": "Minor",
+          "user_impact": "người dùng stuck if OTP not received.",
+          "heuristic": "Nielsen #1: Timer + resend.",
+          "evidence": "Từ ảnh TLTG-6: Không có nút \"Gửi lại\" hoặc countdown timer anywhere trong bottom sheet. DDL spec yêu cầu canResend + timeLeft + countdown-timer child component",
+          "screenshot": "thay-yoi-thong-tin-tltg-6.png",
+          "screen_id": "SCR-TK-003",
+          "screen_name": "Xác thực giao dịch › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/thay-yoi-thong-tin-tltg-6.png",
+          "_img_tier": 4,
+          "description": "No resend button or countdown for OTP.",
+          "ddl_evidence": "COMP:otp-input-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Hick's Law",
+              "url": "https://lawsofux.com/hicks-law/",
+              "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Keep informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No resend button or countdown for OTP.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "Error state wrong PIN",
+          "ref": "COMP:otp-input-1",
+          "severity": "Minor",
+          "user_impact": "Dev improvises trạng thái lỗi.",
+          "heuristic": "Nielsen #9: Error states planned.",
+          "evidence": "Không có artboard cho wrong PIN scenario. DDL spec yêu cầu: error=true → red border cells, shake animation, error message \"Mã PIN không đúng\", remaining attempts counter",
+          "screenshot": "thay-yoi-thong-tin-tltg-6.png",
+          "screen_id": "SCR-TK-003",
+          "screen_name": "Xác thực giao dịch › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/thay-yoi-thong-tin-tltg-6.png",
+          "_img_tier": 5,
+          "description": "No wrong-PIN error artboard designed.",
+          "ddl_evidence": "COMP:otp-input-1",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+              "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+              "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 2,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No wrong-PIN error artboard designed.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 7,
+          "title": "Loading state verification",
+          "ref": "UXG-165, Doherty Threshold",
+          "severity": "Minor",
+          "user_impact": "Double-tap risk.",
+          "heuristic": "Doherty Threshold.",
+          "evidence": "Không có artboard cho loading state khi verify OTP. Doherty: system phải phản hồi < 400ms. Cần loading indicator trên nút \"Xác nhận\"",
+          "screenshot": "thay-yoi-thong-tin-tltg-6.png",
+          "screen_id": "SCR-TK-003",
+          "screen_name": "Xác thực giao dịch › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/thay-yoi-thong-tin-tltg-6.png",
+          "_img_tier": 4,
+          "description": "No loading artboard during OTP xác minh.",
+          "ddl_evidence": "UXG-165, Doherty Threshold",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Doherty Threshold",
+              "url": "https://lawsofux.com/doherty-threshold/",
+              "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No loading artboard during OTP xác minh.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 10,
+          "title": "Transaction summary pre-auth",
+          "ref": "UXG-165",
+          "severity": "Minor",
+          "user_impact": "Blind xác nhận.",
+          "heuristic": "Nielsen #6: Context in OTP.",
+          "evidence": "Từ ảnh TLTG-6: Bottom sheet chỉ có \"nhập mã PIN\". Thiếu summary giao dịch (thay đổi gì, từ giá trị nào → giá trị nào) trước khi xác thực. User không biết mình đang xác nhận thay đổi gì",
+          "screenshot": "thay-yoi-thong-tin-tltg-6.png",
+          "screen_id": "SCR-TK-003",
+          "screen_name": "Xác thực giao dịch › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/thay-yoi-thong-tin-tltg-6.png",
+          "_img_tier": 4,
+          "description": "OTP bottom sheet thiếu giao dịch summary.",
+          "ddl_evidence": "UXG-165",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Doherty Threshold",
+              "url": "https://lawsofux.com/doherty-threshold/",
+              "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Minimize load.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #3 — User Control and Freedom",
+            "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+            "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "OTP bottom sheet thiếu giao dịch summary.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-TK-004",
+      "screen_name": "Kết quả thay đổi › Kết quả giao dịch (`SCR-TK-004`)",
+      "screen_type": "result",
+      "gaps": [
+        {
+          "num": 2,
+          "title": "Transaction details completeness",
+          "ref": "COMP:receipt-preview-1, UXG-165",
+          "severity": "Minor",
+          "user_impact": "Can't xác minh what changed.",
+          "heuristic": "Nielsen #1: Result details bắt buộc.",
+          "evidence": "Từ ảnh TLTG-7: Popup chỉ có icon + message + \"Đóng\". DDL receipt-preview-1 spec (items, subtotal, paymentMethod) available. Thiếu: mã GD, thời gian, before/after values",
+          "screenshot": "thay-yoi-thong-tin-tltg-7.png",
+          "screen_id": "SCR-TK-004",
+          "screen_name": "Kết quả thay đổi › Kết quả giao dịch",
+          "screen_type": "result",
+          "screenshot_path": "ui/thay-yoi-thong-tin-tltg-7.png",
+          "_img_tier": 5,
+          "description": "Success popup minimal — no giao dịch details.",
+          "ddl_evidence": "COMP:receipt-preview-1, UXG-165",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Hick's Law",
+              "url": "https://lawsofux.com/hicks-law/",
+              "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Keep informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Success popup minimal — no giao dịch details.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 3,
+          "title": "Action after success",
+          "ref": "—",
+          "severity": "Minor",
+          "user_impact": "No post-task navigation guidance.",
+          "heuristic": "Nielsen #3: Post-task navigation.",
+          "evidence": "Từ ảnh TLTG-7: Chỉ có link \"Đóng\". Thiếu secondary action: \"Xem chi tiết TK\" hoặc \"Về trang chủ\"",
+          "screenshot": "thay-yoi-thong-tin-tltg-7.png",
+          "screen_id": "SCR-TK-004",
+          "screen_name": "Kết quả thay đổi › Kết quả giao dịch",
+          "screen_type": "result",
+          "screenshot_path": "ui/thay-yoi-thong-tin-tltg-7.png",
+          "_img_tier": 4,
+          "description": "Only 'Đóng' — no secondary actions post-success.",
+          "ddl_evidence": "—",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+              "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+              "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #3 — User Control and Freedom",
+              "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+              "quote": "Exit needed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Only 'Đóng' — no secondary actions post-success.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "Receipt save option",
+          "ref": "COMP:receipt-preview-1",
+          "severity": "Minor",
+          "user_impact": "Can't download proof of change.",
+          "heuristic": "Nielsen #7: Export/share options.",
+          "evidence": "Không có option lưu/chia sẻ biên lai thay đổi. DDL receipt spec supports save functionality. Banking context: user cần evidence cho thay đổi tài khoản",
+          "screenshot": "thay-yoi-thong-tin-tltg-7.png",
+          "screen_id": "SCR-TK-004",
+          "screen_name": "Kết quả thay đổi › Kết quả giao dịch",
+          "screen_type": "result",
+          "screenshot_path": "ui/thay-yoi-thong-tin-tltg-7.png",
+          "_img_tier": 5,
+          "description": "No save/share biên lai option for modification xác nhận.",
+          "ddl_evidence": "COMP:receipt-preview-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+              "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+              "quote": "Shortcuts.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No save/share biên lai option for modification xác nhận.",
+          "_enriched_by": "llm"
+        }
+      ]
+    }
+  ],
+  "heuristics": [
+    {
+      "key": "flow",
+      "name_vi": "Luồng người dùng",
+      "name_en": "Flow & Navigation",
+      "score": 0,
+      "gap_count": 10
+    },
+    {
+      "key": "component",
+      "name_vi": "Thành phần",
+      "name_en": "Component & DDL",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "visual",
+      "name_vi": "Thiết kế trực quan",
+      "name_en": "Visual Design",
+      "score": 71,
+      "gap_count": 6
+    },
+    {
+      "key": "content",
+      "name_vi": "Nội dung",
+      "name_en": "Content & Copy",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "a11y",
+      "name_vi": "Tiếp cận",
+      "name_en": "Accessibility",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "trust",
+      "name_vi": "Tin cậy & Bảo mật",
+      "name_en": "Trust & Security",
+      "score": 100,
+      "gap_count": 0
+    }
+  ],
+  "_ref_enrichment": {
+    "gap_enriched": 3,
+    "uxp_enriched": 3,
+    "sources": [
+      "enriched-data.json",
+      "official-urls.md"
+    ]
+  }
+}

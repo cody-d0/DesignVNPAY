@@ -1,0 +1,451 @@
+[
+  {
+    "id": "UXP-001",
+    "hiện_trạng": "OTP bottom sheet thiếu countdown timer và nút 'Gửi lại OTP' — vi phạm DDL otp-input-1 spec. 6 cells without time feedback.",
+    "tác_động": "OTP cho tra soát giao dịch = financial dispute → cần full security UX. Timer expired silently → rejection. No resend → restart entire complaint.",
+    "nguyên_tắc": "Nielsen #1: OTP timer = time-critical status. DDL spec mandates canResend + timeLeft states.",
+    "đề_xuất_steps": [
+      "Countdown: 02:00 visible next to OTP cells",
+      "Resend after 30s cooldown",
+      "Auto-focus first cell",
+      "trạng thái lỗi: red border + 'OTP không đúng'"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed about what is going on.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Precisely indicate the problem.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-002",
+    "hiện_trạng": "Typo: 'Loại giai dịch' — đúng là 'Loại giao dịch'. Lỗi chính tả trên màn xác nhận tra soát.",
+    "tác_động": "Typo on dispute xác nhận = severe trust issue. If app can't spell correctly, how trustworthy is the dispute resolution process?",
+    "nguyên_tắc": "Nielsen #4: Typographic precision bắt buộc. Financial disputes = zero-tolerance for text errors.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words mean the same thing.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Sửa \"giai\" → \"giao\" trong label trường. Audit toàn bộ labels trong flow để phát hiện typo tương tự",
+      "Kiểm tra consistency pattern này với các flow tương tự trong app",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-003",
+    "hiện_trạng": "'Trạng thái giao dịch: Label 2' — placeholder text chưa replaced. Raw placeholder visible trên xác nhận screen.",
+    "tác_động": "Placeholder 'Label 2' in production-facing design = critical QA gap. người dùng sees 'Label 2' → 'App broken?'. Destroys trust completely on dispute screen.",
+    "nguyên_tắc": "Nielsen #2: Real content bắt buộc. Placeholder in xác nhận screen = design review failure.",
+    "đề_xuất_steps": [
+      "thay thế 'Label 2' with actual status: 'Đang xử lý' / 'Chờ xác nhận'",
+      "QA: scan all designs for 'Label' pattern",
+      "Design review checklist: no placeholders in final designs"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Speak the users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-004",
+    "hiện_trạng": "9 fields trong 1 màn không có grouping — flat list gây cognitive overload. Dispute form without sections.",
+    "tác_động": "9 ungrouped fields → người dùng overwhelmed. Can't quickly identify which fields complete, which need input.",
+    "nguyên_tắc": "Hick's Law: Too many choices simultaneously. Miller's Law: Group into sections.",
+    "references": [
+      {
+        "name": "Hick's Law",
+        "url": "https://lawsofux.com/hicks-law/",
+        "quote": "Decision time increases with number and complexity of choices.",
+        "source": "Laws of UX"
+      },
+      {
+        "name": "Miller's Law",
+        "url": "https://lawsofux.com/millers-law/",
+        "quote": "7±2 items in working memory.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Chia form thành 2 sections:",
+      "\"Thông tin giao dịch\" (Ngày, Loại, Số TK, Số tiền, Số thẻ nhận, Mã GD) và",
+      "\"Thông tin tra soát\" (Lý do, Nội dung..."
+    ]
+  },
+  {
+    "id": "UXP-005",
+    "hiện_trạng": "Form fields thiếu placeholder text gợi ý format — 'Ngày giao dịch' không hint format (dd/mm/yyyy). người dùng doesn't know expected input format.",
+    "tác_động": "No placeholder → người dùng guesses format → error → frustration. Especially critical: date format, giao dịch ID format.",
+    "nguyên_tắc": "WCAG 3.3.2: Labels or instructions when người dùng input bắt buộc.",
+    "references": [
+      {
+        "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+        "quote": "Labels provided when content requires user input.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm placeholder cho mỗi field. Ngày GD: \"DD/MM/YYYY\". Mã GD: \"Xem trong lịch sử giao dịch\". Nội dung: \"Mô tả chi tiết vấn đề...\"",
+      "xác minh implementation trên cả iOS và Android — đảm bảo nhất quán",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-006",
+    "hiện_trạng": "Close button '×' trong bottom sheet size 20×20px — dưới 44×44px minimum touch target.",
+    "tác_động": "20px close button = nearly impossible to tap accurately on mobile. người dùng frustrated trying to dismiss bottom sheet.",
+    "nguyên_tắc": "Fitts's Law: 44px minimum. 20px = less than half bắt buộc size.",
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng vùng chạm của \"×\" lên 44×44px (có thể giữ icon nhỏ với padding). Hoặc thêm drag handle ở top của bottom sheet để dismiss bằng swipe",
+      "Audit toàn bộ interactive elements trong màn hình — đảm bảo tất cả ≥ 44×44px",
+      "Test trên thiết bị thực với ngón tay — xác minh không bị mis-tap adjacent elements"
+    ]
+  },
+  {
+    "id": "UXP-007",
+    "hiện_trạng": "'Trong thời gian tra soát quy định' — mơ hồ, không có SLA cụ thể. người dùng không biết chờ 3 ngày, 30 ngày, hay 90 ngày.",
+    "tác_động": "Vague timeline = anxiety. người dùng keeps checking app daily. Specific SLA: '15 ngày làm việc' sets expectations and reduces support calls.",
+    "nguyên_tắc": "Nielsen #1: Expected timeline = system status. Doherty: Time expectation reduces perceived wait.",
+    "đề_xuất_steps": [
+      "'Thời gian xử lý dự kiến: 15 ngày làm việc'",
+      "Progress tracker: Đã tiếp nhận → Đang xử lý → Hoàn thành",
+      "Push notification when status changes"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-008",
+    "hiện_trạng": "Mã tra soát 'UT123123' không có tap-to-copy. người dùng cần this code for follow-up with bank.",
+    "tác_động": "Reference code without copy = manual transcription. Error-prone when calling bank: 'UT123123' → người dùng types 'UT12312' wrong.",
+    "nguyên_tắc": "Nielsen #7: Copy-to-clipboard shortcut essential for reference numbers.",
+    "references": [
+      {
+        "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+        "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+        "quote": "Shortcuts speed up the interaction.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm copy icon bên cạnh UT",
+      "Tap → toast \"Đã sao chép mã tra soát\""
+    ]
+  },
+  {
+    "id": "UXP-009",
+    "hiện_trạng": "Character counter '6/500' color gray ~#999999 trên white bg — estimated contrast ratio ~2.8:1, below WCAG 4.5:1 minimum.",
+    "tác_động": "Low contrast counter = invisible for low-vision người dùng. They won't know remaining characters.",
+    "nguyên_tắc": "WCAG 1.4.3: Minimum 4.5:1 contrast for text.",
+    "references": [
+      {
+        "name": "WCAG 1.4.3 — Contrast (Minimum) (Level AA)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+        "quote": "Text has a contrast ratio of at least 4.5:1.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Dùng màu counter ≥ #767676 (contrast 4.54:1 vs white). Hoặc dùng token `base.muted-foreground` đã pass WCAG",
+      "Real-time update counter khi selection thay đổi",
+      "Disable thêm khi đạt max — hiển thị tooltip \"Đã đạt giới hạn N\""
+    ]
+  },
+  {
+    "id": "UXP-010",
+    "hiện_trạng": "Tab 'Tra cứu yêu cầu' không có badge count — người dùng không biết có bao nhiêu yêu cầu đang xử lý.",
+    "tác_động": "No badge = no reason to check. người dùng forgets about pending disputes. Badge '3' = 'I have 3 active disputes, let me check.'",
+    "nguyên_tắc": "Nielsen #1: Pending count = system status for ongoing processes.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm badge số (VD \"2\") vào tab \"Tra cứu yêu cầu\" khi có yêu cầu đang chờ xử lý",
+      "Color coding nhất quán: đỏ = urgent/overdue, vàng = attention, xanh = info",
+      "Hiển thị persistent (không auto-dismiss) cho critical alerts"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TRK-001",
+    "hiện_trạng": "Empty gray area below 2 items — no guidance content.",
+    "tác_động": "Dead space without helpful info.",
+    "nguyên_tắc": "Nielsen #8: Purposeful use of space.",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Every element should serve purpose.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #8 để cải thiện trải nghiệm",
+      "Khắc phục: Dead space without helpful info.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TRK-002",
+    "hiện_trạng": "No placeholder text in any form field.",
+    "tác_động": "người dùng doesn't know input format.",
+    "nguyên_tắc": "WCAG 3.3.2: Input instructions.",
+    "references": [
+      {
+        "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+        "quote": "Labels provided.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Thêm helper text bên dưới trường nhập: giải thích format mong đợi hoặc ví dụ",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TRK-002",
+    "hiện_trạng": "Mã giao dịch field — no helper text guiding where to find it.",
+    "tác_động": "người dùng doesn't know where giao dịch code is: 'Check giao dịch history'.",
+    "nguyên_tắc": "Nielsen #6: Contextual help.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize memory load.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm helper text bên dưới trường nhập: giải thích format mong đợi hoặc ví dụ",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#7@SCR-TRK-002",
+    "hiện_trạng": "9 fields under single section header — no sub-grouping.",
+    "tác_động": "All fields equal weight → cognitive overload.",
+    "nguyên_tắc": "Miller's Law: Sub-group long field lists.",
+    "references": [
+      {
+        "name": "Miller's Law",
+        "url": "https://lawsofux.com/millers-law/",
+        "quote": "7±2 items.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Miller's Law để cải thiện trải nghiệm",
+      "Khắc phục: All fields equal weight → cognitive overload.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TRK-003",
+    "hiện_trạng": "Character counter gray ~#999 — contrast ~2.8:1.",
+    "tác_động": "Below WCAG 4.5:1 minimum.",
+    "nguyên_tắc": "WCAG 1.4.3: Contrast minimum.",
+    "references": [
+      {
+        "name": "WCAG 1.4.3 — Contrast (Minimum) (Level AA)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+        "quote": "4.5:1 contrast ratio.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc WCAG 1.4.3 để cải thiện trải nghiệm",
+      "Khắc phục: Below WCAG 4.5:1 minimum.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TRK-003",
+    "hiện_trạng": "No inline validation indicator after field completed.",
+    "tác_động": "người dùng doesn't know if input is valid.",
+    "nguyên_tắc": "Nielsen #1: Validation feedback.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Triển khai inline validation real-time — kiểm tra ngay khi người dùng rời trường nhập",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TRK-004",
+    "hiện_trạng": "Typo 'Loại giai dịch'.",
+    "tác_động": "giống nhau typo on xác nhận: trust issue.",
+    "nguyên_tắc": "Nielsen #4: Text correctness.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "No confusion.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TRK-004",
+    "hiện_trạng": "OTP thiếu countdown timer.",
+    "tác_động": "No time feedback for OTP validity.",
+    "nguyên_tắc": "Nielsen #1: Timer bắt buộc.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung countdown timer vào thiết kế màn hình",
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow"
+    ]
+  },
+  {
+    "id": "Gap#7@SCR-TRK-004",
+    "hiện_trạng": "OTP thiếu resend button.",
+    "tác_động": "người dùng stuck if OTP not received.",
+    "nguyên_tắc": "Nielsen #1: Resend = recovery path.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung resend button vào thiết kế màn hình",
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#9@SCR-TRK-004",
+    "hiện_trạng": "Close '×' button 20×20px — tiny target.",
+    "tác_động": "Touch target violation.",
+    "nguyên_tắc": "Fitts's Law: 44px minimum.",
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "Target size matters.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng kích thước vùng chạm tối thiểu 44×44dp theo chuẩn WCAG 2.5.5",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#10@SCR-TRK-004",
+    "hiện_trạng": "'Label 2' placeholder for giao dịch status.",
+    "tác_động": "Placeholder in production = broken.",
+    "nguyên_tắc": "Nielsen #2: Real content.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Real language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm helper text bên dưới trường nhập: giải thích format mong đợi hoặc ví dụ",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TRK-005",
+    "hiện_trạng": "Mã tra soát UT123123 — no copy function.",
+    "tác_động": "Manual transcription needed.",
+    "nguyên_tắc": "Nielsen #7: Copy shortcut.",
+    "references": [
+      {
+        "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+        "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+        "quote": "Shortcuts.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #7 để cải thiện trải nghiệm",
+      "Khắc phục: Manual transcription needed.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#7@SCR-TRK-005",
+    "hiện_trạng": "Vague SLA: 'trong thời gian quy định'.",
+    "tác_động": "No specific timeline = anxiety.",
+    "nguyên_tắc": "Nielsen #1: Specific timeline.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #1 để cải thiện trải nghiệm",
+      "Khắc phục: No specific timeline = anxiety.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  }
+]

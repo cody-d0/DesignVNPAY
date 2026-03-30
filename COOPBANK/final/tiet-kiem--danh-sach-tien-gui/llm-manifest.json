@@ -1,0 +1,502 @@
+{
+  "_generator": "enrich_llm.py",
+  "_version": "1.0",
+  "module": {
+    "name": "Danh sách tiền gửi",
+    "domain": "Banking",
+    "product": "Co-opBank Mobile Banking",
+    "dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/tiet-kiem--danh-sach-tien-gui"
+  },
+  "system_prompt": "Bạn là UX Auditor chuyên nghiệp cho Banking app (Co-opBank Mobile Banking).\n\nNhiệm vụ: Enrich các finding từ UX audit report. Mỗi finding cần 4-5 fields:\n\n1. **hiện_trạng**: Mô tả chính xác UI hiện tại\n   - PHẢI có artboard ID (vd: \"Trên artboard 7103\")\n   - PHẢI có overlay type nếu có (vd: \"overlay: OTP bottom-sheet\")\n   - PHẢI liệt kê UI elements thực tế có mặt\n   - KHÔNG suy diễn elements không có trong evidence\n\n2. **tác_động**: Hậu quả cụ thể cho người dùng\n   - PHẢI mô tả consequence cho user (bị chặn, mất khả năng, nhầm lẫn...)\n   - PHẢI có domain context (Banking: giao dịch nhạy cảm, trust, compliance...)\n   - KHÔNG dùng severity label (\"nghiêm trọng\", \"critical\", \"major\")\n   - KHÔNG lặp lại problem title\n\n3. **nguyên_tắc**: Heuristic vi phạm + quote + giải thích\n   - PHẢI cite heuristic bằng tên chính xác (Nielsen #N, WCAG X.Y.Z, Laws of UX)\n   - PHẢI có quote gốc tiếng Anh\n   - PHẢI giải thích TẠI SAO design vi phạm nguyên tắc này\n   - Ưu tiên chọn từ heuristic_candidates đã pre-select\n\n4. **đề_xuất_steps**: (chỉ UXP) Array các bước cải thiện\n   - Ít nhất 2 bước\n   - Mỗi bước actionable, có DDL ref nếu liên quan\n   - Spec cụ thể (timeout=60s, color token, component name)\n\n5. **references**: Array các tham chiếu chính thức\n   - Mỗi ref: {name, url, quote, source}\n   - Dữ liệu từ REFERENCE DATABASE bên dưới\n   - KHÔNG bịa URL — chỉ dùng URL từ database\n\nOUTPUT FORMAT: JSON array of objects, mỗi object có id + các fields trên.\n\nREFERENCE DATABASE:\n  Nielsen #1: Nielsen #1 — Visibility of System Status — \"The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.\"\n  Nielsen #10: Nielsen #10 — Help and Documentation — \"It's best if the system doesn't need any additional explanation. However, it may be necessary to provide documentation.\"\n  Nielsen #2: Nielsen #2 — Match Between System and Real World — \"The design should speak the users' language. Use words, phrases, and concepts familiar to the user.\"\n  Nielsen #3: Nielsen #3 — User Control and Freedom — \"Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.\"\n  Nielsen #4: Nielsen #4 — Consistency and Standards — \"Users should not have to wonder whether different words, situations, or actions mean the same thing.\"\n  Nielsen #5: Nielsen #5 — Error Prevention — \"Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.\"\n  Nielsen #6: Nielsen #6 — Recognition Rather Than Recall — \"Minimize the user's memory load by making elements, actions, and options visible.\"\n  Nielsen #7: Nielsen #7 — Flexibility and Efficiency of Use — \"Shortcuts — hidden from novice users — may speed up the interaction for the expert user.\"\n  Nielsen #8: Nielsen #8 — Aesthetic and Minimalist Design — \"Interfaces should not contain information that is irrelevant or rarely needed.\"\n  Nielsen #9: Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors — \"Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.\"\n  Fitts's Law: \"The time to acquire a target is a function of the distance to and size of the target.\"\n  Hick's Law: \"The time it takes to make a decision increases with the number and complexity of choices.\"\n  Jakob's Law: \"Users spend most of their time on other sites. This means that users prefer your site to work the same way.\"\n  Miller's Law: \"The average person can only keep 7 (plus or minus 2) items in their working memory.\"\n  Peak-End Rule: \"People judge an experience largely based on how they felt at its most intense point and at its end.\"\n  Zeigarnik Effect: \"People remember uncompleted or interrupted tasks better than completed tasks.\"\n  Von Restorff Effect: \"When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.\"\n  Doherty Threshold: \"Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.\"\n  Aesthetic-Usability Effect: \"Users often perceive aesthetically pleasing design as design that's more usable.\"\n  WCAG 1.4.11 — Non-text Contrast (Level AA)\n  WCAG 1.4.3 — Contrast (Minimum) (Level AA)\n  WCAG 2.5.5 — Target Size Enhanced (Level AAA)\n  WCAG 2.5.8 — Target Size Minimum (Level AA)\n  WCAG 3.3.1 — Error Identification (Level A)\n  WCAG 3.3.2 — Labels or Instructions (Level A)\n  WCAG 3.3.3 — Error Suggestion (Level AA)\n  WCAG 3.3.4 — Error Prevention: Legal, Financial, Data (Level AA)",
+  "items": [
+    {
+      "id": "Gap#3@SCR-DSG-001",
+      "type": "gap",
+      "finding": {
+        "num": 3,
+        "title": "Filter chip touch target ≥ 44px",
+        "severity": "Minor",
+        "screen_id": "SCR-DSG-001",
+        "screen_name": "Danh sách tiền gửi › Danh sách",
+        "screen_type": "list",
+        "evidence": "Từ ảnh: chips cao est. 28px < 44px minimum touch target",
+        "ddl_ref": "—",
+        "ddl_evidence": "—",
+        "current_user_impact": "chips cao est. 28px < 44px minimum touch target — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DSG-001",
+        "parent_screen_name": "Danh sách tiền gửi › Danh sách",
+        "boundary_type": "list"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Danh sách tiền gửi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#5@SCR-DSG-001",
+      "type": "gap",
+      "finding": {
+        "num": 5,
+        "title": "Empty state CTA pattern",
+        "severity": "Minor",
+        "screen_id": "SCR-DSG-001",
+        "screen_name": "Danh sách tiền gửi › Danh sách",
+        "screen_type": "list",
+        "evidence": "DDL cần button chuẩn. Từ ảnh 1603: tooltip trôi nổi gần FAB",
+        "ddl_ref": "COMP:empty-state-1",
+        "ddl_evidence": "COMP:empty-state-1",
+        "current_user_impact": "DDL cần button chuẩn. Từ ảnh 1603: tooltip trôi nổi gần FAB — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": "1603",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DSG-001",
+        "parent_screen_name": "Danh sách tiền gửi › Danh sách",
+        "boundary_type": "list"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Danh sách tiền gửi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #6 — Recognition Rather Than Recall",
+          "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+          "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "context_map:empty_state",
+          "_ref_id": "nielsen.6"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-DSG-001",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "Empty state illustration",
+        "severity": "Minor",
+        "screen_id": "SCR-DSG-001",
+        "screen_name": "Danh sách tiền gửi › Danh sách",
+        "screen_type": "list",
+        "evidence": "DDL cần icon/illustration. Từ ảnh 1603: chỉ text body",
+        "ddl_ref": "COMP:empty-state-1",
+        "ddl_evidence": "COMP:empty-state-1",
+        "current_user_impact": "DDL cần icon/illustration. Từ ảnh 1603: chỉ text body — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": "1603",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DSG-001",
+        "parent_screen_name": "Danh sách tiền gửi › Danh sách",
+        "boundary_type": "list"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Danh sách tiền gửi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #6 — Recognition Rather Than Recall",
+          "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+          "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "context_map:empty_state",
+          "_ref_id": "nielsen.6"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#7@SCR-DSG-001",
+      "type": "gap",
+      "finding": {
+        "num": 7,
+        "title": "FAB ARIA label",
+        "severity": "Minor",
+        "screen_id": "SCR-DSG-001",
+        "screen_name": "Danh sách tiền gửi › Danh sách",
+        "screen_type": "list",
+        "evidence": "FAB \"+\" icon-only thiếu accessible name=\"Mở tiền gửi mới\"",
+        "ddl_ref": "UXG-183",
+        "ddl_evidence": "UXG-183",
+        "current_user_impact": "FAB \"+\" icon-only thiếu accessible name=\"Mở tiền gửi mới\" — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DSG-001",
+        "parent_screen_name": "Danh sách tiền gửi › Danh sách",
+        "boundary_type": "list"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Danh sách tiền gửi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#8@SCR-DSG-001",
+      "type": "gap",
+      "finding": {
+        "num": 8,
+        "title": "Filter icon ARIA label",
+        "severity": "Minor",
+        "screen_id": "SCR-DSG-001",
+        "screen_name": "Danh sách tiền gửi › Danh sách",
+        "screen_type": "list",
+        "evidence": "Filter funnel icon-only, thiếu aria-label",
+        "ddl_ref": "UXG-183",
+        "ddl_evidence": "UXG-183",
+        "current_user_impact": "Filter funnel icon-only, thiếu aria-label — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DSG-001",
+        "parent_screen_name": "Danh sách tiền gửi › Danh sách",
+        "boundary_type": "list"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Danh sách tiền gửi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#13@SCR-DSG-001",
+      "type": "gap",
+      "finding": {
+        "num": 13,
+        "title": "Loading / skeleton state",
+        "severity": "Minor",
+        "screen_id": "SCR-DSG-001",
+        "screen_name": "Danh sách tiền gửi › Danh sách",
+        "screen_type": "list",
+        "evidence": "Không có artboard loading state — banking NFR thiếu",
+        "ddl_ref": "—",
+        "ddl_evidence": "—",
+        "current_user_impact": "Không có artboard loading state — banking NFR thiếu — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DSG-001",
+        "parent_screen_name": "Danh sách tiền gửi › Danh sách",
+        "boundary_type": "list"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Danh sách tiền gửi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#14@SCR-DSG-001",
+      "type": "gap",
+      "finding": {
+        "num": 14,
+        "title": "Account number readability",
+        "severity": "Minor",
+        "screen_id": "SCR-DSG-001",
+        "screen_name": "Danh sách tiền gửi › Danh sách",
+        "screen_type": "list",
+        "evidence": "Từ ảnh: \"12300123123000\" 14 chars không grouping, khó đọc",
+        "ddl_ref": "—",
+        "ddl_evidence": "—",
+        "current_user_impact": "\"12300123123000\" 14 chars không grouping, khó đọc — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DSG-001",
+        "parent_screen_name": "Danh sách tiền gửi › Danh sách",
+        "boundary_type": "list"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Danh sách tiền gửi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#15@SCR-DSG-001",
+      "type": "gap",
+      "finding": {
+        "num": 15,
+        "title": "Typo content",
+        "severity": "Minor",
+        "screen_id": "SCR-DSG-001",
+        "screen_name": "Danh sách tiền gửi › Danh sách",
+        "screen_type": "list",
+        "evidence": "Từ ảnh 1602: \"Số số: 1231233213\" — lỗi đánh máy \"Số sổ\"",
+        "ddl_ref": "—",
+        "ddl_evidence": "—",
+        "current_user_impact": "Từ ảnh 1602: \"Số số: 1231233213\" — lỗi đánh máy \"Số sổ\" — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": "1602",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DSG-001",
+        "parent_screen_name": "Danh sách tiền gửi › Danh sách",
+        "boundary_type": "list"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Danh sách tiền gửi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#16@SCR-DSG-001",
+      "type": "gap",
+      "finding": {
+        "num": 16,
+        "title": "Date field consistency",
+        "severity": "Minor",
+        "screen_id": "SCR-DSG-001",
+        "screen_name": "Danh sách tiền gửi › Danh sách",
+        "screen_type": "list",
+        "evidence": "Tích lũy: 2 ngày; Thường: 1 ngày — schema không nhất quán",
+        "ddl_ref": "—",
+        "ddl_evidence": "—",
+        "current_user_impact": "Tích lũy: 2 ngày; Thường: 1 ngày — schema không nhất quán — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DSG-001",
+        "parent_screen_name": "Danh sách tiền gửi › Danh sách",
+        "boundary_type": "list"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Danh sách tiền gửi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#18@SCR-DSG-001",
+      "type": "gap",
+      "finding": {
+        "num": 18,
+        "title": "Filter chip scroll indicator",
+        "severity": "Minor",
+        "screen_id": "SCR-DSG-001",
+        "screen_name": "Danh sách tiền gửi › Danh sách",
+        "screen_type": "list",
+        "evidence": "Chips 3 items trên 375px — thiếu fade hint cho scroll ngang",
+        "ddl_ref": "—",
+        "ddl_evidence": "—",
+        "current_user_impact": "Chips 3 items trên 375px — thiếu fade hint cho scroll ngang — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DSG-001",
+        "parent_screen_name": "Danh sách tiền gửi › Danh sách",
+        "boundary_type": "list"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Danh sách tiền gửi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#20@SCR-DSG-001",
+      "type": "gap",
+      "finding": {
+        "num": 20,
+        "title": "Balance alignment consistency",
+        "severity": "Minor",
+        "screen_id": "SCR-DSG-001",
+        "screen_name": "Danh sách tiền gửi › Danh sách",
+        "screen_type": "list",
+        "evidence": "\"Số dư gốc hiện tại\" right-align vs summary row left-align — inconsistent",
+        "ddl_ref": "—",
+        "ddl_evidence": "—",
+        "current_user_impact": "\"Số dư gốc hiện tại\" right-align vs summary row left-align — inconsistent — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DSG-001",
+        "parent_screen_name": "Danh sách tiền gửi › Danh sách",
+        "boundary_type": "list"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Danh sách tiền gửi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    }
+  ],
+  "stats": {
+    "uxp_count": 0,
+    "gap_count": 11,
+    "total_items": 11,
+    "fields_to_generate": 44
+  }
+}

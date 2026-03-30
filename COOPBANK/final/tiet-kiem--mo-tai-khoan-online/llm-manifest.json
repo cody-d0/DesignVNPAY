@@ -1,0 +1,1486 @@
+{
+  "_generator": "enrich_llm.py",
+  "_version": "1.0",
+  "module": {
+    "name": "Mở tài khoản tiền gửi online",
+    "domain": "Banking",
+    "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+    "dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/tiet-kiem--mo-tai-khoan-online"
+  },
+  "system_prompt": "Bạn là UX Auditor chuyên nghiệp cho Banking app (Mở tài khoản tiền gửi online (Co-opBank)).\n\nNhiệm vụ: Enrich các finding từ UX audit report. Mỗi finding cần 4-5 fields:\n\n1. **hiện_trạng**: Mô tả chính xác UI hiện tại\n   - PHẢI có artboard ID (vd: \"Trên artboard 7103\")\n   - PHẢI có overlay type nếu có (vd: \"overlay: OTP bottom-sheet\")\n   - PHẢI liệt kê UI elements thực tế có mặt\n   - KHÔNG suy diễn elements không có trong evidence\n\n2. **tác_động**: Hậu quả cụ thể cho người dùng\n   - PHẢI mô tả consequence cho user (bị chặn, mất khả năng, nhầm lẫn...)\n   - PHẢI có domain context (Banking: giao dịch nhạy cảm, trust, compliance...)\n   - KHÔNG dùng severity label (\"nghiêm trọng\", \"critical\", \"major\")\n   - KHÔNG lặp lại problem title\n\n3. **nguyên_tắc**: Heuristic vi phạm + quote + giải thích\n   - PHẢI cite heuristic bằng tên chính xác (Nielsen #N, WCAG X.Y.Z, Laws of UX)\n   - PHẢI có quote gốc tiếng Anh\n   - PHẢI giải thích TẠI SAO design vi phạm nguyên tắc này\n   - Ưu tiên chọn từ heuristic_candidates đã pre-select\n\n4. **đề_xuất_steps**: (chỉ UXP) Array các bước cải thiện\n   - Ít nhất 2 bước\n   - Mỗi bước actionable, có DDL ref nếu liên quan\n   - Spec cụ thể (timeout=60s, color token, component name)\n\n5. **references**: Array các tham chiếu chính thức\n   - Mỗi ref: {name, url, quote, source}\n   - Dữ liệu từ REFERENCE DATABASE bên dưới\n   - KHÔNG bịa URL — chỉ dùng URL từ database\n\nOUTPUT FORMAT: JSON array of objects, mỗi object có id + các fields trên.\n\nREFERENCE DATABASE:\n  Nielsen #1: Nielsen #1 — Visibility of System Status — \"The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.\"\n  Nielsen #10: Nielsen #10 — Help and Documentation — \"It's best if the system doesn't need any additional explanation. However, it may be necessary to provide documentation.\"\n  Nielsen #2: Nielsen #2 — Match Between System and Real World — \"The design should speak the users' language. Use words, phrases, and concepts familiar to the user.\"\n  Nielsen #3: Nielsen #3 — User Control and Freedom — \"Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.\"\n  Nielsen #4: Nielsen #4 — Consistency and Standards — \"Users should not have to wonder whether different words, situations, or actions mean the same thing.\"\n  Nielsen #5: Nielsen #5 — Error Prevention — \"Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.\"\n  Nielsen #6: Nielsen #6 — Recognition Rather Than Recall — \"Minimize the user's memory load by making elements, actions, and options visible.\"\n  Nielsen #7: Nielsen #7 — Flexibility and Efficiency of Use — \"Shortcuts — hidden from novice users — may speed up the interaction for the expert user.\"\n  Nielsen #8: Nielsen #8 — Aesthetic and Minimalist Design — \"Interfaces should not contain information that is irrelevant or rarely needed.\"\n  Nielsen #9: Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors — \"Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.\"\n  Fitts's Law: \"The time to acquire a target is a function of the distance to and size of the target.\"\n  Hick's Law: \"The time it takes to make a decision increases with the number and complexity of choices.\"\n  Jakob's Law: \"Users spend most of their time on other sites. This means that users prefer your site to work the same way.\"\n  Miller's Law: \"The average person can only keep 7 (plus or minus 2) items in their working memory.\"\n  Peak-End Rule: \"People judge an experience largely based on how they felt at its most intense point and at its end.\"\n  Zeigarnik Effect: \"People remember uncompleted or interrupted tasks better than completed tasks.\"\n  Von Restorff Effect: \"When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.\"\n  Doherty Threshold: \"Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.\"\n  Aesthetic-Usability Effect: \"Users often perceive aesthetically pleasing design as design that's more usable.\"\n  WCAG 1.4.11 — Non-text Contrast (Level AA)\n  WCAG 1.4.3 — Contrast (Minimum) (Level AA)\n  WCAG 2.5.5 — Target Size Enhanced (Level AAA)\n  WCAG 2.5.8 — Target Size Minimum (Level AA)\n  WCAG 3.3.1 — Error Identification (Level A)\n  WCAG 3.3.2 — Labels or Instructions (Level A)\n  WCAG 3.3.3 — Error Suggestion (Level AA)\n  WCAG 3.3.4 — Error Prevention: Legal, Financial, Data (Level AA)",
+  "items": [
+    {
+      "id": "UXP-001",
+      "type": "uxp",
+      "finding": {
+        "severity": "Critical",
+        "screen_tag": "Mở tiền gửi trực tuyến - Tích luỹ linh động",
+        "screen_id": "SCR-TK-001",
+        "problem": "DDL spec `otp-input-1` yêu cầu states: `activeIndex`, `canResend`, `timeLeft`, `digits`, `errorCount`. Ảnh Figma chỉ hiển thị 6 ô tĩnh, KHÔNG có UI resend timer, KHÔNG có error state, KHÔNG có countdown. Thiếu hoàn toàn UX cho trường hợp nhập sai, hết thời gian OTP.",
+        "ddl_ref": "COMP:otp-input-1",
+        "solution_draft": "Bổ sung: (1) Countdown timer \"Gửi lại mã sau 60s\", (2) Nút \"Gửi lại\" khi hết thời gian, (3) Error state khi nhập sai (viền đỏ + thông báo lần nhập ...",
+        "gap_ref": "Check #1, Check #1",
+        "current_user_impact": "Người dùng không thể hoàn thành thao tác nhập mã xác thực OTP do DDL spec `otp-input-1` yêu cầu states: `activeIndex`.",
+        "current_heuristic": "COMP:otp-input-1"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Tiền gửi tiết kiệm › Danh mục",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 1,
+          "title": "Touch target ≥ 44×44px",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: Icon menu ~40×40px, dưới chuẩn 44px. Spacing hẹp giữa các items",
+          "ddl_ref": "UXG-042",
+          "category": "Vision",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Zeigarnik Effect",
+          "url": "https://lawsofux.com/zeigarnik-effect/",
+          "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:countdown",
+          "_ref_id": "laws.zeigarnik"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-002",
+      "type": "uxp",
+      "finding": {
+        "severity": "Critical",
+        "screen_tag": "Xác nhận giao dịch - Tích luỹ linh động",
+        "screen_id": "SCR-TK-001",
+        "problem": "Sau khi user nhập OTP và tap \"Xác nhận\", không có loading indicator hay processing state. Banking transaction cần feedback tức thì để user biết giao dịch đang xử lý (Doherty Threshold: response < 400ms hoặc show progress).",
+        "ddl_ref": "UXG-165",
+        "solution_draft": "Thêm màn hình/overlay loading \"Đang xử lý giao dịch...\" với spinner hoặc progress bar. Disable button \"Xác nhận\" sau khi tap để tránh double-submit.",
+        "gap_ref": "Check #6, Check #5, Check #5",
+        "current_user_impact": "Trải nghiệm bị phá vỡ tại Xác nhận giao dịch - Tích luỹ linh động: sau khi user nhập OTP và tap \"Xác nhận\", buộc user phải thoát và thử lại.",
+        "current_heuristic": "UXG-165"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Tiền gửi tiết kiệm › Danh mục",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 5,
+          "title": "Color contrast header",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: Text trắng (#FFFFFF) trên nền xanh đậm (~#1E3A8A), contrast ≥ 7:1",
+          "ddl_ref": "WCAG AA",
+          "category": "Vision",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Doherty Threshold",
+          "url": "https://lawsofux.com/doherty-threshold/",
+          "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:doherty",
+          "_ref_id": "laws.doherty"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-003",
+      "type": "uxp",
+      "finding": {
+        "severity": "Critical",
+        "screen_tag": "Mở tiền gửi trực tuyến - Tích luỹ linh động",
+        "screen_id": "SCR-TK-001",
+        "problem": "Form có nhiều trường nhập liệu nhưng không có variant nào hiển thị error state (viền đỏ, thông báo lỗi dưới field). Chỉ có helper text \"Số tiền gửi tối thiểu là 1,000,000 VND\" nhưng không có UI khi vi phạm rule này.",
+        "ddl_ref": "UXG-243",
+        "solution_draft": "Bổ sung error state cho text-input: viền đỏ, helper text chuyển đỏ, icon error. Cần artboard riêng cho validation failed state.",
+        "gap_ref": "Check #1",
+        "current_user_impact": "Trải nghiệm bị phá vỡ tại Mở tiền gửi trực tuyến - Tích luỹ linh động: form có nhiều trường nhập liệu nhưng không có variant nào hiển thị error state (, buộc user phải thoát và thử lại.",
+        "current_heuristic": "UXG-243"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Tiền gửi tiết kiệm › Danh mục",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 1,
+          "title": "Touch target ≥ 44×44px",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: Icon menu ~40×40px, dưới chuẩn 44px. Spacing hẹp giữa các items",
+          "ddl_ref": "UXG-042",
+          "category": "Vision",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-004",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Tiền gửi tiết kiệm",
+        "screen_id": "SCR-TK-001",
+        "problem": "Các icon menu (40×40px) gần sát nhau trong grid 3×2. Khoảng cách giữa các touch target có thể không đủ 8px spacing theo WCAG. Trên screenshot, icon row 2 chỉ có 2 items nên alignment không cân đối.",
+        "ddl_ref": "UXG-042",
+        "solution_draft": "Tăng touch target tối thiểu 44×44px, đảm bảo spacing ≥ 8px giữa các items. Cân nhắc layout 2 cột cho row 2 để cân đối hơn.",
+        "gap_ref": "Check #1, Check #3",
+        "current_user_impact": "Các icon menu (40×40px) gần sát nhau trong grid 3×2 — gây nhầm lẫn và giảm tin tưởng vào giao diện tại bước Tiền gửi tiết kiệm.",
+        "current_heuristic": "UXG-042"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Tiền gửi tiết kiệm › Danh mục",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 1,
+          "title": "Touch target ≥ 44×44px",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: Icon menu ~40×40px, dưới chuẩn 44px. Spacing hẹp giữa các items",
+          "ddl_ref": "UXG-042",
+          "category": "Vision",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 3,
+          "title": "Grid layout alignment",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: Row 2 chỉ có 2 items trên grid 3 cột, gây bất cân đối",
+          "ddl_ref": "UXG-165",
+          "category": "Vision",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-005",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Kết quả giao dịch - Tích luỹ linh động",
+        "screen_id": "SCR-TK-001",
+        "problem": "DDL `receipt-preview-1` spec yêu cầu fields: `transactionId`, `timestamp`, `amount`, `status`, `recipientInfo`, `senderInfo`. Ảnh thiếu `senderInfo` (tài khoản nguồn) — user không thấy tiền trích từ tài khoản nào. Cũng thiếu \"Lãi suất\" và \"Kỳ hạn\" trong receipt.",
+        "ddl_ref": "COMP:receipt-preview-1",
+        "solution_draft": "Bổ sung: Tài khoản nguồn, Lãi suất, Kỳ hạn, Hình thức tích luỹ vào receipt card.",
+        "gap_ref": "Check #1, Check #1",
+        "current_user_impact": "Người dùng gặp khó khăn khi thao tác do DDL `receipt-preview-1` spec yêu cầu fields: `transactionId`, làm tăng thời gian thao tác.",
+        "current_heuristic": "COMP:receipt-preview-1"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Tiền gửi tiết kiệm › Danh mục",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 1,
+          "title": "Touch target ≥ 44×44px",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: Icon menu ~40×40px, dưới chuẩn 44px. Spacing hẹp giữa các items",
+          "ddl_ref": "UXG-042",
+          "category": "Vision",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Doherty Threshold",
+          "url": "https://lawsofux.com/doherty-threshold/",
+          "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:status",
+          "_ref_id": "laws.doherty"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-006",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Xác nhận giao dịch - Tích luỹ linh động",
+        "screen_id": "SCR-TK-001",
+        "problem": "Form hiển thị lãi suất 3,98%/năm nhưng màn hình xác nhận hiển thị 5%. Tài khoản nguồn ở form là \"9099798712313123\" nhưng confirm là \"98712313123\" (thiếu prefix). Gây mất tin tưởng user.",
+        "ddl_ref": "UXG-165",
+        "solution_draft": "Đảm bảo data consistency giữa form và confirm screen. Hiển thị đầy đủ số tài khoản.",
+        "gap_ref": "Check #5, Check #4, Check #5",
+        "current_user_impact": "Người dùng gặp khó khăn khi nhập thông tin do form hiển thị lãi suất 3,98%/năm nhưng màn hình xác nhận hiển thị 5%, làm tăng thời gian thao tác.",
+        "current_heuristic": "UXG-165"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Tiền gửi tiết kiệm › Danh mục",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 4,
+          "title": "Text truncation",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: Tất cả text labels hiển thị đầy đủ, không truncation",
+          "ddl_ref": "UXG-101",
+          "category": "Vision",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 5,
+          "title": "Color contrast header",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: Text trắng (#FFFFFF) trên nền xanh đậm (~#1E3A8A), contrast ≥ 7:1",
+          "ddl_ref": "WCAG AA",
+          "category": "Vision",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-007",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Mở tiền gửi trực tuyến - Tích luỹ định kỳ tự động",
+        "screen_id": "SCR-TK-001",
+        "problem": "Form TLTÐ có ~15 fields, artboard cao 1593px (gấp đôi viewport 812px). User phải scroll nhiều lần. Quá nhiều lựa chọn cùng lúc vi phạm Hick's Law — thời gian quyết định tăng theo số lựa chọn.",
+        "ddl_ref": "Hick's Law",
+        "solution_draft": "Chia form thành 2-3 bước (wizard/stepper): Bước 1 thông tin cơ bản, Bước 2 tích luỹ định kỳ, Bước 3 tài khoản nhận. Progressive disclosure giảm cog...",
+        "gap_ref": "Check #2",
+        "current_user_impact": "Form TLTÐ có ~15 fields, artboard cao 1593px (gấp đôi viewport 812px) — gây nhầm lẫn và giảm tin tưởng vào giao diện tại bước Mở tiền gửi trực tuyến - Tích luỹ định kỳ tự động.",
+        "current_heuristic": "Hick's Law"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Tiền gửi tiết kiệm › Danh mục",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 2,
+          "title": "Header back navigation",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: Back arrow icon ở header-left, rõ ràng",
+          "ddl_ref": "UXG-080",
+          "category": "Vision",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Hick's Law",
+          "url": "https://lawsofux.com/hicks-law/",
+          "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:hick",
+          "_ref_id": "laws.hick"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-008",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Xác nhận giao dịch - Tích luỹ linh động",
+        "screen_id": "SCR-TK-002",
+        "problem": "Artboard 1305 hiển thị \"Qúy khách vui lòng kiểm tra lại thông tin đã khởi tạo\" — sai chính tả \"Qúy\" (đúng: \"Quý\"). Cũng có trong artboard 1313. Lỗi nhỏ nhưng ảnh hưởng perceived quality.",
+        "ddl_ref": "UXG-101",
+        "solution_draft": "Sửa \"Qúy\" → \"Quý\" trên tất cả artboards.",
+        "gap_ref": "Check #6, Check #8",
+        "current_user_impact": "Artboard 1305 hiển thị \"Qúy khách vui lòng kiểm tra lại thông tin đã khởi tạo\" — không chặn luồng nhưng giảm tính chuyên nghiệp của giao diện.",
+        "current_heuristic": "UXG-101"
+      },
+      "artboard": {
+        "artboard_id": "1305",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-002",
+        "parent_screen_name": "Mở tiền gửi trực tuyến - Tích luỹ linh động › Form nhập thông tin",
+        "boundary_type": "multi-variant"
+      },
+      "related_checks": [
+        {
+          "num": 6,
+          "title": "Min amount helper",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: \"Số tiền gửi tối thiểu là 1,000,000 VND\" hiển thị rõ dưới field",
+          "ddl_ref": "UXG-101",
+          "category": "Vision",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 8,
+          "title": "Interest info expand/collapse",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: \"Xem thêm\" / \"Thu gọn\" toggle hoạt động, content expand rõ",
+          "ddl_ref": "—",
+          "category": "Vision",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-009",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Mở tiền gửi trực tuyến - Tích luỹ linh động",
+        "screen_id": "SCR-TK-002",
+        "problem": "Form có dropdown \"Phương thức đáo hạn\" nhưng KHÔNG có artboard popup tương ứng (chỉ có popup cho \"Chu kỳ tích luỹ\" và \"Phương thức rút gốc\"). User không biết options nào available.",
+        "ddl_ref": "—",
+        "solution_draft": "Bổ sung artboard popup cho \"Phương thức đáo hạn\" với danh sách options.",
+        "gap_ref": "Check #9",
+        "current_user_impact": "Form có dropdown \"Phương thức đáo hạn\" nhưng KHÔNG có artboard popup tương ứng (, có thể cải thiện để nâng cao trải nghiệm tổng thể.",
+        "current_heuristic": "—"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-002",
+        "parent_screen_name": "Mở tiền gửi trực tuyến - Tích luỹ linh động › Form nhập thông tin",
+        "boundary_type": "multi-variant"
+      },
+      "related_checks": [
+        {
+          "num": 9,
+          "title": "Missing popup \"Phương thức đáo hạn\"",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: Dropdown \"Phương thức đáo hạn\" có caret nhưng KHÔNG có artboard popup",
+          "ddl_ref": "—",
+          "category": "Vision",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-010",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Kết quả giao dịch - Tích luỹ linh động",
+        "screen_id": "SCR-TK-001",
+        "problem": "Button \"Giấy xác nhận\" không rõ sẽ mở PDF, download, hay navigate screen mới. Thiếu icon indicator. Fitts's Law: 2 buttons cùng size nhưng \"Tạo giao dịch mới\" (primary) và \"Giấy xác nhận\" (secondary) không phân biệt rõ hierarchy.",
+        "ddl_ref": "UXG-080",
+        "solution_draft": "Dùng visual hierarchy rõ ràng: primary button (filled) cho action chính, outline button cho secondary. Thêm icon download/PDF bên cạnh \"Giấy xác nh...",
+        "gap_ref": "Check #4, Check #3",
+        "current_user_impact": "Chi tiết thiết kế chưa tối ưu tại Kết quả giao dịch - Tích luỹ linh động: button \"Giấy xác nhận\" không rõ sẽ mở PDF, download, hay navigate screen mới.",
+        "current_heuristic": "UXG-080"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Tiền gửi tiết kiệm › Danh mục",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 3,
+          "title": "Grid layout alignment",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: Row 2 chỉ có 2 items trên grid 3 cột, gây bất cân đối",
+          "ddl_ref": "UXG-165",
+          "category": "Vision",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 4,
+          "title": "Text truncation",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: Tất cả text labels hiển thị đầy đủ, không truncation",
+          "ddl_ref": "UXG-101",
+          "category": "Vision",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Fitts's Law",
+          "url": "https://lawsofux.com/fittss-law/",
+          "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:fitts",
+          "_ref_id": "laws.fitts"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#1@SCR-TK-001",
+      "type": "gap",
+      "finding": {
+        "num": 1,
+        "title": "Touch target ≥ 44×44px",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-001",
+        "screen_name": "Tiền gửi tiết kiệm › Danh mục",
+        "screen_type": "menu",
+        "evidence": "Từ ảnh: Icon menu ~40×40px, dưới chuẩn 44px. Spacing hẹp giữa các items",
+        "ddl_ref": "UXG-042",
+        "ddl_evidence": "UXG-042",
+        "current_user_impact": "Icon menu ~40×40px, dưới chuẩn 44px. Spacing hẹp giữa các items — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Tiền gửi tiết kiệm › Danh mục",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#3@SCR-TK-001",
+      "type": "gap",
+      "finding": {
+        "num": 3,
+        "title": "Grid layout alignment",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-001",
+        "screen_name": "Tiền gửi tiết kiệm › Danh mục",
+        "screen_type": "menu",
+        "evidence": "Từ ảnh: Row 2 chỉ có 2 items trên grid 3 cột, gây bất cân đối",
+        "ddl_ref": "UXG-165",
+        "ddl_evidence": "UXG-165",
+        "current_user_impact": "Row 2 chỉ có 2 items trên grid 3 cột, gây bất cân đối — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Tiền gửi tiết kiệm › Danh mục",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#1@SCR-TK-002",
+      "type": "gap",
+      "finding": {
+        "num": 1,
+        "title": "Text-input error state",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-002",
+        "screen_name": "Mở tiền gửi trực tuyến - Tích luỹ linh động › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "DDL `text-input-1` spec: `error`, `errorMessage` states. Screenshot: chỉ có default + filled states, KHÔNG có error variant",
+        "ddl_ref": "COMP:text-input-1",
+        "ddl_evidence": "COMP:text-input-1",
+        "current_user_impact": "DDL `text-input-1` spec: `error`, `errorMessage` states. Screenshot: chỉ có default + filled... — vi phạm Component & DDL",
+        "current_heuristic": "Component & DDL (Thành phần)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-002",
+        "parent_screen_name": "Mở tiền gửi trực tuyến - Tích luỹ linh động › Form nhập thông tin",
+        "boundary_type": "multi-variant"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "context_map:missing_error_message",
+          "_ref_id": "nielsen.9"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#9@SCR-TK-002",
+      "type": "gap",
+      "finding": {
+        "num": 9,
+        "title": "Missing popup \"Phương thức đáo hạn\"",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-002",
+        "screen_name": "Mở tiền gửi trực tuyến - Tích luỹ linh động › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: Dropdown \"Phương thức đáo hạn\" có caret nhưng KHÔNG có artboard popup",
+        "ddl_ref": "—",
+        "ddl_evidence": "—",
+        "current_user_impact": "Dropdown \"Phương thức đáo hạn\" có caret nhưng KHÔNG có artboard popup — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-002",
+        "parent_screen_name": "Mở tiền gửi trực tuyến - Tích luỹ linh động › Form nhập thông tin",
+        "boundary_type": "multi-variant"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#1@SCR-TK-003",
+      "type": "gap",
+      "finding": {
+        "num": 1,
+        "title": "OTP states completeness",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-003",
+        "screen_name": "Xác nhận giao dịch - Tích luỹ linh động › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "DDL `otp-input-1`: `activeIndex`, `canResend`, `timeLeft`, `digits`, `errorCount`. Screenshot: 6 ô tĩnh only",
+        "ddl_ref": "COMP:otp-input-1",
+        "ddl_evidence": "COMP:otp-input-1",
+        "current_user_impact": "DDL `otp-input-1`: `activeIndex`, `canResend`, `timeLeft`, `digits`, `errorCount`. Screenshot: 6 ô... — vi phạm Component & DDL",
+        "current_heuristic": "Component & DDL (Thành phần)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-003",
+        "parent_screen_name": "Xác nhận giao dịch - Tích luỹ linh động › Xác nhận giao dịch",
+        "boundary_type": "multi-variant"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Zeigarnik Effect",
+          "url": "https://lawsofux.com/zeigarnik-effect/",
+          "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:resend",
+          "_ref_id": "laws.zeigarnik"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#5@SCR-TK-003",
+      "type": "gap",
+      "finding": {
+        "num": 5,
+        "title": "Data consistency form→confirm",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-003",
+        "screen_name": "Xác nhận giao dịch - Tích luỹ linh động › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh: Form lãi suất 3,98%/năm vs Confirm 5%. TK nguồn bị cắt prefix",
+        "ddl_ref": "UXG-165",
+        "ddl_evidence": "UXG-165",
+        "current_user_impact": "Form lãi suất 3,98%/năm vs Confirm 5%. TK nguồn bị cắt prefix — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-003",
+        "parent_screen_name": "Xác nhận giao dịch - Tích luỹ linh động › Xác nhận giao dịch",
+        "boundary_type": "multi-variant"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-TK-003",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "Loading/processing state",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-003",
+        "screen_name": "Xác nhận giao dịch - Tích luỹ linh động › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh: KHÔNG có loading state sau tap \"Xác nhận\" — thiếu feedback",
+        "ddl_ref": "UXG-165",
+        "ddl_evidence": "UXG-165",
+        "current_user_impact": "KHÔNG có loading state sau tap \"Xác nhận\" — thiếu feedback — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-003",
+        "parent_screen_name": "Xác nhận giao dịch - Tích luỹ linh động › Xác nhận giao dịch",
+        "boundary_type": "multi-variant"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Doherty Threshold",
+          "url": "https://lawsofux.com/doherty-threshold/",
+          "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:feedback",
+          "_ref_id": "laws.doherty"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#8@SCR-TK-003",
+      "type": "gap",
+      "finding": {
+        "num": 8,
+        "title": "Typo \"Qúy khách\"",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-003",
+        "screen_name": "Xác nhận giao dịch - Tích luỹ linh động › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh: \"Qúy khách\" thay vì \"Quý khách\" — lỗi chính tả",
+        "ddl_ref": "UXG-101",
+        "ddl_evidence": "UXG-101",
+        "current_user_impact": "\"Qúy khách\" thay vì \"Quý khách\" — lỗi chính tả — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-003",
+        "parent_screen_name": "Xác nhận giao dịch - Tích luỹ linh động › Xác nhận giao dịch",
+        "boundary_type": "multi-variant"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#1@SCR-TK-004",
+      "type": "gap",
+      "finding": {
+        "num": 1,
+        "title": "Receipt fields completeness",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-004",
+        "screen_name": "Kết quả giao dịch - Tích luỹ linh động › Kết quả giao dịch",
+        "screen_type": "result",
+        "evidence": "DDL `receipt-preview-1`: cần `senderInfo`. Screenshot: thiếu tài khoản nguồn, lãi suất, kỳ hạn",
+        "ddl_ref": "COMP:receipt-preview-1",
+        "ddl_evidence": "COMP:receipt-preview-1",
+        "current_user_impact": "DDL `receipt-preview-1`: cần `senderInfo`. Screenshot: thiếu tài khoản nguồn, lãi suất, kỳ hạn — vi phạm Component & DDL",
+        "current_heuristic": "Component & DDL (Thành phần)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-004",
+        "parent_screen_name": "Kết quả giao dịch - Tích luỹ linh động › Kết quả giao dịch",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#4@SCR-TK-004",
+      "type": "gap",
+      "finding": {
+        "num": 4,
+        "title": "Primary/Secondary CTA hierarchy",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-004",
+        "screen_name": "Kết quả giao dịch - Tích luỹ linh động › Kết quả giao dịch",
+        "screen_type": "result",
+        "evidence": "Từ ảnh: \"Tạo giao dịch mới\" và \"Giấy xác nhận\" cùng style — thiếu visual hierarchy",
+        "ddl_ref": "Fitts's Law",
+        "ddl_evidence": "Fitts's Law",
+        "current_user_impact": "\"Tạo giao dịch mới\" và \"Giấy xác nhận\" cùng style — thiếu visual hierarchy — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-004",
+        "parent_screen_name": "Kết quả giao dịch - Tích luỹ linh động › Kết quả giao dịch",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Fitts's Law",
+          "url": "https://lawsofux.com/fittss-law/",
+          "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:fitts",
+          "_ref_id": "laws.fitts"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#1@SCR-TK-005",
+      "type": "gap",
+      "finding": {
+        "num": 1,
+        "title": "Text-input error state",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-005",
+        "screen_name": "Mở tiền gửi trực tuyến - Tích luỹ định kỳ tự động › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "DDL `text-input-1`: `error` state. Screenshot: NO error variant",
+        "ddl_ref": "COMP:text-input-1",
+        "ddl_evidence": "COMP:text-input-1",
+        "current_user_impact": "DDL `text-input-1`: `error` state. Screenshot: NO error variant — vi phạm Component & DDL",
+        "current_heuristic": "Component & DDL (Thành phần)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-005",
+        "parent_screen_name": "Mở tiền gửi trực tuyến - Tích luỹ định kỳ tự động › Form nhập thông tin",
+        "boundary_type": "multi-variant"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#2@SCR-TK-005",
+      "type": "gap",
+      "finding": {
+        "num": 2,
+        "title": "Form length / cognitive load",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-005",
+        "screen_name": "Mở tiền gửi trực tuyến - Tích luỹ định kỳ tự động › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: ~15 fields, artboard 1593px (2× viewport). Quá dài, cần stepper",
+        "ddl_ref": "Hick's Law",
+        "ddl_evidence": "Hick's Law",
+        "current_user_impact": "~15 fields, artboard 1593px (2× viewport). Quá dài, cần stepper — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-005",
+        "parent_screen_name": "Mở tiền gửi trực tuyến - Tích luỹ định kỳ tự động › Form nhập thông tin",
+        "boundary_type": "multi-variant"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Hick's Law",
+          "url": "https://lawsofux.com/hicks-law/",
+          "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:hick",
+          "_ref_id": "laws.hick"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#1@SCR-TK-006",
+      "type": "gap",
+      "finding": {
+        "num": 1,
+        "title": "OTP states completeness",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-006",
+        "screen_name": "Xác nhận giao dịch - Tích luỹ định kỳ tự động › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "DDL `otp-input-1`: states thiếu tương tự SCR-TK-003",
+        "ddl_ref": "COMP:otp-input-1",
+        "ddl_evidence": "COMP:otp-input-1",
+        "current_user_impact": "DDL `otp-input-1`: states thiếu tương tự SCR-TK-003 — vi phạm Component & DDL",
+        "current_heuristic": "Component & DDL (Thành phần)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-006",
+        "parent_screen_name": "Xác nhận giao dịch - Tích luỹ định kỳ tự động › Xác nhận giao dịch",
+        "boundary_type": "multi-variant"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#4@SCR-TK-006",
+      "type": "gap",
+      "finding": {
+        "num": 4,
+        "title": "Data consistency",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-006",
+        "screen_name": "Xác nhận giao dịch - Tích luỹ định kỳ tự động › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh: Tương tự SCR-TK-003, lãi suất form vs confirm không nhất quán",
+        "ddl_ref": "UXG-165",
+        "ddl_evidence": "UXG-165",
+        "current_user_impact": "Tương tự SCR-TK-003, lãi suất form vs confirm không nhất quán — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-006",
+        "parent_screen_name": "Xác nhận giao dịch - Tích luỹ định kỳ tự động › Xác nhận giao dịch",
+        "boundary_type": "multi-variant"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#5@SCR-TK-006",
+      "type": "gap",
+      "finding": {
+        "num": 5,
+        "title": "Loading state",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-006",
+        "screen_name": "Xác nhận giao dịch - Tích luỹ định kỳ tự động › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh: Thiếu loading state sau OTP confirm",
+        "ddl_ref": "UXG-165",
+        "ddl_evidence": "UXG-165",
+        "current_user_impact": "Thiếu loading state sau OTP confirm — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-006",
+        "parent_screen_name": "Xác nhận giao dịch - Tích luỹ định kỳ tự động › Xác nhận giao dịch",
+        "boundary_type": "multi-variant"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-TK-006",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "Typo \"Qúy khách\"",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-006",
+        "screen_name": "Xác nhận giao dịch - Tích luỹ định kỳ tự động › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh: Artboard 1313 có \"Qúy khách\" — cùng lỗi chính tả",
+        "ddl_ref": "UXG-101",
+        "ddl_evidence": "UXG-101",
+        "current_user_impact": "Artboard 1313 có \"Qúy khách\" — cùng lỗi chính tả — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": "1313",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-006",
+        "parent_screen_name": "Xác nhận giao dịch - Tích luỹ định kỳ tự động › Xác nhận giao dịch",
+        "boundary_type": "multi-variant"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#1@SCR-TK-007",
+      "type": "gap",
+      "finding": {
+        "num": 1,
+        "title": "Receipt fields completeness",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-007",
+        "screen_name": "Kết quả giao dịch - Tích luỹ định kỳ tự động › Kết quả giao dịch",
+        "screen_type": "result",
+        "evidence": "DDL: thiếu tài khoản nguồn, lãi suất, kỳ hạn. Có thêm chu kỳ + số tiền định kỳ (tốt)",
+        "ddl_ref": "COMP:receipt-preview-1",
+        "ddl_evidence": "COMP:receipt-preview-1",
+        "current_user_impact": "DDL: thiếu tài khoản nguồn, lãi suất, kỳ hạn. Có thêm chu kỳ + số tiền định kỳ (tốt) — vi phạm Component & DDL",
+        "current_heuristic": "Component & DDL (Thành phần)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-007",
+        "parent_screen_name": "Kết quả giao dịch - Tích luỹ định kỳ tự động › Kết quả giao dịch",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#3@SCR-TK-007",
+      "type": "gap",
+      "finding": {
+        "num": 3,
+        "title": "CTA hierarchy",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-007",
+        "screen_name": "Kết quả giao dịch - Tích luỹ định kỳ tự động › Kết quả giao dịch",
+        "screen_type": "result",
+        "evidence": "Từ ảnh: 2 buttons cùng style, thiếu visual hierarchy",
+        "ddl_ref": "Fitts's Law",
+        "ddl_evidence": "Fitts's Law",
+        "current_user_impact": "2 buttons cùng style, thiếu visual hierarchy — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-007",
+        "parent_screen_name": "Kết quả giao dịch - Tích luỹ định kỳ tự động › Kết quả giao dịch",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Mở tài khoản tiền gửi online (Co-opBank)",
+        "module": "Mở tài khoản tiền gửi online",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Fitts's Law",
+          "url": "https://lawsofux.com/fittss-law/",
+          "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:fitts",
+          "_ref_id": "laws.fitts"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    }
+  ],
+  "stats": {
+    "uxp_count": 10,
+    "gap_count": 18,
+    "total_items": 28,
+    "fields_to_generate": 122
+  }
+}

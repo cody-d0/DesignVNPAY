@@ -1,0 +1,669 @@
+[
+  {
+    "id": "UXP-001",
+    "hiện_trạng": "Popup-4 thông báo người dùng cần 'đến Quầy giao dịch' để xử lý vấn đề, nhưng nút CTA bên dưới ghi 'Cài mã PIN' — hoàn toàn không liên quan đến nội dung message. người dùng đọc hướng dẫn đến quầy nhưng button lại là action khác.",
+    "tác_động": "CTA mismatch = người dùng confusion tại critical moment (đang bị block khỏi app). người dùng có thể: (1) tap 'Cài mã PIN' vì đó là button duy nhất → action sai, (2) hesitate vì message vs button contradict → abandoned. Trust violation khi error handling contradict chính nó.",
+    "nguyên_tắc": "Nielsen #4 — Consistency: CTA label phải match action described trong message body. Internal inconsistency giữa text và button = direct violation. Nielsen #9: Error recovery phải constructive — contradicting instruction vs action = opposite of constructive.",
+    "đề_xuất_steps": [
+      "Align CTA label với message: nếu hướng dẫn 'đến Quầy' → CTA = 'Tìm quầy giao dịch gần nhất'",
+      "Nếu action thực sự là cài PIN → sửa message body cho phù hợp",
+      "Audit tất cả popup CTA-message pairs cho consistency",
+      "Thêm secondary action: 'Gọi hotline 1900xxxx'"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-002",
+    "hiện_trạng": "Blur background overlay khi popup hiển thị (SCR-DLB-002, login-expired.png) không đủ mờ — số dư tài khoản '20,000,000 VND' vẫn đọc được phía sau popup. Sensitive financial data visible ngay cả khi screen bị locked/expired.",
+    "tác_động": "Security vulnerability: session expired = người dùng chưa re-authenticate → sensitive data phải fully obscured. Shoulder surfing risk: bất kỳ ai nhìn screen đều thấy số dư. Đặc biệt nguy hiểm trong public settings (quán cà phê, xe buýt).",
+    "nguyên_tắc": "Nielsen #5 — Error Prevention: Blur phải ngăn chặn data exposure — current implementation fails. WCAG 1.3.3 — Sensory Characteristics: overlay covering sensitive data phải effective, not decorative.",
+    "đề_xuất_steps": [
+      "Tăng blur radius: minimum 20px gaussian blur để unreadable",
+      "Hoặc thêm solid overlay color (white/dark) với 80%+ opacity",
+      "Test: xác minh số dư, số tài khoản, tên hoàn toàn unreadable sau blur",
+      "Apply nhất quán blur policy: mọi sensitive data obscured khi session expired"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-003",
+    "hiện_trạng": "Màn đổi mật khẩu (SCR-DLB-003) thiếu password-strength-1 component theo DDL spec. Không có progress bar hiển thị strength level (weak/medium/strong) và không có real-time validation checklist. Điều kiện mật khẩu hiển thị static text.",
+    "tác_động": "người dùng nhập mật khẩu mà không biết strength → submit → có thể weak password hoặc validation fail post-submit. Password strength meter giảm weak passwords 40-60% theo research — financial app cần strong passwords.",
+    "nguyên_tắc": "Nielsen #1 — Visibility: Password strength là real-time status cần instant feedback. Nielsen #5 — Error Prevention: strength meter ngăn chặn weak passwords trước submit.",
+    "đề_xuất_steps": [
+      "triển khai password-strength-1 DDL component: progress bar + color coding",
+      "4 levels: Yếu (red) → Trung bình (amber) → Mạnh (green) → Rất mạnh (dark green)",
+      "Real-time update: bar grows + color changes as người dùng types",
+      "Minimum requirement: 'Mạnh' level trước khi enable submit button"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-004",
+    "hiện_trạng": "Popup-3 yêu cầu người dùng 'đổi mật khẩu' nhưng CTA button ghi 'Cài mã PIN'. 'Mật khẩu' ≠ 'Mã PIN' — 2 concepts khác nhau trong ngân hàng context. Terminology mismatch trong cùng popup.",
+    "tác_động": "người dùng confused: 'Tôi cần đổi mật khẩu hay cài PIN mới?'. Hai concepts rất khác nhau trong ngân hàng: mật khẩu = đăng nhập app, PIN = xác thực giao dịch. Nhầm lẫn có thể dẫn người dùng vào flow sai.",
+    "nguyên_tắc": "Nielsen #2 — Match Real World: Terminology phải precise trong financial context. 'Mật khẩu' và 'PIN' là 2 security credentials khác nhau — mixing chúng = real-world terminology violation.",
+    "đề_xuất_steps": [
+      "Align CTA với message: 'Đổi mật khẩu' → CTA = 'Đổi mật khẩu'",
+      "Hoặc nếu thực sự là cài PIN → sửa message body",
+      "Glossary: define clear terms — 'Mật khẩu đăng nhập' vs 'Mã PIN giao dịch'",
+      "Audit tất cả popups cho terminology consistency"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-005",
+    "hiện_trạng": "Popup cập nhật bắt buộc (popup-1, SCR-DLB-001) chỉ có nút 'Cập nhật' — không có nút đóng (X), không có 'Bỏ qua', không có 'Để sau'. Zero escape hatch. người dùng bị force vào update flow.",
+    "tác_động": "Nếu người dùng không thể update ngay (Wi-Fi yếu, storage đầy, đang cần giao dịch gấp) → blocked hoàn toàn. Force update mà không có grace period = người dùng mất quyền control device. Đặc biệt nguy hiểm khi cần giao dịch khẩn cấp.",
+    "nguyên_tắc": "Nielsen #3 — người dùng Control: Force update without escape = control violation. người dùng cần option 'Để sau' hoặc grace period. Exception: security-critical updates — nhưng vẫn cần communicate lý do.",
+    "đề_xuất_steps": [
+      "Thêm 'Để sau' option cho non-critical updates",
+      "Nếu bắt buộc: explain WHY ('Bản cập nhật bảo mật quan trọng')",
+      "Grace period: remind 3 lần trước khi force update",
+      "Background download: update sẵn, chỉ cần restart"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #10 — Help and Documentation",
+        "url": "https://www.nngroup.com/articles/help-and-documentation/",
+        "quote": "It may be necessary to provide documentation to help users understand how to complete their tasks.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-006",
+    "hiện_trạng": "SCR-DLB-001 (login) dùng Face ID + saved account — người dùng không nhập credentials. Nhưng sau error flow, SCR-DLB-004 (re-login) yêu cầu nhập Số điện thoại thủ công — context break: người dùng đã login bằng biometrics, giờ phải nhớ/nhập phone number.",
+    "tác_động": "Context switch jarring: biometric login = zero-effort → sudden requirement nhập phone number = high effort. người dùng có thể không nhớ phone number registered (multiple numbers). UX regression: post-error experience harder than initial login.",
+    "nguyên_tắc": "Nielsen #6 — Recognition: System đã biết phone number (từ login session trước) → nên pre-fill. Buộc người dùng nhập lại info system đã có = recall requirement thay vì recognition.",
+    "đề_xuất_steps": [
+      "Pre-fill phone number từ previous session/device storage",
+      "Offer Face ID re-auth trên re-login screen nếu biometric available",
+      "Nếu phải nhập, hiển thị masked phone: '***678' + 'Dùng số khác?'",
+      "Maintain login method consistency: nếu người dùng lúc đầu dùng Face ID → offer Face ID lại"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-007",
+    "hiện_trạng": "Text ví dụ mật khẩu trên SCR-DLB-003 hiển thị 'Ví dụ: abc@1234; a&123456; 12345678a$...' — ellipsis (…) cắt ngang ví dụ cuối cùng. người dùng không thấy complete example.",
+    "tác_động": "Truncated example defeats purpose: ví dụ nên illustrate valid format rõ ràng. '12345678a$...' → người dùng không biết example đầy đủ là gì. Nếu text quá dài, cần redesign layout thay vì truncate.",
+    "nguyên_tắc": "Nielsen #10 — Help: Ví dụ là micro-documentation — phải complete và clear. Truncated example = unhelpful documentation. Content phải fit design, không cắt content cho vừa.",
+    "đề_xuất_steps": [
+      "Hiển thị full examples không truncate — resize container nếu cần",
+      "Hoặc giảm số examples: 2 clear examples tốt hơn 3 truncated",
+      "Format examples rõ ràng: mỗi example 1 dòng nếu cần",
+      "Đảm bảo font size đủ lớn để đọc (≥ 13px)"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #10 — Help and Documentation",
+        "url": "https://www.nngroup.com/articles/help-and-documentation/",
+        "quote": "It may be necessary to provide documentation to help users understand how to complete their tasks.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-008",
+    "hiện_trạng": "Không có attempt counter trên login screen — người dùng không biết còn bao nhiêu lần nhập sai mật khẩu trước khi tài khoản bị khóa. Không có trạng thái lỗi designed cho failed login attempts.",
+    "tác_động": "Surprise lockout: người dùng thử vài mật khẩu → bị khóa bất ngờ → phải đến quầy/gọi hotline. Counter cho phép: 'Còn 2 lần, kiểm tra kỹ trước khi nhập.' Đặc biệt critical cho ngân hàng — lockout = blocked khỏi tài chính.",
+    "nguyên_tắc": "Nielsen #1 — Visibility: Attempt count là security status cần real-time hiển thị. Nielsen #5 — Error Prevention: counter helps người dùng self-regulate behavior.",
+    "đề_xuất_steps": [
+      "Hiển thị attempt counter sau lần sai đầu tiên: 'Còn 4 lần thử'",
+      "Color escalation: amber (3 left) → red (1-2 left)",
+      "Suggest recovery trước lockout: 'Quên mật khẩu?' prominently",
+      "Post-lockout: clear instructions (hotline, chi nhánh, thời gian unlock)"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-009",
+    "hiện_trạng": "Input field 'Mật khẩu' trên login (SCR-DLB-001) chỉ dùng placeholder text — khi người dùng bắt đầu type, label biến mất. Không có floating/persistent label. người dùng type xong không nhớ field này là gì.",
+    "tác_động": "Placeholder-as-label pattern is anti-pattern: (1) label disappears on focus → người dùng forgets field purpose mid-type, (2) placeholder color often too light → khả năng tiếp cận issue, (3) người dùng reviewing form before submit cannot xác minh which field is which.",
+    "nguyên_tắc": "Nielsen #6 — Recognition: Persistent label lets người dùng recognize field purpose at all times. Placeholder-only = recall requirement once người dùng starts typing. WCAG 3.3.2 — Labels: input fields must have persistent labels.",
+    "đề_xuất_steps": [
+      "triển khai floating label: placeholder → animate to top on focus → persistent",
+      "Label always visible regardless of input state",
+      "Maintain placeholder for hint text: 'Nhập mật khẩu đăng nhập'",
+      "Apply consistently: all text inputs trong app dùng floating label"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+        "quote": "Labels or instructions are provided when content requires user input.",
+        "source": "W3C"
+      }
+    ]
+  },
+  {
+    "id": "UXP-010",
+    "hiện_trạng": "Face ID icon trên login screen (SCR-DLB-001) không có text label đi kèm. Icon-only biometric button. người dùng phải recognize icon = Face ID — không phải tất cả người dùng đều biết biometric icons.",
+    "tác_động": "Elderly/less tech-savvy người dùng không identify Face ID icon → miss biometric login → nhập mật khẩu thủ công (harder). Icon-only interaction rely on learned conventions — not all ngân hàng customers have this literacy.",
+    "nguyên_tắc": "Nielsen #6 — Recognition: Icon + label provides dual-channel recognition. Icon-only requires recall of icon meaning. WCAG 1.1.1: Images must have text alternatives.",
+    "đề_xuất_steps": [
+      "Thêm text label dưới icon: 'Đăng nhập bằng Face ID'",
+      "Hoặc tooltip on first use: 'Chạm để đăng nhập bằng Face ID'",
+      "ARIA label: aria-label='Đăng nhập bằng Face ID'",
+      "xem xét auto-prompt biometric on screen load (standard iOS/Android pattern)"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "WCAG 1.1.1 — Non-text Content (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html",
+        "quote": "All non-text content has a text alternative that serves the equivalent purpose.",
+        "source": "W3C"
+      }
+    ]
+  },
+  {
+    "id": "UXP-011",
+    "hiện_trạng": "Popup tái xác thực (SCR-DLB-002, session expired) không có countdown timer. DDL countdown-timer-1 spec bắt buộc nhưng không triển khai. người dùng không biết còn bao lâu để nhập mật khẩu trước khi session hoàn toàn expire.",
+    "tác_động": "Thiếu countdown → người dùng không biết urgency: nhập chậm → timeout giữa chừng → popup biến mất → must restart. Timer lets người dùng know: 'Còn 120 giây' → pace accordingly. Doherty Threshold: perceived time pressure cần visual indicator.",
+    "nguyên_tắc": "Nielsen #1 — Visibility: Re-auth timer là time-critical status. Without countdown, người dùng surprised by timeout. Doherty Threshold: feedback about remaining time reduces anxiety.",
+    "đề_xuất_steps": [
+      "Thêm countdown timer: '02:00' counting down",
+      "Visual indicator: progress bar hoặc circle timer",
+      "Warning state: color change amber/red khi < 30s",
+      "On timeout: clear message 'Hết thời gian. Vui lòng đăng nhập lại.'"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Doherty Threshold",
+        "url": "https://lawsofux.com/doherty-threshold/",
+        "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+        "source": "Laws of UX"
+      }
+    ]
+  },
+  {
+    "id": "UXP-012",
+    "hiện_trạng": "Sau khi người dùng hoàn thành đổi mật khẩu (SCR-DLB-003 → SCR-DLB-004), trường Số điện thoại trên re-login screen trống — người dùng phải nhập lại dù system đã biết số từ session trước.",
+    "tác_động": "Friction post-recovery: người dùng vừa trải qua error flow → đổi mật khẩu thành công → giờ phải nhớ + nhập phone number. Anti-climactic ending. System đã có data nhưng buộc người dùng input lại = không cần thiết work.",
+    "nguyên_tắc": "Nielsen #6 — Recognition: Pre-fill known data → người dùng chỉ cần xác nhận, không phải recall + type. Data system đã có = phải auto-populate. WCAG 1.3.5 — Identify Input Purpose: autofill telephone.",
+    "đề_xuất_steps": [
+      "Pre-fill phone number từ previous session: '09xxxxxxx78'",
+      "Masked hiển thị: '***678' với option 'Dùng số khác'",
+      "Auto-focus vào password field nếu phone pre-filled",
+      "Transition message: 'Đổi mật khẩu thành công! Đăng nhập lại với mật khẩu mới.'"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "WCAG 1.3.5 — Identify Input Purpose (Level AA)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/identify-input-purpose.html",
+        "quote": "The purpose of each input field collecting information about the user can be programmatically determined.",
+        "source": "W3C"
+      }
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-DLB-001",
+    "hiện_trạng": "Input fields trên SCR-DLB-001 chỉ dùng placeholder labels — không có persistent/floating labels phía trên field.",
+    "tác_động": "Placeholder disappears on type → người dùng loses field context. Anti-pattern for forms.",
+    "nguyên_tắc": "WCAG 3.3.2: Labels must persist. Placeholder is not a label replacement.",
+    "references": [
+      {
+        "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+        "quote": "Labels or instructions are provided when content requires user input.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung persistent/floating labels phía trên field vào thiết kế màn hình",
+      "Thêm helper text bên dưới trường nhập: giải thích format mong đợi hoặc ví dụ",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-DLB-001",
+    "hiện_trạng": "Popups trên SCR-DLB-001 (popup.png, popup-2..4) — kiểm tra xem có dismiss button (X icon) hay không. Một số popup thiếu close option.",
+    "tác_động": "Popup without dismiss = trapped người dùng. Especially problematic if popup is informational — người dùng phải act on CTA dù chỉ muốn dismiss.",
+    "nguyên_tắc": "Nielsen #3 — người dùng Control: Every modal must have dismiss option (X, tap outside, or skip button).",
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit'.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung close option vào thiết kế màn hình",
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-DLB-001",
+    "hiện_trạng": "Popup-4 (SCR-DLB-001): nút 'Cài mã PIN' nhưng message nói 'đến Quầy giao dịch'. CTA action ≠ body text instruction.",
+    "tác_động": "người dùng doesn't know whether to follow button action or text instruction. Contradicting UI elements erode trust.",
+    "nguyên_tắc": "Nielsen #4 — Consistency: CTA must match message content. Contradiction = consistency violation.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Đồng bộ format hiển thị giữa tất cả màn hình trong cùng flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-DLB-001",
+    "hiện_trạng": "Popup-3 (SCR-DLB-001): body text nói 'đổi mật khẩu' nhưng CTA = 'Cài mã PIN'. Terminology mismatch: password ≠ PIN.",
+    "tác_động": "ngân hàng customers know password ≠ PIN. Mixing terms creates security anxiety: 'Which credential is compromised?'",
+    "nguyên_tắc": "Nielsen #2 — Match Real World: ngân hàng terminology must be precise — password and PIN are khác nhau security credentials.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "The design should speak the users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#9@SCR-DLB-001",
+    "hiện_trạng": "Banner quảng cáo 'Gói vay hỗ trợ' hiển thị trên login screen (SCR-DLB-001) — cần xác minh không interfere với authentication flow.",
+    "tác_động": "Ad on login screen may distract from primary task (authentication). Accidental tap on ad → navigate away from login. Placement priority should be: login > ads.",
+    "nguyên_tắc": "Nielsen #8 — Aesthetic and Minimalist: Login screen should focus on authentication. Non-essential content (ads) competes for attention.",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #8 — Aesthetic and Minimalist để cải thiện trải nghiệm",
+      "Khắc phục: Ad on login screen may distract from primary task (authentication). Accidental tap on ad → navigate",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#10@SCR-DLB-001",
+    "hiện_trạng": "Popup update bắt buộc (popup.png, SCR-DLB-001) chỉ có nút 'Cập nhật' — không có escape option hoặc 'Để sau'.",
+    "tác_động": "Zero escape = người dùng blocked if update not possible right now. Force update during urgent ngân hàng need = service denial.",
+    "nguyên_tắc": "Nielsen #3 — người dùng Control: bắt buộc popup must have fallback. At minimum: explain why bắt buộc + cung cấp grace period.",
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users need a clearly marked 'emergency exit'.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung escape option hoặc 'Để sau' vào thiết kế màn hình",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#13@SCR-DLB-001",
+    "hiện_trạng": "Face ID icon trên SCR-DLB-001 — icon only, không có text label. Visual-only biometric authentication trigger.",
+    "tác_động": "Not all người dùng recognize Face ID icon. Elderly ngân hàng customers may miss biometric option entirely.",
+    "nguyên_tắc": "WCAG 1.1.1: Non-text content needs text alternative. Nielsen #6: Icon + label = dual-channel recognition.",
+    "references": [
+      {
+        "name": "WCAG 1.1.1 — Non-text Content (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html",
+        "quote": "All non-text content has a text alternative.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung text label vào thiết kế màn hình",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-DLB-002",
+    "hiện_trạng": "Blur overlay trên SCR-DLB-002 (login-expired.png): '20,000,000 VND' vẫn readable qua blur — insufficient obscuring.",
+    "tác_động": "Session expired = unauthenticated state. Sensitive số dư visible = security risk. Shoulder surfing in public.",
+    "nguyên_tắc": "Nielsen #5: Blur must effectively ngăn chặn data exposure. Insufficient blur = failed prevention.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "The best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #5 để cải thiện trải nghiệm",
+      "Khắc phục: Session expired = unauthenticated state. Sensitive số dư visible = security risk. Shoulder surfing",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#2@SCR-DLB-002",
+    "hiện_trạng": "Re-auth popup (SCR-DLB-002) chỉ có text input + Bỏ qua/Xác nhận — không có Face ID option. Login dùng biometrics nhưng re-auth chỉ password.",
+    "tác_động": "không nhất quán auth methods: login = Face ID (0 effort), re-auth = password (high effort). người dùng experience degrades post-timeout. Should offer giống nhau auth method.",
+    "nguyên_tắc": "Nielsen #4 — Consistency: Authentication method should be nhất quán. If biometric available at login → available at re-auth.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung Face ID option vào thiết kế màn hình",
+      "Đồng bộ format hiển thị giữa tất cả màn hình trong cùng flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-DLB-002",
+    "hiện_trạng": "Không có trạng thái lỗi designed cho failed login attempts trên SCR-DLB-002 — attempt counter thiếu post-incorrect entry.",
+    "tác_động": "No visibility into remaining attempts → surprise lockout. ngân hàng lockout = severe consequence needing branch visit.",
+    "nguyên_tắc": "Nielsen #1 — Visibility: Attempt counter is critical security feedback.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung post-incorrect entry vào thiết kế màn hình",
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow"
+    ]
+  },
+  {
+    "id": "Gap#9@SCR-DLB-002",
+    "hiện_trạng": "Re-auth popup (SCR-DLB-002, login-expired.png) — không có countdown timer. DDL countdown-timer-1 spec bắt buộc.",
+    "tác_động": "người dùng doesn't know how long they have to re-authenticate → surprise timeout mid-typing.",
+    "nguyên_tắc": "Nielsen #1 — Visibility: Re-auth window time limit is critical status.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung countdown timer vào thiết kế màn hình",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-DLB-003",
+    "hiện_trạng": "Change password screen (SCR-DLB-003) — không có password strength meter/progress bar. DDL password-strength-1 bắt buộc.",
+    "tác_động": "người dùng không thể gauge password strength before submit. Weak passwords → security vulnerability for ngân hàng app.",
+    "nguyên_tắc": "Nielsen #1 — Visibility: Password strength is real-time status. Nielsen #5: Strength meter prevents weak passwords.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung password strength meter/progress bar vào thiết kế màn hình",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#2@SCR-DLB-003",
+    "hiện_trạng": "Password requirements checklist trên SCR-DLB-003 static — không update visual indicators (✓/✗) real-time khi người dùng types.",
+    "tác_động": "Static checklist = người dùng phải memorize rules → type → submit → discover violations. Real-time updates eliminate post-submit errors entirely.",
+    "nguyên_tắc": "Nielsen #1 — Visibility: Validation status must update in real-time.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Triển khai inline validation real-time — kiểm tra ngay khi người dùng rời trường nhập",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-DLB-003",
+    "hiện_trạng": "Password example text bị truncate: '12345678a$...' — ellipsis cắt giữa example trên SCR-DLB-003.",
+    "tác_động": "Truncated example = unhelpful help. người dùng doesn't see full valid password pattern.",
+    "nguyên_tắc": "Nielsen #10: Help documentation must be complete and accessible.",
+    "references": [
+      {
+        "name": "Nielsen #10 — Help and Documentation",
+        "url": "https://www.nngroup.com/articles/help-and-documentation/",
+        "quote": "It may be necessary to provide documentation to help users understand how to complete their tasks.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #10 để cải thiện trải nghiệm",
+      "Khắc phục: Truncated example = unhelpful help. người dùng doesn't see full valid password pattern.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#8@SCR-DLB-003",
+    "hiện_trạng": "3 input fields (old password, new password, xác nhận) trên SCR-DLB-003 dùng placeholder labels — không có persistent/floating labels.",
+    "tác_động": "3 similar password fields without persistent labels → người dùng may type new password into old password field without realizing.",
+    "nguyên_tắc": "WCAG 3.3.2: Labels must persist. Critical when multiple similar fields exist on giống nhau screen.",
+    "references": [
+      {
+        "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+        "quote": "Labels or instructions are provided when content requires user input.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung persistent/floating labels vào thiết kế màn hình",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Thêm helper text bên dưới trường nhập: giải thích format mong đợi hoặc ví dụ"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-DLB-004",
+    "hiện_trạng": "Re-login screen (SCR-DLB-004) sau đổi mật khẩu — không có transition message. người dùng lands on blank login without context: 'Tại sao tôi phải đăng nhập lại?'",
+    "tác_động": "Jarring transition: password change → suddenly blank login. No success xác nhận or explanation for re-login requirement.",
+    "nguyên_tắc": "Nielsen #1 — Visibility: Transition context needed: 'Đổi mật khẩu thành công! Đăng nhập lại với mật khẩu mới.'",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung transition message vào thiết kế màn hình",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-DLB-004",
+    "hiện_trạng": "Phone number field trên SCR-DLB-004 trống — người dùng phải nhập lại số dù system đã biết từ previous session.",
+    "tác_động": "không cần thiết data re-entry. System has phone number but doesn't pre-fill → manual work for người dùng.",
+    "nguyên_tắc": "Nielsen #6: Pre-fill known data. Don't make người dùng recall + retype information system already has.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-DLB-004",
+    "hiện_trạng": "Re-login (SCR-DLB-004) sau error flow — không có positive reinforcement. người dùng vừa trải qua error → đổi mật khẩu → re-login = flat ending.",
+    "tác_động": "Peak-End Rule: error flow ends without positive closure. người dùng's memory of the experience = frustration without resolution feeling.",
+    "nguyên_tắc": "Peak-End Rule: End experience on positive note. Success message + smooth re-entry = positive end.",
+    "references": [
+      {
+        "name": "Peak-End Rule",
+        "url": "https://lawsofux.com/peak-end-rule/",
+        "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung positive reinforcement vào thiết kế màn hình",
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#8@SCR-DLB-004",
+    "hiện_trạng": "Phone number field trống trên re-login SCR-DLB-004 — cùng issue với Gap#3 nhưng specifically sau đổi mật khẩu flow.",
+    "tác_động": "Post-password-change re-login should be seamless. Empty phone field adds friction to already lengthy recovery flow.",
+    "nguyên_tắc": "Nielsen #6: System possesses phone number → must pre-fill to minimize người dùng effort.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #6 để cải thiện trải nghiệm",
+      "Khắc phục: Post-password-change re-login should be seamless. Empty phone field adds friction to already lengthy",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  }
+]

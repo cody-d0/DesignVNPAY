@@ -1,0 +1,1822 @@
+{
+  "meta": {
+    "client_name": "Co-opBank",
+    "product_name": "Co-opBank Mobile Banking",
+    "module_name": ": Dịch Vụ Thẻ / Thẻ · **Figma Node**: `142:33334`",
+    "domain": "Banking",
+    "section": "",
+    "module_dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/dich-vu-the--quan-ly-the"
+  },
+  "stats": {
+    "screen_count": 4,
+    "check_count": 48,
+    "gap_count": 31,
+    "pass_count": 16,
+    "proposal_count": 12,
+    "overall_score": 33,
+    "overall_score_color": "#b91c1c",
+    "overall_score_offset": 214,
+    "overall_weighted_score": 82,
+    "severity_counts": {
+      "critical": 3,
+      "major": 7,
+      "minor": 2
+    }
+  },
+  "screens": [
+    {
+      "id": "SCR-THE-001",
+      "name": "Dịch vụ thẻ › Danh sách thẻ (`SCR-THE-001`)",
+      "type": "list",
+      "score": 35,
+      "score_color": "#b91c1c",
+      "score_offset": 102,
+      "weighted_score": 81,
+      "gap_count": 12,
+      "artboard_count": 22
+    },
+    {
+      "id": "SCR-THE-002",
+      "name": "Thông tin thẻ › Chi tiết thẻ (`SCR-THE-002`)",
+      "type": "detail",
+      "score": 40,
+      "score_color": "#b91c1c",
+      "score_offset": 94,
+      "weighted_score": 87,
+      "gap_count": 6,
+      "artboard_count": 1
+    },
+    {
+      "id": "SCR-THE-003",
+      "name": "Lịch sử GD thẻ › Danh sách GD (`SCR-THE-003`)",
+      "type": "list",
+      "score": 44,
+      "score_color": "#b91c1c",
+      "score_offset": 88,
+      "weighted_score": 81,
+      "gap_count": 5,
+      "artboard_count": 5
+    },
+    {
+      "id": "SCR-THE-004",
+      "name": "Lịch sử GD thẻ › Chi tiết GD (`SCR-THE-004`)",
+      "type": "detail",
+      "score": 11,
+      "score_color": "#b91c1c",
+      "score_offset": 140,
+      "weighted_score": 81,
+      "gap_count": 8,
+      "artboard_count": 1
+    }
+  ],
+  "uxps": [
+    {
+      "id": "UXP-001",
+      "severity": "Critical",
+      "screen_tag": "Dịch vụ thẻ › Danh sách thẻ (SCR-THE-001)",
+      "problem": "OTP/PIN overlay thiếu canResend state + \"Gửi lại\" button — user kẹt nếu không nhận mã",
+      "gap_ref": "Check #3 (SCR-THE-001)",
+      "ddl_ref": "COMP:otp-input-1 (canResend, Gửi lại button)",
+      "solution": "Thêm \"Gửi lại mã\" button (disabled 60s) + countdown timer trong PIN overlay",
+      "screenshot_path": "ui/danh-sach-the-xac-thuc-otp.png",
+      "_img_tier": "1",
+      "references": [
+        {
+          "name": "Nielsen #3 — User Control and Freedom",
+          "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+          "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Zeigarnik Effect",
+          "url": "https://lawsofux.com/zeigarnik-effect/",
+          "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "người dùng bị blocked hoàn toàn tại authentication step: OTP hết hạn → no resend → back toàn bộ flow → re-enter thông tin → request OTP mới. Mỗi restart flow dịch vụ thẻ mất 1-2 phút. Với flow có nhiều bước (khóa/mở thẻ), abandon rate tăng đáng kể.",
+      "heuristic": "Nielsen #3 — người dùng Control and Freedom: 'Gửi lại' là emergency exit khi primary path fails. Thiếu recovery mechanism tại authentication step = design dead end. Zeigarnik Effect: task bị interrupted mà không có recovery path tạo negative memory mạnh.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "OTP/PIN overlay trên dịch vụ thẻ (SCR-THE-001) thiếu canResend state và nút 'Gửi lại'. DDL otp-input-1 spec yêu cầu canResend + resend button. Khi OTP hết hạn hoặc không nhận được, người dùng không có action nào để request mã mới từ screen hiện tại.",
+      "solution_steps": [
+        "Thêm nút 'Gửi lại mã' xuất hiện sau countdown hết, với cooldown 30s",
+        "Hiển thị countdown timer ngay dưới OTP cells",
+        "triển khai resend logic với rate limiting: max 3 resends per session",
+        "Hiển thị feedback khi resend: 'Mã mới đã gửi đến số ***678'"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-002",
+      "severity": "Critical",
+      "screen_tag": "Dịch vụ thẻ › Danh sách thẻ (SCR-THE-001)",
+      "problem": "PIN overlay thiếu attempt counter — text cảnh báo tĩnh, user không biết còn bao nhiêu lần thử",
+      "gap_ref": "Check #4 (SCR-THE-001)",
+      "ddl_ref": "COMP:otp-input-1 (timeLeft state)",
+      "solution": "Thay text \"bị khóa sau 5 lần\" bằng dynamic \"Còn X lần thử\" counter",
+      "screenshot_path": "ui/danh-sach-the-xac-thuc-otp.png",
+      "_img_tier": "1",
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "người dùng thử PIN cũ → sai → thử lại → bất ngờ bị lockout vì không track được attempts. Lockout thẻ ngân hàng = không giao dịch được cho đến khi unlock qua chi nhánh. Thiếu attempt counter biến minor mistake thành major consequence.",
+      "heuristic": "Nielsen #1 — Visibility of System Status: Attempt count là critical status — người dùng cần biết proximity to lockout. Nielsen #5 — Error Prevention: counter giúp người dùng calibrate hành vi — biết còn 1/5 lần → cẩn thận hơn, tránh lockout.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "PIN overlay trên dịch vụ thẻ (SCR-THE-001) chỉ hiển thị text cảnh báo tĩnh về lockout — không có attempt counter real-time. người dùng không biết đang ở lần thử thứ mấy trong giới hạn 5 lần. DDL spec yêu cầu timeLeft state cho countdown nhưng design không triển khai.",
+      "solution_steps": [
+        "Hiển thị attempt counter: 'Lần thử 2/5' — update realtime sau mỗi lần nhập sai",
+        "Warning color escalation: normal (1-2/5) → amber (3/5) → red (4-5/5)",
+        "Sau attempt 3/5, thêm dialog xác nhận: 'Bạn còn 2 lần thử. Tiếp tục?'",
+        "Khi lockout, hiển thị rõ recovery path: 'Liên hệ hotline 1900xxxx hoặc đến chi nhánh'"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-003",
+      "severity": "Critical",
+      "screen_tag": "Lịch sử GD thẻ › Chi tiết GD (SCR-THE-004)",
+      "problem": "Receipt chỉ có 4/11 fields theo DDL spec — thiếu merchant, channel, status, dispute CTA, share",
+      "gap_ref": "Check #1, #2, #3, #4, #5 (SCR-THE-004)",
+      "ddl_ref": "COMP:receipt-preview-1",
+      "solution": "Bổ sung: merchant name, kênh GD (POS/Online/ATM), trạng thái, \"Khiếu nại giao dịch\" CTA",
+      "screenshot_path": "ui/lsgd-the-3.png",
+      "_img_tier": "1",
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Jakob's Law",
+          "url": "https://lawsofux.com/jakobs-law/",
+          "quote": "Users spend most of their time on other sites. This means that users prefer your site to work the same way as all the other sites they already know.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "biên lai thiếu thông tin gây khó khăn tra soát: (1) thiếu merchant → không biết giao dịch ở đâu, (2) thiếu channel → không phân biệt POS/Online, (3) thiếu dispute CTA → người dùng không biết cách khiếu nại. So với VCB/MB/TCB đều đầy đủ fields — Co-opBank perceived as kém chuyên nghiệp.",
+      "heuristic": "Nielsen #1 — Visibility: biên lai là complete system status cho 1 giao dịch — thiếu 7/11 fields = 64% information gap. Jakob's Law: người dùng kỳ vọng ngân hàng biên lai đầy đủ vì mọi app ngân hàng khác đều cung cấp.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "biên lai/chi tiết giao dịch trên SCR-THE-004 chỉ hiển thị 4 fields (ngày, số tiền, nội dung, mã GD) trong khi DDL biên lai-preview-1 spec yêu cầu 11 fields. Thiếu: merchant name, location, channel (POS/Online/ATM), status, dispute CTA, share button, và mã tham chiếu.",
+      "solution_steps": [
+        "Thêm merchant name thay cho 'QUET THE': hiển thị tên cửa hàng/đơn vị chấp nhận thẻ",
+        "Thêm channel field: 'POS' / 'Online' / 'ATM' / 'Rút tiền mặt'",
+        "Thêm trạng thái GD: 'Thành công' / 'Đang xử lý' / 'Từ chối'",
+        "Thêm CTA 'Khiếu nại giao dịch' — yêu cầu pháp lý cho ngân hàng",
+        "Thêm share/save biên lai button"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-004",
+      "severity": "Major",
+      "screen_tag": "Thông tin thẻ › Chi tiết thẻ (SCR-THE-002)",
+      "problem": "Thiếu CTA \"Thanh toán dư nợ\" khi xem thông tin dư nợ — screen chỉ informational",
+      "gap_ref": "Check #1 (SCR-THE-002)",
+      "ddl_ref": "Fitts's Law",
+      "solution": "Thêm sticky CTA \"Thanh toán dư nợ\" ở bottom. VCB/Techcombank đều có pattern này",
+      "screenshot_path": "ui/danh-sach-the-thong-tin-the.png",
+      "_img_tier": "1",
+      "references": [
+        {
+          "name": "Fitts's Law",
+          "url": "https://lawsofux.com/fittss-law/",
+          "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+          "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+          "quote": "Shortcuts — hidden from novice users — may speed up the interaction for the expert user.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Nielsen #6 — Recognition Rather Than Recall",
+          "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+          "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Miss conversion opportunity: người dùng xem dư nợ → muốn thanh toán ngay → không có CTA → phải navigate manual → friction → có thể trì hoãn thanh toán → phí phạt lãi. ngân hàng app nên enable immediate action từ context screen.",
+      "heuristic": "Nielsen #7 — Flexibility and Efficiency: CTA contextual cho phép người dùng act ngay từ thông tin đang xem — shortcut cho common follow-up action. Thiếu CTA buộc người dùng navigate thủ công = inefficient. Proximity: CTA nên gần thông tin liên quan (dư nợ → thanh toán).",
+      "ref_count": 4,
+      "_enriched_ref": {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+        "source": "Laws of UX"
+      },
+      "hiện_trạng": "Màn thông tin dư nợ thẻ tín dụng (SCR-THE-002) chỉ hiển thị thông tin — không có CTA 'Thanh toán dư nợ' hoặc bất kỳ actionable button nào. Screen là informational dead end — người dùng xem xong phải back ra rồi tự tìm flow thanh toán.",
+      "solution_steps": [
+        "Thêm sticky CTA bottom bar: 'Thanh toán dư nợ' → navigate đến flow thanh toán",
+        "Pre-fill amount = dư nợ hiện tại khi navigate sang",
+        "Thêm secondary action: 'Cài đặt thanh toán tự động'",
+        "Highlight due date với conditional color: đỏ nếu ≤ 3 ngày"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-005",
+      "severity": "Major",
+      "screen_tag": "Lịch sử GD thẻ › Danh sách GD (SCR-THE-003)",
+      "problem": "Date picker dùng text input thay vì calendar UI — error-prone, thiếu presets",
+      "gap_ref": "Check #1, #2 (SCR-THE-003)",
+      "ddl_ref": "UXG-197 (Input Labels) · UXG-204 (Submit Feedback)",
+      "solution": "(1) Thay text input bằng native date picker, (2) Thêm preset: \"Tuần này\", \"Tháng này\", \"3 tháng\"",
+      "screenshot_path": "ui/lsgd-the-2.png",
+      "_img_tier": "1",
+      "references": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+          "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+          "quote": "Shortcuts — hidden from novice users — may speed up the interaction for the expert user.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Text input cho date = error-prone: format sai (31/13/2025), ngày không tồn tại (30/02), Từ > Đến. Calendar UI loại bỏ 100% format errors và invalid dates. Thiếu quick presets ('Tuần này', '30 ngày', 'Tháng trước') buộc tất cả người dùng input thủ công.",
+      "heuristic": "Nielsen #5 — Error Prevention: Calendar UI ngăn chặn format errors tại input point. Text date fields cho phép mọi loại lỗi format — opposite of prevention. Nielsen #7 — Flexibility: presets cho common ranges giảm effort cho majority use cases.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Date picker trong filter sao kê (SCR-THE-003) dùng 2 text inputs với format 'dd/mm/yyyy' thay vì calendar UI. người dùng phải nhập ngày bằng tay — không có calendar popup, date wheel, hoặc native date picker. Overlay 'Khác' chỉ có text fields.",
+      "solution_steps": [
+        "thay thế text inputs bằng native date picker hoặc calendar popup",
+        "Thêm quick preset buttons: 'Hôm nay', '7 ngày', '30 ngày', 'Tháng trước'",
+        "Tự động kiểm tra: Từ ngày < Đến ngày, ngày hợp lệ",
+        "Giới hạn selectable range: min = ngày mở thẻ, max = today"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-006",
+      "severity": "Major",
+      "screen_tag": "Dịch vụ thẻ › Danh sách thẻ (SCR-THE-001)",
+      "problem": "Empty state thiếu illustration + CTA button — DDL empty-state-1 requires icon + hasCta",
+      "gap_ref": "Check #8, #9 (SCR-THE-001)",
+      "ddl_ref": "COMP:empty-state-1 (hasCta, icon states)",
+      "solution": "Thêm illustration icon + \"Đăng ký thẻ ngay\" CTA button theo DDL spec",
+      "screenshot_path": "ui/danh-sach-the-1.png",
+      "_img_tier": "1",
+      "references": [
+        {
+          "name": "Nielsen #6 — Recognition Rather Than Recall",
+          "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+          "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Aesthetic-Usability Effect",
+          "url": "https://lawsofux.com/aesthetic-usability-effect/",
+          "quote": "Users often perceive aesthetically pleasing design as design that's more usable.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "trạng thái trống là touchpoint phổ biến — mỗi thẻ mới, mỗi filter không có kết quả. Thiếu CTA mất cơ hội guide người dùng: 'Thực hiện giao dịch đầu tiên' hoặc 'Thay đổi bộ lọc'. Thiếu illustration giảm perceived quality — ngân hàng app cần polished UI.",
+      "heuristic": "Nielsen #6 — Recognition: trạng thái trống cần visible actions — người dùng nên recognize next step thay vì recall. Aesthetic-Usability Effect: trạng thái trống có illustration perceived as higher quality → increased trust.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "trạng thái trống trên danh sách giao dịch (SCR-THE-001) chỉ hiển thị text 'Không có giao dịch' — thiếu illustration/icon (DDL empty-state-1 yêu cầu icon slot) và thiếu CTA button (DDL yêu cầu hasCta state). Dead end visual.",
+      "solution_steps": [
+        "Thêm illustration theo DDL empty-state-1 component: icon phù hợp context (thẻ/giao dịch)",
+        "Thêm CTA button: 'Thực hiện giao dịch' hoặc 'Thay đổi bộ lọc' tùy context",
+        "Style nhất quán với DDL spec: centered layout, muted text, prominent CTA"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-007",
+      "severity": "Major",
+      "screen_tag": "Thông tin thẻ › Chi tiết thẻ (SCR-THE-002)",
+      "problem": "Hạn mức tín dụng text-only — thiếu progress bar/utilization visual",
+      "gap_ref": "Check #2 (SCR-THE-002)",
+      "ddl_ref": "UXG-162 (Content Jumping)",
+      "solution": "Thêm progress bar: \"Đã sử dụng 22M / 100M\" với visual indicator",
+      "screenshot_path": "ui/danh-sach-the-thong-tin-the.png",
+      "_img_tier": "1",
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Miller's Law",
+          "url": "https://lawsofux.com/millers-law/",
+          "quote": "The average person can only keep 7 (plus or minus 2) items in their working memory.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "Text-only credit limit thiếu at-a-glance comprehension: '78M còn lại trên tổng bao nhiêu?' → người dùng phải so sánh manual với tổng hạn mức. Progress bar cung cấp immediate visual sensing: 'đã dùng 30%' vs 'còn 78M' — cái trước dễ hiểu hơn trong 0.5 giây.",
+      "heuristic": "Nielsen #1 — Visibility: utilization ratio là critical status — progress bar hiển thị trực quan hơn text. Miller's Law: processing '78M/110M = 71% còn lại' là cognitive task — progress bar offload phép tính này cho visual cortex.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Hạn mức tín dụng trên SCR-THE-002 hiển thị text-only: 'Hạn mức khả dụng còn lại: 78,000,000 VND'. Không có progress bar, utilization chart, hoặc visual indicator nào cho tỷ lệ sử dụng hạn mức. người dùng phải tự tính phần trăm đã dùng.",
+      "solution_steps": [
+        "Thêm progress bar hiển thị tỷ lệ sử dụng: total → used → available",
+        "Color coding: xanh (< 50% used) → amber (50-80%) → đỏ (> 80%)",
+        "Hiển thị cả số và phần trăm: '78,000,000 VND (71% khả dụng)'",
+        "Thêm tooltip/tap để xem breakdown: hạn mức tổng, đã dùng, khả dụng"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-008",
+      "severity": "Major",
+      "screen_tag": "Dịch vụ thẻ › Danh sách thẻ (SCR-THE-001)",
+      "problem": "Quick action grid ẩn khi thẻ khoá — không disable với tooltip giải thích",
+      "gap_ref": "Check #1 (SCR-THE-001)",
+      "ddl_ref": "UXG-175 (Loading Buttons)",
+      "solution": "Disable actions + tooltip \"Thẻ đang bị khoá. Vui lòng mở khoá để sử dụng\"",
+      "screenshot_path": "ui/danh-sach-the-1.png",
+      "_img_tier": "1",
+      "references": [
+        {
+          "name": "Nielsen #6 — Recognition Rather Than Recall",
+          "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+          "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Hidden actions → người dùng không discover features: 'Thẻ sau khi mở khóa có thêm tính năng gì?' → không biết nên thiếu motivation mở khóa. Disabled + tooltip ('Mở khóa thẻ để sử dụng') educate người dùng về available features và guide action.",
+      "heuristic": "Nielsen #6 — Recognition: Disabled state cho phép người dùng recognize tất cả features — hidden state buộc recall. System nên hiển thị full capability landscape dù một số temporarily unavailable. hiển thị the whole picture, indicate what's accessible.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Quick action grid trên card thẻ khóa (SCR-THE-001, artboard locked-state) ẩn hoàn toàn actions không khả dụng thay vì disable chúng. Khi thẻ bị khóa, 3/4 actions visible, 1 bị hidden — người dùng không biết action khác tồn tại hoặc tại sao thiếu.",
+      "solution_steps": [
+        "thay thế ẩn pattern bằng disabled state: icon greyed-out + opacity 50%",
+        "Thêm tooltip khi tap disabled action: 'Vui lòng mở khóa thẻ trước'",
+        "Giữ nhất quán grid layout 4 actions bất kể trạng thái thẻ",
+        "Deep link: tooltip chứa 'Mở khóa ngay' → navigate đến flow mở khóa"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-009",
+      "severity": "Major",
+      "screen_tag": "Lịch sử GD thẻ › Chi tiết GD (SCR-THE-004)",
+      "problem": "Nội dung \"QUET THE\" all-caps kỹ thuật — cần map sang ngôn ngữ user-friendly",
+      "gap_ref": "Check #6 (SCR-THE-004)",
+      "ddl_ref": "—",
+      "solution": "Map: QUET THE → \"Thanh toán tại POS\", CHUYEN TIEN → \"Chuyển tiền\"",
+      "screenshot_path": "ui/lsgd-the-3.png",
+      "_img_tier": "1",
+      "references": [
+        {
+          "name": "Nielsen #2 — Match Between System and Real World",
+          "url": "https://www.nngroup.com/articles/match-system-real-world/",
+          "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Nielsen #4 — Consistency and Standards",
+          "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+          "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "'QUET THE' không meaningful cho người dùng: 'Quẹt thẻ ở đâu? Mua gì?' — thiếu context hoàn toàn. VCB/TCB/MB đều map sang: 'Thanh toán tại POS - [Tên cửa hàng]'. Content kỹ thuật trên customer-facing screen vi phạm basic UX principle.",
+      "heuristic": "Nielsen #2 — Match Between System and Real World: \"The design should speak the người dùng' language.\" 'QUET THE' là machine language — người dùng's language là 'Thanh toán tại POS'. Content phải transform từ hệ thống sang ngôn ngữ người dùng.",
+      "ref_count": 3,
+      "hiện_trạng": "Nội dung giao dịch trên chi tiết GD thẻ (SCR-THE-004) hiển thị 'QUET THE' — text kỹ thuật all-caps từ hệ thống core ngân hàng. Thiếu mapping sang ngôn ngữ người dùng-friendly. Không có merchant name cụ thể — chỉ mã kỹ thuật.",
+      "solution_steps": [
+        "Map technical codes sang người dùng-friendly labels: 'QUET THE' → 'Thanh toán tại POS'",
+        "Thêm merchant name nếu available: 'Thanh toán tại POS - Circle K Q1'",
+        "Standardize casing: proper case thay vì ALL CAPS",
+        "Maintain mapping table: tech_code → display_label cho tất cả giao dịch types"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-010",
+      "severity": "Major",
+      "screen_tag": "Lịch sử GD thẻ › Danh sách GD (SCR-THE-003)",
+      "problem": "Transaction list flat chronological — thiếu grouping by date + daily total",
+      "gap_ref": "Check #3 (SCR-THE-003)",
+      "ddl_ref": "—",
+      "solution": "Group transactions by date với daily total header. VCB/MB đều có pattern này",
+      "screenshot_path": "ui/lsgd-the-2.png",
+      "_img_tier": "1",
+      "references": [
+        {
+          "name": "Miller's Law",
+          "url": "https://lawsofux.com/millers-law/",
+          "quote": "The average person can only keep 7 (plus or minus 2) items in their working memory.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+          "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+          "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Flat list khó scan: người dùng tìm giao dịch ngày cụ thể phải đọc từng item. Thiếu daily totals buộc người dùng tự tính tiêu hao mỗi ngày. VCB/MB đều group by date + daily total — Co-opBank perceived kém organized. Khi list dài (>50 items), flat list unusable.",
+      "heuristic": "Miller's Law: grouping giảm tải nhận thức — 30 items flat vs 5 date groups × 6 items/group. Second approach processable. Nielsen #8: organization = information architecture — flat list là thiếu structure, không phải minimalist.",
+      "ref_count": 3,
+      "hiện_trạng": "Danh sách giao dịch thẻ (SCR-THE-003) hiển thị flat chronological — tất cả transactions liệt kê liên tục không có grouping theo ngày. Thiếu daily totals, date headers, hoặc visual separation giữa các ngày khác nhau.",
+      "solution_steps": [
+        "Group giao dịch theo ngày: date header + list items + daily total",
+        "Date header format: 'Thứ Hai, 15/03/2025' — familiar, scannable",
+        "Daily total: '+500,000 VND / -1,200,000 VND' — income/expense summary",
+        "Sticky date header khi scroll để người dùng biết đang ở ngày nào"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-011",
+      "severity": "Minor",
+      "screen_tag": "Dịch vụ thẻ › Danh sách thẻ (SCR-THE-001)",
+      "problem": "Status badges sử dụng color-only (green/pink) — accessibility issue",
+      "gap_ref": "Check #12 (SCR-THE-001)",
+      "ddl_ref": "UXG-180 (Color Only)",
+      "solution": "Thêm icon prefix: ✅ \"Hoạt động\", 🔒 \"Khoá\" — WCAG compliant",
+      "screenshot_path": "ui/danh-sach-the-1.png",
+      "_img_tier": "1",
+      "references": [
+        {
+          "name": "WCAG 1.4.1 — Use of Color (Level A)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html",
+          "quote": "Color is not used as the only visual means of conveying information, indicating an action, prompting a response, or distinguishing a visual element.",
+          "source": "W3C"
+        },
+        {
+          "name": "WCAG 1.4.11 — Non-text Contrast (Level AA)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html",
+          "quote": "Non-text content must have a contrast ratio of at least 3:1 against adjacent colors.",
+          "source": "W3C"
+        }
+      ],
+      "user_impact": "~8% nam giới color vision deficiency không phân biệt green/pink. Status thẻ 'Hoạt động' vs 'Khoá' là critical info — nhầm lẫn dẫn đến quẹt thẻ bị từ chối (embarrassment) hoặc bỏ qua thẻ bị khóa trái phép (security risk).",
+      "heuristic": "WCAG 1.4.1 — Use of Color: color không được là kênh duy nhất truyền tải thông tin. Status badges cần thêm icon hoặc shape indicator ngoài color. WCAG 1.4.11: non-text contrast ≥ 3:1.",
+      "ref_count": 3,
+      "hiện_trạng": "Status badges trên card thẻ (SCR-THE-001) sử dụng color-only: 'Hoạt động' (green text), 'Khoá' (pink text). Không có icon, border, hoặc secondary indicator — semantic meaning hoàn toàn phụ thuộc vào color channel.",
+      "solution_steps": [
+        "Thêm icon cho mỗi status: ✓ (Hoạt động), 🔒 (Khoá), ⏸ (Tạm dừng)",
+        "Dùng badge/chip component: icon + text + background color",
+        "Đảm bảo contrast ≥ 3:1 cho badge background với surrounding elements",
+        "Test với color blindness simulator (Coblis, NoCoffee extension)"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-012",
+      "severity": "Minor",
+      "screen_tag": "Lịch sử GD thẻ › Danh sách GD (SCR-THE-003)",
+      "problem": "Transaction description bị truncate, không expandable",
+      "gap_ref": "Check #4 (SCR-THE-003)",
+      "ddl_ref": "UXG-176 (Error Feedback)",
+      "solution": "Cho phép tap to expand full description, hoặc hiển thị full trong detail screen",
+      "screenshot_path": "ui/lsgd-the-2.png",
+      "_img_tier": "1",
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+          "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+          "quote": "Shortcuts — hidden from novice users — may speed up the interaction for the expert user.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "người dùng không đọc được nội dung giao dịch đầy đủ — không biết ai chuyển, nội dung gì. Đặc biệt quan trọng khi tra soát: 'HA chuyen...' → 'HA chuyển tiền mua hàng' hay 'HA chuyển cho Mom'? Thiếu full content = thiếu context tra soát.",
+      "heuristic": "Nielsen #1 — Visibility: giao dịch description là người dùng-generated content — cắt nó = ẩn thông tin người dùng đã nhập. Truncation acceptable chỉ khi có expandable mechanism (tap to expand, detail view). Thiếu cả hai = permanent information loss.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "giao dịch description trên danh sách giao dịch thẻ (SCR-THE-003) bị truncate: 'MB (270832) (HA chuyen...' — text cắt giữa chừng. Tap vào item cũng không hiển thị full description. Không có expandable pattern hoặc detail view đầy đủ.",
+      "solution_steps": [
+        "List view: hiển thị 2 dòng max, truncate với '...' nếu dài hơn",
+        "Tap row → navigate detail view hiển thị full description",
+        "Detail view thay vì chỉ biên lai — hiển thị thêm context: merchant, channel, status",
+        "Long-press để copy description nhanh cho tra soát"
+      ],
+      "_enriched_by": "llm"
+    }
+  ],
+  "gaps_by_screen": [
+    {
+      "screen_id": "SCR-THE-001",
+      "screen_name": "Dịch vụ thẻ › Danh sách thẻ (`SCR-THE-001`)",
+      "screen_type": "list",
+      "gaps": [
+        {
+          "num": 1,
+          "title": "Quick action grid ẩn khi thẻ khoá thay vì disable",
+          "ref": "UXG-175 (Loading Buttons)",
+          "severity": "Minor",
+          "user_impact": "người dùng không discover features unavailable → không motivated mở khóa. Disabled + tooltip educate người dùng better than hidden. Layout shift (3 vs 4 items) cũng gây inconsistency giữa states.",
+          "heuristic": "Nielsen #6 — Recognition: hiển thị all features, indicate availability. Hidden = recall requirement. Disabled with explanation = recognition.",
+          "evidence": "Artboard locked-state: 3 quick actions visible, 1 hidden. No tooltip/explanation",
+          "screenshot": "danh-sach-the-1.png",
+          "screen_id": "SCR-THE-001",
+          "screen_name": "Dịch vụ thẻ › Danh sách thẻ",
+          "screen_type": "list",
+          "screenshot_path": "ui/danh-sach-the-1.png",
+          "_img_tier": 5,
+          "description": "Artboard locked-state (SCR-THE-001): 3 quick actions visible, 1 hidden khi thẻ khóa. Actions bị ẩn hoàn toàn thay vì disabled với visual indicator.",
+          "ddl_evidence": "UXG-175 (Loading Buttons)",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #3 — User Control and Freedom",
+            "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+            "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Artboard locked-state (SCR-THE-001): 3 quick actions visible, 1 hidden khi thẻ khóa. Actions bị ẩn hoàn toàn thay vì disabled với visual indicator.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 2,
+          "title": "Quick action \"Sao kê\", \"Cài đặt PIN\" thiếu destination rõ ràng",
+          "ref": "UXG-176 (Error Feedback)",
+          "severity": "Minor",
+          "user_impact": "Incomplete flow design → dev triển khai inconsistently hoặc skip. người dùng tap action → uncertain destination → potential broken experience hoặc 'coming soon' dead end.",
+          "heuristic": "Nielsen #4 — Consistency: Mỗi action phải có clear, defined destination. Incomplete flow documentation = consistency risk trong implementation.",
+          "evidence": "Design không define destination screens cho 2/4 actions",
+          "screenshot": "danh-sach-the-1.png",
+          "screen_id": "SCR-THE-001",
+          "screen_name": "Dịch vụ thẻ › Danh sách thẻ",
+          "screen_type": "list",
+          "screenshot_path": "ui/danh-sach-the-1.png",
+          "_img_tier": 5,
+          "description": "Quick actions 'Sao kê' và 'Cài đặt PIN' trên SCR-THE-001 không define destination screens trong design. Action buttons exist nhưng flow continuation unclear.",
+          "ddl_evidence": "UXG-176 (Error Feedback)",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Quick actions 'Sao kê' và 'Cài đặt PIN' trên SCR-THE-001 không define destination screens trong design. Action buttons exist nhưng flow continuation unclear.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 3,
+          "title": "otp-input-1: `canResend` state missing (Quên PIN?)",
+          "ref": "COMP:otp-input-1",
+          "severity": "Minor",
+          "user_impact": "OTP expired → dead end. người dùng phải restart entire card service flow. Recovery path thiếu tại authentication step.",
+          "heuristic": "Nielsen #3 — người dùng Control: Resend là emergency exit khi OTP fails. Thiếu nó = lack of người dùng control.",
+          "evidence": "DDL spec requires canResend + Gửi lại button. Screenshots: PIN overlay không có resend",
+          "screenshot": "danh-sach-the-1.png",
+          "screen_id": "SCR-THE-001",
+          "screen_name": "Dịch vụ thẻ › Danh sách thẻ",
+          "screen_type": "list",
+          "screenshot_path": "ui/danh-sach-the-xac-thuc-otp.png",
+          "_img_tier": 5,
+          "description": "OTP overlay trên SCR-THE-001 thiếu canResend state. DDL otp-input-1 spec yêu cầu resend button + countdown — design không triển khai.",
+          "ddl_evidence": "COMP:otp-input-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #3 — User Control and Freedom",
+              "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+              "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "OTP overlay trên SCR-THE-001 thiếu canResend state. DDL otp-input-1 spec yêu cầu resend button + countdown — design không triển khai.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 4,
+          "title": "otp-input-1: attempt counter missing",
+          "ref": "COMP:otp-input-1",
+          "severity": "Minor",
+          "user_impact": "người dùng không track attempts → surprise lockout. Counter cho phép người dùng calibrate behavior khi approaching limit.",
+          "heuristic": "Nielsen #1 — Visibility: Attempt count là time-critical status cần realtime hiển thị.",
+          "evidence": "DDL spec: `timeLeft` state for countdown. Design: chỉ text cảnh báo tĩnh",
+          "screenshot": "danh-sach-the-1.png",
+          "screen_id": "SCR-THE-001",
+          "screen_name": "Dịch vụ thẻ › Danh sách thẻ",
+          "screen_type": "list",
+          "screenshot_path": "ui/danh-sach-the-xac-thuc-otp.png",
+          "_img_tier": 5,
+          "description": "OTP overlay thiếu attempt counter — DDL spec yêu cầu timeLeft state cho countdown. Design chỉ static text warning, không realtime counter.",
+          "ddl_evidence": "COMP:otp-input-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "OTP overlay thiếu attempt counter — DDL spec yêu cầu timeLeft state cho countdown. Design chỉ static text warning, không realtime counter.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 5,
+          "title": "otp-input-1: ARIA label cho từng ô nhập PIN",
+          "ref": "UXG-183 (ARIA Labels)",
+          "severity": "Minor",
+          "user_impact": "Visually impaired người dùng blocked from card service authentication. Core ngân hàng function inaccessible.",
+          "heuristic": "WCAG 4.1.2 — Name, Role, Value: UI components phải có programmatically determined name and role. Thiếu ARIA labels = Level A violation.",
+          "evidence": "6 cells không có accessible label. Screen reader fail",
+          "screenshot": "danh-sach-the-1.png",
+          "screen_id": "SCR-THE-001",
+          "screen_name": "Dịch vụ thẻ › Danh sách thẻ",
+          "screen_type": "list",
+          "screenshot_path": "ui/danh-sach-the-xac-thuc-otp.png",
+          "_img_tier": 5,
+          "description": "6 OTP cells trên SCR-THE-001 không có individual ARIA labels. trình đọc màn hình người dùng không thể navigate: 'Cell 1 of 6', 'Cell 2 of 6' etc.",
+          "ddl_evidence": "UXG-183 (ARIA Labels)",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "WCAG 4.1.2 — Name, Role, Value (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html",
+              "quote": "For all user interface components, the name and role can be programmatically determined.",
+              "source": "W3C"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "6 OTP cells trên SCR-THE-001 không có individual ARIA labels. trình đọc màn hình người dùng không thể navigate: 'Cell 1 of 6', 'Cell 2 of 6' etc.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "otp-input-1: per-cell visual feedback (active/error/filled)",
+          "ref": "COMP:otp-input-1",
+          "severity": "Minor",
+          "user_impact": "Input ambiguity: tap → type → digit goes where? Without active indicator, người dùng unsure about input destination → hesitation → potential error.",
+          "heuristic": "Nielsen #1 — Visibility: Focus/active state là system status cần phản hồi trực quan. Standard pattern: primary border color + cursor for active cell.",
+          "evidence": "DDL spec: activeIndex state. Artboard: cells static, không có active indicator",
+          "screenshot": "danh-sach-the-1.png",
+          "screen_id": "SCR-THE-001",
+          "screen_name": "Dịch vụ thẻ › Danh sách thẻ",
+          "screen_type": "list",
+          "screenshot_path": "ui/danh-sach-the-xac-thuc-otp.png",
+          "_img_tier": 5,
+          "description": "OTP cells trên SCR-THE-001 static — không có active cell highlight (DDL spec: activeIndex state). Tất cả cells cùng visual style, người dùng không biết cursor/focus ở ô nào.",
+          "ddl_evidence": "COMP:otp-input-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "OTP cells trên SCR-THE-001 static — không có active cell highlight (DDL spec: activeIndex state). Tất cả cells cùng visual style, người dùng không biết cursor/focus ở ô nào.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 7,
+          "title": "app-header-1: back/home icon buttons thiếu ARIA label",
+          "ref": "UXG-243 (Icon Button Labels)",
+          "severity": "Minor",
+          "user_impact": "trình đọc màn hình: 'button' without name → người dùng không biết function. Về visual: icon-only navigation rely on learned conventions — problematic cho new người dùng hoặc elderly ngân hàng customers.",
+          "heuristic": "WCAG 4.1.2: Interactive elements phải có accessible name. Icon-only buttons cần aria-label. WCAG 1.1.1: non-text content cần text alternative.",
+          "evidence": "back_white, home icons không có visible text/label",
+          "screenshot": "danh-sach-the-1.png",
+          "screen_id": "SCR-THE-001",
+          "screen_name": "Dịch vụ thẻ › Danh sách thẻ",
+          "screen_type": "list",
+          "screenshot_path": "ui/danh-sach-the-1.png",
+          "_img_tier": 5,
+          "description": "Header trên SCR-THE-001: icon buttons (back, home) không có visible text labels hoặc ARIA labels. Icon-only navigation cho core function.",
+          "ddl_evidence": "UXG-243 (Icon Button Labels)",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "WCAG 4.1.2 — Name, Role, Value (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html",
+              "quote": "For all user interface components, the name and role can be programmatically determined.",
+              "source": "W3C"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Header trên SCR-THE-001: icon buttons (back, home) không có visible text labels hoặc ARIA labels. Icon-only navigation cho core function.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 8,
+          "title": "empty-state-1: thiếu CTA button (`hasCta` state)",
+          "ref": "COMP:empty-state-1",
+          "severity": "Minor",
+          "user_impact": "Dead end experience: người dùng sees empty → no guidance → back out. CTA 'Thực hiện giao dịch đầu tiên' converts trạng thái trống into onboarding opportunity.",
+          "heuristic": "Nielsen #6 — Recognition: Visible CTA lets người dùng recognize next action instead of recall navigation path.",
+          "evidence": "DDL spec: hasCta state. Design: text only, không có \"Đăng ký thẻ ngay\" CTA",
+          "screenshot": "danh-sach-the-1.png",
+          "screen_id": "SCR-THE-001",
+          "screen_name": "Dịch vụ thẻ › Danh sách thẻ",
+          "screen_type": "list",
+          "screenshot_path": "ui/danh-sach-the-1.png",
+          "_img_tier": 5,
+          "description": "trạng thái trống trên SCR-THE-001 thiếu CTA button — DDL empty-state-1 spec yêu cầu hasCta state. Text only, không actionable.",
+          "ddl_evidence": "COMP:empty-state-1",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 2,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "trạng thái trống trên SCR-THE-001 thiếu CTA button — DDL empty-state-1 spec yêu cầu hasCta state. Text only, không actionable.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 9,
+          "title": "empty-state-1: thiếu illustration/icon",
+          "ref": "COMP:empty-state-1",
+          "severity": "Minor",
+          "user_impact": "Perceived quality thấp: chuyên nghiệp ngân hàng apps đều có illustrated empty states. Thiếu visual → app cảm thấy unfinished/MVP.",
+          "heuristic": "Aesthetic-Usability Effect: Visual polish (illustration) tăng perceived usability. trạng thái trống là first impression cho new features.",
+          "evidence": "DDL spec: icon slot. Design: text only",
+          "screenshot": "danh-sach-the-1.png",
+          "screen_id": "SCR-THE-001",
+          "screen_name": "Dịch vụ thẻ › Danh sách thẻ",
+          "screen_type": "list",
+          "screenshot_path": "ui/danh-sach-the-1.png",
+          "_img_tier": 5,
+          "description": "trạng thái trống trên SCR-THE-001 thiếu illustration/icon — DDL empty-state-1 spec yêu cầu icon slot. Chỉ text centered trên nền trắng.",
+          "ddl_evidence": "COMP:empty-state-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Aesthetic-Usability Effect",
+              "url": "https://lawsofux.com/aesthetic-usability-effect/",
+              "quote": "Users often perceive aesthetically pleasing design as design that's more usable.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 2,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "trạng thái trống trên SCR-THE-001 thiếu illustration/icon — DDL empty-state-1 spec yêu cầu icon slot. Chỉ text centered trên nền trắng.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 10,
+          "title": "Số thẻ masked inconsistency vs hạn mức masked",
+          "ref": "UXG-180 (Color Only)",
+          "severity": "Minor",
+          "user_impact": "người dùng confusion: 'Tại sao số thẻ thấy 4 số cuối nhưng hạn mức hoàn toàn ẩn?'. Inconsistency gợi câu hỏi about security logic — erode trust. Design nên follow 1 pattern nhất quán cho masked data.",
+          "heuristic": "Nielsen #4 — Consistency: Cùng pattern (masked sensitive data) phải apply consistently. 2 khác nhau masking patterns = internal inconsistency.",
+          "evidence": "Partial mask (last 4) vs full mask — 2 patterns khác nhau",
+          "screenshot": "danh-sach-the-1.png",
+          "screen_id": "SCR-THE-001",
+          "screen_name": "Dịch vụ thẻ › Danh sách thẻ",
+          "screen_type": "list",
+          "screenshot_path": "ui/danh-sach-the-1.png",
+          "_img_tier": 5,
+          "description": "Số thẻ dùng partial mask (hiện last 4) nhưng hạn mức dùng full mask (********) — 2 masking patterns khác nhau trên cùng card. không nhất quán data protection visual.",
+          "ddl_evidence": "UXG-180 (Color Only)",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Số thẻ dùng partial mask (hiện last 4) nhưng hạn mức dùng full mask (********) — 2 masking patterns khác nhau trên cùng card. không nhất quán data protection visual.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 11,
+          "title": "Carousel dots: không accessible, không có \"1/3\" indicator",
+          "ref": "UXG-183 (ARIA Labels)",
+          "severity": "Minor",
+          "user_impact": "trình đọc màn hình người dùng không navigate giữa thẻ. Swipe without xác nhận feedback → người dùng unsure if card switched → xác minh by reading content = extra cognitive step.",
+          "heuristic": "WCAG 4.1.2: Carousel controls phải có accessible names. Nielsen #1: Card switch cần feedback (subtle transition, dot update) để xác nhận action.",
+          "evidence": "Dots không có label. Swipe gesture không confirm",
+          "screenshot": "danh-sach-the-1.png",
+          "screen_id": "SCR-THE-001",
+          "screen_name": "Dịch vụ thẻ › Danh sách thẻ",
+          "screen_type": "list",
+          "screenshot_path": "ui/danh-sach-the-1.png",
+          "_img_tier": 5,
+          "description": "Carousel dots trên card thẻ (SCR-THE-001) không có accessible labels. Swipe gesture cũng không có xác nhận feedback khi switch cards. Dots visual-only, không labeled.",
+          "ddl_evidence": "UXG-183 (ARIA Labels)",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "WCAG 4.1.2 — Name, Role, Value (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html",
+              "quote": "For all user interface components, the name and role can be programmatically determined.",
+              "source": "W3C"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Nielsen #4 — Consistency and Standards",
+            "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+            "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Carousel dots trên card thẻ (SCR-THE-001) không có accessible labels. Swipe gesture cũng không có xác nhận feedback khi switch cards. Dots visual-only, không labeled.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 12,
+          "title": "Status badges: color-only, không có icon prefix",
+          "ref": "UXG-180 (Color Only)",
+          "severity": "Minor",
+          "user_impact": "Color-blind người dùng không thể distinguish status. Card status is critical ngân hàng info — misidentification has real consequences.",
+          "heuristic": "WCAG 1.4.1 — Use of Color: color không được là kênh duy nhất. Thêm icon/shape để convey status regardless of color perception.",
+          "evidence": "\"Hoạt động\" (green), \"Khoá\" (pink) — màu duy nhất, không có icon",
+          "screenshot": "danh-sach-the-1.png",
+          "screen_id": "SCR-THE-001",
+          "screen_name": "Dịch vụ thẻ › Danh sách thẻ",
+          "screen_type": "list",
+          "screenshot_path": "ui/danh-sach-the-1.png",
+          "_img_tier": 5,
+          "description": "Status badges (Hoạt động/Khoá) trên SCR-THE-001 dùng color-only — green/pink text, không icon hoặc shape indicator.",
+          "ddl_evidence": "UXG-180 (Color Only)",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "WCAG 1.4.1 — Use of Color (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html",
+              "quote": "Color is not used as the only visual means of conveying information.",
+              "source": "W3C"
+            }
+          ],
+          "hiện_trạng": "Status badges (Hoạt động/Khoá) trên SCR-THE-001 dùng color-only — green/pink text, không icon hoặc shape indicator.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-THE-002",
+      "screen_name": "Thông tin thẻ › Chi tiết thẻ (`SCR-THE-002`)",
+      "screen_type": "detail",
+      "gaps": [
+        {
+          "num": 1,
+          "title": "Thiếu CTA \"Thanh toán dư nợ\" khi xem thông tin dư nợ",
+          "ref": "fitts (Fitts's Law)",
+          "severity": "Minor",
+          "user_impact": "Context switching loss: người dùng sees amounts, decides to pay, but must navigate away → may forget amount → must return. Direct CTA eliminates this loop entirely.",
+          "heuristic": "Nielsen #7 — Flexibility: Contextual CTA = shortcut cho common follow-up action. Thiếu CTA buộc manual navigation = inefficient.",
+          "evidence": "Screen chỉ informational. Không có sticky CTA bottom. VCB/Techcombank đều có",
+          "screenshot": "danh-sach-the-thong-tin-the.png",
+          "screen_id": "SCR-THE-002",
+          "screen_name": "Thông tin thẻ › Chi tiết thẻ",
+          "screen_type": "detail",
+          "screenshot_path": "ui/danh-sach-the-thong-tin-the.png",
+          "_img_tier": 5,
+          "description": "Màn thông tin dư nợ (SCR-THE-002) chỉ informational — không có sticky CTA 'Thanh toán dư nợ' ở bottom. Screen dead end: view info → back → manually navigate to payment.",
+          "ddl_evidence": "fitts (Fitts's Law)",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+              "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+              "quote": "Shortcuts — hidden from novice users — may speed up the interaction for the expert user.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Fitts's Law",
+            "url": "https://lawsofux.com/fittss-law/",
+            "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+            "source": "Laws of UX"
+          },
+          "hiện_trạng": "Màn thông tin dư nợ (SCR-THE-002) chỉ informational — không có sticky CTA 'Thanh toán dư nợ' ở bottom. Screen dead end: view info → back → manually navigate to payment.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 2,
+          "title": "Hạn mức tín dụng không có progress bar/utilization visual",
+          "ref": "UXG-162 (Content Jumping)",
+          "severity": "Minor",
+          "user_impact": "Text requires mental math to gauge utilization percentage. Progress bar provides instant visual comprehension in < 1 second.",
+          "heuristic": "Nielsen #1 — Visibility: Utilization ratio là status cần visual representation — text alone insufficient for at-a-glance understanding.",
+          "evidence": "\"Hạn mức khả dụng còn lại: 78M\" — text only, không có visual indicator",
+          "screenshot": "danh-sach-the-thong-tin-the.png",
+          "screen_id": "SCR-THE-002",
+          "screen_name": "Thông tin thẻ › Chi tiết thẻ",
+          "screen_type": "detail",
+          "screenshot_path": "ui/danh-sach-the-thong-tin-the.png",
+          "_img_tier": 5,
+          "description": "Credit limit trên SCR-THE-002 hiển thị text-only: '78,000,000 VND'. Không có progress bar hoặc utilization visual.",
+          "ddl_evidence": "UXG-162 (Content Jumping)",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Credit limit trên SCR-THE-002 hiển thị text-only: '78,000,000 VND'. Không có progress bar hoặc utilization visual.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 3,
+          "title": "Ngày đến hạn không có conditional highlight (<7 ngày)",
+          "ref": "UXG-176 (Error Feedback)",
+          "severity": "Minor",
+          "user_impact": "Due date approaching = urgency context. Plain text treated giống nhau whether 30 days or 2 days away. người dùng may miss payment deadline → late fee → credit score impact.",
+          "heuristic": "Nielsen #1 — Visibility: Time urgency là critical status. Conditional highlighting (red when ≤ 3 days) conveys urgency visually. Von Restorff: urgent date phải visually distinct.",
+          "evidence": "\"29/12/2025\" plain text — không countdown, không màu cảnh báo",
+          "screenshot": "danh-sach-the-thong-tin-the.png",
+          "screen_id": "SCR-THE-002",
+          "screen_name": "Thông tin thẻ › Chi tiết thẻ",
+          "screen_type": "detail",
+          "screenshot_path": "ui/danh-sach-the-thong-tin-the.png",
+          "_img_tier": 5,
+          "description": "Due date '29/12/2025' trên SCR-THE-002 hiển thị plain text — không có conditional highlighting khi gần đến hạn. Không countdown, không color urgent.",
+          "ddl_evidence": "UXG-176 (Error Feedback)",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Von Restorff Effect",
+              "url": "https://lawsofux.com/von-restorff-effect/",
+              "quote": "When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Due date '29/12/2025' trên SCR-THE-002 hiển thị plain text — không có conditional highlighting khi gần đến hạn. Không countdown, không color urgent.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 4,
+          "title": "Label-value row spacing quá dense (~8px)",
+          "ref": "UXG-162",
+          "severity": "Minor",
+          "user_impact": "Dense layout khó scan — người dùng phải focus intently to read each row. Finger may accidentally tap wrong row. Reduces readability especially for elderly ngân hàng customers.",
+          "heuristic": "Nielsen #8 — Aesthetic and Minimalist: Adequate spacing là part of clean design, not wasted space. Fitts's Law: dense rows increase mistouch probability.",
+          "evidence": "Từ ảnh: rows quá gần nhau, không đủ breathing room",
+          "screenshot": "danh-sach-the-thong-tin-the.png",
+          "screen_id": "SCR-THE-002",
+          "screen_name": "Thông tin thẻ › Chi tiết thẻ",
+          "screen_type": "detail",
+          "screenshot_path": "ui/danh-sach-the-thong-tin-the.png",
+          "_img_tier": 5,
+          "description": "Label-value rows trên SCR-THE-002 có spacing quá dense (~8px). Các rows gần nhau, thiếu breathing room giữa information groups.",
+          "ddl_evidence": "UXG-162",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+              "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+              "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Label-value rows trên SCR-THE-002 có spacing quá dense (~8px). Các rows gần nhau, thiếu breathing room giữa information groups.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 5,
+          "title": "app-header-1: icon buttons thiếu ARIA label",
+          "ref": "UXG-243 (Icon Button Labels)",
+          "severity": "Minor",
+          "user_impact": "trình đọc màn hình người dùng không thể identify navigation controls. giống nhau pattern as SCR-THE-001 — systemic khả năng tiếp cận gap across card service screens.",
+          "heuristic": "WCAG 4.1.2: All interactive elements need programmatically determined names.",
+          "evidence": "home/back buttons không có visible text",
+          "screenshot": "danh-sach-the-thong-tin-the.png",
+          "screen_id": "SCR-THE-002",
+          "screen_name": "Thông tin thẻ › Chi tiết thẻ",
+          "screen_type": "detail",
+          "screenshot_path": "ui/danh-sach-the-thong-tin-the.png",
+          "_img_tier": 5,
+          "description": "Header icon buttons (home/back) trên SCR-THE-002 thiếu ARIA labels — icon-only without accessible names.",
+          "ddl_evidence": "UXG-243 (Icon Button Labels)",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "WCAG 4.1.2 — Name, Role, Value (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html",
+              "quote": "For all user interface components, the name and role can be programmatically determined.",
+              "source": "W3C"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Header icon buttons (home/back) trên SCR-THE-002 thiếu ARIA labels — icon-only without accessible names.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "Section divider giữa 2 sections không đủ visual separation",
+          "ref": "—",
+          "severity": "Minor",
+          "user_impact": "Sections visually blend → người dùng phải read headers to identify boundaries. Clear dividers enable at-a-glance section identification.",
+          "heuristic": "Miller's Law: Chunking information into visually distinct sections aids processing. Dividers are chunking mechanism.",
+          "evidence": "Chỉ header text, không có divider line/color",
+          "screenshot": "danh-sach-the-thong-tin-the.png",
+          "screen_id": "SCR-THE-002",
+          "screen_name": "Thông tin thẻ › Chi tiết thẻ",
+          "screen_type": "detail",
+          "screenshot_path": "ui/danh-sach-the-thong-tin-the.png",
+          "_img_tier": 5,
+          "description": "2 sections trên SCR-THE-002 (thông tin thẻ + chi tiết dư nợ) phân tách chỉ bằng header text — thiếu divider line hoặc color differentiation.",
+          "ddl_evidence": "—",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Miller's Law",
+              "url": "https://lawsofux.com/millers-law/",
+              "quote": "The average person can only keep 7 (plus or minus 2) items in their working memory.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "2 sections trên SCR-THE-002 (thông tin thẻ + chi tiết dư nợ) phân tách chỉ bằng header text — thiếu divider line hoặc color differentiation.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-THE-003",
+      "screen_name": "Lịch sử GD thẻ › Danh sách GD (`SCR-THE-003`)",
+      "screen_type": "list",
+      "gaps": [
+        {
+          "num": 1,
+          "title": "Date picker: text input thay vì calendar picker",
+          "ref": "UXG-197 (Input Labels)",
+          "severity": "Minor",
+          "user_impact": "Text input = all format errors possible. Calendar eliminates 100% invalid date entries. Manual entry for date range = 10+ taps vs 2 taps with calendar.",
+          "heuristic": "Nielsen #5 — Error Prevention: Calendar UI prevents format errors at source. Text date input is anti-pattern for mobile.",
+          "evidence": "\"Khác\" overlay: 2 text inputs `dd/mm/yyyy`, không có calendar UI. Error-prone",
+          "screenshot": "lsgd-the-2.png",
+          "screen_id": "SCR-THE-003",
+          "screen_name": "Lịch sử GD thẻ › Danh sách GD",
+          "screen_type": "list",
+          "screenshot_path": "ui/lsgd-the-2.png",
+          "_img_tier": 5,
+          "description": "Date picker trong filter overlay 'Khác' trên SCR-THE-003: 2 text inputs dd/mm/yyyy, không có calendar popup hoặc native date picker.",
+          "ddl_evidence": "UXG-197 (Input Labels)",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Date picker trong filter overlay 'Khác' trên SCR-THE-003: 2 text inputs dd/mm/yyyy, không có calendar popup hoặc native date picker.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 2,
+          "title": "Date picker: thiếu quick presets (Tuần này, Tháng này)",
+          "ref": "UXG-204 (Submit Feedback)",
+          "severity": "Minor",
+          "user_impact": "80% queries likely fall into common ranges (last 7/30/90 days). Without presets, all người dùng do manual work. Presets = 1 tap vs 6+ taps for manual input.",
+          "heuristic": "Nielsen #7 — Flexibility: Presets = shortcuts cho common use cases. Power người dùng và novice đều benefit.",
+          "evidence": "Không có preset options, phải nhập tay",
+          "screenshot": "lsgd-the-2.png",
+          "screen_id": "SCR-THE-003",
+          "screen_name": "Lịch sử GD thẻ › Danh sách GD",
+          "screen_type": "list",
+          "screenshot_path": "ui/lsgd-the-2.png",
+          "_img_tier": 5,
+          "description": "Date filter trên SCR-THE-003 thiếu quick presets — không có 'Tuần này', '30 ngày', 'Tháng trước'. người dùng phải nhập date range thủ công mỗi lần.",
+          "ddl_evidence": "UXG-204 (Submit Feedback)",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+              "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+              "quote": "Shortcuts — hidden from novice users — may speed up the interaction for the expert user.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Fitts's Law",
+            "url": "https://lawsofux.com/fittss-law/",
+            "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+            "source": "Laws of UX"
+          },
+          "hiện_trạng": "Date filter trên SCR-THE-003 thiếu quick presets — không có 'Tuần này', '30 ngày', 'Tháng trước'. người dùng phải nhập date range thủ công mỗi lần.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 3,
+          "title": "Transaction list: không có grouping by date + daily total",
+          "ref": "—",
+          "severity": "Minor",
+          "user_impact": "Flat list unusable for longer periods (30+ transactions). Finding specific day's transactions requires sequential scanning.",
+          "heuristic": "Miller's Law: Grouping reduces tải nhận thức. Date headers serve as chunking mechanism for temporal data.",
+          "evidence": "Flat chronological list. VCB/MB đều group by date",
+          "screenshot": "lsgd-the-2.png",
+          "screen_id": "SCR-THE-003",
+          "screen_name": "Lịch sử GD thẻ › Danh sách GD",
+          "screen_type": "list",
+          "screenshot_path": "ui/lsgd-the-2.png",
+          "_img_tier": 5,
+          "description": "giao dịch list trên SCR-THE-003 hiển thị flat chronological — không group by date. VCB/MB đều group by date + daily totals.",
+          "ddl_evidence": "—",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Miller's Law",
+              "url": "https://lawsofux.com/millers-law/",
+              "quote": "The average person can only keep 7 (plus or minus 2) items in their working memory.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "giao dịch list trên SCR-THE-003 hiển thị flat chronological — không group by date. VCB/MB đều group by date + daily totals.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 4,
+          "title": "Transaction description bị truncate, không expandable",
+          "ref": "UXG-176",
+          "severity": "Minor",
+          "user_impact": "Permanent information loss — người dùng không thể access full giao dịch content anywhere in UI. Problematic for reconciliation and dispute.",
+          "heuristic": "Nielsen #1 — Visibility: Full giao dịch content is người dùng-generated data — hiding it = visibility failure. Truncation ok only with expand mechanism.",
+          "evidence": "\"MB (270832) (HA chuyen...\" — truncated, tap detail cũng không full",
+          "screenshot": "lsgd-the-2.png",
+          "screen_id": "SCR-THE-003",
+          "screen_name": "Lịch sử GD thẻ › Danh sách GD",
+          "screen_type": "list",
+          "screenshot_path": "ui/lsgd-the-2.png",
+          "_img_tier": 5,
+          "description": "giao dịch description trên SCR-THE-003 bị truncate: 'MB (270832) (HA chuyen...' — text cut off. Tap detail cũng không hiển thị full description.",
+          "ddl_evidence": "UXG-176",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "giao dịch description trên SCR-THE-003 bị truncate: 'MB (270832) (HA chuyen...' — text cut off. Tap detail cũng không hiển thị full description.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 5,
+          "title": "Filter state persistence khi back không định nghĩa rõ",
+          "ref": "UXG-147 (Back Button)",
+          "severity": "Minor",
+          "user_impact": "If filter resets on back: người dùng phải re-apply filter each time after viewing a giao dịch detail → multiplied friction. State preservation is expected behavior.",
+          "heuristic": "Nielsen #3 — người dùng Control: Filter state phải preserved khi người dùng navigates within flow. Reset = loss of người dùng's explicitly stated preference.",
+          "evidence": "Không rõ filter \"Tiền vào\" có giữ khi navigate → back",
+          "screenshot": "lsgd-the-2.png",
+          "screen_id": "SCR-THE-003",
+          "screen_name": "Lịch sử GD thẻ › Danh sách GD",
+          "screen_type": "list",
+          "screenshot_path": "ui/lsgd-the-2.png",
+          "_img_tier": 5,
+          "description": "Filter state trên SCR-THE-003 (VD: 'Tiền vào') — không rõ persistence khi navigate to detail → back. Filter may reset, forcing re-selection.",
+          "ddl_evidence": "UXG-147 (Back Button)",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #3 — User Control and Freedom",
+              "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+              "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Filter state trên SCR-THE-003 (VD: 'Tiền vào') — không rõ persistence khi navigate to detail → back. Filter may reset, forcing re-selection.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-THE-004",
+      "screen_name": "Lịch sử GD thẻ › Chi tiết GD (`SCR-THE-004`)",
+      "screen_type": "detail",
+      "gaps": [
+        {
+          "num": 1,
+          "title": "receipt-preview-1: chỉ 4/11 fields vs DDL spec",
+          "ref": "COMP:receipt-preview-1",
+          "severity": "Minor",
+          "user_impact": "Incomplete biên lai = incomplete giao dịch record. người dùng không thể identify where, how, or dispute if needed. Vi phạm ngân hàng regulation về giao dịch transparency.",
+          "heuristic": "Nielsen #1 — Visibility: biên lai phải complete — 7 thiếu fields = 64% information gap on critical financial document.",
+          "evidence": "DDL: merchant, location, channel, status, dispute CTA, share. Figma: Mã GD, Ngày, Số tiền, Nội dung only",
+          "screenshot": "lsgd-the-3.png",
+          "screen_id": "SCR-THE-004",
+          "screen_name": "Lịch sử GD thẻ › Chi tiết GD",
+          "screen_type": "detail",
+          "screenshot_path": "ui/lsgd-the-3.png",
+          "_img_tier": 5,
+          "description": "biên lai trên SCR-THE-004 chỉ 4/11 fields vs DDL biên lai-preview-1 spec. Thiếu: merchant, location, channel, status, dispute CTA, share, reference code.",
+          "ddl_evidence": "COMP:receipt-preview-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "biên lai trên SCR-THE-004 chỉ 4/11 fields vs DDL biên lai-preview-1 spec. Thiếu: merchant, location, channel, status, dispute CTA, share, reference code.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 2,
+          "title": "Thiếu merchant name",
+          "ref": "COMP:receipt-preview-1",
+          "severity": "Minor",
+          "user_impact": "'QUET THE' tells người dùng nothing about where they spent money. Essential for expense tracking, tax reporting, dispute filing.",
+          "heuristic": "Nielsen #2 — Match Real World: 'QUET THE' là system language. người dùng's language: 'Circle K Q1' hoặc 'Thanh toán tại POS'.",
+          "evidence": "\"QUET THE\" ≠ merchant name. VCB/TCB đều có",
+          "screenshot": "lsgd-the-3.png",
+          "screen_id": "SCR-THE-004",
+          "screen_name": "Lịch sử GD thẻ › Chi tiết GD",
+          "screen_type": "detail",
+          "screenshot_path": "ui/lsgd-the-3.png",
+          "_img_tier": 5,
+          "description": "biên lai trên SCR-THE-004 hiển thị 'QUET THE' thay vì merchant name. VCB/TCB/MB đều hiển thị tên merchant cụ thể.",
+          "ddl_evidence": "COMP:receipt-preview-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "biên lai trên SCR-THE-004 hiển thị 'QUET THE' thay vì merchant name. VCB/TCB/MB đều hiển thị tên merchant cụ thể.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 3,
+          "title": "Thiếu kênh GD (POS/Online/ATM)",
+          "ref": "COMP:receipt-preview-1",
+          "severity": "Minor",
+          "user_impact": "Channel info essential for fraud detection: 'I didn't make any online purchase' → need channel to identify. Also critical for expense categorization.",
+          "heuristic": "Nielsen #1 — Visibility: giao dịch channel là system status người dùng cần để xác minh legitimacy.",
+          "evidence": "Không distinguish POS vs online vs ATM",
+          "screenshot": "lsgd-the-3.png",
+          "screen_id": "SCR-THE-004",
+          "screen_name": "Lịch sử GD thẻ › Chi tiết GD",
+          "screen_type": "detail",
+          "screenshot_path": "ui/lsgd-the-3.png",
+          "_img_tier": 5,
+          "description": "biên lai trên SCR-THE-004 thiếu channel field — không phân biệt POS/Online/ATM giao dịch. người dùng không biết giao dịch thực hiện qua kênh nào.",
+          "ddl_evidence": "COMP:receipt-preview-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "The design should always keep users informed about what is going on.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "biên lai trên SCR-THE-004 thiếu channel field — không phân biệt POS/Online/ATM giao dịch. người dùng không biết giao dịch thực hiện qua kênh nào.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 4,
+          "title": "Thiếu trạng thái GD (Thành công/Đang xử lý)",
+          "ref": "UXG-221 (Loading Indicators)",
+          "severity": "Minor",
+          "user_impact": "người dùng không xác minh giao dịch thành công hay đang pending. Đặc biệt quan trọng cho credit card: pending transactions affect available credit nhưng người dùng không biết status.",
+          "heuristic": "Nielsen #1 — Visibility: giao dịch status là fundamental system state — phải visible trên mọi giao dịch record.",
+          "evidence": "Không có status field",
+          "screenshot": "lsgd-the-3.png",
+          "screen_id": "SCR-THE-004",
+          "screen_name": "Lịch sử GD thẻ › Chi tiết GD",
+          "screen_type": "detail",
+          "screenshot_path": "ui/lsgd-the-3.png",
+          "_img_tier": 5,
+          "description": "biên lai trên SCR-THE-004 thiếu trạng thái giao dịch: Thành công/Đang xử lý/Từ chối. Không status field nào được hiển thị.",
+          "ddl_evidence": "UXG-221 (Loading Indicators)",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Zeigarnik Effect",
+              "url": "https://lawsofux.com/zeigarnik-effect/",
+              "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 2,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "biên lai trên SCR-THE-004 thiếu trạng thái giao dịch: Thành công/Đang xử lý/Từ chối. Không status field nào được hiển thị.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 5,
+          "title": "Thiếu \"Khiếu nại giao dịch\" CTA",
+          "ref": "UXG-176 (Error Feedback)",
+          "severity": "Minor",
+          "user_impact": "người dùng bị giao dịch gian lận phải navigate thủ công tìm flow khiếu nại thay vì 1-tap từ biên lai. Tăng time-to-dispute = giảm protection cho customer.",
+          "heuristic": "Nielsen #7 — Flexibility: Contextual CTA (dispute) tại giao dịch detail = shortcut cho critical follow-up action. WCAG 3.3.4: financial actions cần reversibility mechanism.",
+          "evidence": "Banking regulation yêu cầu. VCB/MB đều có",
+          "screenshot": "lsgd-the-3.png",
+          "screen_id": "SCR-THE-004",
+          "screen_name": "Lịch sử GD thẻ › Chi tiết GD",
+          "screen_type": "detail",
+          "screenshot_path": "ui/lsgd-the-3.png",
+          "_img_tier": 5,
+          "description": "biên lai trên SCR-THE-004 không có CTA 'Khiếu nại giao dịch'. ngân hàng regulation yêu cầu mechanism cho customer dispute. VCB/MB đều có.",
+          "ddl_evidence": "UXG-176 (Error Feedback)",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+              "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+              "quote": "Shortcuts — hidden from novice users — may speed up the interaction for the expert user.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "biên lai trên SCR-THE-004 không có CTA 'Khiếu nại giao dịch'. ngân hàng regulation yêu cầu mechanism cho customer dispute. VCB/MB đều có.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "\"QUET THE\" nội dung kỹ thuật all-caps",
+          "ref": "—",
+          "severity": "Minor",
+          "user_impact": "Machine language on customer-facing screen. Every other ngân hàng app maps technical codes to người dùng-friendly labels.",
+          "heuristic": "Nielsen #2 — Match Real World: System must translate internal codes to người dùng language before displaying.",
+          "evidence": "Cần map: QUET THE → \"Thanh toán tại POS\"",
+          "screenshot": "lsgd-the-3.png",
+          "screen_id": "SCR-THE-004",
+          "screen_name": "Lịch sử GD thẻ › Chi tiết GD",
+          "screen_type": "detail",
+          "screenshot_path": "ui/lsgd-the-3.png",
+          "_img_tier": 5,
+          "description": "'QUET THE' nội dung kỹ thuật all-caps trên biên lai SCR-THE-004. Cần mapping: QUET THE → 'Thanh toán tại POS'.",
+          "ddl_evidence": "—",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "'QUET THE' nội dung kỹ thuật all-caps trên biên lai SCR-THE-004. Cần mapping: QUET THE → 'Thanh toán tại POS'.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 7,
+          "title": "Screen 80% whitespace",
+          "ref": "—",
+          "severity": "Minor",
+          "user_impact": "Excessive whitespace signal incomplete design — 7 thiếu fields could fill this space. Underutilized screen real estate while critical info thiếu = poor information architecture.",
+          "heuristic": "Nielsen #8 — Aesthetic and Minimalist: Minimal ≠ empty. Minimal means showing only essential info — but right now essential info is thiếu, not removed by design.",
+          "evidence": "4 rows ~40% height, còn lại trống",
+          "screenshot": "lsgd-the-3.png",
+          "screen_id": "SCR-THE-004",
+          "screen_name": "Lịch sử GD thẻ › Chi tiết GD",
+          "screen_type": "detail",
+          "screenshot_path": "ui/lsgd-the-3.png",
+          "_img_tier": 5,
+          "description": "biên lai screen SCR-THE-004: 4 info rows chiếm ~40% height, còn ~60% whitespace. Screen underutilized — opportunity thêm context (merchant, channel, CTA) bị bỏ phí.",
+          "ddl_evidence": "—",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+              "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+              "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "biên lai screen SCR-THE-004: 4 info rows chiếm ~40% height, còn ~60% whitespace. Screen underutilized — opportunity thêm context (merchant, channel, CTA) bị bỏ phí.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 8,
+          "title": "Peak-End Rule: screen kết thúc flow thanh toán",
+          "ref": "peak-end",
+          "severity": "Minor",
+          "user_impact": "Peak-End Rule: experience judged by ending. biên lai screen là end of giao dịch viewing flow — anticlimactic ending reduces overall perceived quality of card management feature.",
+          "heuristic": "Peak-End Rule: People judge experience by peak and end moments. biên lai screen cần invest UX effort để end on positive note.",
+          "evidence": "Màn hình kết thúc transaction nhưng không có positive closure (receipt, share, CTA)",
+          "screenshot": "lsgd-the-3.png",
+          "screen_id": "SCR-THE-004",
+          "screen_name": "Lịch sử GD thẻ › Chi tiết GD",
+          "screen_type": "detail",
+          "screenshot_path": "ui/lsgd-the-3.png",
+          "_img_tier": 5,
+          "description": "biên lai screen SCR-THE-004 kết thúc giao dịch flow nhưng thiếu positive closure: không có success indicator, share button, hoặc 'Done' CTA. Screen flat và anticlimactic.",
+          "ddl_evidence": "peak-end",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "biên lai screen SCR-THE-004 kết thúc giao dịch flow nhưng thiếu positive closure: không có success indicator, share button, hoặc 'Done' CTA. Screen flat và anticlimactic.",
+          "_enriched_by": "llm"
+        }
+      ]
+    }
+  ],
+  "heuristics": [
+    {
+      "key": "flow",
+      "name_vi": "Luồng người dùng",
+      "name_en": "Flow & Navigation",
+      "score": 39,
+      "gap_count": 17
+    },
+    {
+      "key": "component",
+      "name_vi": "Thành phần",
+      "name_en": "Component & DDL",
+      "score": 40,
+      "gap_count": 6
+    },
+    {
+      "key": "visual",
+      "name_vi": "Thiết kế trực quan",
+      "name_en": "Visual Design",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "content",
+      "name_vi": "Nội dung",
+      "name_en": "Content & Copy",
+      "score": 25,
+      "gap_count": 3
+    },
+    {
+      "key": "a11y",
+      "name_vi": "Tiếp cận",
+      "name_en": "Accessibility",
+      "score": 0,
+      "gap_count": 5
+    },
+    {
+      "key": "trust",
+      "name_vi": "Tin cậy & Bảo mật",
+      "name_en": "Trust & Security",
+      "score": 100,
+      "gap_count": 0
+    }
+  ],
+  "_ref_enrichment": {
+    "gap_enriched": 7,
+    "uxp_enriched": 2,
+    "sources": [
+      "enriched-data.json",
+      "official-urls.md"
+    ]
+  }
+}

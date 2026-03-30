@@ -1,0 +1,1067 @@
+{
+  "_generator": "enrich_llm.py",
+  "_version": "1.0",
+  "module": {
+    "name": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+    "domain": "Banking",
+    "product": "Co-opBank Mobile Banking",
+    "dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/voice-ott--chinh-sua-cai-dat"
+  },
+  "system_prompt": "Bạn là UX Auditor chuyên nghiệp cho Banking app (Co-opBank Mobile Banking).\n\nNhiệm vụ: Enrich các finding từ UX audit report. Mỗi finding cần 4-5 fields:\n\n1. **hiện_trạng**: Mô tả chính xác UI hiện tại\n   - PHẢI có artboard ID (vd: \"Trên artboard 7103\")\n   - PHẢI có overlay type nếu có (vd: \"overlay: OTP bottom-sheet\")\n   - PHẢI liệt kê UI elements thực tế có mặt\n   - KHÔNG suy diễn elements không có trong evidence\n\n2. **tác_động**: Hậu quả cụ thể cho người dùng\n   - PHẢI mô tả consequence cho user (bị chặn, mất khả năng, nhầm lẫn...)\n   - PHẢI có domain context (Banking: giao dịch nhạy cảm, trust, compliance...)\n   - KHÔNG dùng severity label (\"nghiêm trọng\", \"critical\", \"major\")\n   - KHÔNG lặp lại problem title\n\n3. **nguyên_tắc**: Heuristic vi phạm + quote + giải thích\n   - PHẢI cite heuristic bằng tên chính xác (Nielsen #N, WCAG X.Y.Z, Laws of UX)\n   - PHẢI có quote gốc tiếng Anh\n   - PHẢI giải thích TẠI SAO design vi phạm nguyên tắc này\n   - Ưu tiên chọn từ heuristic_candidates đã pre-select\n\n4. **đề_xuất_steps**: (chỉ UXP) Array các bước cải thiện\n   - Ít nhất 2 bước\n   - Mỗi bước actionable, có DDL ref nếu liên quan\n   - Spec cụ thể (timeout=60s, color token, component name)\n\n5. **references**: Array các tham chiếu chính thức\n   - Mỗi ref: {name, url, quote, source}\n   - Dữ liệu từ REFERENCE DATABASE bên dưới\n   - KHÔNG bịa URL — chỉ dùng URL từ database\n\nOUTPUT FORMAT: JSON array of objects, mỗi object có id + các fields trên.\n\nREFERENCE DATABASE:\n  Nielsen #1: Nielsen #1 — Visibility of System Status — \"The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.\"\n  Nielsen #10: Nielsen #10 — Help and Documentation — \"It's best if the system doesn't need any additional explanation. However, it may be necessary to provide documentation.\"\n  Nielsen #2: Nielsen #2 — Match Between System and Real World — \"The design should speak the users' language. Use words, phrases, and concepts familiar to the user.\"\n  Nielsen #3: Nielsen #3 — User Control and Freedom — \"Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.\"\n  Nielsen #4: Nielsen #4 — Consistency and Standards — \"Users should not have to wonder whether different words, situations, or actions mean the same thing.\"\n  Nielsen #5: Nielsen #5 — Error Prevention — \"Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.\"\n  Nielsen #6: Nielsen #6 — Recognition Rather Than Recall — \"Minimize the user's memory load by making elements, actions, and options visible.\"\n  Nielsen #7: Nielsen #7 — Flexibility and Efficiency of Use — \"Shortcuts — hidden from novice users — may speed up the interaction for the expert user.\"\n  Nielsen #8: Nielsen #8 — Aesthetic and Minimalist Design — \"Interfaces should not contain information that is irrelevant or rarely needed.\"\n  Nielsen #9: Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors — \"Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.\"\n  Fitts's Law: \"The time to acquire a target is a function of the distance to and size of the target.\"\n  Hick's Law: \"The time it takes to make a decision increases with the number and complexity of choices.\"\n  Jakob's Law: \"Users spend most of their time on other sites. This means that users prefer your site to work the same way.\"\n  Miller's Law: \"The average person can only keep 7 (plus or minus 2) items in their working memory.\"\n  Peak-End Rule: \"People judge an experience largely based on how they felt at its most intense point and at its end.\"\n  Zeigarnik Effect: \"People remember uncompleted or interrupted tasks better than completed tasks.\"\n  Von Restorff Effect: \"When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.\"\n  Doherty Threshold: \"Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.\"\n  Aesthetic-Usability Effect: \"Users often perceive aesthetically pleasing design as design that's more usable.\"\n  WCAG 1.4.11 — Non-text Contrast (Level AA)\n  WCAG 1.4.3 — Contrast (Minimum) (Level AA)\n  WCAG 2.5.5 — Target Size Enhanced (Level AAA)\n  WCAG 2.5.8 — Target Size Minimum (Level AA)\n  WCAG 3.3.1 — Error Identification (Level A)\n  WCAG 3.3.2 — Labels or Instructions (Level A)\n  WCAG 3.3.3 — Error Suggestion (Level AA)\n  WCAG 3.3.4 — Error Prevention: Legal, Financial, Data (Level AA)",
+  "items": [
+    {
+      "id": "UXP-001",
+      "type": "uxp",
+      "finding": {
+        "severity": "Critical",
+        "screen_tag": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "screen_id": "SCR-VCE-002",
+        "problem": "OTP bottom sheet (7203) thiếu hoàn toàn \"Gửi lại OTP\" button và countdown timer",
+        "ddl_ref": "COMP:otp-input-1 (canResend, timeLeft states)",
+        "solution_draft": "Thêm: (1) Countdown \"Gửi lại sau 01:30\" và (2) Link \"Gửi lại\" sau khi hết timeout. Đặt ngay dưới instruction text trong bottom sheet",
+        "gap_ref": "Check #12, #13",
+        "current_user_impact": "Lỗi nghiêm trọng gây gián đoạn luồng Chỉnh sửa cài đặt Voice: OTP bottom sheet (7203) thiếu hoàn toàn \"Gửi lại OTP\" button và countdown timer.",
+        "current_heuristic": "COMP:otp-input-1"
+      },
+      "artboard": {
+        "artboard_id": "7203",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-002",
+        "parent_screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "boundary_type": "edit_form_with_auth_overlay"
+      },
+      "related_checks": [
+        {
+          "num": 12,
+          "title": "`otp-input-1` DDL spec: có \"Gửi lại OTP\" (canResend) trong bottom sheet",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh 7203-chinh-sua-voice.png: Bottom sheet OTP chỉ có 6 ô + \"Xác nhận\". **Thiếu hoàn toàn** \"Gửi lại\" trigger. DDL `otp-input-1` spec: `canResend` state là mandatory",
+          "ddl_ref": "COMP:otp-input-1",
+          "category": "Skill A · C1",
+          "severity": "",
+          "artboard_ids": [
+            "7203"
+          ]
+        },
+        {
+          "num": 13,
+          "title": "`otp-input-1` DDL spec: có countdown timer (timeLeft)",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh 7203-chinh-sua-voice.png: Không có countdown \"Gửi lại sau Xs\". DDL `otp-input-1` spec: `timeLeft` state là mandatory. User không biết khi nào resend",
+          "ddl_ref": "COMP:otp-input-1",
+          "category": "Skill A · C1",
+          "severity": "",
+          "artboard_ids": [
+            "7203"
+          ]
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Zeigarnik Effect",
+          "url": "https://lawsofux.com/zeigarnik-effect/",
+          "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:countdown",
+          "_ref_id": "laws.zeigarnik"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-002",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "screen_id": "SCR-VCE-002",
+        "problem": "Time picker fields \"Từ\"/\"Đến\" dùng Calendar icon thay vì Clock icon — semantic mismatch",
+        "ddl_ref": "UXG-197 (Input Labels)",
+        "solution_draft": "Thay Calendar icon (📅) bằng Clock icon (🕐) cho 2 time-picker fields \"Từ\" và \"Đến\" trong màn hình 7202",
+        "gap_ref": "Check #11",
+        "current_user_impact": "Time picker fields \"Từ\"/\"Đến\" dùng Calendar icon thay vì Clock icon — gây nhầm lẫn và giảm tin tưởng vào giao diện tại bước Form nhập thông tin.",
+        "current_heuristic": "UXG-197"
+      },
+      "artboard": {
+        "artboard_id": "7202",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-002",
+        "parent_screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "boundary_type": "edit_form_with_auth_overlay"
+      },
+      "related_checks": [
+        {
+          "num": 11,
+          "title": "Time picker fields dùng Clock icon (không phải Calendar)",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh 7202-chinh-sua-voice.png: Các field \"Từ\"/\"Đến\" kèm **Calendar icon (📅)** — semantic mismatch. Time selection phải dùng Clock icon 🕐, không phải date picker icon",
+          "ddl_ref": "UXG-197",
+          "category": "Skill C · C1",
+          "severity": "",
+          "artboard_ids": [
+            "7202"
+          ]
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-003",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "SCR-VCE-001 + SCR-VCE-002",
+        "screen_id": "SCR-VCE-001",
+        "problem": "Số tài khoản hiển thị đầy đủ trên cả view (7201) và edit (7202) — không mask PII",
+        "ddl_ref": "UXG-180 (Color Only) — security principle Banking",
+        "solution_draft": "Mask account numbers: \"212312312313\" → \"****2313\". Nhất quán với phone masking tại OTP screen",
+        "gap_ref": "Check #4, #18",
+        "current_user_impact": "Số tài khoản hiển thị đầy đủ trên cả view (7201) và edit (7202) — không mask PII — gây nhầm lẫn và giảm tin tưởng vào giao diện tại bước SCR-VCE-001 + SCR-VCE-002.",
+        "current_heuristic": "UXG-180"
+      },
+      "artboard": {
+        "artboard_id": "7201",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-001",
+        "parent_screen_name": "Cài đặt Voice OTT › Form nhập thông tin",
+        "boundary_type": "settings_view_with_feedback_overlay"
+      },
+      "related_checks": [
+        {
+          "num": 4,
+          "title": "Số tài khoản trong danh sách được masking (PII protection)",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh 7201-chinh-sua-voice.png: \"212312312313\" / \"312312312313\" hiển thị đầy đủ. Banking: account numbers phải masked (e.g., ****2313). Inconsistent với OTP screen (mask phone)",
+          "ddl_ref": "UXG-180",
+          "category": "Skill B",
+          "severity": "",
+          "artboard_ids": [
+            "7201",
+            "2313"
+          ]
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-004",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "screen_id": "SCR-VCE-002",
+        "problem": "Thiếu inline error cho time picker khi \"Từ\" > \"Đến\" (invalid range)",
+        "ddl_ref": "UXG-257 (Inline Errors) · COMP:text-input-1 (error state)",
+        "solution_draft": "Thêm error state dưới time picker: \"Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc\". Dùng red border + error text pattern",
+        "gap_ref": "Check #17",
+        "current_user_impact": "Trải nghiệm bị suy giảm đáng kể: thiếu inline error cho time picker khi \"Từ\" > \"Đến\" (invalid range), ảnh hưởng đến hiệu suất sử dụng.",
+        "current_heuristic": "UXG-257 · COMP:text-input-1"
+      },
+      "artboard": {
+        "artboard_id": "7202",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-002",
+        "parent_screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "boundary_type": "edit_form_with_auth_overlay"
+      },
+      "related_checks": [
+        {
+          "num": 17,
+          "title": "Time picker: error state khi \"Từ\" > \"Đến\" invalid range",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh 7202-chinh-sua-voice.png: Không có error state visible cho invalid time range. DDL `text-input-1` spec có `error` state — thiếu trong Figma variants",
+          "ddl_ref": "UXG-257",
+          "category": "Skill A · C1",
+          "severity": "",
+          "artboard_ids": [
+            "7202"
+          ]
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-005",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "screen_id": "SCR-VCE-002",
+        "problem": "Xóa tài khoản khỏi danh sách không có confirmation dialog — destructive action không được bảo vệ",
+        "ddl_ref": "UXG-265 (Confirm Destructive Actions)",
+        "solution_draft": "Khi tap (−): hiện confirmation bottom sheet \"Xóa tài khoản ****2313 khỏi danh sách Voice OTT?\" với CTA \"Xóa\" (destructive) + \"Huỷ\"",
+        "gap_ref": "Check #19",
+        "current_user_impact": "Xóa tài khoản khỏi danh sách không có confirmation dialog — gây nhầm lẫn và giảm tin tưởng vào giao diện tại bước Form nhập thông tin.",
+        "current_heuristic": "UXG-265"
+      },
+      "artboard": {
+        "artboard_id": "7202",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-002",
+        "parent_screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "boundary_type": "edit_form_with_auth_overlay"
+      },
+      "related_checks": [
+        {
+          "num": 19,
+          "title": "Xóa tài khoản (−) có confirmation dialog trước khi xóa",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh 7202-chinh-sua-voice.png: Icon (−) per account row, không rõ có confirm step. UXG-265 (Confirm Destructive Actions) — xóa tài khoản là destructive action",
+          "ddl_ref": "UXG-265",
+          "category": "Skill B",
+          "severity": "",
+          "artboard_ids": [
+            "7202"
+          ]
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "context_map:destructive_action",
+          "_ref_id": "nielsen.5"
+        },
+        {
+          "name": "Von Restorff Effect",
+          "url": "https://lawsofux.com/von-restorff-effect/",
+          "quote": "When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.",
+          "source": "Laws of UX",
+          "_match_source": "context_map:destructive_action",
+          "_ref_id": "laws.von_restorff"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-006",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "screen_id": "SCR-VCE-002",
+        "problem": "\"Lưu chỉnh sửa\" thiếu loading state sau khi submit — nguy cơ double-submit",
+        "ddl_ref": "UXG-175 (Loading Buttons)",
+        "solution_draft": "Sau tap \"Lưu chỉnh sửa\": button chuyển sang loading state (spinner + disabled) trong khi OTP bottom sheet loading",
+        "gap_ref": "Check #22",
+        "current_user_impact": "Trải nghiệm bị suy giảm đáng kể: \"Lưu chỉnh sửa\" thiếu loading state sau khi submit — nguy cơ double-submit, ảnh hưởng đến hiệu suất sử dụng.",
+        "current_heuristic": "UXG-175"
+      },
+      "artboard": {
+        "artboard_id": "7202",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-002",
+        "parent_screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "boundary_type": "edit_form_with_auth_overlay"
+      },
+      "related_checks": [
+        {
+          "num": 22,
+          "title": "\"Lưu chỉnh sửa\" có loading state sau submit (tránh double-submit)",
+          "verdict": "Gap",
+          "evidence": "Không thấy loading button state trong Figma 7202. Banking: submit → OTP trigger cần loading indicator. DDL `text-input-1`: missing loading/submitting state",
+          "ddl_ref": "UXG-175",
+          "category": "Skill B",
+          "severity": "",
+          "artboard_ids": [
+            "7202"
+          ]
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "context_map:missing_status_indicator",
+          "_ref_id": "nielsen.1"
+        },
+        {
+          "name": "Zeigarnik Effect",
+          "url": "https://lawsofux.com/zeigarnik-effect/",
+          "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+          "source": "Laws of UX",
+          "_match_source": "context_map:missing_status_indicator",
+          "_ref_id": "laws.zeigarnik"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-007",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Cài đặt Voice OTT › Form nhập thông tin",
+        "screen_id": "SCR-VCE-001",
+        "problem": "Nút \"Đóng\" trong success popup (7204) là text-link, thiếu button affordance",
+        "ddl_ref": "UXG-204 (Submit Feedback)",
+        "solution_draft": "Style \"Đóng\" dưới dạng outlined button (border + padding) để rõ ràng là tappable element",
+        "gap_ref": "Check #6",
+        "current_user_impact": "Nút \"Đóng\" trong success popup (7204) là text-link, thiếu button affordance — không chặn luồng nhưng giảm tính chuyên nghiệp của giao diện.",
+        "current_heuristic": "UXG-204"
+      },
+      "artboard": {
+        "artboard_id": "7204",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-001",
+        "parent_screen_name": "Cài đặt Voice OTT › Form nhập thông tin",
+        "boundary_type": "settings_view_with_feedback_overlay"
+      },
+      "related_checks": [
+        {
+          "num": 6,
+          "title": "Success popup \"Thông báo\" (7204): nút \"Đóng\" có affordance rõ dạng button",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh 7204-chinh-sua-voice.png: \"Đóng\" được render dạng text-link màu xanh, không có border/background. Giảm affordance — user có thể không nhận ra là bấm được",
+          "ddl_ref": "UXG-204",
+          "category": "Skill C · C2",
+          "severity": "",
+          "artboard_ids": [
+            "7204"
+          ]
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Doherty Threshold",
+          "url": "https://lawsofux.com/doherty-threshold/",
+          "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:feedback",
+          "_ref_id": "laws.doherty"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-008",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Cài đặt Voice OTT › Form nhập thông tin",
+        "screen_id": "SCR-VCE-001",
+        "problem": "Warning \"Lưu ý: KHÔNG để thiết bị ở chế độ im lặng\" không đủ nổi bật",
+        "ddl_ref": "UXG-219 (Contrast Readability)",
+        "solution_draft": "Thêm icon cảnh báo (⚠️ amber) trước text, hoặc dùng warning text color (#D97706 amber) để phân biệt với body text",
+        "gap_ref": "Check #3",
+        "current_user_impact": "Warning \"Lưu ý: KHÔNG để thiết bị ở chế độ im lặng\" không đủ nổi bật — không chặn luồng nhưng giảm tính chuyên nghiệp của giao diện.",
+        "current_heuristic": "UXG-219"
+      },
+      "artboard": {
+        "artboard_id": "7201",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-001",
+        "parent_screen_name": "Cài đặt Voice OTT › Form nhập thông tin",
+        "boundary_type": "settings_view_with_feedback_overlay"
+      },
+      "related_checks": [
+        {
+          "num": 3,
+          "title": "Warning text \"Lưu ý: KHÔNG\" đủ nổi bật, không chỉ dựa vào chữ in hoa",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh 7201-chinh-sua-voice.png: Text \"Lưu ý: KHÔNG...\" cùng màu body text, không có màu cảnh báo (amber/đỏ). Chỉ caps không đủ để phân biệt — rủi ro bị bỏ qua",
+          "ddl_ref": "UXG-219",
+          "category": "Skill C · C3",
+          "severity": "",
+          "artboard_ids": [
+            "7201"
+          ]
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#3@SCR-VCE-001",
+      "type": "gap",
+      "finding": {
+        "num": 3,
+        "title": "Warning text \"Lưu ý: KHÔNG\" đủ nổi bật, không chỉ dựa vào chữ in hoa",
+        "severity": "Minor",
+        "screen_id": "SCR-VCE-001",
+        "screen_name": "Cài đặt Voice OTT › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh 7201-chinh-sua-voice.png: Text \"Lưu ý: KHÔNG...\" cùng màu body text, không có màu cảnh báo (amber/đỏ). Chỉ caps không đủ để phân biệt — rủi ro bị bỏ qua",
+        "ddl_ref": "UXG-219",
+        "ddl_evidence": "UXG-219",
+        "current_user_impact": "Từ ảnh 7201-chinh-sua-voice.png: Text \"Lưu ý: KHÔNG...\" cùng màu body text, không có màu cảnh báo... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": "7201",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-001",
+        "parent_screen_name": "Cài đặt Voice OTT › Form nhập thông tin",
+        "boundary_type": "settings_view_with_feedback_overlay"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#4@SCR-VCE-001",
+      "type": "gap",
+      "finding": {
+        "num": 4,
+        "title": "Số tài khoản trong danh sách được masking (PII protection)",
+        "severity": "Minor",
+        "screen_id": "SCR-VCE-001",
+        "screen_name": "Cài đặt Voice OTT › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh 7201-chinh-sua-voice.png: \"212312312313\" / \"312312312313\" hiển thị đầy đủ. Banking: account numbers phải masked (e.g., ****2313). Inconsistent với OTP screen (mask phone)",
+        "ddl_ref": "UXG-180",
+        "ddl_evidence": "UXG-180",
+        "current_user_impact": "Từ ảnh 7201-chinh-sua-voice.png: \"212312312313\" / \"312312312313\" hiển thị đầy đủ. Banking: account... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": "7201",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-001",
+        "parent_screen_name": "Cài đặt Voice OTT › Form nhập thông tin",
+        "boundary_type": "settings_view_with_feedback_overlay"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-VCE-001",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "Success popup \"Thông báo\" (7204): nút \"Đóng\" có affordance rõ dạng button",
+        "severity": "Minor",
+        "screen_id": "SCR-VCE-001",
+        "screen_name": "Cài đặt Voice OTT › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh 7204-chinh-sua-voice.png: \"Đóng\" được render dạng text-link màu xanh, không có border/background. Giảm affordance — user có thể không nhận ra là bấm được",
+        "ddl_ref": "UXG-204",
+        "ddl_evidence": "UXG-204",
+        "current_user_impact": "Từ ảnh 7204-chinh-sua-voice.png: \"Đóng\" được render dạng text-link màu xanh, không có... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": "7204",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-001",
+        "parent_screen_name": "Cài đặt Voice OTT › Form nhập thông tin",
+        "boundary_type": "settings_view_with_feedback_overlay"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#11@SCR-VCE-002",
+      "type": "gap",
+      "finding": {
+        "num": 11,
+        "title": "Time picker fields dùng Clock icon (không phải Calendar)",
+        "severity": "Minor",
+        "screen_id": "SCR-VCE-002",
+        "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh 7202-chinh-sua-voice.png: Các field \"Từ\"/\"Đến\" kèm **Calendar icon (📅)** — semantic mismatch. Time selection phải dùng Clock icon 🕐, không phải date picker icon",
+        "ddl_ref": "UXG-197",
+        "ddl_evidence": "UXG-197",
+        "current_user_impact": "Từ ảnh 7202-chinh-sua-voice.png: Các field \"Từ\"/\"Đến\" kèm **Calendar icon (📅)** — semantic... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": "7202",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-002",
+        "parent_screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "boundary_type": "edit_form_with_auth_overlay"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#12@SCR-VCE-002",
+      "type": "gap",
+      "finding": {
+        "num": 12,
+        "title": "`otp-input-1` DDL spec: có \"Gửi lại OTP\" (canResend) trong bottom sheet",
+        "severity": "Minor",
+        "screen_id": "SCR-VCE-002",
+        "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh 7203-chinh-sua-voice.png: Bottom sheet OTP chỉ có 6 ô + \"Xác nhận\". **Thiếu hoàn toàn** \"Gửi lại\" trigger. DDL `otp-input-1` spec: `canResend` state là mandatory",
+        "ddl_ref": "COMP:otp-input-1",
+        "ddl_evidence": "COMP:otp-input-1",
+        "current_user_impact": "Từ ảnh 7203-chinh-sua-voice.png: Bottom sheet OTP chỉ có 6 ô + \"Xác nhận\". **Thiếu hoàn toàn** \"Gửi... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": "7203",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-002",
+        "parent_screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "boundary_type": "edit_form_with_auth_overlay"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Zeigarnik Effect",
+          "url": "https://lawsofux.com/zeigarnik-effect/",
+          "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:resend",
+          "_ref_id": "laws.zeigarnik"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#13@SCR-VCE-002",
+      "type": "gap",
+      "finding": {
+        "num": 13,
+        "title": "`otp-input-1` DDL spec: có countdown timer (timeLeft)",
+        "severity": "Minor",
+        "screen_id": "SCR-VCE-002",
+        "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh 7203-chinh-sua-voice.png: Không có countdown \"Gửi lại sau Xs\". DDL `otp-input-1` spec: `timeLeft` state là mandatory. User không biết khi nào resend",
+        "ddl_ref": "COMP:otp-input-1",
+        "ddl_evidence": "COMP:otp-input-1",
+        "current_user_impact": "Từ ảnh 7203-chinh-sua-voice.png: Không có countdown \"Gửi lại sau Xs\". DDL `otp-input-1` spec:... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": "7203",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-002",
+        "parent_screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "boundary_type": "edit_form_with_auth_overlay"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Zeigarnik Effect",
+          "url": "https://lawsofux.com/zeigarnik-effect/",
+          "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:countdown",
+          "_ref_id": "laws.zeigarnik"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#17@SCR-VCE-002",
+      "type": "gap",
+      "finding": {
+        "num": 17,
+        "title": "Time picker: error state khi \"Từ\" > \"Đến\" invalid range",
+        "severity": "Minor",
+        "screen_id": "SCR-VCE-002",
+        "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh 7202-chinh-sua-voice.png: Không có error state visible cho invalid time range. DDL `text-input-1` spec có `error` state — thiếu trong Figma variants",
+        "ddl_ref": "UXG-257",
+        "ddl_evidence": "UXG-257",
+        "current_user_impact": "Từ ảnh 7202-chinh-sua-voice.png: Không có error state visible cho invalid time range. DDL... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": "7202",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-002",
+        "parent_screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "boundary_type": "edit_form_with_auth_overlay"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#18@SCR-VCE-002",
+      "type": "gap",
+      "finding": {
+        "num": 18,
+        "title": "Số tài khoản trong edit form được masking",
+        "severity": "Minor",
+        "screen_id": "SCR-VCE-002",
+        "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh 7202-chinh-sua-voice.png: \"12312312313123\" hiển thị đầy đủ trong list. Inconsistent: phone masked ở 7203 nhưng account không masked ở 7202",
+        "ddl_ref": "UXG-180",
+        "ddl_evidence": "UXG-180",
+        "current_user_impact": "Từ ảnh 7202-chinh-sua-voice.png: \"12312312313123\" hiển thị đầy đủ trong list. Inconsistent: phone... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": "7202",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-002",
+        "parent_screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "boundary_type": "edit_form_with_auth_overlay"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#19@SCR-VCE-002",
+      "type": "gap",
+      "finding": {
+        "num": 19,
+        "title": "Xóa tài khoản (−) có confirmation dialog trước khi xóa",
+        "severity": "Minor",
+        "screen_id": "SCR-VCE-002",
+        "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh 7202-chinh-sua-voice.png: Icon (−) per account row, không rõ có confirm step. UXG-265 (Confirm Destructive Actions) — xóa tài khoản là destructive action",
+        "ddl_ref": "UXG-265",
+        "ddl_evidence": "UXG-265",
+        "current_user_impact": "Từ ảnh 7202-chinh-sua-voice.png: Icon (−) per account row, không rõ có confirm step. UXG-265... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": "7202",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-002",
+        "parent_screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "boundary_type": "edit_form_with_auth_overlay"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "context_map:destructive_action",
+          "_ref_id": "nielsen.5"
+        },
+        {
+          "name": "Von Restorff Effect",
+          "url": "https://lawsofux.com/von-restorff-effect/",
+          "quote": "When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.",
+          "source": "Laws of UX",
+          "_match_source": "context_map:destructive_action",
+          "_ref_id": "laws.von_restorff"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#22@SCR-VCE-002",
+      "type": "gap",
+      "finding": {
+        "num": 22,
+        "title": "\"Lưu chỉnh sửa\" có loading state sau submit (tránh double-submit)",
+        "severity": "Minor",
+        "screen_id": "SCR-VCE-002",
+        "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Không thấy loading button state trong Figma 7202. Banking: submit → OTP trigger cần loading indicator. DDL `text-input-1`: missing loading/submitting state",
+        "ddl_ref": "UXG-175",
+        "ddl_evidence": "UXG-175",
+        "current_user_impact": "Không thấy loading button state trong Figma 7202. Banking: submit → OTP trigger cần loading... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": "7202",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-002",
+        "parent_screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "boundary_type": "edit_form_with_auth_overlay"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "context_map:missing_status_indicator",
+          "_ref_id": "nielsen.1"
+        },
+        {
+          "name": "Zeigarnik Effect",
+          "url": "https://lawsofux.com/zeigarnik-effect/",
+          "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+          "source": "Laws of UX",
+          "_match_source": "context_map:missing_status_indicator",
+          "_ref_id": "laws.zeigarnik"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#24@SCR-VCE-002",
+      "type": "gap",
+      "finding": {
+        "num": 24,
+        "title": "Hick's Law: form có nhiều interactive zones — cognitive load có thể cao",
+        "severity": "Minor",
+        "screen_id": "SCR-VCE-002",
+        "screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh 7202-chinh-sua-voice.png: 5-6 interactive zones (add/remove accounts + time pickers + dual CTA). Hick's Law: cân nhắc visual grouping rõ hơn giữa sections để giảm cognitive load",
+        "ddl_ref": "hick",
+        "ddl_evidence": "hick",
+        "current_user_impact": "Từ ảnh 7202-chinh-sua-voice.png: 5-6 interactive zones (add/remove accounts + time pickers + dual... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": "7202",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-VCE-002",
+        "parent_screen_name": "Chỉnh sửa cài đặt Voice › Form nhập thông tin",
+        "boundary_type": "edit_form_with_auth_overlay"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Chỉnh sửa cài đặt Voice OTT | Co-opBank Mobile Banking",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Hick's Law",
+          "url": "https://lawsofux.com/hicks-law/",
+          "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:hick",
+          "_ref_id": "laws.hick"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    }
+  ],
+  "stats": {
+    "uxp_count": 8,
+    "gap_count": 11,
+    "total_items": 19,
+    "fields_to_generate": 84
+  }
+}

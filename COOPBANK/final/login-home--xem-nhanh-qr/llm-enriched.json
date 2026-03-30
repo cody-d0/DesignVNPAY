@@ -1,0 +1,379 @@
+[
+  {
+    "id": "UXP-001",
+    "hiện_trạng": "Từ xem-nhanh-ma-qr-3: QR screen có popup 'Thông báo' khi người dùng thử toggle chức năng nhạy cảm. Popup chặn toàn bộ screen, generic title 'Thông báo' không indicate nội dung. Thiếu trạng thái tải giữa các toggle actions.",
+    "tác_động": "Modal blocking: người dùng muốn toggle ON/OFF chức năng nhanh nhưng popup interrupt flow. Generic 'Thông báo' không communicate severity — cùng title cho error, warning, info. người dùng phải đọc body text mới biết đây là gì — tốn cognitive effort.",
+    "nguyên_tắc": "Nielsen #8 — Aesthetic and Minimalist: Modal popup cho simple toggle = excessive interruption. Inline xác nhận hoặc toast notification đủ cho non-destructive actions. Nielsen #9: Popup title phải specific, không generic.",
+    "đề_xuất_steps": [
+      "thay thế modal với inline toggle + toast xác nhận cho non-critical toggles",
+      "Nếu cần xác nhận: title specific — 'Xác nhận bật QR thanh toán'",
+      "Thêm trạng thái tải (spinner) giữa toggle actions nếu cần server roundtrip",
+      "Success feedback: toast 'Đã bật QR thanh toán' tự biến mất sau 3s"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Error messages should precisely indicate the problem and constructively suggest a solution.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-003",
+    "hiện_trạng": "Từ xem-nhanh-ma-qr-2: Mô tả bảo mật QR hiển thị wall of text — dense paragraph không scannable. Text giải thích rủi ro + hướng dẫn nhưng format không structured (no bullets, no bold key points).",
+    "tác_động": "Wall of text = TL;DR — người dùng skip toàn bộ security warning → proceed without understanding risk. ngân hàng security text cần structured format để key points visible even on quick scan.",
+    "nguyên_tắc": "Nielsen #8: Content phải scannable — bullet points > paragraphs. F-pattern reading: người dùng skip dense text. Critical info phải bold/highlighted. Miller's Law: chunk long text thành digestible sections.",
+    "đề_xuất_steps": [
+      "Break wall of text thành bullet points: 3-4 key risks",
+      "Bold key warnings: 'Không chia sẻ mã QR cho người lạ'",
+      "Icons cho mỗi risk point để tăng scannability",
+      "Collapsible 'Xem thêm' cho details — hiển thị key points first"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Miller's Law",
+        "url": "https://lawsofux.com/millers-law/",
+        "quote": "The average person can only keep 7 (plus or minus 2) items in their working memory.",
+        "source": "Laws of UX"
+      }
+    ]
+  },
+  {
+    "id": "UXP-004",
+    "hiện_trạng": "Từ xem-nhanh-ma-qr-10: Nút 'Cài đặt ngay' trên popup không rõ destination — người dùng tap nút nhưng không biết sẽ đi đến đâu (cài đặt gì? app settings? biometric setup?).",
+    "tác_động": "Ambiguous CTA creates hesitation: ngân hàng app người dùng cautious about tapping uncertain buttons. 'Cài đặt ngay' → cài đặt gì? Mất trust khi action unclear trong financial context.",
+    "nguyên_tắc": "Nielsen #2 — Match Real World: CTA phải describe destination, không generic. 'Cài đặt vân tay' specific hơn 'Cài đặt ngay'. người dùng cần to predict action outcome before tapping.",
+    "đề_xuất_steps": [
+      "CTA specific: 'Cài đặt Touch ID' hoặc 'Bật xác thực vân tay'",
+      "Subtitle dưới CTA: mô tả brief flow sẽ đi qua",
+      "Secondary option: 'Để sau' cho người dùng chưa sẵn sàng"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "The design should speak the users' language.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users need a clearly marked 'emergency exit'.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-005",
+    "hiện_trạng": "Từ xem-nhanh-ma-qr-4: QR code hiển thị nhưng không có brightness boost — screen không auto-increase brightness để scanner đọc dễ hơn. QR nhỏ hoặc contrast không đủ khi outdoor lighting.",
+    "tác_động": "QR code khó scan trong ánh sáng mạnh (ngoài trời, cửa hàng sáng) nếu phone brightness thấp. Auto-brightness boost là standard pattern (VCB, MoMo, ZaloPay đều triển khai). Thiếu nó = người dùng phải manual increase brightness.",
+    "nguyên_tắc": "Nielsen #7 — Flexibility: Auto-brightness là invisible shortcut giúp QR scan ngay lần đầu. Giảm friction cho physical-digital interaction.",
+    "đề_xuất_steps": [
+      "Auto-boost screen brightness khi QR code displayed (80-100%)",
+      "Restore original brightness khi leave QR screen",
+      "High contrast QR: white background + dark modules",
+      "QR size: minimum 40% screen width cho reliable scanning"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+        "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+        "quote": "Shortcuts may speed up the interaction for the expert user.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Jakob's Law",
+        "url": "https://lawsofux.com/jakobs-law/",
+        "quote": "Users prefer your site to work the same way as all the other sites they already know.",
+        "source": "Laws of UX"
+      }
+    ]
+  },
+  {
+    "id": "UXP-006",
+    "hiện_trạng": "Từ xem-nhanh-ma-qr-16: Screen hiển thị nội dung nhưng thiếu context về source/origin — người dùng không rõ data đến từ đâu hoặc last updated khi nào.",
+    "tác_động": "Financial data without timestamp → người dùng không xác minh freshness. 'Số dư này là real-time hay cached từ sáng?' Trust issue với financial data.",
+    "nguyên_tắc": "Nielsen #1 — Visibility: Data freshness (timestamp) là status metadata cần visible cho financial information.",
+    "đề_xuất_steps": [
+      "Thêm last-updated timestamp: 'Cập nhật lúc 14:30'",
+      "Pull-to-refresh để update data",
+      "Loading indicator khi refreshing"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-007",
+    "hiện_trạng": "Từ xem-nhanh-ma-qr-12: Tab bar hiển thị 5/5 tabs đều có badge đỏ (notification dot). Khi tất cả tabs đều có badge → badge mất ý nghĩa — không phân biệt urgent vs normal.",
+    "tác_động": "Badge fatigue: khi tất cả đều 'urgent', không gì thực sự urgent. người dùng ignore badges entirely → miss real notifications. Visual noise giảm overall UI quality.",
+    "nguyên_tắc": "Von Restorff Effect: Badge phải selective để hiệu quả. Khi all-badges → none stands out → all ignored. Use badges sparingly for meaningful notifications only.",
+    "đề_xuất_steps": [
+      "Selective badges: chỉ hiển thị khi có actionable notification",
+      "Badge count: '3' thay vì dot — cho biết severity",
+      "Clear mechanism: badge disappears after người dùng visits tab",
+      "Priority: chỉ critical notifications deserve badge"
+    ],
+    "references": [
+      {
+        "name": "Von Restorff Effect",
+        "url": "https://lawsofux.com/von-restorff-effect/",
+        "quote": "When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.",
+        "source": "Laws of UX"
+      },
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-008",
+    "hiện_trạng": "Từ xem-nhanh-ma-qr-9: Banner CTA 'Chi tiết' positioned gần edge — small touch target và proximity to screen edge tăng mistouch rate.",
+    "tác_động": "Edge-positioned small CTA = poor ergonomics. Thumb zone mapping shows edges are lowest accuracy areas. Below WCAG minimum target size.",
+    "nguyên_tắc": "WCAG 2.5.8: Minimum target size. Fitts's Law: targets at screen edges harder to hit → need larger size.",
+    "đề_xuất_steps": [
+      "Move CTA away from edge — minimum 8px margin",
+      "Increase touch target to 44×44px minimum",
+      "Or make entire banner card tappable"
+    ],
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+        "source": "Laws of UX"
+      }
+    ]
+  },
+  {
+    "id": "UXP-009",
+    "hiện_trạng": "Màn hình QR hiển thị 2 tài khoản với arrows trái/phải để toggle — nhưng thiếu pagination dots/indicator. Không rõ có bao nhiêu accounts total và đang view account nào.",
+    "tác_động": "người dùng doesn't know total accounts or current position. thiếu pagination: 'Có 3 tài khoản hay 2? Đang xem cái nào?' Especially confusing khi accounts > 2.",
+    "nguyên_tắc": "Nielsen #1 — Visibility: Current position in paginated list = system status. Dots/counter needed: '1/3' or ● ○ ○.",
+    "đề_xuất_steps": [
+      "Thêm pagination dots dưới QR: ● ○ (2 accounts) hoặc '1/3'",
+      "Swipe gesture support ngoài arrows",
+      "Highlight current account indicator"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-010",
+    "hiện_trạng": "Từ popup-touch-id: Touch ID popup dùng 'Hủy' button — wording potentially confusing. 'Hủy' = cancel what? Cancel Touch ID setup or dismiss popup?",
+    "tác_động": "Ambiguous button label: người dùng đang thiết lập Touch ID → 'Hủy' có thể mean cancel setup entirely. Should clarify: 'Để sau' (dismiss) vs 'Hủy cài đặt' (cancel).",
+    "nguyên_tắc": "Nielsen #2: Button labels phải unambiguous. 'Hủy' too generic — doesn't communicate exact action outcome.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "The design should speak the users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thống nhất dùng \"Đóng\" hoặc \"Hủy xác thực\" cho rõ ý",
+      "Audit toàn bộ app cho cùng pattern — đảm bảo wording nhất quán",
+      "Tạo content guideline: bảng từ chuẩn (VD: \"Đóng\" vs \"Hủy\" vs \"Thoát\") cho team"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-QR-002",
+    "hiện_trạng": "Không có trạng thái tải giữa toggle actions trên SCR-QR-002. Toggle → immediate result without transition.",
+    "tác_động": "If server roundtrip needed: UI shows toggled state before xác nhận → potential inconsistency on failure.",
+    "nguyên_tắc": "Nielsen #1: State change requiring server validation needs loading feedback.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung trạng thái tải giữa toggle actions trên SCR-QR-002 vào thiết kế màn hình",
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Đồng bộ format hiển thị giữa tất cả màn hình trong cùng flow",
+      "Thêm trạng thái loading với skeleton hoặc spinner kèm message giải thích"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-QR-002",
+    "hiện_trạng": "Popup title 'Thông báo' generic — doesn't indicate security-related content on SCR-QR-002.",
+    "tác_động": "Generic title = người dùng doesn't gauge importance before reading body. Security popups need distinct framing.",
+    "nguyên_tắc": "Nielsen #9: Titles should precisely indicate content type/severity.",
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Error messages should precisely indicate the problem.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #9 để cải thiện trải nghiệm",
+      "Khắc phục: Generic title = người dùng doesn't gauge importance before reading body. Security popups need distinct fra",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-QR-002",
+    "hiện_trạng": "Security description wall of text trên SCR-QR-002 — not scannable, no structure.",
+    "tác_động": "người dùng skip dense security text. Key warnings missed. Format as bullets for scannability.",
+    "nguyên_tắc": "Nielsen #8: Content must be scannable. Dense text on mobile = skipped.",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#7@SCR-QR-002",
+    "hiện_trạng": "Không có trạng thái trống artboard cho TK rỗng trên QR screen (SCR-QR-002).",
+    "tác_động": "If người dùng has no accounts → QR screen shows what? thiếu design state.",
+    "nguyên_tắc": "Nielsen #6: Empty states need visible guidance — CTA to create/link account.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung trạng thái trống artboard cho TK rỗng trên QR screen (SCR-QR-002) vào thiết kế màn hình",
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Thiết kế trạng thái trống với illustration, message hướng dẫn và CTA rõ ràng"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-QR-003",
+    "hiện_trạng": "'Cài đặt ngay' button trên popup SCR-QR-003 — flow destination unclear.",
+    "tác_động": "người dùng hesitates tapping uncertain CTA in financial app. Ambiguity = reduced conversion.",
+    "nguyên_tắc": "Nielsen #2: CTA must describe destination/outcome clearly.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "The design should speak the users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#7@SCR-QR-003",
+    "hiện_trạng": "Touch ID popup wording: 'Hủy' vs 'Đóng' inconsistency across popups on SCR-QR-003.",
+    "tác_động": "khác nhau dismiss labels on similar popups. 'Hủy' implies cancellation, 'Đóng' implies closing — semantically khác nhau for giống nhau action.",
+    "nguyên_tắc": "Nielsen #4: giống nhau action = giống nhau label across all instances.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đồng bộ format hiển thị giữa tất cả màn hình trong cùng flow",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#8@SCR-QR-003",
+    "hiện_trạng": "Banner CTA 'Chi tiết' near edge trên SCR-QR-003 — small touch target positioning issue.",
+    "tác_động": "Edge proximity + small size = difficult tap target. Below WCAG minimum.",
+    "nguyên_tắc": "Fitts's Law: Edge targets need larger size to compensate for lower accuracy.",
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng kích thước vùng chạm tối thiểu 44×44dp theo chuẩn WCAG 2.5.5",
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-QR-004",
+    "hiện_trạng": "5/5 tab bar tabs have red badges — all-badges visual noise pattern.",
+    "tác_động": "When everything is highlighted, nothing is highlighted. Badge fatigue → người dùng ignores all badges.",
+    "nguyên_tắc": "Von Restorff: Selective distinction is key. All-highlighted = no distinction.",
+    "references": [
+      {
+        "name": "Von Restorff Effect",
+        "url": "https://lawsofux.com/von-restorff-effect/",
+        "quote": "The one that differs from the rest is most likely to be remembered.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Von Restorff để cải thiện trải nghiệm",
+      "Khắc phục: When everything is highlighted, nothing is highlighted. Badge fatigue → người dùng ignores all badges.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-QR-005",
+    "hiện_trạng": "Multi-account QR screen: arrows trái/phải nhưng thiếu pagination dots. người dùng doesn't know position or total count.",
+    "tác_động": "thiếu position indicator in paginated content. người dùng navigates blind.",
+    "nguyên_tắc": "Nielsen #1: Pagination position = system status that must be visible.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung pagination dots vào thiết kế màn hình",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  }
+]

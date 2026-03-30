@@ -1,0 +1,975 @@
+{
+  "meta": {
+    "client_name": "Co-opBank",
+    "product_name": "Co-opBank Mobile Banking",
+    "module_name": "Kích hoạt thẻ | Co-opBank Mobile Banking",
+    "domain": "Banking",
+    "section": "Dịch vụ thẻ / Kích hoạt thẻ",
+    "module_dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/dich-vu-the--kich-hoat-the"
+  },
+  "stats": {
+    "screen_count": 3,
+    "check_count": 26,
+    "gap_count": 14,
+    "pass_count": 12,
+    "proposal_count": 5,
+    "overall_score": 46,
+    "overall_score_color": "#b91c1c",
+    "overall_score_offset": 173,
+    "overall_weighted_score": 83,
+    "severity_counts": {
+      "critical": 3,
+      "major": 2,
+      "minor": 0
+    }
+  },
+  "screens": [
+    {
+      "id": "SCR-KHT-001",
+      "name": "Kích hoạt thẻ › Form nhập thông tin (`SCR-KHT-001`)",
+      "type": "form",
+      "score": 44,
+      "score_color": "#b91c1c",
+      "score_offset": 88,
+      "weighted_score": 81,
+      "gap_count": 5,
+      "artboard_count": 6
+    },
+    {
+      "id": "SCR-KHT-002",
+      "name": "Kích hoạt thẻ › Xác nhận giao dịch (`SCR-KHT-002`)",
+      "type": "confirm",
+      "score": 38,
+      "score_color": "#b91c1c",
+      "score_offset": 97,
+      "weighted_score": 88,
+      "gap_count": 5,
+      "artboard_count": 2
+    },
+    {
+      "id": "SCR-KHT-003",
+      "name": "Kích hoạt thẻ › Đặt mã PIN thẻ (`SCR-KHT-003`)",
+      "type": "form",
+      "score": 56,
+      "score_color": "#c2410c",
+      "score_offset": 69,
+      "weighted_score": 81,
+      "gap_count": 4,
+      "artboard_count": 10
+    }
+  ],
+  "uxps": [
+    {
+      "id": "UXP-001",
+      "severity": "Critical",
+      "screen_tag": "Kích hoạt thẻ › Xác nhận giao dịch",
+      "problem": "Soft OTP thiếu attempt counter, countdown timer, và \"Gửi lại\" button",
+      "gap_ref": "Check #10, #11, #14",
+      "ddl_ref": "COMP:otp-input-1 (canResend, timeLeft, lockout states)",
+      "solution": "Thêm: (1) \"Còn X lần thử\" counter, (2) Countdown \"Gửi lại sau Xs\", (3) \"Gửi lại OTP\" button",
+      "screenshot_path": "ui/kich-hoat-the-3.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Nielsen #3 — User Control and Freedom",
+          "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+          "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "người dùng bị blocked hoàn toàn khi OTP hết hạn — không có 'Gửi lại' → phải back toàn bộ flow kích hoạt thẻ → nhập lại số thẻ → request OTP mới. Thiếu attempt counter khiến người dùng thử bất cẩn → lockout bất ngờ → thẻ bị khóa, phải đến chi nhánh mở lại.",
+      "heuristic": "Nielsen #1 — Visibility of System Status: countdown timer và attempt counter là system status cần hiển thị real-time. Nielsen #3 — người dùng Control: thiếu 'Gửi lại' là thiếu recovery mechanism tại authentication step. Zeigarnik Effect: task bị block mà không có clear path forward tạo negative memory mạnh.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "OTP bottom sheet trên màn xác thực (SCR-KHT-002) thiếu 3 elements quan trọng: (1) attempt counter cho biết còn bao nhiêu lần thử, (2) countdown timer cho thời hạn mã OTP, (3) nút 'Gửi lại' khi mã hết hạn hoặc không nhận được. Text chỉ ghi 'bị khóa sau 5 lần liên tiếp' nhưng không hiển thị attempt hiện tại.",
+      "solution_steps": [
+        "Thêm countdown timer tự đếm ngược từ 120s (hoặc server config) ngay dưới OTP cells",
+        "Hiển thị attempt counter: 'Lần thử 2/5' — update realtime sau mỗi lần nhập sai",
+        "Thêm nút 'Gửi lại mã' xuất hiện sau countdown hết, có cooldown 30s giữa các lần",
+        "Warning color (amber → red) khi attempt ≥ 3/5 để tăng người dùng awareness"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-002",
+      "severity": "Critical",
+      "screen_tag": "Kích hoạt thẻ › Đặt mã PIN thẻ",
+      "problem": "PIN input thiếu show/hide toggle — user nhập blind, tăng risk lỗi",
+      "gap_ref": "Check #12, #18",
+      "ddl_ref": "COMP:otp-input-1 (mask_toggle)",
+      "solution": "Thêm eye icon (show/hide) cho cả 2 PIN fields trên SCR-KHT-003; cũng áp dụng cho Soft OTP field SCR-KHT-002",
+      "screenshot_path": "ui/kich-hoat-the-6.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "WCAG 1.3.1 — Info and Relationships (Level A)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships.html",
+          "quote": "Information, structure, and relationships conveyed through presentation can be programmatically determined.",
+          "source": "W3C"
+        }
+      ],
+      "user_impact": "Mỗi lần nhập sai PIN → error → re-enter 6 digits × 2 fields = 12 digits qua custom numpad. Risk: người dùng set PIN khác ý muốn vì typo mà không biết → phải reset PIN ngay sau kích hoạt. hiển thị/ẩn toggle là standard feature trên mọi ngân hàng app hiện đại.",
+      "heuristic": "Nielsen #5 — Error Prevention: hiển thị/ẩn toggle cho phép người dùng xác minh input trước submit — prevention tại point of action. WCAG 1.3.1 — Info and Relationships: visual state (masked) phải có mechanism để reveal khi người dùng cần xác minh.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "PIN input trên màn đặt PIN (SCR-KHT-003) hiển thị tất cả digits dạng masked (●●●●●●) mà không có hiển thị/ẩn toggle (eye icon). người dùng nhập 6 digits blind — không thể xác minh chính xác trước submit. 7 error artboards (case-loi-4..10) xác nhận pattern nhất quán.",
+      "solution_steps": [
+        "Thêm eye icon toggle cạnh mỗi PIN field: tap → hiển thị digits 3 giây → auto-ẩn",
+        "Khi hiển thị mode active, hiển thị digits thay vì dots",
+        "Đảm bảo toggle accessible: aria-label='Hiện mã PIN' / 'Ẩn mã PIN'",
+        "Auto-ẩn sau 3 giây hoặc khi người dùng tap vào field khác — bảo mật"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-003",
+      "severity": "Critical",
+      "screen_tag": "Kích hoạt thẻ › Form nhập thông tin",
+      "problem": "Modal error interrupt thay vì inline error — disruptive UX pattern",
+      "gap_ref": "Check #3",
+      "ddl_ref": "UXG-165 (error handling best practices)",
+      "solution": "Replace modal bằng inline error message dưới input field với icon cảnh báo",
+      "screenshot_path": "ui/kich-hoat-the-case-loi-1.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "WCAG 3.3.1 — Error Identification (Level A)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html",
+          "quote": "If an input error is automatically detected, the item that is in error is identified and the error is described to the user in text.",
+          "source": "W3C"
+        }
+      ],
+      "user_impact": "Modal interrupt phá vỡ flow nhập liệu: người dùng đang type → modal xuất hiện → phải đọc → tap dismiss → tìm lại field → sửa. 5 bước thay vì 1 (inline error → sửa ngay). Pattern này lặp lại trên 7+ error artboards — mỗi lỗi = 1 modal interrupt.",
+      "heuristic": "Nielsen #9 — Help người dùng Recognize, Diagnose, and Recover from Errors: \"Error messages should precisely indicate the problem and constructively suggest a solution.\" Modal error không chỉ vào field cụ thể. Inline error dưới field = precise indication. WCAG 3.3.1: item in error phải được identified rõ ràng.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Khi validation fail (nhập trống, format sai), ứng dụng hiển thị modal popup 'Thông báo' interrupt toàn bộ screen thay vì inline error dưới field lỗi. Artboard 'kich-hoat-the-case-loi-1.png' xác nhận pattern: modal overlay che form, người dùng phải dismiss trước khi sửa.",
+      "solution_steps": [
+        "thay thế modal errors bằng inline error: red border + error text dưới field lỗi",
+        "Hiển thị tất cả validation errors cùng lúc — không 1 error 1 modal",
+        "Auto-focus vào field lỗi đầu tiên sau validation fail",
+        "Giữ modal chỉ cho system errors (network, server) — không dùng cho input validation"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-004",
+      "severity": "Major",
+      "screen_tag": "Kích hoạt thẻ › Form nhập thông tin",
+      "problem": "3-step flow (Nhập số thẻ → OTP → PIN) không có progress indicator",
+      "gap_ref": "Check #5, #15",
+      "ddl_ref": "COMP:step-indicator-1, Law:zeigarnik",
+      "solution": "Thêm step dots hoặc \"Bước 1/3\" ở header. Zeigarnik: user cần biết progress",
+      "screenshot_path": "ui/kich-hoat-the-1.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Zeigarnik Effect",
+          "url": "https://lawsofux.com/zeigarnik-effect/",
+          "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Thiếu progress indicator tăng perceived effort và abandonment risk. người dùng ở bước OTP không biết còn 1 bước (PIN) → có thể nghĩ flow đã gần xong → surprise khi thêm PIN screen → frustration. Với flow ngân hàng quan trọng (kích hoạt thẻ), abandon rate tăng = thẻ không được sử dụng.",
+      "heuristic": "Nielsen #1 — Visibility of System Status: progress trong multi-step flow là status cần visible. Zeigarnik Effect: hiển thị progress tạo motivation hoàn thành — 'đã xong 2/3' giữ người dùng engaged. Goal Gradient Effect: perceived proximity to goal tăng commitment.",
+      "ref_count": 3,
+      "hiện_trạng": "Flow kích hoạt thẻ có 3 steps (Nhập số thẻ → OTP → Đặt PIN) nhưng không có progress indicator (step dots, progress bar, hoặc step labels) trên bất kỳ screen nào. người dùng không biết đang ở bước mấy, còn bao nhiêu bước, và tổng flow dài bao lâu.",
+      "solution_steps": [
+        "Thêm step indicator 3 dots hoặc progress bar ở top mỗi screen",
+        "Label mỗi step: 'Bước 1: Nhập số thẻ' → 'Bước 2: Xác thực OTP' → 'Bước 3: Đặt PIN'",
+        "Highlight current step, dim future steps, checkmark completed steps",
+        "nhất quán placement (top of screen, dưới header) trên tất cả screens trong flow"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-005",
+      "severity": "Major",
+      "screen_tag": "Kích hoạt thẻ › Đặt mã PIN thẻ",
+      "problem": "Validation rules hiển thị static trong Lưu ý, không có real-time feedback",
+      "gap_ref": "Check #19",
+      "ddl_ref": "COMP:otp-input-1 (realtime_validation)",
+      "solution": "Checklist rules đổi màu từ xám → xanh real-time khi user nhập đạt điều kiện",
+      "screenshot_path": "ui/kich-hoat-the-6.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Miller's Law",
+          "url": "https://lawsofux.com/millers-law/",
+          "quote": "The average person can only keep 7 (plus or minus 2) items in their working memory.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "người dùng phải đọc rules → nhớ → nhập → submit → chờ validation → sửa nếu sai. tải nhận thức cao: 3-4 rules phải giữ trong working memory (Miller's Law: 7±2 items). Real-time checklist validation giảm errors 60-80% theo UX research — mỗi rule update visual khi satisfied.",
+      "heuristic": "Nielsen #1 — Visibility: validation status phải visible real-time, không phải post-submit. Nielsen #5 — Error Prevention: real-time feedback ngăn chặn errors trước khi chúng xảy ra. Miller's Law: static text rules overload working memory — checklist với phản hồi trực quan giảm load.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Rules về PIN (độ dài, ký tự cho phép, không trùng số cũ) hiển thị static trong block 'Lưu ý' phía dưới form PIN (SCR-KHT-003). Khi người dùng nhập PIN, không có real-time validation feedback — rules text không highlight xanh/đỏ theo input, không có checkmark/cross indicators.",
+      "solution_steps": [
+        "Convert 'Lưu ý' static text thành interactive validation checklist",
+        "Mỗi rule hiển thị ✓ (green) khi satisfied, ✗ (red) khi violated, ○ (grey) khi pending",
+        "Update checklist real-time khi người dùng type — không đợi submit",
+        "Disable CTA cho đến khi tất cả rules satisfied — ngăn chặn submit invalid PIN"
+      ],
+      "_enriched_by": "llm"
+    }
+  ],
+  "gaps_by_screen": [
+    {
+      "screen_id": "SCR-KHT-001",
+      "screen_name": "Kích hoạt thẻ › Form nhập thông tin (`SCR-KHT-001`)",
+      "screen_type": "form",
+      "gaps": [
+        {
+          "num": 1,
+          "title": "`text-input-1` spec: helper_text below input field",
+          "ref": "COMP:text-input-1",
+          "severity": "Minor",
+          "user_impact": "người dùng không biết format yêu cầu (16 số, có/không dấu cách) → nhập sai format → validation error → re-enter. Helper text 'Nhập 16 số trên mặt thẻ' giảm errors ngay từ first input attempt.",
+          "heuristic": "Nielsen #10 — Help and Documentation: Helper text là micro-documentation tại point of need. WCAG 3.3.2 — Labels or Instructions: input fields nên có instructions khi người dùng interaction không self-evident.",
+          "evidence": "Từ ảnh kich-hoat-the-1.png: Chỉ có label trên input, thiếu helper text hướng dẫn dưới field theo spec",
+          "screenshot": "kich-hoat-the-1.png",
+          "screen_id": "SCR-KHT-001",
+          "screen_name": "Kích hoạt thẻ › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/kich-hoat-the-1.png",
+          "_img_tier": 1,
+          "description": "Input field 'Nhập số thẻ' trên SCR-KHT-001 chỉ có label phía trên — thiếu helper text bên dưới field. DDL text-input-1 spec yêu cầu helper_text property hiển thị format hint hoặc instruction dưới input.",
+          "ddl_evidence": "COMP:text-input-1",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #10 — Help and Documentation",
+              "url": "https://www.nngroup.com/articles/help-and-documentation/",
+              "quote": "It's best if the system doesn't need any additional explanation. However, it may be necessary to provide documentation to help users understand how to complete their tasks.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+              "quote": "Labels or instructions are provided when content requires user input.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Input field 'Nhập số thẻ' trên SCR-KHT-001 chỉ có label phía trên — thiếu helper text bên dưới field. DDL text-input-1 spec yêu cầu helper_text property hiển thị format hint hoặc instruction dưới input.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 3,
+          "title": "Error strategy: inline error thay vì modal interrupt",
+          "ref": "UXG-165",
+          "severity": "Minor",
+          "user_impact": "Modal error cho input validation là anti-pattern: interrupt focus, require extra tap to dismiss, không point to specific field. Multiplied across 7+ error cases trong flow = high friction. người dùng perceive app as 'khó dùng' và 'hay bị lỗi'.",
+          "heuristic": "Nielsen #9: Error messages must precisely indicate the problem. Modal errors are imprecise — they don't point to the field. WCAG 3.3.1: item in error must be identified — modal error fails to visually connect error to field.",
+          "evidence": "Từ ảnh kich-hoat-the-case-loi-1.png: Lỗi nhập trống dùng modal \"Thông báo\" + \"Đóng\" thay vì inline error dưới input",
+          "screenshot": "kich-hoat-the-case-loi-1.png",
+          "screen_id": "SCR-KHT-001",
+          "screen_name": "Kích hoạt thẻ › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/kich-hoat-the-case-loi-1.png",
+          "_img_tier": 1,
+          "description": "Error artboard 'kich-hoat-the-case-loi-1.png' hiển thị lỗi nhập trống bằng modal 'Thông báo' overlay toàn screen. Modal interrupt input flow — người dùng phải dismiss modal trước khi sửa input field.",
+          "ddl_evidence": "UXG-165",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+              "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+              "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "WCAG 3.3.1 — Error Identification (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html",
+              "quote": "If an input error is automatically detected, the item that is in error is identified and the error is described to the user in text.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Error artboard 'kich-hoat-the-case-loi-1.png' hiển thị lỗi nhập trống bằng modal 'Thông báo' overlay toàn screen. Modal interrupt input flow — người dùng phải dismiss modal trước khi sửa input field.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 5,
+          "title": "Progress indicator cho 3-step flow (step dots)",
+          "ref": "COMP:step-indicator-1",
+          "severity": "Minor",
+          "user_impact": "người dùng commitment thấp khi không biết total effort: 'Còn bao nhiêu bước nữa?' → potential abandon. Zeigarnik Effect: hiển thị progress '1/3' tạo psychological investment giữ người dùng trong flow.",
+          "heuristic": "Nielsen #1 — Visibility: Progress position trong multi-step flow là status phải visible. Zeigarnik Effect: incomplete progress bar motivates completion — thiếu nó giảm completion rate.",
+          "evidence": "Từ ảnh kich-hoat-the-1.png: Không có progress bar / step indicator — user không biết flow gồm mấy bước",
+          "screenshot": "kich-hoat-the-1.png",
+          "screen_id": "SCR-KHT-001",
+          "screen_name": "Kích hoạt thẻ › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/kich-hoat-the-1.png",
+          "_img_tier": 1,
+          "description": "Screen nhập số thẻ (SCR-KHT-001) không có progress indicator — người dùng không biết đây là bước 1 của flow 3 bước. Không có step dots, progress bar, hoặc step label.",
+          "ddl_evidence": "COMP:step-indicator-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Zeigarnik Effect",
+              "url": "https://lawsofux.com/zeigarnik-effect/",
+              "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "hiện_trạng": "Screen nhập số thẻ (SCR-KHT-001) không có progress indicator — người dùng không biết đây là bước 1 của flow 3 bước. Không có step dots, progress bar, hoặc step label.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 8,
+          "title": "Badge contrast \"Chờ kích hoạt\" WCAG AA (≥4.5:1)",
+          "ref": "UXG-243",
+          "severity": "Minor",
+          "user_impact": "Badge status thẻ khó đọc trong outdoor conditions (ánh sáng mạnh) hoặc cho người suy giảm thị lực. Status 'Chờ kích hoạt' là information cần urgent — người dùng phải nhận diện ngay thẻ nào cần action.",
+          "heuristic": "WCAG 1.4.3 — Contrast Minimum: text phải có contrast ≥ 4.5:1 với background cho Level AA. Badge text < 4.5:1 violate khả năng tiếp cận requirement cơ bản cho text content.",
+          "evidence": "Từ ảnh danh-sach-the-21.png: Badge màu nhạt trên nền trắng — est. contrast <4.5:1, FAIL WCAG AA",
+          "screenshot": "danh-sach-the-21.png",
+          "screen_id": "SCR-KHT-001",
+          "screen_name": "Kích hoạt thẻ › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/danh-sach-the-21.png",
+          "_img_tier": 1,
+          "description": "Badge 'Chờ kích hoạt' trên card thẻ (artboard danh-sach-the-21.png) dùng màu nhạt trên nền trắng — contrast ratio ước tính < 4.5:1, thấp hơn WCAG AA requirement cho text.",
+          "ddl_evidence": "UXG-243",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "WCAG 1.4.3 — Contrast Minimum (Level AA)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+              "quote": "The visual presentation of text and images of text has a contrast ratio of at least 4.5:1.",
+              "source": "W3C"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Badge 'Chờ kích hoạt' trên card thẻ (artboard danh-sach-the-21.png) dùng màu nhạt trên nền trắng — contrast ratio ước tính < 4.5:1, thấp hơn WCAG AA requirement cho text.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 9,
+          "title": "CTA label nhất quán (\"Tiếp tục\" vs \"Xác nhận\")",
+          "ref": "UXG-165",
+          "severity": "Minor",
+          "user_impact": "không nhất quán CTA labels tạo micro-confusion: 'Tiếp tục' → expect more steps, 'Xác nhận' → expect finality. Khi người dùng encounter 'Xác nhận' ở step 2 nhưng còn step 3 (PIN), expectation mismatch tạo surprise.",
+          "heuristic": "Nielsen #4 — Consistency: Label cho primary CTA trong cùng 1 flow nên nhất quán hoặc follow clear pattern: 'Tiếp tục' cho intermediate steps, 'Xác nhận' chỉ cho final step.",
+          "evidence": "Từ ảnh: kich-hoat-the-1.png = \"Tiếp tục\", kich-hoat-the-2.png = \"Xác nhận\" — không nhất quán cùng action",
+          "screenshot": "kich-hoat-the-1.png",
+          "screen_id": "SCR-KHT-001",
+          "screen_name": "Kích hoạt thẻ › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/kich-hoat-the-1.png",
+          "_img_tier": 1,
+          "description": "CTA label thay đổi giữa screens: SCR-KHT-001 (kich-hoat-the-1.png) dùng 'Tiếp tục', SCR-KHT-002 (kich-hoat-the-2.png) dùng 'Xác nhận'. Hai labels khác nhau cho cùng một pattern (primary CTA trong flow kích hoạt thẻ).",
+          "ddl_evidence": "UXG-165",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "CTA label thay đổi giữa screens: SCR-KHT-001 (kich-hoat-the-1.png) dùng 'Tiếp tục', SCR-KHT-002 (kich-hoat-the-2.png) dùng 'Xác nhận'. Hai labels khác nhau cho cùng một pattern (primary CTA trong flow kích hoạt thẻ).",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-KHT-002",
+      "screen_name": "Kích hoạt thẻ › Xác nhận giao dịch (`SCR-KHT-002`)",
+      "screen_type": "confirm",
+      "gaps": [
+        {
+          "num": 10,
+          "title": "`otp-input-1` spec: canResend state + \"Gửi lại\" button",
+          "ref": "COMP:otp-input-1",
+          "severity": "Minor",
+          "user_impact": "OTP hết hạn hoặc SMS delay → người dùng stuck: không có recovery path tại OTP screen → phải back toàn bộ flow → re-enter card number → request new OTP. Dead end pattern tại authentication step.",
+          "heuristic": "Nielsen #3 — người dùng Control: 'Gửi lại' là emergency exit khi primary path (first OTP) fails. Thiếu nó = lack of người dùng control tại critical step.",
+          "evidence": "Từ ảnh kich-hoat-the-3.png: OTP bottom sheet không có \"Gửi lại\" button — DDL otp-input-1 spec: canResend là mandatory state",
+          "screenshot": "kich-hoat-the-3.png",
+          "screen_id": "SCR-KHT-002",
+          "screen_name": "Kích hoạt thẻ › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/kich-hoat-the-3.png",
+          "_img_tier": 1,
+          "description": "OTP bottom sheet (SCR-KHT-002, kich-hoat-the-3.png) không có nút 'Gửi lại'. DDL otp-input-1 spec yêu cầu canResend state với resend button — design không triển khai.",
+          "ddl_evidence": "COMP:otp-input-1",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #3 — User Control and Freedom",
+              "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+              "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Zeigarnik Effect",
+              "url": "https://lawsofux.com/zeigarnik-effect/",
+              "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "OTP bottom sheet (SCR-KHT-002, kich-hoat-the-3.png) không có nút 'Gửi lại'. DDL otp-input-1 spec yêu cầu canResend state với resend button — design không triển khai.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 11,
+          "title": "`otp-input-1` spec: timeLeft countdown timer",
+          "ref": "COMP:otp-input-1",
+          "severity": "Minor",
+          "user_impact": "người dùng nhập OTP chậm (OTP dài + custom keyboard) → hết hạn giữa chừng → nhập xong → error 'mã hết hạn' → frustration. Countdown timer cho phép người dùng estimate nếu còn đủ thời gian hoặc cần request mã mới ngay.",
+          "heuristic": "Nielsen #1 — Visibility: Thời hạn OTP là time-critical status — phải visible. Doherty Threshold: feedback về time remaining là critical khi người dùng racing against expiry.",
+          "evidence": "Từ ảnh kich-hoat-the-3.png: Text \"bị khóa sau 5 lần\" nhưng không có countdown timer — user không track attempts",
+          "screenshot": "kich-hoat-the-3.png",
+          "screen_id": "SCR-KHT-002",
+          "screen_name": "Kích hoạt thẻ › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/kich-hoat-the-3.png",
+          "_img_tier": 1,
+          "description": "OTP bottom sheet (SCR-KHT-002) có text 'bị khóa sau 5 lần' nhưng không có countdown timer hiển thị thời gian còn lại của mã OTP. người dùng không biết mã hiện tại còn hiệu lực bao lâu.",
+          "ddl_evidence": "COMP:otp-input-1",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Doherty Threshold",
+              "url": "https://lawsofux.com/doherty-threshold/",
+              "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "OTP bottom sheet (SCR-KHT-002) có text 'bị khóa sau 5 lần' nhưng không có countdown timer hiển thị thời gian còn lại của mã OTP. người dùng không biết mã hiện tại còn hiệu lực bao lâu.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 12,
+          "title": "`otp-input-1` spec: mask_toggle eye icon",
+          "ref": "COMP:otp-input-1",
+          "severity": "Minor",
+          "user_impact": "người dùng nhập OTP blind → typo → error → re-enter. OTP thường 6 digits — mỗi digit sai = fail toàn bộ. hiển thị/ẩn cho phép người dùng xác minh trước submit, đặc biệt hữu ích khi nhập OTP từ SMS trên device khác.",
+          "heuristic": "Nielsen #5 — Error Prevention: hiển thị/ẩn toggle cho phép verification trước submit — error prevention tại last mile. người dùng nên có option reveal input khi cần xác minh accuracy.",
+          "evidence": "Từ ảnh kich-hoat-the-3.png: Không có eye icon trong OTP area — user không verify PIN trước submit",
+          "screenshot": "kich-hoat-the-3.png",
+          "screen_id": "SCR-KHT-002",
+          "screen_name": "Kích hoạt thẻ › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/kich-hoat-the-3.png",
+          "_img_tier": 1,
+          "description": "OTP input area (SCR-KHT-002, kich-hoat-the-3.png) không có eye icon (mask_toggle) — người dùng không thể reveal OTP digits đã nhập. DDL otp-input-1 spec yêu cầu mask_toggle property.",
+          "ddl_evidence": "COMP:otp-input-1",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "OTP input area (SCR-KHT-002, kich-hoat-the-3.png) không có eye icon (mask_toggle) — người dùng không thể reveal OTP digits đã nhập. DDL otp-input-1 spec yêu cầu mask_toggle property.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 14,
+          "title": "Security: lockout warning rõ ràng với attempt counter",
+          "ref": "UXG-243",
+          "severity": "Minor",
+          "user_impact": "người dùng không biết đã thử bao nhiêu lần → bất ngờ bị lockout. Lockout trên kích hoạt thẻ = thẻ không thể sử dụng, phải liên hệ ngân hàng. Warning thiếu visual urgency = dễ bỏ sót.",
+          "heuristic": "Nielsen #5 — Error Prevention: Attempt counter là prevention tool — cho người dùng biết proximity to lockout. Von Restorff: warning text phải visually distinct từ surrounding content để được noticed.",
+          "evidence": "Từ ảnh kich-hoat-the-3.png: \"Bị khóa sau 5 lần liên tiếp\" nhưng thiếu attempt counter (\"Còn X lần\") — cảnh báo passive",
+          "screenshot": "kich-hoat-the-3.png",
+          "screen_id": "SCR-KHT-002",
+          "screen_name": "Kích hoạt thẻ › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/kich-hoat-the-3.png",
+          "_img_tier": 1,
+          "description": "Warning 'Bị khóa sau 5 lần liên tiếp' trên OTP screen (SCR-KHT-002) thiếu attempt counter — không ghi đang ở lần thử thứ mấy. Warning text cũng cùng style với body text — không có urgency color hoặc icon.",
+          "ddl_evidence": "UXG-243",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Von Restorff Effect",
+              "url": "https://lawsofux.com/von-restorff-effect/",
+              "quote": "When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Warning 'Bị khóa sau 5 lần liên tiếp' trên OTP screen (SCR-KHT-002) thiếu attempt counter — không ghi đang ở lần thử thứ mấy. Warning text cũng cùng style với body text — không có urgency color hoặc icon.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 15,
+          "title": "Progress indicator: Zeigarnik Effect compliance",
+          "ref": "zeigarnik",
+          "severity": "Minor",
+          "user_impact": "Tại OTP step, người dùng đã invest effort (nhập số thẻ ở step 1). Không thấy progress '2/3' → không biết còn 1 bước nữa → potential abandon vì perceived effort unclear. Zeigarnik: showing '2/3 complete' motivates finishing.",
+          "heuristic": "Zeigarnik Effect: người ta có xu hướng hoàn thành task đã bắt đầu — nhưng chỉ khi biết progress. Thiếu indicator = thiếu trigger cho hiệu ứng này.",
+          "evidence": "Từ ảnh kich-hoat-the-3.png: Không có step indicator — user không feel progress → anxiety tăng",
+          "screenshot": "kich-hoat-the-3.png",
+          "screen_id": "SCR-KHT-002",
+          "screen_name": "Kích hoạt thẻ › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/kich-hoat-the-3.png",
+          "_img_tier": 1,
+          "description": "OTP screen (SCR-KHT-002) — không có step indicator. người dùng ở bước 2/3 nhưng UI không communicate position trong flow. Thiếu progress feedback tại authentication step.",
+          "ddl_evidence": "zeigarnik",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Zeigarnik Effect",
+              "url": "https://lawsofux.com/zeigarnik-effect/",
+              "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "hiện_trạng": "OTP screen (SCR-KHT-002) — không có step indicator. người dùng ở bước 2/3 nhưng UI không communicate position trong flow. Thiếu progress feedback tại authentication step.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-KHT-003",
+      "screen_name": "Kích hoạt thẻ › Đặt mã PIN thẻ (`SCR-KHT-003`)",
+      "screen_type": "form",
+      "gaps": [
+        {
+          "num": 18,
+          "title": "`otp-input-1` spec: mask_toggle (show/hide PIN)",
+          "ref": "COMP:otp-input-1",
+          "severity": "Minor",
+          "user_impact": "12 digits (6 PIN × 2 fields) nhập blind qua custom numpad. Error rate cao → re-entry → người dùng frustration tại final step của flow kích hoạt thẻ. 7 error artboards xác nhận nhiều error scenarios xảy ra — hiển thị/ẩn sẽ ngăn chặn phần lớn.",
+          "heuristic": "Nielsen #5 — Error Prevention: hiển thị/ẩn toggle = verification mechanism trước submit. Khi 7/10 artboards là error cases, thiếu prevention tool rõ ràng là design gap.",
+          "evidence": "Từ ảnh kich-hoat-the-6.png + case-loi-4..10 (rerun): Không có eye icon trong tất cả 10 artboards — confirmed gap",
+          "screenshot": "kich-hoat-the-6.png",
+          "screen_id": "SCR-KHT-003",
+          "screen_name": "Kích hoạt thẻ › Đặt mã PIN thẻ",
+          "screen_type": "form",
+          "screenshot_path": "ui/kich-hoat-the-6.png",
+          "_img_tier": 1,
+          "description": "PIN input trên SCR-KHT-003 (kich-hoat-the-6.png + 7 error artboards case-loi-4..10) — không có eye icon/mask_toggle cho hiển thị/ẩn PIN. DDL otp-input-1 spec yêu cầu mask_toggle. Tất cả artboards nhất quán: no toggle.",
+          "ddl_evidence": "COMP:otp-input-1",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "PIN input trên SCR-KHT-003 (kich-hoat-the-6.png + 7 error artboards case-loi-4..10) — không có eye icon/mask_toggle cho hiển thị/ẩn PIN. DDL otp-input-1 spec yêu cầu mask_toggle. Tất cả artboards nhất quán: no toggle.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 19,
+          "title": "`otp-input-1` spec: real-time validation checklist",
+          "ref": "COMP:otp-input-1",
+          "severity": "Minor",
+          "user_impact": "Static rules require người dùng memorize → nhập → submit → discover errors post-submit. Real-time checklist cung cấp instant feedback: mỗi keystroke update rule status → người dùng sửa ngay → zero post-submit errors cho rule violations.",
+          "heuristic": "Nielsen #1 — Visibility: Validation status phải visible real-time. Miller's Law: static rules overload memory — interactive checklist offload cognitive work to UI.",
+          "evidence": "Từ ảnh kich-hoat-the-6.png: Rules trong Lưu ý static. Không có real-time feedback khi user nhập PIN",
+          "screenshot": "kich-hoat-the-6.png",
+          "screen_id": "SCR-KHT-003",
+          "screen_name": "Kích hoạt thẻ › Đặt mã PIN thẻ",
+          "screen_type": "form",
+          "screenshot_path": "ui/kich-hoat-the-6.png",
+          "_img_tier": 1,
+          "description": "PIN rules trên SCR-KHT-003 hiển thị dạng static text trong block 'Lưu ý' — không có real-time validation checklist. Khi người dùng nhập PIN, rules text không update visual (green ✓ / red ✗) theo input.",
+          "ddl_evidence": "COMP:otp-input-1",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Miller's Law",
+              "url": "https://lawsofux.com/millers-law/",
+              "quote": "The average person can only keep 7 (plus or minus 2) items in their working memory.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "PIN rules trên SCR-KHT-003 hiển thị dạng static text trong block 'Lưu ý' — không có real-time validation checklist. Khi người dùng nhập PIN, rules text không update visual (green ✓ / red ✗) theo input.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 24,
+          "title": "Information architecture: Lưu ý block không chiếm quá 25% height",
+          "ref": "UXG-165",
+          "severity": "Minor",
+          "user_impact": "Information architecture imbalanced: secondary content (rules) chiếm nhiều space hơn primary content (PIN input). Trên smaller phones, PIN fields có thể bị keyboard che vì Lưu ý đẩy lên. người dùng focus bị split giữa rules text và input fields.",
+          "heuristic": "Nielsen #8 — Aesthetic and Minimalist Design: Information hierarchy phải reflect importance. Rules là supporting info — không nên chiếm 30% attention space. xem xét collapsible section hoặc convert to inline checklist.",
+          "evidence": "Từ ảnh kich-hoat-the-6.png: Khối Lưu ý chiếm ~30% height màn hình, đẩy PIN form xuống dưới",
+          "screenshot": "kich-hoat-the-6.png",
+          "screen_id": "SCR-KHT-003",
+          "screen_name": "Kích hoạt thẻ › Đặt mã PIN thẻ",
+          "screen_type": "form",
+          "screenshot_path": "ui/kich-hoat-the-6.png",
+          "_img_tier": 1,
+          "description": "Block 'Lưu ý' trên PIN screen (SCR-KHT-003, kich-hoat-the-6.png) chiếm ~30% height màn hình — đẩy PIN fields lên cao và reduce usable space cho primary task (nhập PIN). Content Lưu ý dense và takes significant vertical space.",
+          "ddl_evidence": "UXG-165",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+              "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+              "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Miller's Law",
+              "url": "https://lawsofux.com/millers-law/",
+              "quote": "The average person can only keep 7 (plus or minus 2) items in their working memory.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Block 'Lưu ý' trên PIN screen (SCR-KHT-003, kich-hoat-the-6.png) chiếm ~30% height màn hình — đẩy PIN fields lên cao và reduce usable space cho primary task (nhập PIN). Content Lưu ý dense và takes significant vertical space.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 26,
+          "title": "Error state: input fields có red border visual affordance",
+          "ref": "UXG-165",
+          "severity": "Minor",
+          "user_impact": "người dùng đọc thông báo lỗi nhưng không biết field nào cần sửa — thiếu visual pointer. Đặc biệt quan trọng khi có 2 PIN fields (Nhập PIN + Nhập lại PIN) — người dùng cần biết field nào sai. Red border là universal convention cho trạng thái lỗi.",
+          "heuristic": "WCAG 3.3.1: Item in error phải được identified — red border là visual identification standard. Nielsen #4: Red border for error là industry convention — người dùng kỳ vọng it from every other form they use (Jakob's Law).",
+          "evidence": "Rerun vision case-loi-4..10: Tất cả 7 error artboards — error text hiển thị nhưng input cells KHÔNG có border màu đỏ. Thiếu visual affordance chỉ rõ field lỗi",
+          "screenshot": "kich-hoat-the-case-loi-4.png",
+          "screen_id": "SCR-KHT-003",
+          "screen_name": "Kích hoạt thẻ › Đặt mã PIN thẻ",
+          "screen_type": "form",
+          "screenshot_path": "ui/kich-hoat-the-case-loi-4.png",
+          "_img_tier": 4,
+          "description": "7 error artboards (case-loi-4..10) trên SCR-KHT-003 — tất cả hiển thị error text qua modal hoặc inline text, nhưng input fields không có red border visual tín hiệu tương tác. Fields vẫn giữ default border style khi error active — thiếu visual connection giữa thông báo lỗi và field lỗi.",
+          "ddl_evidence": "UXG-165",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "WCAG 3.3.1 — Error Identification (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html",
+              "quote": "If an input error is automatically detected, the item that is in error is identified and the error is described to the user in text.",
+              "source": "W3C"
+            },
+            {
+              "name": "Jakob's Law",
+              "url": "https://lawsofux.com/jakobs-law/",
+              "quote": "Users spend most of their time on other sites. This means that users prefer your site to work the same way as all the other sites they already know.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "7 error artboards (case-loi-4..10) trên SCR-KHT-003 — tất cả hiển thị error text qua modal hoặc inline text, nhưng input fields không có red border visual tín hiệu tương tác. Fields vẫn giữ default border style khi error active — thiếu visual connection giữa thông báo lỗi và field lỗi.",
+          "_enriched_by": "llm"
+        }
+      ]
+    }
+  ],
+  "heuristics": [
+    {
+      "key": "flow",
+      "name_vi": "Luồng người dùng",
+      "name_en": "Flow & Navigation",
+      "score": 46,
+      "gap_count": 14
+    },
+    {
+      "key": "component",
+      "name_vi": "Thành phần",
+      "name_en": "Component & DDL",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "visual",
+      "name_vi": "Thiết kế trực quan",
+      "name_en": "Visual Design",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "content",
+      "name_vi": "Nội dung",
+      "name_en": "Content & Copy",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "a11y",
+      "name_vi": "Tiếp cận",
+      "name_en": "Accessibility",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "trust",
+      "name_vi": "Tin cậy & Bảo mật",
+      "name_en": "Trust & Security",
+      "score": 100,
+      "gap_count": 0
+    }
+  ],
+  "_ref_enrichment": {
+    "gap_enriched": 5,
+    "uxp_enriched": 1,
+    "sources": [
+      "enriched-data.json",
+      "official-urls.md"
+    ]
+  }
+}

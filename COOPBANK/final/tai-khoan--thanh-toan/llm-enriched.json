@@ -1,0 +1,384 @@
+[
+  {
+    "id": "Gap#3@SCR-TAT-001",
+    "hiện_trạng": "Copy icon cạnh số tài khoản trên account.png nhỏ (~24px) — dưới minimum touch target 44px. Khó tap chính xác trên mobile.",
+    "tác_động": "người dùng muốn copy số TK để chia sẻ nhưng icon quá nhỏ → mistouch → frustration. Copy số tài khoản là high-frequency action trong ngân hàng.",
+    "nguyên_tắc": "Fitts's Law: Target size phải proportional với frequency of use. WCAG 2.5.8: Minimum 44×44px touch target.",
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng kích thước vùng chạm tối thiểu 44×44dp theo chuẩn WCAG 2.5.5",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TAT-001",
+    "hiện_trạng": "Không có loading indicator khi refresh data tài khoản trên account.png. Pull-to-refresh hoặc manual refresh không có phản hồi trực quan.",
+    "tác_động": "người dùng không biết data đang refresh hay frozen. Financial data staleness = trust issue: 'Số dư này mới nhất chưa?'",
+    "nguyên_tắc": "Nielsen #1 — Visibility: Data refresh status cần immediate phản hồi trực quan (spinner, skeleton, shimmer).",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung loading indicator khi refresh data tài khoản trên account vào thiết kế màn hình",
+      "Thêm trạng thái loading với skeleton hoặc spinner kèm message giải thích",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow"
+    ]
+  },
+  {
+    "id": "Gap#7@SCR-TAT-001",
+    "hiện_trạng": "TK tiết kiệm và vay sections collapsed trên account.png — chỉ có caret icon nhỏ, không có visual hint rõ ràng rằng sections expandable.",
+    "tác_động": "người dùng không discover collapsed sections → không biết mình có TK tiết kiệm/vay. Hidden content = missed features.",
+    "nguyên_tắc": "Nielsen #6 — Recognition: Expandable sections cần clear visual tín hiệu tương tác — chevron + 'Xem thêm' text hoặc count badge '(2 tài khoản)'.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung visual hint rõ ràng rằng sections expandable vào thiết kế màn hình",
+      "Thêm helper text bên dưới trường nhập: giải thích format mong đợi hoặc ví dụ",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#8@SCR-TAT-001",
+    "hiện_trạng": "Tổng số dư hiển thị 15,000,000 VND cho 2 TK — cần xác minh aggregation logic đúng. Header section sum phải match individual account balances.",
+    "tác_động": "Incorrect aggregation = financial data trust violation. người dùng cross-checks: '10M + 5M = 15M?' — nếu sai = severe trust damage.",
+    "nguyên_tắc": "Nielsen #5 — Error Prevention: Financial aggregation phải precise. hiển thị calculation transparency khi possible.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "The best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#10@SCR-TAT-002",
+    "hiện_trạng": "12 fields thông tin TK trên account-3/4.png hiển thị flat list — không grouping theo nhóm logic (thông tin cơ bản, số dư, phí, ngày).",
+    "tác_động": "12 fields flat = information overload. người dùng scanning cho 'Số dư khả dụng' phải scroll qua tất cả fields. Grouping giảm scan time 40-60%.",
+    "nguyên_tắc": "Gestalt — Proximity: Group related items together. Miller's Law: Chunk 12 items thành 3-4 groups of 3-4.",
+    "references": [
+      {
+        "name": "Miller's Law",
+        "url": "https://lawsofux.com/millers-law/",
+        "quote": "The average person can only keep 7 (plus or minus 2) items in their working memory.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#11@SCR-TAT-002",
+    "hiện_trạng": "'Số dư thực tế' và 'Số dư khả dụng' hiển thị kề nhau trên account-3.png — cùng visual style, không explain sự khác biệt.",
+    "tác_động": "2 số dư numbers khác nhau gây confusion: 'Tại sao tôi có 2 số dư? Tôi thực sự có bao nhiêu tiền?' Pending transactions = difference — nhưng không explained.",
+    "nguyên_tắc": "Nielsen #10 — Help: Complex financial concepts cần inline explanation. Tooltip hoặc info icon cho terminology unfamiliar.",
+    "references": [
+      {
+        "name": "Nielsen #10 — Help and Documentation",
+        "url": "https://www.nngroup.com/articles/help-and-documentation/",
+        "quote": "It may be necessary to provide documentation to help users understand how to complete their tasks.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đồng bộ format hiển thị giữa tất cả màn hình trong cùng flow",
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#12@SCR-TAT-002",
+    "hiện_trạng": "'Lãi cộng dồn', 'Số tiền phong tòa' trên account-3.png — không có help icon hoặc tooltip. ngân hàng-specific terms without explanation.",
+    "tác_động": "ngân hàng jargon: 'Phong tòa' — nhiều người dùng không biết nghĩa → anxiety: 'Tiền bị phong tòa? Có vấn đề gì không?' Help text prevents không cần thiết support calls.",
+    "nguyên_tắc": "Nielsen #2 — Match Real World: If using technical terms, cung cấp inline definitions. Nielsen #10: Help cho domain-specific terminology.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "The design should speak the users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung help icon hoặc tooltip vào thiết kế màn hình",
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#13@SCR-TAT-002",
+    "hiện_trạng": "Modal xác nhận đặt TK mặc định (account-5.png): title 'Thông báo' — generic. Không communicate specific action being confirmed.",
+    "tác_động": "Generic 'Thông báo' for xác nhận = người dùng doesn't gauge importance before reading body. giống nhau title for info, warning, xác nhận.",
+    "nguyên_tắc": "Nielsen #9: Modal titles phải specific — 'Xác nhận đặt tài khoản mặc định?' thay vì 'Thông báo'.",
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Error messages should precisely indicate the problem.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#14@SCR-TAT-002",
+    "hiện_trạng": "Sau set default TK: badge 'Tài khoản thanh toán mặc định' visible trên account-3.png — nhưng không có undo option hoặc change mechanism rõ ràng.",
+    "tác_động": "người dùng set default accidentally → how to undo? No visible path to change default account. Success badge good, but undo path needed.",
+    "nguyên_tắc": "Nielsen #3 — người dùng Control: Reversible actions need clear undo path. 'Đổi tài khoản mặc định' link near badge.",
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users need a clearly marked 'emergency exit'.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung undo option hoặc change mechanism rõ ràng vào thiết kế màn hình",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#15@SCR-TAT-002",
+    "hiện_trạng": "Loading spinner trên account-9.png xuất hiện giữa header và content — position có thể gây confusing: loading toàn trang hay chỉ section?",
+    "tác_động": "Ambiguous loading scope: spinner giữa screen → người dùng không biết loading data nào. Full page? Specific section? Unclear scope = người dùng waits unnecessarily.",
+    "nguyên_tắc": "Nielsen #1: Loading indicator phải scoped — skeleton loaders cho specific sections, full overlay cho page-level loads.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm trạng thái loading với skeleton hoặc spinner kèm message giải thích",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#16@SCR-TAT-002",
+    "hiện_trạng": "Bottom nav tabs trên account-3.png có badge đỏ — cần xác minh count meaningful (not all-badge pattern).",
+    "tác_động": "If all tabs have badges → badge fatigue. Badge count should be meaningful, not decorative.",
+    "nguyên_tắc": "Von Restorff: Selective badges only. All-badge = no distinction.",
+    "references": [
+      {
+        "name": "Von Restorff Effect",
+        "url": "https://lawsofux.com/von-restorff-effect/",
+        "quote": "The one that differs from the rest is most likely to be remembered.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Von Restorff để cải thiện trải nghiệm",
+      "Khắc phục: If all tabs have badges → badge fatigue. Badge count should be meaningful, not decorative.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#19@SCR-TAT-002",
+    "hiện_trạng": "Screen bị cắt tại 'Ngày mở tài khoản' trên account-3.png — không có scroll indicator (gradient fade, scroll bar hint) cho biết có thêm content bên dưới.",
+    "tác_động": "Content below fold invisible without scroll hint → người dùng may not discover remaining fields. Important info like fees, dates may be missed.",
+    "nguyên_tắc": "Nielsen #6: Scrollable content needs visual tín hiệu tương tác — partial content visible, gradient fade, or scroll indicator.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung scroll indicator (gradient fade vào thiết kế màn hình",
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Thêm helper text bên dưới trường nhập: giải thích format mong đợi hoặc ví dụ"
+    ]
+  },
+  {
+    "id": "Gap#22@SCR-TAT-003",
+    "hiện_trạng": "QR code trên account-6.png static — không có expiry timer, không có rotate mechanism. QR hiển thị persistent without time limit.",
+    "tác_động": "Static QR = screenshot sharing risk. Anyone with screenshot can receive money to this account. Expiry/rotation prevents fraud.",
+    "nguyên_tắc": "Nielsen #5 — Error Prevention: Time-limited QR prevents misuse. Auto-rotate mechanism standard for payment QR.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "The best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung expiry timer vào thiết kế màn hình",
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#23@SCR-TAT-003",
+    "hiện_trạng": "Label 'My QR' (English) trên account-6.png — trong app toàn Vietnamese. Language inconsistency.",
+    "tác_động": "English label in Vietnamese app = jarring. 'QR của tôi' hoặc 'Mã QR' more nhất quán with app language.",
+    "nguyên_tắc": "Nielsen #4 — Consistency: Language must be nhất quán throughout app. Mixed EN/VN labels = thiếu chuyên nghiệp.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đồng bộ format hiển thị giữa tất cả màn hình trong cùng flow",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#28@SCR-TAT-004",
+    "hiện_trạng": "giao dịch description 'MB (270832) (HA c...' bị truncate trên giao dịch-history.png — người dùng không đọc full description.",
+    "tác_động": "Truncated giao dịch info → người dùng không thể xác minh giao dịch without tapping. ngân hàng: full giao dịch reference critical for reconciliation.",
+    "nguyên_tắc": "Nielsen #6: giao dịch info phải readable hoặc expandable. Truncation acceptable nếu có tap-to-expand.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #6 để cải thiện trải nghiệm",
+      "Khắc phục: Truncated giao dịch info → người dùng không thể xác minh giao dịch without tapping. ngân hàng: full transacti",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#29@SCR-TAT-004",
+    "hiện_trạng": "Khi custom filter active trên giao dịch-historyfilter.png — không có clear/reset filter button visible.",
+    "tác_động": "người dùng applies filter → wants to go back to all transactions → how? Without clear button: must manually reset each filter field.",
+    "nguyên_tắc": "Nielsen #3 — người dùng Control: Active filters need 'Xóa bộ lọc' button. Filter state must be reversible easily.",
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users need a clearly marked 'emergency exit'.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung clear/reset filter button visible vào thiết kế màn hình",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Thêm tính năng tìm kiếm/lọc cho danh sách dài — hỗ trợ tìm nhanh theo keyword"
+    ]
+  },
+  {
+    "id": "Gap#30@SCR-TAT-004",
+    "hiện_trạng": "Tabs 'Toàn bộ/Tiền vào/Tiền ra' trên giao dịch-history.png không có count badge — người dùng không biết mỗi tab có bao nhiêu transactions.",
+    "tác_động": "Count on tabs helps người dùng: 'Tiền vào (5)' vs 'Tiền ra (12)'. Without count, must tap each tab to discover how many items.",
+    "nguyên_tắc": "Nielsen #1 — Visibility: Tab count = content preview. Helps người dùng decide which tab to explore.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung thành phần còn thiếu vào giao diện hiện tại",
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#31@SCR-TAT-004",
+    "hiện_trạng": "trạng thái trống trên giao dịch-history-2.png chỉ có text 'Không có giao dịch' — không có illustration, không có CTA gợi ý action.",
+    "tác_động": "Bare trạng thái trống = dead end. Good trạng thái trống: illustration + explanation + CTA ('Thực hiện giao dịch đầu tiên').",
+    "nguyên_tắc": "Nielsen #6: Empty states should guide next action, not just state absence.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung giao dịch' — không có illustration vào thiết kế màn hình",
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Thiết kế trạng thái trống với illustration, message hướng dẫn và CTA rõ ràng",
+      "Thêm helper text bên dưới trường nhập: giải thích format mong đợi hoặc ví dụ"
+    ]
+  },
+  {
+    "id": "Gap#32@SCR-TAT-004",
+    "hiện_trạng": "Disclaimer giới hạn tra cứu trên giao dịch-history.png — 2 dòng text dài, khó đọc nhanh.",
+    "tác_động": "Important limitation (e.g., '3 tháng gần nhất') buried in dense text. người dùng may not notice limit → confusion when older transactions thiếu.",
+    "nguyên_tắc": "Nielsen #8: Essential info must be scannable. Disclaimer formatted as short badge: '⚠ Hiển thị 3 tháng gần nhất'.",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#33@SCR-TAT-004",
+    "hiện_trạng": "Calendar picker trên timepicker.png chỉ có nút 'Xong' — không có Cancel/Hủy button. người dùng chọn sai ngày → phải chọn lại đúng trước khi 'Xong'.",
+    "tác_động": "No cancel = forced commit. If người dùng opened picker accidentally, must pick a date before dismissing. Nielsen #3 violation.",
+    "nguyên_tắc": "Nielsen #3 — người dùng Control: Every picker/dialog needs cancel/dismiss option alongside xác nhận.",
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users need a clearly marked 'emergency exit'.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung Cancel/Hủy button vào thiết kế màn hình",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  }
+]

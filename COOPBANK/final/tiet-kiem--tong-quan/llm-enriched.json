@@ -1,0 +1,645 @@
+[
+  {
+    "id": "UXP-001",
+    "hiện_trạng": "Account cards tiết kiệm trên SCR-TKTK-001 thiếu tap tín hiệu tương tác — no shadow, no chevron, no hover state. Cards look static, not interactive.",
+    "tác_động": "người dùng doesn't know cards are tappable → misses detail screen. Critical navigation gap.",
+    "nguyên_tắc": "Nielsen #6: Interactive elements need visible tín hiệu tương tác. Subtle shadow + chevron icon → recognition.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm chevron `>` hoặc caret ở phải mỗi account row để chỉ ra tính tappable",
+      "Real-time update counter khi selection thay đổi",
+      "Disable thêm khi đạt max — hiển thị tooltip \"Đã đạt giới hạn N\""
+    ]
+  },
+  {
+    "id": "UXP-002",
+    "hiện_trạng": "Số TK '12300123123000' hiển thị 13 ký tự liên tục không có dấu phân cách — khó đọc, khó xác minh.",
+    "tác_động": "Ungrouped 13 digits = unreadable. ngân hàng standard: '1230-0123-123-000'. người dùng comparing STK between screens must count digits manually.",
+    "nguyên_tắc": "Nielsen #6: Formatted numbers easier to read. Gestalt grouping for digit chunks.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize memory load.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format số tài khoản nhóm 4 ký tự: `1230-0123-1230-00`",
+      "hiển thị context đầy đủ on-screen — giảm memory load cho người dùng",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-003",
+    "hiện_trạng": "Tên chủ TK 'HA NGUYEN QUANG' và số TK '012547288' hiển thị full — PII exposed trên savings overview screen.",
+    "tác_động": "Full name + STK = social engineering attack vector. Anyone viewing screen sees complete financial identity.",
+    "nguyên_tắc": "Nielsen #5: Default PII masking. Name: 'HA N***G Q***G'. STK: '0125***88'. Tap to reveal.",
+    "đề_xuất_steps": [
+      "Mask name: 'HA N***G QUANG' or first name only",
+      "Mask STK: '0125***88'",
+      "Eye toggle per sensitive field"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "The best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-004",
+    "hiện_trạng": "Bottom action bar labels bị viết tắt: 'Thay đổi t.tin tích lũy định kỳ' truncated. Unreadable abbreviated labels on navigation.",
+    "tác_động": "Truncated labels → người dùng guesses action meaning. 'T.tin' = 'thông tin'? 'tư tin'? Abbreviations kill scannability.",
+    "nguyên_tắc": "Nielsen #2: Full, clear labels. Abbreviations = jargon. Use icon + short label: 'Thay đổi TL'.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Speak the users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Rút ngắn labels: \"Thay đổi TT\" hoặc dùng icon+tooltip on longpress",
+      "Dùng ngôn ngữ và mô hình tâm lý quen thuộc với người dùng ngân hàng",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-005",
+    "hiện_trạng": "Lãi suất '0.1%' nằm lẫn trong danh sách fields dài — không được emphasized. Key info buried.",
+    "tác_động": "Interest rate = primary decision factor for savings. Buried in list = người dùng phải scan 10+ fields to find it.",
+    "nguyên_tắc": "Von Restorff: Key figures should visually stand out. Larger font, color accent, or badge format.",
+    "references": [
+      {
+        "name": "Von Restorff Effect",
+        "url": "https://lawsofux.com/von-restorff-effect/",
+        "quote": "The one that differs from the rest is most likely to be remembered.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Highlight \"Lãi suất: 0.1%\" bằng badge màu xanh hoặc font bold/larger",
+      "Color coding nhất quán: đỏ = urgent/overdue, vàng = attention, xanh = info",
+      "Hiển thị persistent (không auto-dismiss) cho critical alerts"
+    ]
+  },
+  {
+    "id": "UXP-006",
+    "hiện_trạng": "Filter buttons trên giao dịch history ~36-40px height — dưới 44px minimum touch target.",
+    "tác_động": "Small filter buttons → mistouch. Adjacent buttons too close.",
+    "nguyên_tắc": "Fitts's Law: Minimum 44px for mobile interactive elements.",
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng chiều cao filter buttons lên tối thiểu 44px với đủ padding",
+      "Audit toàn bộ interactive elements trong màn hình — đảm bảo tất cả ≥ 44×44px",
+      "Test trên thiết bị thực với ngón tay — xác minh không bị mis-tap adjacent elements"
+    ]
+  },
+  {
+    "id": "UXP-007",
+    "hiện_trạng": "trạng thái trống (artboard 1412): chỉ text 'Không có kết quả tìm kiếm' — thiếu icon, description, CTA theo DDL empty-state-1 spec.",
+    "tác_động": "Text-only trạng thái trống = bleak. DDL requires: illustration + descriptive title + CTA. Current = minimum effort, not người dùng-friendly.",
+    "nguyên_tắc": "Nielsen #6: Empty states guide người dùng — illustration + guidance + action CTA.",
+    "đề_xuất_steps": [
+      "thêm illustration/icon (search empty icon)",
+      "Descriptive text: 'Không tìm thấy giao dịch phù hợp. Thử thay đổi bộ lọc.'",
+      "CTA: 'Xóa bộ lọc' để reset filters"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-008",
+    "hiện_trạng": "Disclaimer text ~10px trên artboard 1410 — quá nhỏ, khó đọc. Below WCAG minimum.",
+    "tác_động": "10px text = unreadable on mobile. WCAG minimum ~12px. Legal/disclaimer text still needs to be readable.",
+    "nguyên_tắc": "WCAG 1.4.4: Text resizable. Minimum 12px for body text on mobile.",
+    "references": [
+      {
+        "name": "WCAG 1.4.4 — Resize Text (Level AA)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/resize-text.html",
+        "quote": "Text can be resized without assistive technology up to 200 percent.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng font size lên ≥12px",
+      "đặt trong styled callout box (info card) thay vì plain text"
+    ]
+  },
+  {
+    "id": "UXP-009",
+    "hiện_trạng": "giao dịch description 'HA chuyen...' bị truncate trên artboard 1410/1413 — thiếu thông tin quan trọng.",
+    "tác_động": "Truncated description: 'HA chuyen...' — chuyển cho ai? Bao nhiêu? người dùng phải tap each row to see full info. Scan impossible.",
+    "nguyên_tắc": "Nielsen #6: Key info visible without interaction. hiển thị recipient name fully or use 2-line layout.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Make elements visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Hiển thị 2 dòng mô tả",
+      "hoặc tap-to-expand tooltip"
+    ]
+  },
+  {
+    "id": "UXP-010",
+    "hiện_trạng": "Số tài khoản '9099798712313123' — 16 ký tự không formatted. No grouping, no separators.",
+    "tác_động": "16 ungrouped digits = completely unreadable. Must format: '9099-7987-1231-3123'.",
+    "nguyên_tắc": "Nielsen #6: Number formatting for readability.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize memory load.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format: `9099-7987-1231-3123` với dấu gạch",
+      "hiển thị context đầy đủ on-screen — giảm memory load cho người dùng",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-011",
+    "hiện_trạng": "Biên lai giao dịch thiếu Share/Print buttons — vi phạm DDL biên lai-preview-1 spec. No export actions.",
+    "tác_động": "người dùng không thể share biên lai for proof, can't print for records. Must screenshot. ngân hàng essential feature thiếu.",
+    "nguyên_tắc": "Nielsen #7: biên lai actions (share, print, download) = essential flexibility.",
+    "đề_xuất_steps": [
+      "CTA bar: 'Chia sẻ' + 'Tải PDF' + 'In'",
+      "Share: native share sheet",
+      "PDF: generate formatted biên lai"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+        "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+        "quote": "Shortcuts may speed up the interaction for the expert user.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-012",
+    "hiện_trạng": "Biên lai thiếu trạng thái giao dịch — no 'Thành công', 'Đang xử lý', 'Thất bại' badge. giao dịch outcome invisible.",
+    "tác_động": "biên lai without status = 'Did it work?' người dùng không thể xác nhận outcome. Critical for giao dịch tài chính.",
+    "nguyên_tắc": "Nielsen #1: giao dịch status = #1 system status on biên lai.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm status badge (\"✅ Thành công\") với màu semantic ngay dưới header",
+      "Color coding nhất quán: đỏ = urgent/overdue, vàng = attention, xanh = info",
+      "Hiển thị persistent (không auto-dismiss) cho critical alerts"
+    ]
+  },
+  {
+    "id": "UXP-013",
+    "hiện_trạng": "Số tiền '2,000,000 VND' trên biên lai cùng font size với labels — không có phân cấp trực quan. Amount = most important info.",
+    "tác_động": "Amount not prominent → người dùng phải scan to find key number. Should be 2× larger, bold, colored.",
+    "nguyên_tắc": "Von Restorff: Key data must stand out. Amount = primary info on biên lai.",
+    "references": [
+      {
+        "name": "Von Restorff Effect",
+        "url": "https://lawsofux.com/von-restorff-effect/",
+        "quote": "The one that differs is most likely to be remembered.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Font-size 24px bold",
+      "màu semantic (xanh/đỏ tùy chiều GD) cho số tiền"
+    ]
+  },
+  {
+    "id": "UXP-014",
+    "hiện_trạng": "Nội dung giao dịch 'Tien tiet kiem' — thiếu dấu tiếng Việt (đúng: 'Tiền tiết kiệm'). ASCII text on Vietnamese ngân hàng screen.",
+    "tác_động": "thiếu diacritics = thiếu chuyên nghiệp, khó đọc for Vietnamese người dùng. 'Tien' vs 'Tiền' completely khác nhau reading flow.",
+    "nguyên_tắc": "Nielsen #2: Vietnamese UI must use proper diacritics. Match real-world language.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Speak the users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Normalize encoding: \"Tien tiet kiem\" → \"Tiền tiết kiệm\"",
+      "Dùng ngôn ngữ và mô hình tâm lý quen thuộc với người dùng ngân hàng",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-015",
+    "hiện_trạng": "~70% màn hình biên lai bên dưới là dead whitespace — khoảng trống lớn không sử dụng.",
+    "tác_động": "Wasted prime real estate. 70% blank = missed opportunity for: share CTAs, related actions, next steps.",
+    "nguyên_tắc": "Nielsen #8: Every screen element should serve purpose. Use space for actions or reduce screen height.",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Should not contain irrelevant information.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm section \"Giao dịch liên quan\" hoặc \"Thao tác nhanh\" (Liên hệ hỗ trợ, Đặt câu hỏi)",
+      "Dùng typography hierarchy: section header bold 16px, content regular 14px",
+      "Sections ít quan trọng collapsed mặc định — giảm scroll length cho majority use case"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TKTK-001",
+    "hiện_trạng": "Account cards lack tap tín hiệu tương tác — no interactive cue.",
+    "tác_động": "người dùng don't discover detail screen.",
+    "nguyên_tắc": "Nielsen #6: Interactive tín hiệu tương tác.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Make elements visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #6 để cải thiện trải nghiệm",
+      "Khắc phục: người dùng don't discover detail screen.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-TKTK-001",
+    "hiện_trạng": "số tài khoản 13 chars without separator.",
+    "tác_động": "khó đọc/xác minh.",
+    "nguyên_tắc": "Nielsen #6: Number formatting.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize load.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#2@SCR-TKTK-002",
+    "hiện_trạng": "Bottom bar 4 icons, labels truncated.",
+    "tác_động": "Unreadable action labels.",
+    "nguyên_tắc": "Hick's Law: 4 actions OK but labels must be readable.",
+    "references": [
+      {
+        "name": "Hick's Law",
+        "url": "https://lawsofux.com/hicks-law/",
+        "quote": "Decision time increases with complexity.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Hick's Law để cải thiện trải nghiệm",
+      "Khắc phục: Unreadable action labels.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TKTK-002",
+    "hiện_trạng": "CTA labels abbreviated — not full text.",
+    "tác_động": "Abbreviated labels khó hiểu.",
+    "nguyên_tắc": "Nielsen #2: Clear language.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Speak users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TKTK-002",
+    "hiện_trạng": "Bottom bar icons blue — DDL may require Gold accent for primary CTA.",
+    "tác_động": "Color not matching design system spec.",
+    "nguyên_tắc": "Nielsen #4: Design system color consistency.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Consistency expected.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Đồng bộ format hiển thị giữa tất cả màn hình trong cùng flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-TKTK-002",
+    "hiện_trạng": "Full name + số tài khoản visible — PII.",
+    "tác_động": "Must mask.",
+    "nguyên_tắc": "Nielsen #5: Default masking.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent problems.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#9@SCR-TKTK-002",
+    "hiện_trạng": "Interest rate '0.1%' buried in field list.",
+    "tác_động": "Key decision data not prominent.",
+    "nguyên_tắc": "Von Restorff: Key figures stand out.",
+    "references": [
+      {
+        "name": "Von Restorff Effect",
+        "url": "https://lawsofux.com/von-restorff-effect/",
+        "quote": "Item that differs is remembered.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Von Restorff để cải thiện trải nghiệm",
+      "Khắc phục: Key decision data not prominent.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#2@SCR-TKTK-003",
+    "hiện_trạng": "Filter buttons ~36-40px — below 44px.",
+    "tác_động": "Touch target violation.",
+    "nguyên_tắc": "Fitts's Law.",
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "Target size affects acquisition.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng kích thước vùng chạm tối thiểu 44×44dp theo chuẩn WCAG 2.5.5",
+      "Thêm tính năng tìm kiếm/lọc cho danh sách dài — hỗ trợ tìm nhanh theo keyword",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-TKTK-003",
+    "hiện_trạng": "trạng thái trống (1412) text-only — no icon, no CTA.",
+    "tác_động": "thiếu DDL spec compliance.",
+    "nguyên_tắc": "Nielsen #6: trạng thái trống guidance.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Guide users.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Thiết kế trạng thái trống với illustration, message hướng dẫn và CTA rõ ràng",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TKTK-003",
+    "hiện_trạng": "trạng thái trống minimalistic — missed Peak-End opportunity.",
+    "tác_động": "Bland trạng thái trống = negative last impression.",
+    "nguyên_tắc": "Peak-End Rule: Last impression matters most.",
+    "references": [
+      {
+        "name": "Peak-End Rule",
+        "url": "https://lawsofux.com/peak-end-rule/",
+        "quote": "People judge experiences by peaks and ends.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái trống với illustration, message hướng dẫn và CTA rõ ràng",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#8@SCR-TKTK-003",
+    "hiện_trạng": "Disclaimer text ~10px — too small to read.",
+    "tác_động": "Below minimum readable size.",
+    "nguyên_tắc": "WCAG 1.4.4: Minimum text size.",
+    "references": [
+      {
+        "name": "WCAG 1.4.4 — Resize Text (Level AA)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/resize-text.html",
+        "quote": "Text resizable to 200%.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Điều chỉnh typography: tăng kích thước ≥14sp, line-height ≥1.5, contrast ratio ≥4.5:1",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#9@SCR-TKTK-003",
+    "hiện_trạng": "giao dịch description 'HA chuyen...' truncated.",
+    "tác_động": "Key info hidden behind truncation.",
+    "nguyên_tắc": "Nielsen #6: Key info visible.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Make visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #6 để cải thiện trải nghiệm",
+      "Khắc phục: Key info hidden behind truncation.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#11@SCR-TKTK-003",
+    "hiện_trạng": "16-char số tài khoản unformatted.",
+    "tác_động": "Unreadable long number.",
+    "nguyên_tắc": "Nielsen #6: Format numbers.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize load.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#2@SCR-TKTK-004",
+    "hiện_trạng": "No share/print buttons on biên lai.",
+    "tác_động": "Can't export biên lai.",
+    "nguyên_tắc": "Nielsen #7: Export options.",
+    "references": [
+      {
+        "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+        "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+        "quote": "Shortcuts.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #7 để cải thiện trải nghiệm",
+      "Khắc phục: Can't export biên lai.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TKTK-004",
+    "hiện_trạng": "No giao dịch status badge on biên lai.",
+    "tác_động": "Can't xác minh outcome.",
+    "nguyên_tắc": "Nielsen #1: giao dịch status.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #1 để cải thiện trải nghiệm",
+      "Khắc phục: Can't xác minh outcome.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TKTK-004",
+    "hiện_trạng": "Amount '2,000,000 VND' no color/icon for giao dịch direction.",
+    "tác_động": "Can't quickly tell credit vs debit.",
+    "nguyên_tắc": "Jakob's Law: ngân hàng color convention — green=in, red=out.",
+    "references": [
+      {
+        "name": "Jakob's Law",
+        "url": "https://lawsofux.com/jakobs-law/",
+        "quote": "Users prefer sites to work like ones they know.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-TKTK-004",
+    "hiện_trạng": "Amount giống nhau font size as labels — no hierarchy.",
+    "tác_động": "Key number not prominent.",
+    "nguyên_tắc": "Von Restorff: Emphasize key data.",
+    "references": [
+      {
+        "name": "Von Restorff Effect",
+        "url": "https://lawsofux.com/von-restorff-effect/",
+        "quote": "Item that differs is remembered.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Điều chỉnh typography: tăng kích thước ≥14sp, line-height ≥1.5, contrast ratio ≥4.5:1",
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TKTK-004",
+    "hiện_trạng": "'Tien tiet kiem' — no diacritics in Vietnamese text.",
+    "tác_động": "thiếu diacritics = thiếu chuyên nghiệp.",
+    "nguyên_tắc": "Nielsen #2: Proper Vietnamese language.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Speak users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #2 để cải thiện trải nghiệm",
+      "Khắc phục: thiếu diacritics = thiếu chuyên nghiệp.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#7@SCR-TKTK-004",
+    "hiện_trạng": "~70% screen is dead whitespace below biên lai data.",
+    "tác_động": "Wasted space, missed CTA opportunity.",
+    "nguyên_tắc": "Nielsen #8: Purposeful use of space.",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Every element should serve purpose.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  }
+]

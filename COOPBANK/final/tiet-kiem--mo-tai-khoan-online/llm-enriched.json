@@ -1,0 +1,564 @@
+[
+  {
+    "id": "UXP-001",
+    "hiện_trạng": "OTP input trên mở TK online thiếu states theo DDL otp-input-1 spec: không có activeIndex highlight, không có canResend button, không có timeLeft countdown, không có trạng thái lỗi. Chỉ có 6 empty cells.",
+    "tác_động": "OTP UX incomplete: người dùng không biết thời gian còn lại, không có cách gửi lại OTP nếu không nhận được, không có phản hồi lỗi nếu nhập sai. Cho giao dịch tài chính → critical.",
+    "nguyên_tắc": "Nielsen #1 — Visibility: OTP timer + active cell indicator = time-critical status. Nielsen #9: OTP trạng thái lỗi phải specific ('Mã OTP không đúng').",
+    "đề_xuất_steps": [
+      "triển khai DDL otp-input-1 full: countdown timer (02:00), active cell highlight, trạng thái lỗi (red border + message), resend button (after 30s cooldown)",
+      "Auto-focus first cell on screen load",
+      "Auto-submit when 6 digits entered"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed about what is going on.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Precisely indicate the problem.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-002",
+    "hiện_trạng": "Sau tap 'Xác nhận' OTP, không có loading indicator. Screen freeze → người dùng taps again → potential double submission for giao dịch tài chính.",
+    "tác_động": "Financial double submission = duplicate account opening or double debit. Critical for ngân hàng. trạng thái tải prevents re-tap.",
+    "nguyên_tắc": "Nielsen #1: Processing state = critical feedback. Doherty Threshold: response > 400ms needs loading indicator.",
+    "đề_xuất_steps": [
+      "Loading spinner on 'Xác nhận' button immediately on tap",
+      "Disable button during processing to ngăn chặn double-tap",
+      "Full-screen loading overlay for giao dịch tài chính"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Doherty Threshold",
+        "url": "https://lawsofux.com/doherty-threshold/",
+        "quote": "Productivity soars when neither has to wait on the other.",
+        "source": "Laws of UX"
+      }
+    ]
+  },
+  {
+    "id": "UXP-003",
+    "hiện_trạng": "Form mở TK online thiếu error states cho tất cả input fields — không có viền đỏ, không có thông báo lỗi inline. DDL text-input-1 spec requires error + errorMessage states.",
+    "tác_động": "người dùng nhập sai → submit → generic error popup thay vì inline per-field errors. Post-submit validation = friction. Inline real-time validation = phương pháp tốt nhất.",
+    "nguyên_tắc": "Nielsen #9: Inline errors per field — red border + specific message. WCAG 3.3.1: Error identification at field level.",
+    "đề_xuất_steps": [
+      "triển khai DDL trạng thái lỗi: red border + icon + thông báo lỗi below field",
+      "Real-time validation on blur (không đợi submit)",
+      "Specific messages: 'Số tiền tối thiểu 1,000,000 VND'"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Precisely indicate the problem.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "WCAG 3.3.1 — Error Identification (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html",
+        "quote": "The item in error is identified and described to the user in text.",
+        "source": "W3C"
+      }
+    ]
+  },
+  {
+    "id": "UXP-004",
+    "hiện_trạng": "Icon menu grid (3×2) — icons 40×40px gần sát nhau. Touch target dưới 44px minimum + spacing tight → mistouch risk.",
+    "tác_động": "Adjacent small icons → người dùng taps wrong menu item → navigates to wrong section → frustration + wasted time.",
+    "nguyên_tắc": "Fitts's Law: 44px minimum + adequate spacing (8px gap minimum) between targets.",
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "Target size and distance affect acquisition.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng touch target tối thiểu 44×44px",
+      "đảm bảo spacing ≥ 8px giữa các items. Cân nhắc layout 2 cột cho row 2 để cân đối hơn."
+    ]
+  },
+  {
+    "id": "UXP-005",
+    "hiện_trạng": "biên lai screens thiếu fields theo DDL biên lai-preview-1: transactionId, timestamp, status, senderInfo không đầy đủ.",
+    "tác_động": "Incomplete biên lai = người dùng không thể xác minh giao dịch details. thiếu transactionId → can't reference for disputes.",
+    "nguyên_tắc": "Nielsen #6: biên lai phải complete — all info needed for future reference.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize memory load.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung: Tài khoản nguồn, Lãi suất, Kỳ hạn, Hình thức tích luỹ vào biên lai card.",
+      "hiển thị context đầy đủ on-screen — giảm memory load cho người dùng",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-006",
+    "hiện_trạng": "Data inconsistency: form lãi suất 3,98%/năm nhưng xác nhận screen hiển thị 5%. Tài khoản nguồn khác nhau giữa form và xác nhận. Critical data mismatch.",
+    "tác_động": "Financial data mismatch between form and xác nhận = trust-destroying. người dùng agreed to 3,98% but system shows 5%? Is this fraud? Is xác nhận wrong? Either way = severe trust violation.",
+    "nguyên_tắc": "Nielsen #5: Data integrity validation. Form → xác nhận must be identical. Any discrepancy = critical bug.",
+    "đề_xuất_steps": [
+      "Automated data consistency check: form data === xác nhận data",
+      "Highlight changed values in xác nhận screen if intentional transformations",
+      "Never auto-change financial terms without explicit người dùng agreement"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Carefully prevent problems from occurring.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "WCAG 3.3.4 — Error Prevention (Legal, Financial, Data)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-prevention-legal-financial-data.html",
+        "quote": "Submissions are reversible, checked, or confirmed.",
+        "source": "W3C"
+      }
+    ]
+  },
+  {
+    "id": "UXP-007",
+    "hiện_trạng": "Form TLTÐ ~15 fields, artboard 1593px (gấp đôi viewport 812px). người dùng phải scroll nhiều lần. Không có progress indicator.",
+    "tác_động": "1593px form = 2× viewport = người dùng lost in scroll. No sections, no progress = 'Am I halfway or 80% done?' Drop-off rate increases exponentially with form length.",
+    "nguyên_tắc": "Miller's Law: 15 fields → group thành 3-4 sections. Nielsen #1: Progress indicator cho long forms.",
+    "references": [
+      {
+        "name": "Miller's Law",
+        "url": "https://lawsofux.com/millers-law/",
+        "quote": "7±2 items in working memory.",
+        "source": "Laws of UX"
+      },
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Chia form thành 2-3 bước (wizard/stepper): Bước 1 thông tin cơ bản",
+      "Bước 2 tích luỹ định kỳ",
+      "Bước 3 tài khoản nhận. Progressive disclosure giảm cog..."
+    ]
+  },
+  {
+    "id": "UXP-008",
+    "hiện_trạng": "Artboard 1305: 'Qúy khách vui lòng kiểm tra lại thông tin đã khởi tạo' — sai chính tả 'Qúy' (đúng: 'Quý').",
+    "tác_động": "Typo on important instruction banner. Vietnamese diacritics error on financial xác nhận screen = thiếu chuyên nghiệp.",
+    "nguyên_tắc": "Nielsen #4: Typographic correctness. Diacritics critical for Vietnamese ngân hàng UI.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "No confusion about meaning.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Sửa \"Qúy\" → \"Quý\" trên tất cả artboards.",
+      "Kiểm tra consistency pattern này với các flow tương tự trong app",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-009",
+    "hiện_trạng": "Dropdown 'Phương thức đáo hạn' trên form nhưng không có artboard popup tương ứng — chỉ có popup chọn kỳ hạn. thiếu design state.",
+    "tác_động": "Dev must improvise popup design → không nhất quán with other dropdowns. Design gap trong flow.",
+    "nguyên_tắc": "Nielsen #4: All interactive states must be designed. Dropdown without popup design = incomplete spec.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Consistency expected.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung artboard popup cho \"Phương thức đáo hạn\" với danh sách options.",
+      "Kiểm tra consistency pattern này với các flow tương tự trong app",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-010",
+    "hiện_trạng": "Button 'Giấy xác nhận' trên biên lai — không rõ sẽ mở PDF, download, hay navigate. Thiếu icon indicator (PDF icon, download arrow, external link).",
+    "tác_động": "Ambiguous CTA: 'Giấy xác nhận' — tap → what happens? PDF viewer? Download file? New screen? người dùng hesitates.",
+    "nguyên_tắc": "Nielsen #2: CTA phải indicate action type. Icon + label: 📄 'Tải giấy xác nhận (PDF)'.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Speak users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Dùng phân cấp trực quan rõ ràng: primary button (filled) cho action chính",
+      "outline button cho secondary. Thêm icon download/PDF bên cạnh \"Giấy xác nh..."
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-TK-001",
+    "hiện_trạng": "Icon menu ~40×40px — below 44px minimum. Spacing tight in grid.",
+    "tác_động": "Touch target violation for primary navigation.",
+    "nguyên_tắc": "Fitts's Law + WCAG 2.5.8.",
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "Target size affects acquisition.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng kích thước vùng chạm tối thiểu 44×44dp theo chuẩn WCAG 2.5.5",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TK-001",
+    "hiện_trạng": "Grid row 2 only 2 items on 3-column grid — misaligned layout.",
+    "tác_động": "Visual imbalance. Empty cell in grid looks unfinished.",
+    "nguyên_tắc": "Gestalt: Grid alignment consistency.",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Visual harmony matters.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đồng bộ format hiển thị giữa tất cả màn hình trong cùng flow",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-TK-002",
+    "hiện_trạng": "Text inputs thiếu DDL trạng thái lỗi: error border + errorMessage.",
+    "tác_động": "No designed phản hồi lỗi on form fields.",
+    "nguyên_tắc": "Nielsen #9: Inline error per field.",
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Indicate problem precisely.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung DDL trạng thái lỗi: error border + errorMessage vào thiết kế màn hình",
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Triển khai inline validation real-time — kiểm tra ngay khi người dùng rời trường nhập",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow"
+    ]
+  },
+  {
+    "id": "Gap#9@SCR-TK-002",
+    "hiện_trạng": "Dropdown 'Phương thức đáo hạn' — no popup artboard designed.",
+    "tác_động": "thiếu design state for interactive element.",
+    "nguyên_tắc": "Nielsen #4: All states designed.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Consistent patterns.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Loại bỏ dropdown khi chỉ có 1 lựa chọn — hiển thị trực tiếp giá trị mặc định",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-TK-003",
+    "hiện_trạng": "OTP states incomplete per DDL otp-input-1 spec.",
+    "tác_động": "thiếu timer, resend, error states.",
+    "nguyên_tắc": "Nielsen #1: OTP requires full state coverage.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-TK-003",
+    "hiện_trạng": "Form lãi suất 3,98% vs xác nhận 5% — data mismatch.",
+    "tác_động": "Financial data inconsistency between screens. Trust-destroying.",
+    "nguyên_tắc": "Nielsen #5: Data integrity critical for financial apps.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent problems.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đồng bộ format hiển thị giữa tất cả màn hình trong cùng flow",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TK-003",
+    "hiện_trạng": "No loading/processing state after OTP xác nhận.",
+    "tác_động": "Double-tap risk for financial submission.",
+    "nguyên_tắc": "Nielsen #1 + Doherty: Processing indicator needed.",
+    "references": [
+      {
+        "name": "Doherty Threshold",
+        "url": "https://lawsofux.com/doherty-threshold/",
+        "quote": "Neither waits on the other.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Thêm trạng thái loading với skeleton hoặc spinner kèm message giải thích",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive"
+    ]
+  },
+  {
+    "id": "Gap#8@SCR-TK-003",
+    "hiện_trạng": "Typo 'Qúy khách' — should be 'Quý khách'.",
+    "tác_động": "Diacritics error on xác nhận screen.",
+    "nguyên_tắc": "Nielsen #4: Text correctness.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "No confusion.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-TK-004",
+    "hiện_trạng": "biên lai fields incomplete per DDL biên lai-preview-1. thiếu senderInfo.",
+    "tác_động": "Incomplete biên lai for reference.",
+    "nguyên_tắc": "Nielsen #6: Complete information.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize memory load.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung senderInfo vào thiết kế màn hình",
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TK-004",
+    "hiện_trạng": "'Tạo giao dịch mới' và 'Giấy xác nhận' — cùng visual style, no hierarchy.",
+    "tác_động": "Equal-weight CTAs = người dùng doesn't know primary action.",
+    "nguyên_tắc": "Nielsen #8: CTA hierarchy — primary (filled) vs secondary (outlined).",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Visual hierarchy matters.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-TK-005",
+    "hiện_trạng": "Text input trạng thái lỗi thiếu on TLTÐ form.",
+    "tác_động": "giống nhau DDL trạng thái lỗi gap as SCR-TK-002.",
+    "nguyên_tắc": "Nielsen #9: Inline errors.",
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Indicate problem.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung on TLTÐ form vào thiết kế màn hình",
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Triển khai inline validation real-time — kiểm tra ngay khi người dùng rời trường nhập"
+    ]
+  },
+  {
+    "id": "Gap#2@SCR-TK-005",
+    "hiện_trạng": "~15 fields, 1593px form — 2× viewport height.",
+    "tác_động": "Extreme scroll length → cognitive overload.",
+    "nguyên_tắc": "Miller's Law: Chunk long forms.",
+    "references": [
+      {
+        "name": "Miller's Law",
+        "url": "https://lawsofux.com/millers-law/",
+        "quote": "7±2 items.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-TK-006",
+    "hiện_trạng": "OTP states incomplete — giống nhau pattern as SCR-TK-003.",
+    "tác_động": "Systemic OTP gap across all savings flows.",
+    "nguyên_tắc": "Nielsen #1: Timer + resend everywhere.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TK-006",
+    "hiện_trạng": "Data consistency issue — form vs xác nhận mismatch repeated.",
+    "tác_động": "giống nhau data integrity gap as SCR-TK-003.",
+    "nguyên_tắc": "Nielsen #5: Data consistency.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent problems.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đồng bộ format hiển thị giữa tất cả màn hình trong cùng flow",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-TK-006",
+    "hiện_trạng": "No trạng thái tải after OTP xác nhận — repeated gap.",
+    "tác_động": "Double-tap risk.",
+    "nguyên_tắc": "Nielsen #1: Processing feedback.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Thêm trạng thái loading với skeleton hoặc spinner kèm message giải thích",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TK-006",
+    "hiện_trạng": "Typo 'Qúy khách' on artboard 1313 — giống nhau diacritics error.",
+    "tác_động": "Repeated typo across multiple screens.",
+    "nguyên_tắc": "Nielsen #4: Text correctness.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Consistency.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-TK-007",
+    "hiện_trạng": "biên lai thiếu key fields: tài khoản nguồn, lãi suất, kỳ hạn. Has giao dịch code but incomplete.",
+    "tác_động": "Savings biên lai without interest rate and term = useless for reference.",
+    "nguyên_tắc": "Nielsen #6: Complete receipts.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize load.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung key fields: tài khoản nguồn vào thiết kế màn hình",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TK-007",
+    "hiện_trạng": "2 buttons giống nhau style — no CTA phân cấp trực quan on biên lai.",
+    "tác_động": "Equal-weight buttons = unclear primary action.",
+    "nguyên_tắc": "Nielsen #8: CTA hierarchy.",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Visual hierarchy.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  }
+]

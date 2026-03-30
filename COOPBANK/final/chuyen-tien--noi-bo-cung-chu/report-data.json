@@ -1,0 +1,847 @@
+{
+  "meta": {
+    "client_name": "Co-opBank",
+    "product_name": "Co-opBank Mobile Banking",
+    "module_name": "CoopBank · Chuyển tiền nội bộ cùng chủ",
+    "domain": "Banking",
+    "section": "",
+    "module_dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/chuyen-tien--noi-bo-cung-chu"
+  },
+  "stats": {
+    "screen_count": 3,
+    "check_count": 36,
+    "gap_count": 7,
+    "pass_count": 29,
+    "proposal_count": 7,
+    "overall_score": 81,
+    "overall_score_color": "#15803d",
+    "overall_score_offset": 61,
+    "overall_weighted_score": 87,
+    "severity_counts": {
+      "critical": 2,
+      "major": 3,
+      "minor": 2
+    }
+  },
+  "screens": [
+    {
+      "id": "SCR-CB-001",
+      "name": "Chuyển tiền nội bộ cùng chủ › Form nhập thông tin (`SCR-CB-001`)",
+      "type": "form",
+      "score": 88,
+      "score_color": "#15803d",
+      "score_offset": 19,
+      "weighted_score": 88,
+      "gap_count": 2,
+      "artboard_count": 4
+    },
+    {
+      "id": "SCR-CB-002",
+      "name": "Chuyển tiền nội bộ cùng chủ › Xác nhận giao dịch (`SCR-CB-002`)",
+      "type": "confirm",
+      "score": 70,
+      "score_color": "#15803d",
+      "score_offset": 47,
+      "weighted_score": 83,
+      "gap_count": 3,
+      "artboard_count": 1
+    },
+    {
+      "id": "SCR-CB-003",
+      "name": "Chuyển tiền nội bộ cùng chủ › Kết quả giao dịch (`SCR-CB-003`)",
+      "type": "result",
+      "score": 80,
+      "score_color": "#15803d",
+      "score_offset": 31,
+      "weighted_score": 90,
+      "gap_count": 2,
+      "artboard_count": 1
+    }
+  ],
+  "uxps": [
+    {
+      "id": "UXP-001",
+      "severity": "Critical",
+      "screen_tag": "Chuyển tiền nội bộ cùng chủ › Form nhập thông tin",
+      "problem": "Form thiếu error state cho text fields — không hiển thị validation error inline khi nhập sai",
+      "gap_ref": "Check #5",
+      "ddl_ref": "COMP:text-input-1 (state.error) · UXG-10 · Law:fitts",
+      "solution": "Thêm: (1) Error border đỏ #dc2626 + helper text dưới input, (2) Disable CTA khi form invalid",
+      "screenshot_path": "ui/internal-transaction-3.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Fitts's Law",
+          "url": "https://lawsofux.com/fittss-law/",
+          "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "WCAG 3.3.1 — Error Identification (Level A)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html",
+          "quote": "If an input error is automatically detected, the item that is in error is identified and the error is described to the user in text.",
+          "source": "W3C"
+        }
+      ],
+      "user_impact": "Người dùng nhập sai nhưng không biết field nào lỗi — phải đọc popup rồi tự xác định. Với form ngân hàng có nhiều field, thời gian sửa lỗi tăng gấp 2-3 lần so với inline validation. Error qua popup cũng phá vỡ flow nhập liệu — dismiss popup → quay lại form → tìm field → sửa.",
+      "heuristic": "Nielsen #9 — Help người dùng Recognize, Diagnose, and Recover from Errors: \"Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.\" Popup generic không chỉ rõ field lỗi = không 'precisely indicate the problem'. WCAG 3.3.1 — Error Identification yêu cầu identify item in error bằng text.",
+      "ref_count": 4,
+      "_enriched_ref": {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+        "source": "Laws of UX"
+      },
+      "hiện_trạng": "Form chuyển tiền nội bộ cùng chủ (SCR-CB-001) có 4 artboards hiển thị các text fields nhập số tài khoản, số tiền, nội dung chuyển. Tất cả text fields chỉ có default state — không hiển thị error border (errorBorderColor), thông báo lỗi inline, hoặc phản hồi trực quan khi dữ liệu nhập sai. Khi validation fail, ứng dụng chỉ hiển thị popup 'Thông báo' generic.",
+      "solution_steps": [
+        "triển khai inline trạng thái lỗi cho mỗi text field: red border (errorBorderColor) + thông báo lỗi bên dưới field",
+        "Sử dụng DDL text-input-1 component với state.error đầy đủ",
+        "kiểm tra real-time khi blur hoặc sau 500ms debounce — không đợi submit",
+        "Cho phép submit chỉ khi tất cả bắt buộc fields valid (disable button pattern)"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-002",
+      "severity": "Critical",
+      "screen_tag": "Chuyển tiền nội bộ cùng chủ › Xác nhận giao dịch",
+      "problem": "Thiếu xác thực bảo mật (OTP/PIN) — nhấn \"Xác nhận\" đi thẳng kết quả, vi phạm security-first",
+      "gap_ref": "Check #4",
+      "ddl_ref": "COMP:otp-input-1 · UXG-45 · Law:doherty",
+      "solution": "Thêm bottom sheet OTP 6 ô sau nhấn \"Xác nhận\": title, 6 cells 48px, resend timer 60s",
+      "screenshot_path": "ui/internal-transaction-5.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Doherty Threshold",
+          "url": "https://lawsofux.com/doherty-threshold/",
+          "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "WCAG 3.3.4 — Error Prevention: Legal, Financial, Data (Level AA)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-prevention-legal-financial-data.html",
+          "quote": "For web pages that cause legal commitments or financial transactions, the submission is checked and the user is given the opportunity to correct them.",
+          "source": "W3C"
+        }
+      ],
+      "user_impact": "Vi phạm nguyên tắc security-first trong ngân hàng: giao dịch tài chính (dù nội bộ cùng chủ) cần ít nhất 1 layer xác thực để ngăn unauthorized transactions. Nếu thiết bị bị truy cập trái phép, kẻ tấn công có thể chuyển tiền giữa các tài khoản mà không cần bất kỳ xác thực nào.",
+      "heuristic": "Nielsen #5 — Error Prevention: \"Thông báo lỗi tốt là quan trọng, nhưng thiết kế tốt nhất là cẩn thận ngăn ngừa vấn đề xảy ra ngay từ đầu.\" Thiếu authentication step là thiếu error prevention cho security-critical action. WCAG 3.3.4 — Error Prevention (Financial): transactions tài chính cần reversible hoặc verified trước khi submit.",
+      "ref_count": 4,
+      "_enriched_ref": {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Flow chuyển tiền nội bộ cùng chủ thiếu bước xác thực bảo mật — nhấn 'Xác nhận' trên màn xác nhận (SCR-CB-002) chuyển thẳng đến màn kết quả (SCR-CB-003) mà không qua OTP hoặc PIN verification. Không có OTP artboard nào trong flow mặc dù DDL match otp-input-1 cho screen context này.",
+      "solution_steps": [
+        "Thêm bước xác thực OTP/Soft OTP hoặc biometric (Face ID/Touch ID) sau màn xác nhận",
+        "Sử dụng DDL otp-input-1 component với đầy đủ states: input, error, countdown, resend",
+        "Hiển thị giao dịch summary trên OTP screen để người dùng xác minh lần cuối trước khi nhập mã",
+        "triển khai rate limiting: khóa sau 5 lần nhập OTP sai liên tiếp"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-003",
+      "severity": "Major",
+      "screen_tag": "Chuyển tiền nội bộ cùng chủ › Xác nhận giao dịch",
+      "problem": "Lỗi chính tả \"Qúy khách\" (đúng: \"Quý khách\") trên màn xác nhận tài chính",
+      "gap_ref": "Check #5",
+      "ddl_ref": "UXG-165",
+      "solution": "Sửa \"Qúy khách\" → \"Quý khách vui lòng kiểm tra lại thông tin đặt lịch đã khởi tạo\"",
+      "screenshot_path": "ui/internal-transaction-5.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Nielsen #4 — Consistency and Standards",
+          "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+          "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Nielsen #2 — Match Between System and Real World",
+          "url": "https://www.nngroup.com/articles/match-system-real-world/",
+          "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Lỗi chính tả trên ngân hàng app làm giảm perceived professionalism và trust. Người dùng ngân hàng kỳ vọng mức độ chính xác cao — lỗi chính tả dù nhỏ cũng gợi câu hỏi 'nếu app sai cả chính tả, liệu tính toán tài chính có chính xác không?'. Ảnh hưởng brand perception đặc biệt lớn tại bước xác nhận — moment of highest trust requirement.",
+      "heuristic": "Nielsen #4 — Consistency and Standards: \"Người dùng không nên phải thắc mắc liệu các từ, tình huống hoặc hành động khác nhau có cùng ý nghĩa hay không.\" Lỗi chính tả phá vỡ standard language consistency. Nielsen #2 — Match Between System and Real World: hệ thống phải dùng ngôn ngữ chuẩn mà người dùng quen thuộc.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Màn xác nhận (SCR-CB-002) hiển thị text instruction chứa lỗi chính tả 'Qúy khách' — dấu sai (đúng: 'Quý khách'). Lỗi xuất hiện trên label instruction cho bước xác nhận giao dịch tài chính, visible cho 100% người dùng đi qua flow.",
+      "solution_steps": [
+        "Sửa tất cả instances 'Qúy khách' → 'Quý khách' trên toàn bộ ứng dụng",
+        "triển khai spell-check tự động cho toàn bộ static content trước deployment",
+        "Tạo glossary tiếng Việt chuẩn cho ngân hàng terms và integrate vào CI/CD",
+        "Review các screen khác trong cùng module và across modules cho lỗi tương tự"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-004",
+      "severity": "Major",
+      "screen_tag": "Chuyển tiền nội bộ cùng chủ › Form nhập thông tin",
+      "problem": "Thiếu loading/processing state khi nhấn \"Tiếp tục\" — user có thể nhấn nhiều lần gây duplicate",
+      "gap_ref": "Check #12",
+      "ddl_ref": "UXG-12 · Law:doherty",
+      "solution": "Thêm: (1) Button loading state: spinner + disable + \"Đang xử lý...\", (2) Loading overlay toàn màn",
+      "screenshot_path": "ui/internal-transaction-2.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Doherty Threshold",
+          "url": "https://lawsofux.com/doherty-threshold/",
+          "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Khi nhấn 'Tiếp tục' mà screen không phản hồi ngay (network delay), người dùng tự nhiên nhấn lại — tạo duplicate requests. Trong ngân hàng, duplicate giao dịch request có thể dẫn đến chuyển khoản 2 lần cùng số tiền. Ngay cả khi backend chặn duplicate, trải nghiệm 'app bị đơ' vẫn tạo anxiety.",
+      "heuristic": "Nielsen #1 — Visibility of System Status: \"Thiết kế phải luôn thông báo cho người dùng biết điều gì đang xảy ra, thông qua phản hồi phù hợp trong thời gian hợp lý.\" Button không thay đổi state = zero visibility vào system processing. Doherty Threshold: nếu response > 400ms mà không có feedback, người dùng perceive system as broken.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Nút 'Tiếp tục' trên form chuyển tiền (SCR-CB-001) chỉ có default state — thiếu loading spinner, disabled state, hoặc processing indicator khi đang submit. 4 artboards trong flow đều không hiển thị trạng thái tải cho submit button. Người dùng không có phản hồi trực quan biết request đang xử lý.",
+      "solution_steps": [
+        "triển khai button trạng thái tải: disable + spinner + text 'Đang xử lý...' ngay sau tap",
+        "ngăn chặn double-tap bằng cách disable button on first tap (debounce at UI level)",
+        "Thêm overlay loading indicator nếu processing > 2 giây",
+        "Nếu timeout > 10 giây, hiển thị retry option thay vì để người dùng đợi vô thời hạn"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-005",
+      "severity": "Major",
+      "screen_tag": "Chuyển tiền nội bộ cùng chủ › Kết quả giao dịch",
+      "problem": "Số TK không nhất quán giữa 3 screens (form/confirm/result dùng 3 giá trị khác nhau)",
+      "gap_ref": "Check #6, Check #5 (screen 3)",
+      "ddl_ref": "UXG-243 · Law:peak-end",
+      "solution": "Đồng nhất TK nguồn + TK thụ hưởng xuyên suốt 3 screens",
+      "screenshot_path": "ui/internal-transaction-6.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Peak-End Rule",
+          "url": "https://lawsofux.com/peak-end-rule/",
+          "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Nielsen #4 — Consistency and Standards",
+          "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+          "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Jakob's Law",
+          "url": "https://lawsofux.com/jakobs-law/",
+          "quote": "Users spend most of their time on other sites. This means that users prefer your site to work the same way as all the other sites they already know.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "Người dùng mất niềm tin vào tính chính xác của giao dịch khi thấy số TK thay đổi qua các bước. Trong ngân hàng, data inconsistency tại bước xác nhận và kết quả là red flag nghiêm trọng — người dùng có thể nghĩ tiền đã chuyển nhầm tài khoản, dẫn đến anxiety call center.",
+      "heuristic": "Nielsen #4 — Consistency and Standards: \"Người dùng không nên phải thắc mắc liệu các từ, tình huống hoặc hành động khác nhau có cùng ý nghĩa hay không.\" Số TK thay đổi giữa screens vi phạm internal consistency — cùng 1 data point phải hiển thị giống nhau across flow. Jakob's Law: ngân hàng người dùng kỳ vọng data persistence và accuracy từ kinh nghiệm với các app tài chính khác.",
+      "ref_count": 4,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Số tài khoản nguồn hiển thị không nhất quán giữa 3 screen: form (SCR-CB-001) hiển thị '9099798712313123', xác nhận (SCR-CB-002) hiển thị '98712313123', và result (SCR-CB-003) hiển thị '9704000012345678'. Ba giá trị khác nhau trên cùng 1 flow cho cùng 1 giao dịch.",
+      "solution_steps": [
+        "Đảm bảo số TK nguồn là single source of truth — lấy từ 1 data point duy nhất",
+        "Hiển thị nhất quán format trên tất cả screens: full số tài khoản hoặc masked (****1234)",
+        "triển khai data consistency check tự động giữa form → xác nhận → result",
+        "Fix sample data trong prototype/design file để phản ánh real data flow"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-006",
+      "severity": "Minor",
+      "screen_tag": "Chuyển tiền nội bộ cùng chủ › Form nhập thông tin",
+      "problem": "Nội dung giao dịch auto-fill không dấu tiếng Việt (\"NGUYEN HOANG KHAI chuyen tien\")",
+      "gap_ref": "Check #5",
+      "ddl_ref": "UXG-78",
+      "solution": "Đổi thành \"NGUYEN HOANG KHAI chuyển tiền\" hoặc cho phép Unicode input",
+      "screenshot_path": "ui/internal-transaction-3.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Nielsen #2 — Match Between System and Real World",
+          "url": "https://www.nngroup.com/articles/match-system-real-world/",
+          "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Nielsen #4 — Consistency and Standards",
+          "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+          "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Auto-fill không dấu tạo disconnection giữa cách người dùng nhận diện tên (có dấu, proper case) và cách hệ thống hiển thị. Người dùng phải đọc kỹ để xác minh đúng người nhận. Với tên phổ biến (Nguyễn Hoàng, Trần Văn), thiếu dấu càng dễ nhầm lẫn giữa các beneficiary.",
+      "heuristic": "Nielsen #2 — Match Between System and Real World: \"The design should speak the người dùng' language. Use words, phrases, and concepts familiar to người dùng.\" Tên không dấu viết hoa toàn bộ là ngôn ngữ máy, không phải ngôn ngữ người dùng Việt Nam. Nielsen #4 — Consistency: nếu app hiển thị tên có dấu ở nơi khác, auto-fill không dấu là không nhất quán.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+        "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+        "quote": "Shortcuts — hidden from novice users — may speed up the interaction for the expert user.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Trường 'Nội dung chuyển tiền' trên form (SCR-CB-001) auto-fill giá trị không dấu tiếng Việt: 'NGUYEN HOANG KHAI chuyen tien'. Text viết hoa toàn bộ tên và không có dấu — khác biệt so với cách người Việt viết tên thông thường. Content này hiển thị vừa trên form, vừa trên xác nhận, vừa trên biên lai.",
+      "solution_steps": [
+        "Auto-fill nội dung chuyển tiền có dấu tiếng Việt: 'Nguyễn Hoàng Khai chuyển tiền'",
+        "Nếu hệ thống core ngân hàng chỉ hỗ trợ ASCII, hiển thị preview cả 2 dạng",
+        "Dùng proper case (capitalize first letter) thay vì ALL CAPS",
+        "Cho phép người dùng edit auto-fill text trước khi submit"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-007",
+      "severity": "Minor",
+      "screen_tag": "Chuyển tiền nội bộ cùng chủ › Kết quả giao dịch",
+      "problem": "Receipt card thiếu separator giữa nhóm thông tin — khó scan theo nhóm",
+      "gap_ref": "Check #4",
+      "ddl_ref": "COMP:receipt-preview-1 · UXG-12",
+      "solution": "Thêm divider line giữa nhóm financial (Số tiền) và schedule (Tần suất) + trước Mã đặt lịch",
+      "screenshot_path": "ui/internal-transaction-6.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Miller's Law",
+          "url": "https://lawsofux.com/millers-law/",
+          "quote": "The average person can only keep 7 (plus or minus 2) items in their working memory.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+          "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+          "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Người dùng khó scan nhanh biên lai để xác minh — phải đọc tuần tự từ trên xuống thay vì glance theo nhóm. Khi cần tìm 1 thông tin cụ thể (VD: mã GD để tra soát), phải scan toàn bộ danh sách thay vì nhìn đúng section. Giảm efficiency khi chụp/chia sẻ biên lai cho bên thứ ba.",
+      "heuristic": "Nielsen #8 — Aesthetic and Minimalist Design: \"Giao diện không nên chứa thông tin không liên quan hoặc hiếm khi cần thiết.\" Thiếu separator không phải minimal — mà là thiếu structure. Miller's Law: grouping 7±2 items thành sections giúp người dùng process thông tin hiệu quả hơn. DDL spec yêu cầu separator giữa sections trong biên lai-preview-1.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "biên lai card trên màn kết quả (SCR-CB-003) hiển thị các thông tin giao dịch (TK nguồn, TK đích, số tiền, nội dung, phí, mã GD) chạy liền nhau không có separator hoặc grouping visual. Các items text nằm sát nhau với cùng style — thiếu hierarchy giữa nhóm thông tin khác nhau.",
+      "solution_steps": [
+        "Thêm horizontal separator (1px divider) giữa các nhóm thông tin: Thông tin TK, Chi tiết GD, Phí & Mã",
+        "Sử dụng DDL biên lai-preview-1 component với separator spec đầy đủ",
+        "Thêm subtle background color differentiation giữa sections (alternating grey/white)",
+        "Group related fields: (TK nguồn + TK đích) | (Số tiền + Phí) | (Nội dung + Mã GD + Thời gian)"
+      ],
+      "_enriched_by": "llm"
+    }
+  ],
+  "gaps_by_screen": [
+    {
+      "screen_id": "SCR-CB-001",
+      "screen_name": "Chuyển tiền nội bộ cùng chủ › Form nhập thông tin (`SCR-CB-001`)",
+      "screen_type": "form",
+      "gaps": [
+        {
+          "num": 5,
+          "title": "Error state cho text-input fields",
+          "ref": "COMP:text-input-1",
+          "severity": "Minor",
+          "user_impact": "người dùng nhập sai không nhận được chỉ dẫn cụ thể field nào lỗi. Phải relying vào popup error → dismiss → tự tìm field → sửa, tăng task completion time đáng kể. Pattern error-by-popup phá vỡ flow nhập liệu liên tục trong form ngân hàng.",
+          "heuristic": "WCAG 3.3.1 — Error Identification: \"If an input error is automatically detected, the item that is in error is identified and the error is described to người dùng in text.\" Error phải identify cụ thể field — popup generic không đáp ứng yêu cầu này.",
+          "evidence": "DDL text-input-1 yêu cầu state.error + errorBorderColor. 4 artboards đều thiếu error variant",
+          "screenshot": "internal-transaction-3.png",
+          "screen_id": "SCR-CB-001",
+          "screen_name": "Chuyển tiền nội bộ cùng chủ › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/internal-transaction-3.png",
+          "_img_tier": 4,
+          "description": "4 artboards trên form screen (SCR-CB-001) đều hiển thị text fields ở default state duy nhất. DDL text-input-1 yêu cầu state.error với errorBorderColor nhưng không có artboard nào thể hiện trạng thái lỗi. Validation lỗi hiện chỉ qua popup 'Thông báo' generic.",
+          "ddl_evidence": "COMP:text-input-1",
+          "ref_count": 5,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "WCAG 3.3.1 — Error Identification (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html",
+              "quote": "If an input error is automatically detected, the item that is in error is identified and the error is described to the user in text.",
+              "source": "W3C"
+            },
+            {
+              "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+              "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+              "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "4 artboards trên form screen (SCR-CB-001) đều hiển thị text fields ở default state duy nhất. DDL text-input-1 yêu cầu state.error với errorBorderColor nhưng không có artboard nào thể hiện trạng thái lỗi. Validation lỗi hiện chỉ qua popup 'Thông báo' generic.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 12,
+          "title": "Loading/processing state khi submit",
+          "ref": "UXG-12",
+          "severity": "Minor",
+          "user_impact": "Zero feedback gap giữa người dùng action (tap) và system response (navigate) tạo uncertainty. Delay > 400ms (Doherty Threshold) mà không có indicator khiến người dùng perceive 'bị đơ', dẫn đến repeated taps → potential duplicate submissions cho giao dịch tài chính.",
+          "heuristic": "Nielsen #1 — Visibility of System Status: \"Thiết kế phải luôn thông báo cho người dùng biết điều gì đang xảy ra, thông qua phản hồi phù hợp trong thời gian hợp lý.\" Doherty Threshold yêu cầu feedback < 400ms — thiếu trạng thái tải vi phạm cả hai principles.",
+          "evidence": "4 artboards: nút \"Tiếp tục\" chỉ có default state, thiếu loading spinner",
+          "screenshot": "internal-transaction.png",
+          "screen_id": "SCR-CB-001",
+          "screen_name": "Chuyển tiền nội bộ cùng chủ › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/internal-transaction.png",
+          "_img_tier": 5,
+          "description": "Nút 'Tiếp tục' trên 4 artboards của form screen (SCR-CB-001) chỉ có default state — thiếu loading spinner hoặc disabled state khi submit. Không có processing indicator nào giữa tap 'Tiếp tục' và navigate sang xác nhận screen.",
+          "ddl_evidence": "UXG-12",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Doherty Threshold",
+              "url": "https://lawsofux.com/doherty-threshold/",
+              "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #3 — User Control and Freedom",
+            "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+            "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Nút 'Tiếp tục' trên 4 artboards của form screen (SCR-CB-001) chỉ có default state — thiếu loading spinner hoặc disabled state khi submit. Không có processing indicator nào giữa tap 'Tiếp tục' và navigate sang xác nhận screen.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-CB-002",
+      "screen_name": "Chuyển tiền nội bộ cùng chủ › Xác nhận giao dịch (`SCR-CB-002`)",
+      "screen_type": "confirm",
+      "gaps": [
+        {
+          "num": 4,
+          "title": "OTP/PIN xác thực trước submit",
+          "ref": "COMP:otp-input-1",
+          "severity": "Minor",
+          "user_impact": "Giao dịch chuyển tiền (dù nội bộ cùng chủ) thiếu authentication layer — nếu device compromised, attacker chuyển tiền tự do giữa các TK. Dù 'cùng chủ' có risk thấp hơn 'khác chủ', vẫn cần authentication tối thiểu vì tiền có thể bị chuyển tiền đến TK đang bị phong tỏa hoặc TK mới mở.",
+          "heuristic": "Nielsen #5 — Error Prevention: Thiếu authentication = thiếu error prevention layer cuối cùng. WCAG 3.3.4 — Error Prevention (Financial): giao dịch tài chính cần mechanism cho người dùng xác nhận/xác minh trước khi irreversible action xảy ra.",
+          "evidence": "DDL match otp-input-1 cho SCR-CB-002 nhưng không có OTP artboard. Product context: \"Security-first\"",
+          "screenshot": "internal-transaction-5.png",
+          "screen_id": "SCR-CB-002",
+          "screen_name": "Chuyển tiền nội bộ cùng chủ › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/internal-transaction-5.png",
+          "_img_tier": 4,
+          "description": "Flow từ xác nhận screen (SCR-CB-002) chuyển thẳng đến result screen (SCR-CB-003) khi nhấn 'Xác nhận' — không qua bước xác thực OTP/PIN. DDL match otp-input-1 cho context chuyển tiền nhưng không có OTP artboard nào trong design. Giao dịch tài chính hoàn tất mà không cần authentication step.",
+          "ddl_evidence": "COMP:otp-input-1",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Doherty Threshold",
+              "url": "https://lawsofux.com/doherty-threshold/",
+              "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "WCAG 3.3.4 — Error Prevention: Legal, Financial, Data (Level AA)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-prevention-legal-financial-data.html",
+              "quote": "For web pages that cause legal commitments or financial transactions, the submission is checked and the user is given the opportunity to correct them.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Flow từ xác nhận screen (SCR-CB-002) chuyển thẳng đến result screen (SCR-CB-003) khi nhấn 'Xác nhận' — không qua bước xác thực OTP/PIN. DDL match otp-input-1 cho context chuyển tiền nhưng không có OTP artboard nào trong design. Giao dịch tài chính hoàn tất mà không cần authentication step.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 5,
+          "title": "Chính tả content instruction",
+          "ref": "UXG-165",
+          "severity": "Minor",
+          "user_impact": "ngân hàng app cần thể hiện professionalism tuyệt đối — lỗi chính tả tại bước xác nhận (moment of highest trust) làm giảm confidence. Người dùng ngân hàng kỳ vọng zero tolerance cho lỗi text, đặc biệt trên screens liên quan đến tiền.",
+          "heuristic": "Nielsen #4 — Consistency and Standards: Nội dung phải tuân theo standard Vietnamese language. Lỗi chính tả vi phạm linguistic consistency — một yếu tố cơ bản nhất của design quality.",
+          "evidence": "Từ ảnh: \"Qúy khách\" — sai dấu. Đúng: \"Quý khách\"",
+          "screenshot": "internal-transaction-5.png",
+          "screen_id": "SCR-CB-002",
+          "screen_name": "Chuyển tiền nội bộ cùng chủ › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/internal-transaction-5.png",
+          "_img_tier": 5,
+          "description": "xác nhận screen (SCR-CB-002) hiển thị instruction text chứa lỗi chính tả 'Qúy khách' — sai dấu thanh (đúng: 'Quý khách'). Lỗi xuất hiện trên instruction label tại bước xác nhận giao dịch, là content 100% người dùng đọc qua.",
+          "ddl_evidence": "UXG-165",
+          "ref_count": 5,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #4 — Consistency and Standards",
+            "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+            "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "xác nhận screen (SCR-CB-002) hiển thị instruction text chứa lỗi chính tả 'Qúy khách' — sai dấu thanh (đúng: 'Quý khách'). Lỗi xuất hiện trên instruction label tại bước xác nhận giao dịch, là content 100% người dùng đọc qua.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "Data consistency với form screen",
+          "ref": "UXG-243",
+          "severity": "Minor",
+          "user_impact": "Data mismatch tại bước xác nhận khiến người dùng mất confidence — 'TK nguồn đã thay đổi, tiền có chuyển đúng không?'. Inconsistency trong prototype/design cũng là risk signal cho development: nếu design không nhất quán, implementation cũng sẽ có data integrity issues.",
+          "heuristic": "Nielsen #4 — Consistency and Standards: Cùng 1 data field phải hiển thị identical value across screens trong 1 flow. Internal consistency là requirement cơ bản nhất — vi phạm ở đây signal deeper quality issue. Jakob's Law: người dùng từ ngân hàng apps khác expect data persistence xuyên suốt flow.",
+          "evidence": "TK nguồn SCR-CB-002: \"98712313123\" ≠ SCR-CB-001: \"9099798712313123\"",
+          "screenshot": "internal-transaction-5.png",
+          "screen_id": "SCR-CB-002",
+          "screen_name": "Chuyển tiền nội bộ cùng chủ › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/internal-transaction-5.png",
+          "_img_tier": 5,
+          "description": "xác nhận screen (SCR-CB-002) hiển thị TK nguồn '98712313123' — khác với form screen (SCR-CB-001) hiển thị '9099798712313123'. Cùng 1 giao dịch nhưng số TK nguồn thay đổi giữa 2 bước liên tiếp. Sample data không nhất quán giữa design screens.",
+          "ddl_evidence": "UXG-243",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Jakob's Law",
+              "url": "https://lawsofux.com/jakobs-law/",
+              "quote": "Users spend most of their time on other sites. This means that users prefer your site to work the same way as all the other sites they already know.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "xác nhận screen (SCR-CB-002) hiển thị TK nguồn '98712313123' — khác với form screen (SCR-CB-001) hiển thị '9099798712313123'. Cùng 1 giao dịch nhưng số TK nguồn thay đổi giữa 2 bước liên tiếp. Sample data không nhất quán giữa design screens.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-CB-003",
+      "screen_name": "Chuyển tiền nội bộ cùng chủ › Kết quả giao dịch (`SCR-CB-003`)",
+      "screen_type": "result",
+      "gaps": [
+        {
+          "num": 4,
+          "title": "Receipt separator giữa nhóm thông tin",
+          "ref": "COMP:receipt-preview-1",
+          "severity": "Minor",
+          "user_impact": "biên lai khó scan — người dùng phải đọc từ trên xuống thay vì glance theo section. Khi share biên lai (screenshot) cho bên thứ ba (kế toán, audit), thiếu visual separation gây khó khăn trong extract thông tin cụ thể. chuyên nghiệp ngân hàng biên lai cần clear information architecture.",
+          "heuristic": "Miller's Law: \"The average person can only keep 7 (plus or minus 2) items in their working memory.\" Grouping items thành sections với separator giúp chunking — người dùng process nhanh hơn. Nielsen #8 — Aesthetic and Minimalist Design: visual structure (separators) giúp interface organized, không phải clutter.",
+          "evidence": "DDL spec yêu cầu Separator giữa sections. Từ ảnh: các items chạy liền không có divider",
+          "screenshot": "internal-transaction-6.png",
+          "screen_id": "SCR-CB-003",
+          "screen_name": "Chuyển tiền nội bộ cùng chủ › Kết quả giao dịch",
+          "screen_type": "result",
+          "screenshot_path": "ui/internal-transaction-6.png",
+          "_img_tier": 5,
+          "description": "biên lai card trên result screen (SCR-CB-003) hiển thị các thông tin giao dịch (TK nguồn, TK đích, số tiền, nội dung, phí) chạy liền nhau — thiếu separator divider giữa các sections. DDL biên lai-preview-1 spec yêu cầu separator giữa information groups nhưng design không triển khai.",
+          "ddl_evidence": "COMP:receipt-preview-1",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Doherty Threshold",
+              "url": "https://lawsofux.com/doherty-threshold/",
+              "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Miller's Law",
+              "url": "https://lawsofux.com/millers-law/",
+              "quote": "The average person can only keep 7 (plus or minus 2) items in their working memory.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+              "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+              "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "biên lai card trên result screen (SCR-CB-003) hiển thị các thông tin giao dịch (TK nguồn, TK đích, số tiền, nội dung, phí) chạy liền nhau — thiếu separator divider giữa các sections. DDL biên lai-preview-1 spec yêu cầu separator giữa information groups nhưng design không triển khai.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 5,
+          "title": "Data consistency với form + confirm",
+          "ref": "UXG-243",
+          "severity": "Minor",
+          "user_impact": "Mức độ data inconsistency cao nhất trong flow: 3 screens × 3 values khác nhau. Người dùng hoàn thành giao dịch nhưng biên lai hiển thị TK nguồn khác hoàn toàn so với TK đã chọn trên form — tạo panic response, dẫn đến liên hệ hỗ trợ ngay lập tức. Gia tăng volume call center không cần thiết.",
+          "heuristic": "Nielsen #4 — Consistency and Standards: Vi phạm nghiêm trọng internal consistency — cùng data field nhưng 3 values trên 3 screens. Đây không chỉ là design issue mà là data integrity signal: prototype data phải reflect real data flow chính xác.",
+          "evidence": "TK nguồn SCR-CB-003: \"9704000012345678\" ≠ SCR-CB-001/002. Sample data inconsistent",
+          "screenshot": "internal-transaction-6.png",
+          "screen_id": "SCR-CB-003",
+          "screen_name": "Chuyển tiền nội bộ cùng chủ › Kết quả giao dịch",
+          "screen_type": "result",
+          "screenshot_path": "ui/internal-transaction-6.png",
+          "_img_tier": 5,
+          "description": "Result screen (SCR-CB-003) hiển thị TK nguồn '9704000012345678' — khác với cả form screen ('9099798712313123') và xác nhận screen ('98712313123'). 3 screens trong cùng 1 flow hiển thị 3 giá trị khác nhau cho cùng 1 field TK nguồn.",
+          "ddl_evidence": "UXG-243",
+          "ref_count": 5,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Jakob's Law",
+              "url": "https://lawsofux.com/jakobs-law/",
+              "quote": "Users spend most of their time on other sites. This means that users prefer your site to work the same way as all the other sites they already know.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Result screen (SCR-CB-003) hiển thị TK nguồn '9704000012345678' — khác với cả form screen ('9099798712313123') và xác nhận screen ('98712313123'). 3 screens trong cùng 1 flow hiển thị 3 giá trị khác nhau cho cùng 1 field TK nguồn.",
+          "_enriched_by": "llm"
+        }
+      ]
+    }
+  ],
+  "heuristics": [
+    {
+      "key": "flow",
+      "name_vi": "Luồng người dùng",
+      "name_en": "Flow & Navigation",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "component",
+      "name_vi": "Thành phần",
+      "name_en": "Component & DDL",
+      "score": 75,
+      "gap_count": 3
+    },
+    {
+      "key": "visual",
+      "name_vi": "Thiết kế trực quan",
+      "name_en": "Visual Design",
+      "score": 78,
+      "gap_count": 4
+    },
+    {
+      "key": "content",
+      "name_vi": "Nội dung",
+      "name_en": "Content & Copy",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "a11y",
+      "name_vi": "Tiếp cận",
+      "name_en": "Accessibility",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "trust",
+      "name_vi": "Tin cậy & Bảo mật",
+      "name_en": "Trust & Security",
+      "score": 100,
+      "gap_count": 0
+    }
+  ],
+  "_score_discrepancies": [
+    {
+      "screen_id": "SCR-CB-001",
+      "field": "pass_count",
+      "claimed": 0,
+      "actual": 14
+    },
+    {
+      "screen_id": "SCR-CB-001",
+      "field": "gap_count",
+      "claimed": 0,
+      "actual": 2
+    },
+    {
+      "screen_id": "SCR-CB-001",
+      "field": "score",
+      "claimed": "0%",
+      "actual": "88%"
+    },
+    {
+      "screen_id": "SCR-CB-002",
+      "field": "pass_count",
+      "claimed": 0,
+      "actual": 7
+    },
+    {
+      "screen_id": "SCR-CB-002",
+      "field": "gap_count",
+      "claimed": 0,
+      "actual": 3
+    },
+    {
+      "screen_id": "SCR-CB-002",
+      "field": "score",
+      "claimed": "0%",
+      "actual": "70%"
+    },
+    {
+      "screen_id": "SCR-CB-003",
+      "field": "pass_count",
+      "claimed": 0,
+      "actual": 8
+    },
+    {
+      "screen_id": "SCR-CB-003",
+      "field": "gap_count",
+      "claimed": 0,
+      "actual": 2
+    },
+    {
+      "screen_id": "SCR-CB-003",
+      "field": "score",
+      "claimed": "0%",
+      "actual": "80%"
+    }
+  ],
+  "_ref_enrichment": {
+    "gap_enriched": 3,
+    "uxp_enriched": 2,
+    "sources": [
+      "enriched-data.json",
+      "official-urls.md"
+    ]
+  }
+}

@@ -1,0 +1,149 @@
+# 📊 Co-opBank UX Audit — Executive Summary
+
+> **Date:** 30/03/2026 · **Scope:** 28 modules · **Coverage:** 256/256 items enriched (100%)
+
+---
+
+## 🔢 Overview
+
+| Metric | Value |
+|--------|-------|
+| **Modules audited** | 28 |
+| **Total findings** | 256 |
+| **Critical** | 61 (24%) |
+| **Major** | 116 (45%) |
+| **Minor** | 79 (31%) |
+| **Pitch decks generated** | 28 HTML files |
+| **LLM enrichment coverage** | 100% |
+
+---
+
+## 🔴 Top 6 Systemic Patterns (Cross-Module)
+
+Các patterns dưới đây xuất hiện **xuyên suốt nhiều modules**, cho thấy đây là **platform-level issues** cần giải quyết ở tầng design system, không phải fix từng màn hình.
+
+### 1. OTP UX Gaps — 29 findings
+
+| Affected modules | ~15+ modules |
+|---|---|
+| **What's missing** | Countdown timer, resend button, error state (red cells), auto-focus |
+| **DDL spec violated** | `otp-input-1`: `canResend` + `timeLeft` states |
+| **Risk** | User stuck if SMS delayed → cannot complete transaction → support call |
+| **Fix scope** | **Platform component** — fix OTP bottom sheet component once → propagates to all flows |
+
+### 2. PII / Account Number Masking — 23 findings
+
+| Affected modules | Chuyển tiền, Tiết kiệm, Tra soát, Voice OTT, Tài khoản |
+|---|---|
+| **What's missing** | Account numbers displayed in full (e.g. `1212390002122`) |
+| **Standard** | Mask: `1212***2122` with tap-to-reveal toggle |
+| **Risk** | PII exposure on screenshots, screen-sharing, over-shoulder viewing |
+| **Fix scope** | **Data formatting utility** — centralized masking function across all account display components |
+
+### 3. Touch Target Violations — 16 findings
+
+| Affected elements | Toggles (24px), calendar icons, close buttons, links |
+|---|---|
+| **Standard violated** | Fitts's Law: 44px minimum · WCAG 2.5.8 |
+| **Risk** | Motor disability users excluded · Accidental mis-taps |
+| **Fix scope** | **Design tokens** — `TOKEN:touch.target.min=44px` enforcement in DDL |
+
+### 4. Loading / Processing Feedback Missing — 12 findings
+
+| Affected flows | Submit OTP, search, save settings, fetch lists |
+|---|---|
+| **Standard violated** | Doherty Threshold (400ms), Nielsen #1 |
+| **Risk** | Double-submit → duplicate API calls · User uncertainty |
+| **Fix scope** | **Button component** — loading state variant in button/CTA component |
+
+### 5. Destructive Actions Unprotected — 11 findings
+
+| Examples | Xóa tài khoản, xóa danh bạ, huỷ dịch vụ, xóa tất cả thông báo |
+|---|---|
+| **What's missing** | Confirmation dialog · Destructive color (red) · Undo snackbar |
+| **Standard violated** | Nielsen #5 — Error Prevention |
+| **Fix scope** | **Dialog component** — destructive variant with red CTA + undo pattern |
+
+### 6. Empty State Incomplete — 11 findings
+
+| Current state | Text-only: "Không có kết quả" |
+|---|---|
+| **DDL spec requires** | Icon + title + description + optional CTA |
+| **Standard violated** | Nielsen #6, DDL `empty-state-1` spec |
+| **Fix scope** | **Empty state component** — standardize across all list/search views |
+
+---
+
+## 📈 Heuristic Citation Distribution
+
+```
+Nielsen #1 (Visibility of System Status)     ████████████████████ 59
+Nielsen #5 (Error Prevention)                 █████████████░░░░░░░ 40
+WCAG (Accessibility standards)                █████████████░░░░░░░ 39
+Nielsen #6 (Recognition > Recall)             ███████████░░░░░░░░░ 34
+Nielsen #2 (Match Real World)                 ████████░░░░░░░░░░░░ 25
+Nielsen #4 (Consistency & Standards)          ████████░░░░░░░░░░░░ 25
+Nielsen #9 (Error Recovery)                   ████████░░░░░░░░░░░░ 23
+Fitts's Law (Touch targets)                   ███████░░░░░░░░░░░░░ 22
+Nielsen #7 (Flexibility & Efficiency)         ██████░░░░░░░░░░░░░░ 19
+Doherty Threshold (Response time)             █████░░░░░░░░░░░░░░░ 16
+Nielsen #3 (User Control & Freedom)           █████░░░░░░░░░░░░░░░ 15
+Peak-End Rule                                 ████░░░░░░░░░░░░░░░░ 13
+Nielsen #8 (Aesthetic & Minimalist)           ████░░░░░░░░░░░░░░░░ 13
+Hick's Law (Choice complexity)                ████░░░░░░░░░░░░░░░░ 13
+Miller's Law (Working memory)                 ████░░░░░░░░░░░░░░░░ 13
+```
+
+**Top 3 takeaway:** App cần cải thiện nhất về **(1) feedback transparency**, **(2) error prevention**, và **(3) accessibility compliance**.
+
+---
+
+## 🏆 Top 10 Modules by Finding Count
+
+| # | Module | Total | Critical | Major | Minor |
+|---|--------|-------|----------|-------|-------|
+| 1 | tiet-kiem--tong-quan | 24 | 6 | 12 | 6 |
+| 2 | tai-khoan--vay | 22 | 5 | 10 | 7 |
+| 3 | tiet-kiem--thay-doi-tich-luy | 15 | 3 | 5 | 7 |
+| 4 | chuyen-tien--danh-ba-thu-huong | 12 | 4 | 5 | 3 |
+| 5 | dich-vu-the--quan-ly-the | 12 | 3 | 7 | 2 |
+| 6 | dich-vu-the--thanh-toan-du-no | 12 | 4 | 6 | 2 |
+| 7 | login-home--dang-nhap-bao-loi | 12 | 2 | 6 | 4 |
+| 8 | tiet-kiem--thay-doi-tat-toan | 12 | 3 | 5 | 4 |
+| 9 | thanh-toan | 11 | 2 | 5 | 4 |
+| 10 | tiet-kiem--mo-tai-khoan-online | 10 | 3 | 4 | 3 |
+
+---
+
+## 🎯 Recommended Fix Priority
+
+### Phase 1 — Platform Components (Week 1-2)
+Fix **once**, propagates to **all modules**:
+1. ✅ **OTP component** — timer + resend + error + auto-focus
+2. ✅ **Account masking utility** — centralized PII formatting
+3. ✅ **Button loading state** — disabled + spinner variant
+
+### Phase 2 — Design Token Enforcement (Week 3)
+4. ✅ **Touch target minimum** — 44px token enforcement
+5. ✅ **Destructive dialog variant** — red CTA + undo snackbar
+6. ✅ **Empty state component** — icon + title + description + CTA
+
+### Phase 3 — Module-Specific Fixes (Week 4+)
+7. Inline validation per module
+8. Copy/content corrections (typos, ASCII Vietnamese)
+9. Accessibility fixes (contrast, ARIA labels)
+
+---
+
+## 📁 Deliverables
+
+| Asset | Count | Location |
+|-------|-------|----------|
+| Pitch deck HTML | 28 | `COOPBANK/final/*/--pitch-deck.html` |
+| Report data JSON | 28 | `COOPBANK/final/*/report-data.json` |
+| LLM enrichment JSON | 28 | `COOPBANK/final/*/llm-enriched.json` |
+| Manifest JSON | 25 | `COOPBANK/final/*/llm-manifest.json` |
+
+---
+
+*Generated by UX Audit Pipeline · Co-opBank Mobile Banking · March 2026*

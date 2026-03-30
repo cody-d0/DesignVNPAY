@@ -1,0 +1,412 @@
+[
+  {
+    "id": "UXP-001",
+    "hiện_trạng": "OTP bottom sheet thiếu 'Gửi lại OTP' button và countdown timer — người dùng stuck nếu SMS delayed. Vi phạm DDL otp-input-1 spec.",
+    "tác_động": "Voice OTT registration = account-level change. Failed OTP → cannot register → completely blocked from service.",
+    "nguyên_tắc": "Nielsen #1: Timer + resend bắt buộc. DDL spec: canResend + timeLeft states bắt buộc.",
+    "đề_xuất_steps": [
+      "Countdown: 02:00",
+      "Resend after 30s",
+      "trạng thái lỗi: red cells",
+      "Auto-focus first cell"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed about what is going on.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Precisely indicate the problem.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-002",
+    "hiện_trạng": "'Xoá tất cả thông báo' — destructive action hiển thị trực tiếp không có xác nhận dialog.",
+    "tác_động": "One-tap 'delete all notifications' → irreversible data loss. All notification preferences wiped.",
+    "nguyên_tắc": "Nielsen #5: Destructive bulk actions MUST have xác nhận. 'Xóa tất cả X thông báo?'",
+    "đề_xuất_steps": [
+      "xác nhận: 'Bạn có chắc muốn xoá tất cả thông báo?'",
+      "Primary: 'Giữ lại', Secondary: 'Xoá tất cả'"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "The best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-003",
+    "hiện_trạng": "Time fields thiếu trạng thái lỗi khi 'Từ' > 'Đến' — invalid range not validated inline.",
+    "tác_động": "Invalid time range submitted → server error or unexpected scheduling behavior.",
+    "nguyên_tắc": "Nielsen #5: ngăn chặn invalid range. Inline: 'Giờ bắt đầu phải trước giờ kết thúc'.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent problems.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm inline error text đỏ dưới time fields: \"Thời gian bắt đầu phải trước thời gian kết thúc\" + red border cho input",
+      "Thêm inline validation realtime — không chờ người dùng submit mới báo lỗi",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-004",
+    "hiện_trạng": "Account picker thiếu max-selection indicator — người dùng doesn't know if 3/10 or 3/3 accounts selected.",
+    "tác_động": "No max limit shown → người dùng selects all accounts → may not realize Voice OTT applies to all. Selection count: '3/5 selected'.",
+    "nguyên_tắc": "Hick's Law: Multi-select picker needs counter. Nielsen #1: Selection status.",
+    "references": [
+      {
+        "name": "Hick's Law",
+        "url": "https://lawsofux.com/hicks-law/",
+        "quote": "Decision time increases with number and complexity of choices.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm subtitle \"Tối đa X tài khoản\" hoặc counter \"Đã chọn 2/5\" trong account picker bottom sheet",
+      "Clear visual differentiation: header đổi màu + contextual actions thay thế default toolbar",
+      "Exit path rõ ràng: \"Hủy chọn\" button hoặc back gesture → trở về normal mode"
+    ]
+  },
+  {
+    "id": "UXP-005",
+    "hiện_trạng": "Thiếu loading/processing state sau submit OTP — no feedback during registration process.",
+    "tác_động": "OTP submitted → blank → người dùng taps again → potential duplicate registration calls.",
+    "nguyên_tắc": "Doherty Threshold: Processing indicator within 400ms.",
+    "references": [
+      {
+        "name": "Doherty Threshold",
+        "url": "https://lawsofux.com/doherty-threshold/",
+        "quote": "Productivity soars when neither has to wait.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm loading spinner + text \"Đang xử lý...\" overlay sau nhấn \"Xác nhận\" OTP",
+      "xác minh implementation trên cả iOS và Android — đảm bảo nhất quán",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-006",
+    "hiện_trạng": "Success popup chỉ generic message + 'Đóng'. Thiếu: TK registered, time window, and secondary actions.",
+    "tác_động": "người dùng registered Voice OTT but doesn't have xác nhận of WHAT was registered. No reference for future.",
+    "nguyên_tắc": "Nielsen #1: trạng thái thành công must xác nhận what happened. Peak-End: positive final impression.",
+    "đề_xuất_steps": [
+      "hiển thị: registered accounts + time window",
+      "CTA: 'Xem cài đặt' + 'Về trang chủ'"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep informed.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Peak-End Rule",
+        "url": "https://lawsofux.com/peak-end-rule/",
+        "quote": "People judge experiences by peaks and ends.",
+        "source": "Laws of UX"
+      }
+    ]
+  },
+  {
+    "id": "UXP-007",
+    "hiện_trạng": "Toggle 'Nhận thông báo BĐSD' height 24px — dưới 44px minimum touch target. khả năng tiếp cận fail.",
+    "tác_động": "24px toggle = 55% smaller than minimum. Mistouch risk extremely high. người dùng with motor disabilities severely impacted.",
+    "nguyên_tắc": "Fitts's Law: 44px minimum. WCAG 2.5.8: Target size.",
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng toggle tap area tối thiểu 44×44px bằng padding invisible hoặc resizing component",
+      "Audit toàn bộ interactive elements trong màn hình — đảm bảo tất cả ≥ 44×44px",
+      "Test trên thiết bị thực với ngón tay — xác minh không bị mis-tap adjacent elements"
+    ]
+  },
+  {
+    "id": "UXP-008",
+    "hiện_trạng": "Account numbers '212312312313', '312312312313' hiển thị full không masked — PII exposure.",
+    "tác_động": "Multiple account numbers visible on registration screen. Must mask by default.",
+    "nguyên_tắc": "Nielsen #5: Default masking for all account numbers.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent problems.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Mask account numbers: \"2123***2313\" (hiển thị first 4 + last 4, mask middle)",
+      "Thêm toggle eye icon cho phép người dùng reveal/ẩn khi cần",
+      "Mặc định ở masked state khi load — copy button copies full value without revealing on screen"
+    ]
+  },
+  {
+    "id": "UXP-009",
+    "hiện_trạng": "Bottom sheet menu items text-only — thiếu icons phân biệt. Reduced khả năng khám phá.",
+    "tác_động": "Text-only menu items = slower scanning. Icons cung cấp pre-attentive visual cues.",
+    "nguyên_tắc": "Nielsen #6: Icons + text = dual-coding for better recognition.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize memory load.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm icon prefix cho mỗi menu item (settings, share, manage, delete)",
+      "Highlight active state rõ ràng (bold + underline hoặc accent color)",
+      "Support swipe gesture giữa các tab trên mobile"
+    ]
+  },
+  {
+    "id": "UXP-010",
+    "hiện_trạng": "Success message generic — no TK number or time window xác nhận in message body.",
+    "tác_động": "Generic 'Đăng ký thành công' without specifics → người dùng không thể xác minh correct configuration.",
+    "nguyên_tắc": "Nielsen #1: xác nhận what was done, not just that something was done.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm: \"TK: 2123xxx2313 · Thời gian: 10:00–23:15\" trong success popup",
+      "Thêm phản hồi trực quan tức thì cho mọi người dùng action trong flow này",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-DKV-001",
+    "hiện_trạng": "Menu items text-only, no icons.",
+    "tác_động": "Reduced scannability.",
+    "nguyên_tắc": "Nielsen #6.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #6. để cải thiện trải nghiệm",
+      "Khắc phục: Reduced scannability.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-DKV-001",
+    "hiện_trạng": "'Xoá tất cả' no xác nhận.",
+    "tác_động": "Destructive without guard.",
+    "nguyên_tắc": "Nielsen #5.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#2@SCR-DKV-002",
+    "hiện_trạng": "Time field no trạng thái lỗi for invalid range.",
+    "tác_động": "Invalid range possible.",
+    "nguyên_tắc": "Nielsen #5.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#10@SCR-DKV-002",
+    "hiện_trạng": "Account picker tải nhận thức.",
+    "tác_động": "Too many options without counter.",
+    "nguyên_tắc": "Hick's Law.",
+    "references": [
+      {
+        "name": "Hick's Law",
+        "url": "https://lawsofux.com/hicks-law/",
+        "quote": "Decision time increases.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Hick's Law. để cải thiện trải nghiệm",
+      "Khắc phục: Too many options without counter.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-DKV-003",
+    "hiện_trạng": "OTP no resend button.",
+    "tác_động": "người dùng stuck.",
+    "nguyên_tắc": "Nielsen #1.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#2@SCR-DKV-003",
+    "hiện_trạng": "OTP no countdown timer.",
+    "tác_động": "No time feedback.",
+    "nguyên_tắc": "Nielsen #1.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-DKV-003",
+    "hiện_trạng": "No loading after OTP submit.",
+    "tác_động": "Double-submit risk.",
+    "nguyên_tắc": "Doherty Threshold.",
+    "references": [
+      {
+        "name": "Doherty Threshold",
+        "url": "https://lawsofux.com/doherty-threshold/",
+        "quote": "Neither waits.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Thêm trạng thái loading với skeleton hoặc spinner kèm message giải thích",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#8@SCR-DKV-003",
+    "hiện_trạng": "Success popup generic — weak Peak-End.",
+    "tác_động": "Bland final impression.",
+    "nguyên_tắc": "Peak-End Rule.",
+    "references": [
+      {
+        "name": "Peak-End Rule",
+        "url": "https://lawsofux.com/peak-end-rule/",
+        "quote": "Peaks and ends.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Peak-End Rule. để cải thiện trải nghiệm",
+      "Khắc phục: Bland final impression.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#9@SCR-DKV-003",
+    "hiện_trạng": "Success thiếu giao dịch details.",
+    "tác_động": "Can't xác minh.",
+    "nguyên_tắc": "Nielsen #1.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung giao dịch details vào thiết kế màn hình",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-DKV-004",
+    "hiện_trạng": "Toggle 24px height — below 44px.",
+    "tác_động": "Touch target violation.",
+    "nguyên_tắc": "Fitts's Law.",
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "Target size.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng kích thước vùng chạm tối thiểu 44×44dp theo chuẩn WCAG 2.5.5",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-DKV-004",
+    "hiện_trạng": "Account numbers not masked.",
+    "tác_động": "PII exposed.",
+    "nguyên_tắc": "Nielsen #5.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  }
+]

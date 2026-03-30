@@ -1,0 +1,799 @@
+{
+  "meta": {
+    "client_name": "Co-opBank",
+    "product_name": "Co-opBank Mobile Banking",
+    "module_name": "Chuyển tiền nhanh 24/7 qua tài khoản",
+    "domain": "Banking",
+    "section": "",
+    "module_dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/chuyen-tien--qua-tai-khoan"
+  },
+  "stats": {
+    "screen_count": 3,
+    "check_count": 50,
+    "gap_count": 9,
+    "pass_count": 41,
+    "proposal_count": 8,
+    "overall_score": 82,
+    "overall_score_color": "#15803d",
+    "overall_score_offset": 58,
+    "overall_weighted_score": 90,
+    "severity_counts": {
+      "critical": 2,
+      "major": 3,
+      "minor": 3
+    }
+  },
+  "screens": [
+    {
+      "id": "SCR-CB-001",
+      "name": "Chuyển tiền nhanh 24/7 qua tài khoản › Form nhập thông tin (`SCR-CB-001`)",
+      "type": "form",
+      "score": 81,
+      "score_color": "#15803d",
+      "score_offset": 30,
+      "weighted_score": 89,
+      "gap_count": 4,
+      "artboard_count": 6
+    },
+    {
+      "id": "SCR-CB-002",
+      "name": "Chuyển tiền nhanh 24/7 qua tài khoản › Xác nhận giao dịch (`SCR-CB-002`)",
+      "type": "confirm",
+      "score": 82,
+      "score_color": "#15803d",
+      "score_offset": 28,
+      "weighted_score": 90,
+      "gap_count": 3,
+      "artboard_count": 2
+    },
+    {
+      "id": "SCR-CB-003",
+      "name": "Chuyển tiền nhanh 24/7 qua tài khoản › Kết quả giao dịch (`SCR-CB-003`)",
+      "type": "result",
+      "score": 83,
+      "score_color": "#15803d",
+      "score_offset": 27,
+      "weighted_score": 92,
+      "gap_count": 2,
+      "artboard_count": 1
+    }
+  ],
+  "uxps": [
+    {
+      "id": "UXP-001",
+      "severity": "Critical",
+      "screen_tag": "Chuyển tiền nhanh 24/7 qua tài khoản › Xác nhận giao dịch",
+      "problem": "Giao diện xác thực OTP (ảnh chuyen-tien-nhanh-247-qua-tai-khoan-5",
+      "gap_ref": "Check #13, Check #14",
+      "ddl_ref": "COMP:otp-input-1 (states: canResend, timeLeft, activeIndex) · Law:Doherty Threshold — phản hồi trong 400ms",
+      "solution": "Thêm nút \"Gửi lại mã OTP\" (tắt trong 60 giây đầu); Thêm bộ đếm ngược \"Gửi lại sau 00:45\"; Highlight ô đang nhập với viền focus (activeIndex state)",
+      "screenshot_path": "ui/chuyen-tien-nhanh-247-qua-tai-khoan-4.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Doherty Threshold",
+          "url": "https://lawsofux.com/doherty-threshold/",
+          "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "Keep users informed.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Chuyển tiền qua TK = high-value. OTP fail → tiền không gửi được, người dùng stuck.",
+      "heuristic": "Nielsen #1: Timer + resend bắt buộc cho OTP.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "OTP xác thực thiếu countdown timer, resend button, trạng thái lỗi — vi phạm DDL otp-input-1 spec.",
+      "solution_steps": [
+        "Countdown: 02:00",
+        "Resend after 30s",
+        "trạng thái lỗi: red cells",
+        "Auto-focus"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-002",
+      "severity": "Critical",
+      "screen_tag": "Chuyển tiền nhanh 24/7 qua tài khoản › Form nhập thông tin",
+      "problem": "Toàn bộ 6 artboards của form nhập (ảnh chuyen-tien-nhanh-247-qua-tai-khoan",
+      "gap_ref": "Check #5",
+      "ddl_ref": "COMP:text-input-1 (variant: error state with destructive border), TOKEN:base.destructive = #dc2626 · Law:UXG-187 (Error Messages — clear, specific error feedback)",
+      "solution": "Thêm variant error state cho tất cả input fields (viền đỏ + thông báo lỗi cụ thể); Xác thực real-time: số tài khoản (tối thiểu 6 chữ số), số tiền (...",
+      "screenshot_path": "ui/chuyen-tien-nhanh-247-qua-tai-khoan-3.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Precisely indicate the problem.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "người dùng điền sai → submit → error popup → quay lại sửa → submit lại. Real-time validation = fix immediately.",
+      "heuristic": "Nielsen #9: Inline validation per field. WCAG 3.3.1: Error at field level.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "6 artboards form nhập — không có inline validation. Errors chỉ hiển thị khi submit.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm variant trạng thái lỗi cho tất cả input fields (viền đỏ + thông báo lỗi cụ thể)",
+        "Xác thực real-time: số tài khoản (tối thiểu 6 chữ số), số tiền (..."
+      ]
+    },
+    {
+      "id": "UXP-003",
+      "severity": "Major",
+      "screen_tag": "Chuyển tiền nhanh 24/7 qua tài khoản › Form nhập thông tin",
+      "problem": "Trường \"Số tiền\" trên form trống (ảnh chuyen-tien-nhanh-247-qua-tai-khoan",
+      "gap_ref": "Check #8",
+      "ddl_ref": "UXG-165 (Input Validation — real-time feedback)",
+      "solution": "Hiển thị dòng \"Hai mươi triệu đồng\" real-time ngay dưới ô nhập khi đang gõ; Cập nhật real-time khi người dùng thay đổi con số; --",
+      "screenshot_path": "ui/chuyen-tien-nhanh-247-qua-tai-khoan.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+          "quote": "Labels provided when content requires user input.",
+          "source": "W3C"
+        }
+      ],
+      "user_impact": "người dùng không biết: number only? Có chấm phân cách? Min/max bao nhiêu? Helper text: '50,000 — 500,000,000 VND'.",
+      "heuristic": "WCAG 3.3.2: Input instructions. Placeholder + min/max helper.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Trường 'Số tiền' trống — không có placeholder, không có format hint (VND, min/max).",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Hiển thị dòng \"Hai mươi triệu đồng\" real-time ngay dưới ô nhập khi đang gõ",
+        "Cập nhật real-time khi người dùng thay đổi con số",
+        "--"
+      ]
+    },
+    {
+      "id": "UXP-004",
+      "severity": "Major",
+      "screen_tag": "Chuyển tiền nhanh 24/7 qua tài khoản › Xác nhận giao dịch",
+      "problem": "Dropdown \"Chọn phương thức xác thực\" hiển thị \"SMS OTP\" là lựa chọn duy nhất (ảnh chuyen-tien-nhanh-247-qua-tai-khoan-4",
+      "gap_ref": "Check #8",
+      "ddl_ref": "UXG-183 (ARIA Labels) · Law:Hick's Law — unnecessary decision point",
+      "solution": "Nếu chỉ có 1 phương thức: hiển thị static text \"Xác thực bằng SMS OTP\"; Nếu từ 2+ phương thức: giữ dropdown; --",
+      "screenshot_path": "ui/chuyen-tien-nhanh-247-qua-tai-khoan-4.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Hick's Law",
+          "url": "https://lawsofux.com/hicks-law/",
+          "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "1-option dropdown = không cần thiết interaction. hiển thị inline: 'Xác thực: SMS OTP'. Dropdown justified for 2+ options.",
+      "heuristic": "Hick's Law: 1 option doesn't need selection UI.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Hick's Law",
+        "url": "https://lawsofux.com/hicks-law/",
+        "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+        "source": "Laws of UX"
+      },
+      "hiện_trạng": "Dropdown 'Chọn phương thức xác thực' hiển thị SMS OTP là lựa chọn duy nhất — dropdown cho 1 option = overhead.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Nếu chỉ có 1 phương thức: hiển thị static text \"Xác thực bằng SMS OTP\"",
+        "Nếu từ 2+ phương thức: giữ dropdown",
+        "--"
+      ]
+    },
+    {
+      "id": "UXP-005",
+      "severity": "Major",
+      "screen_tag": "Chuyển tiền nhanh 24/7 qua tài khoản › Kết quả giao dịch",
+      "problem": "Biên nhận kết quả (ảnh chuyen-tien-nhanh-247-qua-tai-khoan-6",
+      "gap_ref": "Check #6",
+      "ddl_ref": "UXG-235 (Disclaimer/Transparency), COMP:receipt-preview-1 (children: totals section) · Law:Peak-End Rule — incomplete receipt",
+      "solution": "Thêm dòng \"Phí giao dịch: 2,000 VND\" trên biên nhận kết quả; Đặt sau ngân hàng thụ hưởng, trước mã giao dịch; --",
+      "screenshot_path": "ui/chuyen-tien-nhanh-247-qua-tai-khoan-6.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Peak-End Rule",
+          "url": "https://lawsofux.com/peak-end-rule/",
+          "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+          "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+          "quote": "Shortcuts speed up interaction.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "người dùng phải screenshot biên lai = thiếu chuyên nghiệp. PDF download + share = ngân hàng essential.",
+      "heuristic": "Nielsen #7: Export actions bắt buộc for receipts.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Biên nhận kết quả thiếu Share/Print/Download actions — DDL biên lai-preview-1 spec requires export CTAs.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm dòng \"Phí giao dịch: 2,000 VND\" trên biên nhận kết quả",
+        "Đặt sau ngân hàng thụ hưởng, trước mã giao dịch",
+        "--"
+      ]
+    },
+    {
+      "id": "UXP-006",
+      "severity": "Minor",
+      "screen_tag": "Chuyển tiền nhanh 24/7 qua tài khoản › Form nhập thông tin",
+      "problem": "Nội dung giao dịch tự điền \"NGUYEN HOANG KHAI chuyen tien\" (ảnh chuyen-tien-nhanh-247-qua-tai-khoan",
+      "gap_ref": "Check #14",
+      "ddl_ref": "UXG-181 (Alt Text — meaningful labels)",
+      "solution": "Thêm nhãn \"[Tự động]\" hoặc helper text \"Nội dung có thể chỉnh sửa\"; --",
+      "screenshot_path": "ui/chuyen-tien-nhanh-247-qua-tai-khoan-3.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Nielsen #2 — Match Between System and Real World",
+          "url": "https://www.nngroup.com/articles/match-system-real-world/",
+          "quote": "Speak the users' language.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "ASCII text on Vietnamese ngân hàng = thiếu chuyên nghiệp. 'chuyen tien' → 'chuyển tiền'. Name capitalization không nhất quán.",
+      "heuristic": "Nielsen #2: Proper Vietnamese diacritics. Match real-world language.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Nội dung giao dịch auto-fill 'NGUYEN HOANG KHAI chuyen tien' — thiếu dấu tiếng Việt, all-caps name.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm nhãn \"[Tự động]\" hoặc helper text \"Nội dung có thể chỉnh sửa\"",
+        "--"
+      ]
+    },
+    {
+      "id": "UXP-007",
+      "severity": "Minor",
+      "screen_tag": "Chuyển tiền nhanh 24/7 qua tài khoản › Kết quả giao dịch",
+      "problem": "Tên người thụ hưởng hiển thị \"NGUYEN TUNG\" (viết hoa) trên cả xác nhận (ảnh -4",
+      "gap_ref": "Check #11",
+      "ddl_ref": "UXG-165 (Data consistency across screens)",
+      "solution": "Đảm bảo tên người thụ hưởng đồng nhất xuyên suốt flow (từ form → confirm → result); Chọn format chuẩn (viết hoa hoặc Title Case); --",
+      "screenshot_path": "ui/chuyen-tien-nhanh-247-qua-tai-khoan-6.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #2 — Match Between System and Real World",
+          "url": "https://www.nngroup.com/articles/match-system-real-world/",
+          "quote": "Speak the users' language.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "ALL CAPS names = khó đọc, tạo cảm giác máy móc. Title Case: 'Nguyen Tung' = natural, chuyên nghiệp.",
+      "heuristic": "Nielsen #2: Natural language formatting. Title Case for names.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Tên người thụ hưởng 'NGUYEN TUNG' viết hoa trên cả xác nhận và biên nhận — khó đọc, không natural.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Đảm bảo tên người thụ hưởng đồng nhất xuyên suốt flow (từ form → xác nhận → result)",
+        "Chọn format chuẩn (viết hoa hoặc Title Case)",
+        "--"
+      ]
+    },
+    {
+      "id": "UXP-008",
+      "severity": "Minor",
+      "screen_tag": "Chuyển tiền nhanh 24/7 qua tài khoản › Form nhập thông tin",
+      "problem": "Trường thụ hưởng có placeholder ngắn (ảnh chuyen-tien-nhanh-247-qua-tai-khoan",
+      "gap_ref": "Check #17",
+      "ddl_ref": "UXG-186 (Form Labels — clear descriptive labels), COMP:text-input-1 (prop: helperText)",
+      "solution": "Thêm helper text: \"Nhập số tài khoản, số thẻ hoặc số điện thoại người nhận\"; --",
+      "screenshot_path": "ui/chuyen-tien-nhanh-247-qua-tai-khoan-2.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+          "quote": "Labels provided.",
+          "source": "W3C"
+        }
+      ],
+      "user_impact": "Ambiguous input = người dùng guesses. Placeholder should clarify: số tài khoản or name? What format?",
+      "heuristic": "WCAG 3.3.2: Descriptive placeholder text.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Trường thụ hưởng placeholder ngắn — thiếu hint format: 'Nhập số tài khoản hoặc tên người nhận'.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm helper text: \"Nhập số tài khoản, số thẻ hoặc số điện thoại người nhận\"",
+        "--"
+      ]
+    }
+  ],
+  "gaps_by_screen": [
+    {
+      "screen_id": "SCR-CB-001",
+      "screen_name": "Chuyển tiền nhanh 24/7 qua tài khoản › Form nhập thông tin (`SCR-CB-001`)",
+      "screen_type": "form",
+      "gaps": [
+        {
+          "num": 5,
+          "title": "Error state for invalid input",
+          "ref": "COMP:text-input-1",
+          "severity": "Minor",
+          "user_impact": "No error variant in any artboards. UXP-002 — vi phạm Flow & Navigation",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "No error variant in any artboards. UXP-002",
+          "screenshot": "chuyen-tien-nhanh-247-qua-tai-khoan-3.png",
+          "screen_id": "SCR-CB-001",
+          "screen_name": "Chuyển tiền nhanh 24/7 qua tài khoản › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/chuyen-tien-nhanh-247-qua-tai-khoan-3.png",
+          "_img_tier": 4,
+          "description": "No error variant in any artboards. UXP-002",
+          "ddl_evidence": "COMP:text-input-1",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "WCAG 3.3.1 — Error Identification",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html",
+              "quote": "Item in error identified.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No inline error state for invalid input.",
+          "tác_động": "User can't see which field is wrong.",
+          "nguyên_tắc": "WCAG 3.3.1.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 8,
+          "title": "Amount text on empty form",
+          "ref": "✅",
+          "severity": "Minor",
+          "user_impact": "No amount-in-words on empty form state. UXP-003 — vi phạm Flow & Navigation",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "No amount-in-words on empty form state. UXP-003",
+          "screenshot": "chuyen-tien-nhanh-247-qua-tai-khoan.png",
+          "screen_id": "SCR-CB-001",
+          "screen_name": "Chuyển tiền nhanh 24/7 qua tài khoản › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/chuyen-tien-nhanh-247-qua-tai-khoan.png",
+          "_img_tier": 4,
+          "description": "No amount-in-words on empty form state. UXP-003",
+          "ddl_evidence": "✅",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "WCAG 3.3.2 — Labels or Instructions",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+              "quote": "Labels provided.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No amount-in-words on empty form.",
+          "tác_động": "No input format hint.",
+          "nguyên_tắc": "WCAG 3.3.2.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 14,
+          "title": "Auto-fill content label",
+          "ref": "✅",
+          "severity": "Minor",
+          "user_impact": "Auto-fill text without \"[Tự động]\" label. UXP-006 — vi phạm Flow & Navigation",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "Auto-fill text without \"[Tự động]\" label. UXP-006",
+          "screenshot": "chuyen-tien-nhanh-247-qua-tai-khoan.png",
+          "screen_id": "SCR-CB-001",
+          "screen_name": "Chuyển tiền nhanh 24/7 qua tài khoản › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/chuyen-tien-nhanh-247-qua-tai-khoan.png",
+          "_img_tier": 5,
+          "description": "Auto-fill text without \"[Tự động]\" label. UXP-006",
+          "ddl_evidence": "✅",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "Users' language.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+            "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+            "quote": "Shortcuts — hidden from novice users — may speed up the interaction for the expert user.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Auto-fill text without [Tự động] label.",
+          "tác_động": "User unsure if editable.",
+          "nguyên_tắc": "Nielsen #2.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 17,
+          "title": "Helper text for input fields",
+          "ref": "COMP:text-input-1",
+          "severity": "Minor",
+          "user_impact": "No helper text explaining input types. UXP-008 — vi phạm Flow & Navigation",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "No helper text explaining input types. UXP-008",
+          "screenshot": "chuyen-tien-nhanh-247-qua-tai-khoan.png",
+          "screen_id": "SCR-CB-001",
+          "screen_name": "Chuyển tiền nhanh 24/7 qua tài khoản › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/chuyen-tien-nhanh-247-qua-tai-khoan.png",
+          "_img_tier": 5,
+          "description": "No helper text explaining input types. UXP-008",
+          "ddl_evidence": "COMP:text-input-1",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "WCAG 3.3.2 — Labels or Instructions",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+              "quote": "Labels provided.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No helper text for input fields.",
+          "tác_động": "No format guidance.",
+          "nguyên_tắc": "WCAG 3.3.2.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-CB-002",
+      "screen_name": "Chuyển tiền nhanh 24/7 qua tài khoản › Xác nhận giao dịch (`SCR-CB-002`)",
+      "screen_type": "confirm",
+      "gaps": [
+        {
+          "num": 8,
+          "title": "Auth dropdown single option",
+          "ref": "✅",
+          "severity": "Minor",
+          "user_impact": "Dropdown for single option = unnecessary decision. UXP-004 — vi phạm Flow & Navigation",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "Dropdown for single option = unnecessary decision. UXP-004",
+          "screenshot": "chuyen-tien-nhanh-247-qua-tai-khoan-4.png",
+          "screen_id": "SCR-CB-002",
+          "screen_name": "Chuyển tiền nhanh 24/7 qua tài khoản › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/chuyen-tien-nhanh-247-qua-tai-khoan-4.png",
+          "_img_tier": 4,
+          "description": "Dropdown for single option = unnecessary decision. UXP-004",
+          "ddl_evidence": "✅",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Hick's Law",
+              "url": "https://lawsofux.com/hicks-law/",
+              "quote": "Decision time.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 1,
+          "hiện_trạng": "Dropdown for single option SMS OTP.",
+          "tác_động": "Unnecessary interaction.",
+          "nguyên_tắc": "Hick's Law.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 13,
+          "title": "OTP resend button",
+          "ref": "COMP",
+          "severity": "Minor",
+          "user_impact": "No resend button. UXP-001 — vi phạm Flow & Navigation",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "No resend button. UXP-001",
+          "screenshot": "chuyen-tien-nhanh-247-qua-tai-khoan-5.png",
+          "screen_id": "SCR-CB-002",
+          "screen_name": "Chuyển tiền nhanh 24/7 qua tài khoản › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/chuyen-tien-nhanh-247-qua-tai-khoan-5.png",
+          "_img_tier": 4,
+          "description": "No resend button. UXP-001",
+          "ddl_evidence": "COMP",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "hiện_trạng": "OTP no resend button.",
+          "tác_động": "User stuck.",
+          "nguyên_tắc": "Nielsen #1.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 14,
+          "title": "OTP countdown timer",
+          "ref": "COMP",
+          "severity": "Minor",
+          "user_impact": "No countdown timer. UXP-001 — vi phạm Flow & Navigation",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "No countdown timer. UXP-001",
+          "screenshot": "chuyen-tien-nhanh-247-qua-tai-khoan-5.png",
+          "screen_id": "SCR-CB-002",
+          "screen_name": "Chuyển tiền nhanh 24/7 qua tài khoản › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/chuyen-tien-nhanh-247-qua-tai-khoan-5.png",
+          "_img_tier": 4,
+          "description": "No countdown timer. UXP-001",
+          "ddl_evidence": "COMP",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "OTP no countdown timer.",
+          "tác_động": "No time feedback.",
+          "nguyên_tắc": "Nielsen #1.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-CB-003",
+      "screen_name": "Chuyển tiền nhanh 24/7 qua tài khoản › Kết quả giao dịch (`SCR-CB-003`)",
+      "screen_type": "result",
+      "gaps": [
+        {
+          "num": 6,
+          "title": "Fee on receipt",
+          "ref": "COMP:receipt-preview-1",
+          "severity": "Minor",
+          "user_impact": "Phí 2,000 VND present on confirm but missing from receipt. UXP-005 — vi phạm Flow & Navigation",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "Phí 2,000 VND present on confirm but missing from receipt. UXP-005",
+          "screenshot": "chuyen-tien-nhanh-247-qua-tai-khoan-6.png",
+          "screen_id": "SCR-CB-003",
+          "screen_name": "Chuyển tiền nhanh 24/7 qua tài khoản › Kết quả giao dịch",
+          "screen_type": "result",
+          "screenshot_path": "ui/chuyen-tien-nhanh-247-qua-tai-khoan-6.png",
+          "_img_tier": 5,
+          "description": "Phí 2,000 VND present on confirm but missing from receipt. UXP-005",
+          "ddl_evidence": "COMP:receipt-preview-1",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Consistency.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Fee on confirm but missing from receipt.",
+          "tác_động": "Inconsistent info.",
+          "nguyên_tắc": "Nielsen #4.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 11,
+          "title": "Name consistency",
+          "ref": "✅",
+          "severity": "Minor",
+          "user_impact": "\"NGUYEN TUNG\" matches confirm but differs from form \"NGUYEN HOANG HIEU\". UXP-007 — vi phạm Flow & Navigation",
+          "heuristic": "Flow & Navigation (Luồng người dùng)",
+          "evidence": "\"NGUYEN TUNG\" matches confirm but differs from form \"NGUYEN HOANG HIEU\". UXP-007",
+          "screenshot": "chuyen-tien-nhanh-247-qua-tai-khoan-6.png",
+          "screen_id": "SCR-CB-003",
+          "screen_name": "Chuyển tiền nhanh 24/7 qua tài khoản › Kết quả giao dịch",
+          "screen_type": "result",
+          "screenshot_path": "ui/chuyen-tien-nhanh-247-qua-tai-khoan-6.png",
+          "_img_tier": 5,
+          "description": "\"NGUYEN TUNG\" matches confirm but differs from form \"NGUYEN HOANG HIEU\". UXP-007",
+          "ddl_evidence": "✅",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Consistency.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Name differs between form and receipt.",
+          "tác_động": "Trust erosion.",
+          "nguyên_tắc": "Nielsen #4.",
+          "_enriched_by": "llm"
+        }
+      ]
+    }
+  ],
+  "heuristics": [
+    {
+      "key": "flow",
+      "name_vi": "Luồng người dùng",
+      "name_en": "Flow & Navigation",
+      "score": 82,
+      "gap_count": 9
+    },
+    {
+      "key": "component",
+      "name_vi": "Thành phần",
+      "name_en": "Component & DDL",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "visual",
+      "name_vi": "Thiết kế trực quan",
+      "name_en": "Visual Design",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "content",
+      "name_vi": "Nội dung",
+      "name_en": "Content & Copy",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "a11y",
+      "name_vi": "Tiếp cận",
+      "name_en": "Accessibility",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "trust",
+      "name_vi": "Tin cậy & Bảo mật",
+      "name_en": "Trust & Security",
+      "score": 100,
+      "gap_count": 0
+    }
+  ],
+  "_score_discrepancies": [
+    {
+      "screen_id": "SCR-CB-001",
+      "field": "pass_count",
+      "claimed": 0,
+      "actual": 17
+    },
+    {
+      "screen_id": "SCR-CB-001",
+      "field": "gap_count",
+      "claimed": 0,
+      "actual": 4
+    },
+    {
+      "screen_id": "SCR-CB-001",
+      "field": "score",
+      "claimed": "0%",
+      "actual": "81%"
+    },
+    {
+      "screen_id": "SCR-CB-002",
+      "field": "pass_count",
+      "claimed": 0,
+      "actual": 14
+    },
+    {
+      "screen_id": "SCR-CB-002",
+      "field": "gap_count",
+      "claimed": 0,
+      "actual": 3
+    },
+    {
+      "screen_id": "SCR-CB-002",
+      "field": "score",
+      "claimed": "0%",
+      "actual": "82%"
+    },
+    {
+      "screen_id": "SCR-CB-003",
+      "field": "pass_count",
+      "claimed": 0,
+      "actual": 10
+    },
+    {
+      "screen_id": "SCR-CB-003",
+      "field": "gap_count",
+      "claimed": 0,
+      "actual": 2
+    },
+    {
+      "screen_id": "SCR-CB-003",
+      "field": "score",
+      "claimed": "0%",
+      "actual": "83%"
+    }
+  ],
+  "_ref_enrichment": {
+    "gap_enriched": 0,
+    "uxp_enriched": 3,
+    "sources": [
+      "enriched-data.json",
+      "official-urls.md"
+    ]
+  }
+}

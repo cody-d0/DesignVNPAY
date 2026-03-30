@@ -1,0 +1,729 @@
+[
+  {
+    "id": "UXP-001",
+    "hiện_trạng": "TK nguồn '1212390002122' — 13 chữ số không mask, không separator trên dispute detail screens.",
+    "tác_động": "Full account PII on dispute screen = high-risk. Dispute screens often shown to others (bank staff, screenshots for reference).",
+    "nguyên_tắc": "Nielsen #5: Mask by default. '1212***2122'. Especially critical on screens shared for dispute resolution.",
+    "đề_xuất_steps": [
+      "Mask: '1212***2122'",
+      "Tap-to-reveal toggle",
+      "Copy masked version by default"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "The best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-002",
+    "hiện_trạng": "No trạng thái tải after pressing 'Tìm kiếm' — no feedback during search.",
+    "tác_động": "Large date range query may take seconds. No spinner → người dùng taps again → potential duplicate requests.",
+    "nguyên_tắc": "Doherty Threshold: Processing feedback within 400ms.",
+    "references": [
+      {
+        "name": "Doherty Threshold",
+        "url": "https://lawsofux.com/doherty-threshold/",
+        "quote": "Productivity soars when a computer and its users interact at a pace that ensures neither has to wait on the other.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Vị trí",
+      "xác minh implementation trên cả iOS và Android — đảm bảo nhất quán",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-003",
+    "hiện_trạng": "Validation error shown via popup 'Thông báo' only — no inline field-level errors. người dùng phải dismiss popup, remember which field was wrong.",
+    "tác_động": "Popup validation = bad UX. người dùng dismisses popup → forgets which field → tries giống nhau thing. Inline error next to field = immediate fix.",
+    "nguyên_tắc": "Nielsen #9: Inline errors at field level. WCAG 3.3.1: Error identified at item.",
+    "đề_xuất_steps": [
+      "Inline error text below each invalid field",
+      "Red border on error field",
+      "Scroll to first error with focus"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Precisely indicate the problem and constructively suggest a solution.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "WCAG 3.3.1 — Error Identification (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html",
+        "quote": "The item that is in error is identified.",
+        "source": "W3C"
+      }
+    ]
+  },
+  {
+    "id": "UXP-004",
+    "hiện_trạng": "Typo: 'Trang thái tra soát' — đúng: 'Trạng thái tra soát'. Thiếu chữ 'g'. Visible trên 2 artboards.",
+    "tác_động": "Repeated typo across screens → systematic QA gap. Financial app typo = trust erosion.",
+    "nguyên_tắc": "Nielsen #4: Text correctness across all instances. Systemic typo = no spell-check in design process.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words mean the same thing.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Vị trí",
+      "Kiểm tra consistency pattern này với các flow tương tự trong app",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-005",
+    "hiện_trạng": "trạng thái trống: text-only 'Không có kết quả tìm kiếm'. No icon, no description, no CTA.",
+    "tác_động": "DDL empty-state-1 requires icon + title + description + optional CTA. Current = minimal text.",
+    "nguyên_tắc": "Nielsen #6: trạng thái trống = guidance opportunity. DDL compliance bắt buộc.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize memory load.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Vị trí",
+      "Thêm illustration + message giải thích và CTA để người dùng bắt đầu",
+      "Differentiate giữa \"chưa có data\" vs \"đang loading\" vs \"lỗi load\""
+    ]
+  },
+  {
+    "id": "UXP-006",
+    "hiện_trạng": "3 status badges (Đã tiếp nhận, Nghi vấn, Đã xử lý) phân biệt chỉ bằng màu sắc — no icon or text pattern difference.",
+    "tác_động": "Color-only badges = inaccessible for color-blind người dùng (~8% male population). WCAG 1.4.1 violation.",
+    "nguyên_tắc": "WCAG 1.4.1: Color not the only visual means. thêm icons or text patterns per status.",
+    "đề_xuất_steps": [
+      "Icon per status: ✓ (Đã xử lý), ⏳ (Đã tiếp nhận), ⚠ (Nghi vấn)",
+      "Border pattern + icon + color = triple indicator"
+    ],
+    "references": [
+      {
+        "name": "WCAG 1.4.1 — Use of Color (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html",
+        "quote": "Color is not used as the only visual means of conveying information.",
+        "source": "W3C"
+      }
+    ]
+  },
+  {
+    "id": "UXP-007",
+    "hiện_trạng": "Link 'Chi tiết giao dịch ›' — text color normal, no underline, chevron nhỏ, touch target small. Không trông interactive.",
+    "tác_động": "Link without link tín hiệu tương tác = invisible navigation. người dùng doesn't know it's tappable → misses detail view.",
+    "nguyên_tắc": "Nielsen #6: Links must look like links. Underline or distinct color + adequate touch target.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Make elements visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Vị trí",
+      "hiển thị context đầy đủ on-screen — giảm memory load cho người dùng",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-008",
+    "hiện_trạng": "Popup 'Thông báo' minimal — no icon, no action suggestion. Generic error hiển thị.",
+    "tác_động": "Icon-less popup = missed severity signal. Error vs info vs warning → all look giống nhau.",
+    "nguyên_tắc": "Nielsen #9: Error messages should be constructive with specific guidance.",
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Constructively suggest a solution.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Vị trí",
+      "thông báo lỗi phải actionable: nêu rõ nguyên nhân + cách fix",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-009",
+    "hiện_trạng": "Badge 'Đã xử lý' (artboard 5) — contrast ~3:1, borderline below 4.5:1 WCAG AA minimum.",
+    "tác_động": "Low contrast badge text = khó đọc for many người dùng, especially in bright environments.",
+    "nguyên_tắc": "WCAG 1.4.3: Minimum 4.5:1 contrast for text.",
+    "references": [
+      {
+        "name": "WCAG 1.4.3 — Contrast (Minimum) (Level AA)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+        "quote": "Text has contrast ratio of at least 4.5:1.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Vị trí",
+      "xác minh implementation trên cả iOS và Android — đảm bảo nhất quán",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-010",
+    "hiện_trạng": "'Kết quả: — —' khi pending — trình đọc màn hình đọc 'dash dash', no semantic meaning.",
+    "tác_động": "trình đọc màn hình người dùng hear 'dash dash' = meaningless. Should be 'Đang chờ kết quả' or use aria-label.",
+    "nguyên_tắc": "WCAG 1.1.1: Text alternatives with meaning. Placeholder '— —' needs accessible label.",
+    "references": [
+      {
+        "name": "WCAG 1.1.1 — Non-text Content (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html",
+        "quote": "All non-text content has text alternative.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Vị trí",
+      "xác minh implementation trên cả iOS và Android — đảm bảo nhất quán",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-TCY-001",
+    "hiện_trạng": "No inline validation — errors via popup only.",
+    "tác_động": "Poor error UX.",
+    "nguyên_tắc": "WCAG 3.3.1.",
+    "references": [
+      {
+        "name": "WCAG 3.3.1 — Error Identification (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html",
+        "quote": "Item in error identified.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Triển khai inline validation real-time — kiểm tra ngay khi người dùng rời trường nhập",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#2@SCR-TCY-001",
+    "hiện_trạng": "No trạng thái tải after submit.",
+    "tác_động": "No feedback.",
+    "nguyên_tắc": "Doherty Threshold.",
+    "references": [
+      {
+        "name": "Doherty Threshold",
+        "url": "https://lawsofux.com/doherty-threshold/",
+        "quote": "Neither waits.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm trạng thái loading với skeleton hoặc spinner kèm message giải thích",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TCY-001",
+    "hiện_trạng": "Popup no icon.",
+    "tác_động": "No severity signal.",
+    "nguyên_tắc": "Nielsen #9.",
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Constructive.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #9. để cải thiện trải nghiệm",
+      "Khắc phục: No severity signal.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TCY-001",
+    "hiện_trạng": "Calendar icon touch target small.",
+    "tác_động": "Hard to tap.",
+    "nguyên_tắc": "Fitts's Law: 44px.",
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "Target size.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng kích thước vùng chạm tối thiểu 44×44dp theo chuẩn WCAG 2.5.5",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TCY-001",
+    "hiện_trạng": "Error popup poor experience.",
+    "tác_động": "Peak-End: bad final impression.",
+    "nguyên_tắc": "Peak-End Rule.",
+    "references": [
+      {
+        "name": "Peak-End Rule",
+        "url": "https://lawsofux.com/peak-end-rule/",
+        "quote": "Judged by peaks and ends.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#9@SCR-TCY-001",
+    "hiện_trạng": "No submit loading feedback.",
+    "tác_động": "No processing indication.",
+    "nguyên_tắc": "Nielsen #1.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm trạng thái loading với skeleton hoặc spinner kèm message giải thích",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#10@SCR-TCY-001",
+    "hiện_trạng": "Popup-only validation vs inline.",
+    "tác_động": "người dùng không thể locate error field.",
+    "nguyên_tắc": "Nielsen #9.",
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Indicate problem.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Triển khai inline validation real-time — kiểm tra ngay khi người dùng rời trường nhập",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#11@SCR-TCY-001",
+    "hiện_trạng": "thông báo lỗi not actionable.",
+    "tác_động": "Doesn't suggest fix.",
+    "nguyên_tắc": "Nielsen #9.",
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Suggest solution.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#15@SCR-TCY-001",
+    "hiện_trạng": "Typo 'Trang thái' → 'Trạng thái'.",
+    "tác_động": "Repeated typo.",
+    "nguyên_tắc": "Nielsen #4.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Consistency.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #4. để cải thiện trải nghiệm",
+      "Khắc phục: Repeated typo.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#16@SCR-TCY-001",
+    "hiện_trạng": "Date range validation: Từ ngày ≤ Đến ngày not enforced.",
+    "tác_động": "Invalid range → API error.",
+    "nguyên_tắc": "Nielsen #5: ngăn chặn invalid dates.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-TCY-002",
+    "hiện_trạng": "trạng thái trống no icon/CTA.",
+    "tác_động": "DDL not met.",
+    "nguyên_tắc": "Nielsen #6.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Guide.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Thiết kế trạng thái trống với illustration, message hướng dẫn và CTA rõ ràng",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#2@SCR-TCY-002",
+    "hiện_trạng": "No loading when fetching dispute list.",
+    "tác_động": "No feedback.",
+    "nguyên_tắc": "Doherty Threshold.",
+    "references": [
+      {
+        "name": "Doherty Threshold",
+        "url": "https://lawsofux.com/doherty-threshold/",
+        "quote": "Neither waits.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm trạng thái loading với skeleton hoặc spinner kèm message giải thích",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TCY-002",
+    "hiện_trạng": "giống nhau as Gap#2 — Doherty feedback.",
+    "tác_động": "Processing not indicated.",
+    "nguyên_tắc": "Doherty Threshold.",
+    "references": [
+      {
+        "name": "Doherty Threshold",
+        "url": "https://lawsofux.com/doherty-threshold/",
+        "quote": "Neither waits.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm trạng thái loading với skeleton hoặc spinner kèm message giải thích",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TCY-002",
+    "hiện_trạng": "Status badges color-only.",
+    "tác_động": "Color-blind inaccessible.",
+    "nguyên_tắc": "WCAG 1.4.1.",
+    "references": [
+      {
+        "name": "WCAG 1.4.1 — Use of Color (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html",
+        "quote": "Not only means.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung tín hiệu thứ hai ngoài màu sắc (icon + text label) để đạt WCAG 1.4.1",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#7@SCR-TCY-002",
+    "hiện_trạng": "Badge 'Nghi vấn' contrast low.",
+    "tác_động": "Below WCAG AA.",
+    "nguyên_tắc": "WCAG 1.4.3.",
+    "references": [
+      {
+        "name": "WCAG 1.4.3 — Contrast (Minimum) (Level AA)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+        "quote": "4.5:1.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc WCAG 1.4.3. để cải thiện trải nghiệm",
+      "Khắc phục: Below WCAG AA.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#8@SCR-TCY-002",
+    "hiện_trạng": "Badge 'Đã xử lý' contrast borderline.",
+    "tác_động": "Near violation.",
+    "nguyên_tắc": "WCAG 1.4.3.",
+    "references": [
+      {
+        "name": "WCAG 1.4.3 — Contrast (Minimum) (Level AA)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+        "quote": "4.5:1.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc WCAG 1.4.3. để cải thiện trải nghiệm",
+      "Khắc phục: Near violation.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#11@SCR-TCY-002",
+    "hiện_trạng": "No loading artboard when fetching.",
+    "tác_động": "No processing indicator.",
+    "nguyên_tắc": "Nielsen #1.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm trạng thái loading với skeleton hoặc spinner kèm message giải thích",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#14@SCR-TCY-002",
+    "hiện_trạng": "giao dịch ID #123123 not copyable.",
+    "tác_động": "Manual transcription for support.",
+    "nguyên_tắc": "Nielsen #7.",
+    "references": [
+      {
+        "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+        "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+        "quote": "Shortcuts.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #7. để cải thiện trải nghiệm",
+      "Khắc phục: Manual transcription for support.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-TCY-003",
+    "hiện_trạng": "số tài khoản '1212390002122' fully visible — PII.",
+    "tác_động": "Must mask.",
+    "nguyên_tắc": "Nielsen #5.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#2@SCR-TCY-003",
+    "hiện_trạng": "No trạng thái tải for detail screen.",
+    "tác_động": "No feedback.",
+    "nguyên_tắc": "Doherty Threshold.",
+    "references": [
+      {
+        "name": "Doherty Threshold",
+        "url": "https://lawsofux.com/doherty-threshold/",
+        "quote": "Neither waits.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm trạng thái loading với skeleton hoặc spinner kèm message giải thích",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TCY-003",
+    "hiện_trạng": "biên lai sections without visual separators.",
+    "tác_động": "Content blends together.",
+    "nguyên_tắc": "Gestalt.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Gestalt. để cải thiện trải nghiệm",
+      "Khắc phục: Content blends together.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TCY-003",
+    "hiện_trạng": "No skeleton/loading for detail.",
+    "tác_động": "Doherty violation.",
+    "nguyên_tắc": "Doherty.",
+    "references": [
+      {
+        "name": "Doherty Threshold",
+        "url": "https://lawsofux.com/doherty-threshold/",
+        "quote": "Neither waits.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm trạng thái loading với skeleton hoặc spinner kèm message giải thích",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-TCY-003",
+    "hiện_trạng": "'Chi tiết giao dịch' row too small touch target.",
+    "tác_động": "Hard to tap.",
+    "nguyên_tắc": "Fitts's Law.",
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "Target size.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng kích thước vùng chạm tối thiểu 44×44dp theo chuẩn WCAG 2.5.5",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TCY-003",
+    "hiện_trạng": "Link 'Chi tiết giao dịch' no tín hiệu tương tác.",
+    "tác_động": "Invisible navigation.",
+    "nguyên_tắc": "Nielsen #6.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#7@SCR-TCY-003",
+    "hiện_trạng": "Status badges color-only on detail.",
+    "tác_động": "khả năng tiếp cận gap.",
+    "nguyên_tắc": "WCAG 1.4.1.",
+    "references": [
+      {
+        "name": "WCAG 1.4.1 — Use of Color (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html",
+        "quote": "Not only means.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung tín hiệu thứ hai ngoài màu sắc (icon + text label) để đạt WCAG 1.4.1",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#8@SCR-TCY-003",
+    "hiện_trạng": "Badge 'Đã xử lý' contrast low on detail.",
+    "tác_động": "Below WCAG.",
+    "nguyên_tắc": "WCAG 1.4.3.",
+    "references": [
+      {
+        "name": "WCAG 1.4.3 — Contrast (Minimum) (Level AA)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+        "quote": "4.5:1.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc WCAG 1.4.3. để cải thiện trải nghiệm",
+      "Khắc phục: Below WCAG.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#9@SCR-TCY-003",
+    "hiện_trạng": "'Kết quả: — —' no semantic meaning for assistive tech.",
+    "tác_động": "trình đọc màn hình confusion.",
+    "nguyên_tắc": "WCAG 1.1.1.",
+    "references": [
+      {
+        "name": "WCAG 1.1.1 — Non-text Content (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html",
+        "quote": "Text alternative.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm khả năng tiếp cận label tiếng Việt đầy đủ cho trình đọc màn hình",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#14@SCR-TCY-003",
+    "hiện_trạng": "Section icon 'S' without accessible label.",
+    "tác_động": "trình đọc màn hình: 'image' with no description.",
+    "nguyên_tắc": "WCAG 1.1.1.",
+    "references": [
+      {
+        "name": "WCAG 1.1.1 — Non-text Content (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html",
+        "quote": "Alt text.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm khả năng tiếp cận label tiếng Việt đầy đủ cho trình đọc màn hình",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  }
+]

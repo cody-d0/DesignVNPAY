@@ -1,0 +1,354 @@
+[
+  {
+    "id": "UXP-001",
+    "hiện_trạng": "OTP flow (artboard 7103) thiếu countdown timer và resend button — vi phạm DDL otp-input-1 spec. Only 6 cells visible, no feedback.",
+    "tác_động": "Huỷ Voice OTT = account-level action. Failed OTP → can't cancel service → stuck paying. Timer + resend = bắt buộc.",
+    "nguyên_tắc": "Nielsen #1: Timer = time-critical status. DDL otp-input-1 mandates canResend + timeLeft.",
+    "đề_xuất_steps": [
+      "Countdown: 02:00",
+      "Resend after 30s",
+      "Error: red cells + message",
+      "Auto-focus first cell"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed about what is going on.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Precisely indicate the problem.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-002",
+    "hiện_trạng": "Popup prerequisite (artboard 7100) — câu lặp phrase 'đăng ký nhận thông báo' và nội dung thiếu rõ ràng. Copy error on prerequisite dialog.",
+    "tác_động": "Repeated phrase in popup = sloppy copywriting. người dùng confused: 'What do I need to do first?' Prerequisite must be crystal clear.",
+    "nguyên_tắc": "Nielsen #2: Clear, concise language. No redundancy in critical instructions.",
+    "đề_xuất_steps": [
+      "Simplify: 'Để huỷ Voice OTT, bạn cần đăng ký nhận thông báo trước. Nhấn OK để tiếp tục.'",
+      "One clear instruction per popup"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Speak the users' language with words, phrases, and concepts familiar to the user.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-003",
+    "hiện_trạng": "CTA label 'Đăng ký' trên artboard 7105 — nhưng context là chỉnh sửa/huỷ, không phải đăng ký mới. Label mismatch.",
+    "tác_động": "'Đăng ký' khi người dùng muốn huỷ = severe confusion. người dùng hesitates: 'Am I registering something new instead of cancelling?'",
+    "nguyên_tắc": "Nielsen #2: CTA label must match người dùng intent. Context: huỷ → 'Xác nhận huỷ' or 'Cập nhật'.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Speak the users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thay \"Đăng ký\" bằng \"Lưu thay đổi\" khi màn hình được mở từ context chỉnh sửa. Hoặc: \"Xác nhận\" nếu đơn giản hơn.",
+      "Dùng ngôn ngữ và mô hình tâm lý quen thuộc với người dùng ngân hàng",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-004",
+    "hiện_trạng": "Time-picker fields 'Từ'/'Đến' (artboard 7105) — no trạng thái lỗi for invalid range, no placeholder hint for format.",
+    "tác_động": "Empty time fields without placeholder → người dùng guesses format. Invalid range → no inline error → server reject.",
+    "nguyên_tắc": "Nielsen #5: ngăn chặn invalid input. WCAG 3.3.2: Placeholders/labels for input.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent problems.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+        "quote": "Labels provided when content requires user input.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm placeholder \"HH:mm\" cho cả 2 fields. Thêm inline error: \"Giờ bắt đầu phải nhỏ hơn giờ kết thúc\" khi Từ ≥ Đến. DDL `text-input-1` spec: `error`...",
+      "Thêm inline validation realtime — không chờ người dùng submit mới báo lỗi",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-005",
+    "hiện_trạng": "Destructive action 'Đồng ý' (huỷ dịch vụ, artboard 7102) dùng blue button — giống nhau as non-destructive CTAs. No visual distinction.",
+    "tác_động": "Blue 'Đồng ý' on cancel-service dialog = no urgency signal. Destructive action should use red/warning color or at minimum secondary styling.",
+    "nguyên_tắc": "Nielsen #5: Destructive actions need visual differentiation. Red or warning color for irreversible service cancellation.",
+    "đề_xuất_steps": [
+      "'Đồng ý huỷ' → red/outlined destructive style",
+      "'Quay lại' → primary blue (safe default)",
+      "Clear consequence text: 'Dịch vụ Voice OTT sẽ bị huỷ vĩnh viễn'"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "The best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-006",
+    "hiện_trạng": "'Nghe thử' (artboard 7101) — chỉ static play_circle icon, không có play state indicator (playing animation, pause state).",
+    "tác_động": "người dùng taps play → no phản hồi trực quan → 'Is it playing? Should I tap again?' No progress indicator.",
+    "nguyên_tắc": "Nielsen #1: Play state = system status. Animation/pulse during playback.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm playing state: icon đổi sang pause",
+      "text đổi sang \"Đang phát...\" với animated indicator. Stop state khi hoàn thành."
+    ]
+  },
+  {
+    "id": "UXP-007",
+    "hiện_trạng": "Intro box 'Nội dung giới thiệu' lặp lại trên cả 2 màn hình (7101 + 7105) — redundant content on form screen.",
+    "tác_động": "Full intro text on form screen = wasted space. người dùng already read intro on previous screen. Form screen should be action-focused.",
+    "nguyên_tắc": "Nielsen #8: loại bỏ redundant content. Form screen needs minimal context, maximum action area.",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Every extra unit of information competes with relevant units of information.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "SCR-VOT-002 rút ngắn intro box: chỉ giữ warning \"Lưu ý: KHÔNG để thiết bị im lặng\"",
+      "\"Nghe thử\". loại bỏ duplicated description text."
+    ]
+  },
+  {
+    "id": "UXP-008",
+    "hiện_trạng": "Empty account section (artboard 7105) chỉ có '+Thêm tài khoản' — thiếu visual guidance khi no accounts added yet.",
+    "tác_động": "Empty area with just a link = uninviting. Should hiển thị guidance: 'Chưa có tài khoản nào. Thêm tài khoản để bắt đầu.'",
+    "nguyên_tắc": "Nielsen #6: Empty states need guidance content.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm placeholder text: \"Chưa có tài khoản nào. Nhấn + để thêm tài khoản nhận đọc loa.\" Validation: require ≥1 tài khoản trước khi enable CTA.",
+      "Thêm illustration + message giải thích và CTA để người dùng bắt đầu",
+      "Differentiate giữa \"chưa có data\" vs \"đang loading\" vs \"lỗi load\""
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-VOT-001",
+    "hiện_trạng": "OTP no countdown timer.",
+    "tác_động": "No time feedback.",
+    "nguyên_tắc": "Nielsen #1.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-VOT-001",
+    "hiện_trạng": "OTP no resend button.",
+    "tác_động": "người dùng stuck.",
+    "nguyên_tắc": "Nielsen #1.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-VOT-001",
+    "hiện_trạng": "'Đồng ý' for destructive cancel uses giống nhau blue as non-destructive.",
+    "tác_động": "No warning signal.",
+    "nguyên_tắc": "Nielsen #5.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#12@SCR-VOT-001",
+    "hiện_trạng": "Prerequisite popup text repetitive.",
+    "tác_động": "Confusing instruction.",
+    "nguyên_tắc": "Nielsen #2.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Clear language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #2. để cải thiện trải nghiệm",
+      "Khắc phục: Confusing instruction.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#16@SCR-VOT-001",
+    "hiện_trạng": "'Nghe thử' no play state.",
+    "tác_động": "No playback feedback.",
+    "nguyên_tắc": "Nielsen #1.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-VOT-002",
+    "hiện_trạng": "CTA 'Đăng ký' wrong for cancel context.",
+    "tác_động": "Label-context mismatch.",
+    "nguyên_tắc": "Nielsen #2.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#2@SCR-VOT-002",
+    "hiện_trạng": "Time fields no placeholder.",
+    "tác_động": "No format hint.",
+    "nguyên_tắc": "WCAG 3.3.2.",
+    "references": [
+      {
+        "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+        "quote": "Labels provided.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Thêm helper text bên dưới trường nhập: giải thích format mong đợi hoặc ví dụ",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-VOT-002",
+    "hiện_trạng": "Time picker no error validation.",
+    "tác_động": "Invalid range submitted.",
+    "nguyên_tắc": "Nielsen #5.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#8@SCR-VOT-002",
+    "hiện_trạng": "Empty account section no visual guidance.",
+    "tác_động": "Uninviting empty area.",
+    "nguyên_tắc": "Nielsen #6.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Guide.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #6. để cải thiện trải nghiệm",
+      "Khắc phục: Uninviting empty area.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#10@SCR-VOT-002",
+    "hiện_trạng": "Full intro box repeated on form screen.",
+    "tác_động": "Redundant content.",
+    "nguyên_tắc": "Nielsen #8.",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "No irrelevant info.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #8. để cải thiện trải nghiệm",
+      "Khắc phục: Redundant content.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  }
+]

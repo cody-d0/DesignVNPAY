@@ -1,0 +1,874 @@
+{
+  "meta": {
+    "client_name": "Co-opBank",
+    "product_name": "Co-opBank Mobile Banking",
+    "module_name": "Đăng ký Voice OTT",
+    "domain": "banking",
+    "section": "Đăng ký Voice",
+    "module_dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/voice-ott--dang-ky-voice"
+  },
+  "stats": {
+    "screen_count": 4,
+    "check_count": 42,
+    "gap_count": 11,
+    "pass_count": 24,
+    "proposal_count": 10,
+    "overall_score": 57,
+    "overall_score_color": "#c2410c",
+    "overall_score_offset": 138,
+    "overall_weighted_score": 81,
+    "severity_counts": {
+      "critical": 2,
+      "major": 6,
+      "minor": 2
+    }
+  },
+  "screens": [
+    {
+      "id": "SCR-DKV-001",
+      "name": "Thông báo › Danh sách (`SCR-DKV-001`)",
+      "type": "list",
+      "score": 50,
+      "score_color": "#c2410c",
+      "score_offset": 78,
+      "weighted_score": 78,
+      "gap_count": 2,
+      "artboard_count": 2
+    },
+    {
+      "id": "SCR-DKV-002",
+      "name": "Cài đặt Voice OTT › Form nhập thông tin (`SCR-DKV-002`)",
+      "type": "form",
+      "score": 67,
+      "score_color": "#c2410c",
+      "score_offset": 52,
+      "weighted_score": 87,
+      "gap_count": 2,
+      "artboard_count": 2
+    },
+    {
+      "id": "SCR-DKV-003",
+      "name": "Cài đặt Voice OTT › Xác nhận giao dịch (`SCR-DKV-003`)",
+      "type": "confirm",
+      "score": 42,
+      "score_color": "#b91c1c",
+      "score_offset": 91,
+      "weighted_score": 73,
+      "gap_count": 5,
+      "artboard_count": 3
+    },
+    {
+      "id": "SCR-DKV-004",
+      "name": "Cài đặt Voice OTT › Chi tiết (`SCR-DKV-004`)",
+      "type": "detail",
+      "score": 70,
+      "score_color": "#15803d",
+      "score_offset": 47,
+      "weighted_score": 85,
+      "gap_count": 2,
+      "artboard_count": 2
+    }
+  ],
+  "uxps": [
+    {
+      "id": "UXP-001",
+      "severity": "Critical",
+      "screen_tag": "Cài đặt Voice OTT › Xác nhận giao dịch (SCR-DKV-003)",
+      "problem": "OTP bottom sheet thiếu \"Gửi lại OTP\" button và countdown timer — user stuck nếu SMS delayed",
+      "gap_ref": "Check #1, #2 (SCR-DKV-003)",
+      "ddl_ref": "COMP:otp-input-1 (canResend, timeLeft states)",
+      "solution": "Thêm: (1) \"Gửi lại mã OTP\" button (disabled 60s đầu), (2) Countdown \"Gửi lại sau 00:45\" real-time, (3) Active cell highlight cho ô đang nhập",
+      "screenshot_path": "ui/7004-yang-ky-voice.png",
+      "_img_tier": 3,
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "Keep users informed about what is going on.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Precisely indicate the problem.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Voice OTT registration = account-level change. Failed OTP → cannot register → completely blocked from service.",
+      "heuristic": "Nielsen #1: Timer + resend bắt buộc. DDL spec: canResend + timeLeft states bắt buộc.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "OTP bottom sheet thiếu 'Gửi lại OTP' button và countdown timer — người dùng stuck nếu SMS delayed. Vi phạm DDL otp-input-1 spec.",
+      "solution_steps": [
+        "Countdown: 02:00",
+        "Resend after 30s",
+        "trạng thái lỗi: red cells",
+        "Auto-focus first cell"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-002",
+      "severity": "Critical",
+      "screen_tag": "Thông báo › Danh sách (SCR-DKV-001)",
+      "problem": "\"Xoá tất cả thông báo\" không có confirmation dialog — destructive action không bảo vệ",
+      "gap_ref": "Check #4 (SCR-DKV-001)",
+      "ddl_ref": "UXG-165 (destructive action safety)",
+      "solution": "Thêm confirm dialog: \"Bạn có chắc muốn xoá tất cả thông báo? Hành động này không thể hoàn tác.\" với CTA \"Xoá\" (destructive) + \"Huỷ\" (secondary)",
+      "screenshot_path": "ui/7000-yang-ky-voice.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "The best designs carefully prevent problems from occurring in the first place.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "One-tap 'delete all notifications' → irreversible data loss. All notification preferences wiped.",
+      "heuristic": "Nielsen #5: Destructive bulk actions MUST have xác nhận. 'Xóa tất cả X thông báo?'",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "'Xoá tất cả thông báo' — destructive action hiển thị trực tiếp không có xác nhận dialog.",
+      "solution_steps": [
+        "xác nhận: 'Bạn có chắc muốn xoá tất cả thông báo?'",
+        "Primary: 'Giữ lại', Secondary: 'Xoá tất cả'"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-003",
+      "severity": "Major",
+      "screen_tag": "Cài đặt Voice OTT › Form nhập thông tin (SCR-DKV-002)",
+      "problem": "Thiếu error state cho time fields khi nhập range không hợp lệ (Từ > Đến)",
+      "gap_ref": "Check #2 (SCR-DKV-002)",
+      "ddl_ref": "COMP:text-input-1 · error state",
+      "solution": "Thêm inline error text đỏ dưới time fields: \"Thời gian bắt đầu phải trước thời gian kết thúc\" + red border cho input",
+      "screenshot_path": "ui/7001-yang-ky-voice.png",
+      "_img_tier": 3,
+      "references": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Prevent problems.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Invalid time range submitted → server error or unexpected scheduling behavior.",
+      "heuristic": "Nielsen #5: ngăn chặn invalid range. Inline: 'Giờ bắt đầu phải trước giờ kết thúc'.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Time fields thiếu trạng thái lỗi khi 'Từ' > 'Đến' — invalid range not validated inline.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm inline error text đỏ dưới time fields: \"Thời gian bắt đầu phải trước thời gian kết thúc\" + red border cho input",
+        "Thêm inline validation realtime — không chờ người dùng submit mới báo lỗi",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-004",
+      "severity": "Major",
+      "screen_tag": "Cài đặt Voice OTT › Form nhập thông tin (SCR-DKV-002)",
+      "problem": "Account picker thiếu max-selection indicator — cognitive overload khi nhiều TK",
+      "gap_ref": "Check #10 (SCR-DKV-002)",
+      "ddl_ref": "Hick's Law",
+      "solution": "Thêm subtitle \"Tối đa X tài khoản\" hoặc counter \"Đã chọn 2/5\" trong account picker bottom sheet",
+      "screenshot_path": "ui/7002-yang-ky-voice.png",
+      "_img_tier": 3,
+      "references": [
+        {
+          "name": "Hick's Law",
+          "url": "https://lawsofux.com/hicks-law/",
+          "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "No max limit shown → người dùng selects all accounts → may not realize Voice OTT applies to all. Selection count: '3/5 selected'.",
+      "heuristic": "Hick's Law: Multi-select picker needs counter. Nielsen #1: Selection status.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Hick's Law",
+        "url": "https://lawsofux.com/hicks-law/",
+        "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+        "source": "Laws of UX"
+      },
+      "hiện_trạng": "Account picker thiếu max-selection indicator — người dùng doesn't know if 3/10 or 3/3 accounts selected.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm subtitle \"Tối đa X tài khoản\" hoặc counter \"Đã chọn 2/5\" trong account picker bottom sheet",
+        "Clear visual differentiation: header đổi màu + contextual actions thay thế default toolbar",
+        "Exit path rõ ràng: \"Hủy chọn\" button hoặc back gesture → trở về normal mode"
+      ]
+    },
+    {
+      "id": "UXP-005",
+      "severity": "Major",
+      "screen_tag": "Cài đặt Voice OTT › Xác nhận giao dịch (SCR-DKV-003)",
+      "problem": "Thiếu loading/processing state sau khi submit OTP — user không biết hệ thống đang xử lý",
+      "gap_ref": "Check #6 (SCR-DKV-003)",
+      "ddl_ref": "UXG (feedback) · Doherty Threshold",
+      "solution": "Thêm loading spinner + text \"Đang xử lý...\" overlay sau nhấn \"Xác nhận\" OTP",
+      "screenshot_path": "ui/7004-yang-ky-voice.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Doherty Threshold",
+          "url": "https://lawsofux.com/doherty-threshold/",
+          "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "OTP submitted → blank → người dùng taps again → potential duplicate registration calls.",
+      "heuristic": "Doherty Threshold: Processing indicator within 400ms.",
+      "ref_count": 2,
+      "hiện_trạng": "Thiếu loading/processing state sau submit OTP — no feedback during registration process.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm loading spinner + text \"Đang xử lý...\" overlay sau nhấn \"Xác nhận\" OTP",
+        "xác minh implementation trên cả iOS và Android — đảm bảo nhất quán",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-006",
+      "severity": "Major",
+      "screen_tag": "Cài đặt Voice OTT › Xác nhận giao dịch (SCR-DKV-003)",
+      "problem": "Success popup thiếu chi tiết giao dịch và chỉ có 1 exit option \"Đóng\"",
+      "gap_ref": "Check #8, #9 (SCR-DKV-003)",
+      "ddl_ref": "Peak-End Rule",
+      "solution": "(1) Thêm TK number + time window trong success popup, (2) Thêm CTA \"Xem cài đặt\" bên cạnh \"Đóng\"",
+      "screenshot_path": "ui/7005-yang-ky-voice.png",
+      "_img_tier": 3,
+      "references": [
+        {
+          "name": "Peak-End Rule",
+          "url": "https://lawsofux.com/peak-end-rule/",
+          "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "Keep informed.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "người dùng registered Voice OTT but doesn't have xác nhận of WHAT was registered. No reference for future.",
+      "heuristic": "Nielsen #1: trạng thái thành công must xác nhận what happened. Peak-End: positive final impression.",
+      "ref_count": 3,
+      "hiện_trạng": "Success popup chỉ generic message + 'Đóng'. Thiếu: TK registered, time window, and secondary actions.",
+      "solution_steps": [
+        "hiển thị: registered accounts + time window",
+        "CTA: 'Xem cài đặt' + 'Về trang chủ'"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-007",
+      "severity": "Major",
+      "screen_tag": "Cài đặt Voice OTT › Chi tiết (SCR-DKV-004)",
+      "problem": "Toggle \"Nhận thông báo BĐSD\" height 24px < 44px minimum — accessibility fail",
+      "gap_ref": "Check #1 (SCR-DKV-004)",
+      "ddl_ref": "TOKEN:touch.target.min=44px",
+      "solution": "Tăng toggle tap area tối thiểu 44×44px bằng padding invisible hoặc resizing component",
+      "screenshot_path": "ui/7006-yang-ky-voice.png",
+      "_img_tier": "1",
+      "references": [
+        {
+          "name": "Fitts's Law",
+          "url": "https://lawsofux.com/fittss-law/",
+          "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "24px toggle = 55% smaller than minimum. Mistouch risk extremely high. người dùng with motor disabilities severely impacted.",
+      "heuristic": "Fitts's Law: 44px minimum. WCAG 2.5.8: Target size.",
+      "ref_count": 2,
+      "hiện_trạng": "Toggle 'Nhận thông báo BĐSD' height 24px — dưới 44px minimum touch target. khả năng tiếp cận fail.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Tăng toggle tap area tối thiểu 44×44px bằng padding invisible hoặc resizing component",
+        "Audit toàn bộ interactive elements trong màn hình — đảm bảo tất cả ≥ 44×44px",
+        "Test trên thiết bị thực với ngón tay — xác minh không bị mis-tap adjacent elements"
+      ]
+    },
+    {
+      "id": "UXP-008",
+      "severity": "Major",
+      "screen_tag": "Cài đặt Voice OTT › Chi tiết (SCR-DKV-004)",
+      "problem": "Account numbers hiển thị full không masked — vi phạm banking security best practice",
+      "gap_ref": "Check #3 (SCR-DKV-004)",
+      "ddl_ref": "Security best practice (PII protection)",
+      "solution": "Mask account numbers: \"2123***2313\" (show first 4 + last 4, mask middle)",
+      "screenshot_path": "ui/7006-yang-ky-voice.png",
+      "_img_tier": 3,
+      "references": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Prevent problems.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Multiple account numbers visible on registration screen. Must mask by default.",
+      "heuristic": "Nielsen #5: Default masking for all account numbers.",
+      "ref_count": 2,
+      "hiện_trạng": "Account numbers '212312312313', '312312312313' hiển thị full không masked — PII exposure.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Mask account numbers: \"2123***2313\" (hiển thị first 4 + last 4, mask middle)",
+        "Thêm toggle eye icon cho phép người dùng reveal/ẩn khi cần",
+        "Mặc định ở masked state khi load — copy button copies full value without revealing on screen"
+      ]
+    },
+    {
+      "id": "UXP-009",
+      "severity": "Minor",
+      "screen_tag": "Thông báo › Danh sách (SCR-DKV-001)",
+      "problem": "Bottom sheet menu items thiếu icons phân biệt — giảm discoverability",
+      "gap_ref": "Check #3 (SCR-DKV-001)",
+      "ddl_ref": "UXG-243",
+      "solution": "Thêm icon prefix cho mỗi menu item (settings, share, manage, delete)",
+      "screenshot_path": "ui/7000-yang-ky-voice.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Nielsen #6 — Recognition Rather Than Recall",
+          "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+          "quote": "Minimize memory load.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Text-only menu items = slower scanning. Icons cung cấp pre-attentive visual cues.",
+      "heuristic": "Nielsen #6: Icons + text = dual-coding for better recognition.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Bottom sheet menu items text-only — thiếu icons phân biệt. Reduced khả năng khám phá.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm icon prefix cho mỗi menu item (settings, share, manage, delete)",
+        "Highlight active state rõ ràng (bold + underline hoặc accent color)",
+        "Support swipe gesture giữa các tab trên mobile"
+      ]
+    },
+    {
+      "id": "UXP-010",
+      "severity": "Minor",
+      "screen_tag": "Cài đặt Voice OTT › Xác nhận giao dịch (SCR-DKV-003)",
+      "problem": "Success message generic, không có TK number hay time window confirmation",
+      "gap_ref": "Check #9 (SCR-DKV-003)",
+      "ddl_ref": "UXG-165 (data confirmation)",
+      "solution": "Thêm: \"TK: 2123xxx2313 · Thời gian: 10:00–23:15\" trong success popup",
+      "screenshot_path": "ui/7005-yang-ky-voice.png",
+      "_img_tier": 3,
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "Keep informed.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Generic 'Đăng ký thành công' without specifics → người dùng không thể xác minh correct configuration.",
+      "heuristic": "Nielsen #1: xác nhận what was done, not just that something was done.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Success message generic — no TK number or time window xác nhận in message body.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm: \"TK: 2123xxx2313 · Thời gian: 10:00–23:15\" trong success popup",
+        "Thêm phản hồi trực quan tức thì cho mọi người dùng action trong flow này",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    }
+  ],
+  "gaps_by_screen": [
+    {
+      "screen_id": "SCR-DKV-001",
+      "screen_name": "Thông báo › Danh sách (`SCR-DKV-001`)",
+      "screen_type": "list",
+      "gaps": [
+        {
+          "num": 3,
+          "title": "Menu items trong bottom sheet có icon phân biệt",
+          "ref": "UXG-243",
+          "severity": "Minor",
+          "user_impact": "Reduced scannability.",
+          "heuristic": "Nielsen #6.",
+          "evidence": "Vision: ❌ Các menu items chỉ có text, không có icon prefix để phân biệt nhanh. Khó discoverability khi scan danh sách UXG-243",
+          "screenshot": "7000-yang-ky-voice.png",
+          "screen_id": "SCR-DKV-001",
+          "screen_name": "Thông báo › Danh sách",
+          "screen_type": "list",
+          "screenshot_path": "ui/7000-yang-ky-voice.png",
+          "_img_tier": 4,
+          "description": "Menu items text-only, no icons.",
+          "ddl_evidence": "",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+              "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+              "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Visible.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Menu items text-only, no icons.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 4,
+          "title": "\"Xoá tất cả thông báo\" có confirmation dialog",
+          "ref": "",
+          "severity": "Critical",
+          "user_impact": "Destructive without guard.",
+          "heuristic": "Nielsen #5.",
+          "evidence": "Vision: ❌ Destructive action hiển thị trực tiếp không có warning/confirm step. Fitts + UXG concern: user có thể nhấn sai",
+          "screenshot": "7000-yang-ky-voice.png",
+          "screen_id": "SCR-DKV-001",
+          "screen_name": "Thông báo › Danh sách",
+          "screen_type": "list",
+          "screenshot_path": "ui/7000-yang-ky-voice.png",
+          "_img_tier": 4,
+          "description": "'Xoá tất cả' no xác nhận.",
+          "ddl_evidence": "",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Prevent.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Nielsen #5 — Error Prevention",
+            "url": "https://www.nngroup.com/articles/slips/",
+            "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "'Xoá tất cả' no xác nhận.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-DKV-002",
+      "screen_name": "Cài đặt Voice OTT › Form nhập thông tin (`SCR-DKV-002`)",
+      "screen_type": "form",
+      "gaps": [
+        {
+          "num": 2,
+          "title": "DDL `text-input-1` error state cho time fields",
+          "ref": "",
+          "severity": "Major",
+          "user_impact": "Invalid range possible.",
+          "heuristic": "Nielsen #5.",
+          "evidence": "DDL `text-input-1` spec requires `error` state. Vision 7001/7003: ❌ Không thấy error state artboard (Từ > Đến, invalid range). Gap component: thiếu validation error display",
+          "screenshot": "7001-yang-ky-voice.png",
+          "screen_id": "SCR-DKV-002",
+          "screen_name": "Cài đặt Voice OTT › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7001-yang-ky-voice.png",
+          "_img_tier": 3,
+          "description": "Time field no trạng thái lỗi for invalid range.",
+          "ddl_evidence": "",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Prevent.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Time field no trạng thái lỗi for invalid range.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 10,
+          "title": "Hick's Law: Account picker không gây cognitive overload",
+          "ref": "",
+          "severity": "Major",
+          "user_impact": "Too many options without counter.",
+          "heuristic": "Hick's Law.",
+          "evidence": "Hick's Law auto-match. Vision 7002: 3 account items visible với checkbox — manageable. Nhưng không có indicator số lượng tối đa được chọn → potential confusion khi nhiều TK",
+          "screenshot": "7002-yang-ky-voice.png",
+          "screen_id": "SCR-DKV-002",
+          "screen_name": "Cài đặt Voice OTT › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/7002-yang-ky-voice.png",
+          "_img_tier": 3,
+          "description": "Account picker tải nhận thức.",
+          "ddl_evidence": "",
+          "ref_count": 1,
+          "references": [
+            {
+              "name": "Hick's Law",
+              "url": "https://lawsofux.com/hicks-law/",
+              "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+              "source": "Laws of UX"
+            }
+          ],
+          "hiện_trạng": "Account picker tải nhận thức.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-DKV-003",
+      "screen_name": "Cài đặt Voice OTT › Xác nhận giao dịch (`SCR-DKV-003`)",
+      "screen_type": "confirm",
+      "gaps": [
+        {
+          "num": 1,
+          "title": "DDL `otp-input-1` state `canResend` + \"Gửi lại\" button",
+          "ref": "",
+          "severity": "Critical",
+          "user_impact": "người dùng stuck.",
+          "heuristic": "Nielsen #1.",
+          "evidence": "DDL `otp-input-1` spec requires `canResend` state + resend button UI. Vision 7004: ❌ 6 ô OTP hiển thị nhưng KHÔNG CÓ \"Gửi lại\" button hay countdown timer. User stuck nếu SMS delayed",
+          "screenshot": "7004-yang-ky-voice.png",
+          "screen_id": "SCR-DKV-003",
+          "screen_name": "Cài đặt Voice OTT › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/7004-yang-ky-voice.png",
+          "_img_tier": 3,
+          "description": "OTP no resend button.",
+          "ddl_evidence": "",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "OTP no resend button.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 2,
+          "title": "DDL `otp-input-1` state `timeLeft` countdown timer",
+          "ref": "",
+          "severity": "Critical",
+          "user_impact": "No time feedback.",
+          "heuristic": "Nielsen #1.",
+          "evidence": "DDL `otp-input-1` spec requires `timeLeft`. Vision 7004: ❌ Không có countdown timer trong OTP sheet. User không biết thời hạn hiệu lực OTP",
+          "screenshot": "7004-yang-ky-voice.png",
+          "screen_id": "SCR-DKV-003",
+          "screen_name": "Cài đặt Voice OTT › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/7004-yang-ky-voice.png",
+          "_img_tier": 3,
+          "description": "OTP no countdown timer.",
+          "ddl_evidence": "",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "OTP no countdown timer.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "Loading state sau khi submit OTP",
+          "ref": "",
+          "severity": "Major",
+          "user_impact": "Double-submit risk.",
+          "heuristic": "Doherty Threshold.",
+          "evidence": "Vision: ❌ Không có loading/processing state artboard sau khi nhấn \"Xác nhận\" OTP. User không biết hệ thống đang xử lý",
+          "screenshot": "7004-yang-ky-voice.png",
+          "screen_id": "SCR-DKV-003",
+          "screen_name": "Cài đặt Voice OTT › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/7004-yang-ky-voice.png",
+          "_img_tier": 4,
+          "description": "No loading after OTP submit.",
+          "ddl_evidence": "",
+          "ref_count": 1,
+          "references": [
+            {
+              "name": "Doherty Threshold",
+              "url": "https://lawsofux.com/doherty-threshold/",
+              "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 1,
+          "hiện_trạng": "No loading after OTP submit.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 8,
+          "title": "Peak-End Rule: Success popup positive",
+          "ref": "",
+          "severity": "Major",
+          "user_impact": "Bland final impression.",
+          "heuristic": "Peak-End Rule.",
+          "evidence": "Peak-End Rule auto-match. Vision 7005: ⚠️ Popup \"Quý khách đã đăng ký nhận thông báo BĐSD bằng giọng nói thành công\" — ✅ positive. Nhưng chỉ có 1 action \"Đóng\" — thiếu \"Về trang chủ\" hay \"Xem cài đặt\" option",
+          "screenshot": "7005-yang-ky-voice.png",
+          "screen_id": "SCR-DKV-003",
+          "screen_name": "Cài đặt Voice OTT › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/7005-yang-ky-voice.png",
+          "_img_tier": 3,
+          "description": "Success popup generic — weak Peak-End.",
+          "ddl_evidence": "",
+          "ref_count": 1,
+          "references": [
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            }
+          ],
+          "hiện_trạng": "Success popup generic — weak Peak-End.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 9,
+          "title": "Success message có chi tiết giao dịch",
+          "ref": "",
+          "severity": "Minor",
+          "user_impact": "Can't xác minh.",
+          "heuristic": "Nielsen #1.",
+          "evidence": "Vision 7005: ❌ Success popup chỉ có generic message, không có TK number hay time window confirmation. User không thể verify đăng ký đúng không",
+          "screenshot": "7005-yang-ky-voice.png",
+          "screen_id": "SCR-DKV-003",
+          "screen_name": "Cài đặt Voice OTT › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/7005-yang-ky-voice.png",
+          "_img_tier": 3,
+          "description": "Success thiếu giao dịch details.",
+          "ddl_evidence": "",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "hiện_trạng": "Success thiếu giao dịch details.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-DKV-004",
+      "screen_name": "Cài đặt Voice OTT › Chi tiết (`SCR-DKV-004`)",
+      "screen_type": "detail",
+      "gaps": [
+        {
+          "num": 1,
+          "title": "Toggle \"Nhận thông báo BĐSD\" height ≥44px",
+          "ref": "TOKEN:touch",
+          "severity": "Major",
+          "user_impact": "Touch target violation.",
+          "heuristic": "Fitts's Law.",
+          "evidence": "DDL `TOKEN:touch.target.min=44px`. Vision: Toggle component 44×24px — ✅ width 44px nhưng HEIGHT chỉ 24px < 44px minimum. Tap area có thể không đủ cho người dùng lớn tuổi",
+          "screenshot": "7006-yang-ky-voice.png",
+          "screen_id": "SCR-DKV-004",
+          "screen_name": "Cài đặt Voice OTT › Chi tiết",
+          "screen_type": "detail",
+          "screenshot_path": "ui/7006-yang-ky-voice.png",
+          "_img_tier": 5,
+          "description": "Toggle 24px height — below 44px.",
+          "ddl_evidence": "",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "Target size.",
+              "source": "Laws of UX"
+            }
+          ],
+          "hiện_trạng": "Toggle 24px height — below 44px.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 3,
+          "title": "Account numbers masking trong view mode",
+          "ref": "",
+          "severity": "Major",
+          "user_impact": "PII exposed.",
+          "heuristic": "Nielsen #5.",
+          "evidence": "Vision 7006: ❌ Account numbers \"212312312313\", \"312312312313\" hiển thị full không masked. Banking best practice yêu cầu partial masking (e.g., \"2123***2313\") cho account numbers ở read-only view",
+          "screenshot": "7006-yang-ky-voice.png",
+          "screen_id": "SCR-DKV-004",
+          "screen_name": "Cài đặt Voice OTT › Chi tiết",
+          "screen_type": "detail",
+          "screenshot_path": "ui/7006-yang-ky-voice.png",
+          "_img_tier": 3,
+          "description": "Account numbers not masked.",
+          "ddl_evidence": "",
+          "ref_count": 1,
+          "references": [
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Account numbers not masked.",
+          "_enriched_by": "llm"
+        }
+      ]
+    }
+  ],
+  "heuristics": [
+    {
+      "key": "flow",
+      "name_vi": "Luồng người dùng",
+      "name_en": "Flow & Navigation",
+      "score": 80,
+      "gap_count": 3
+    },
+    {
+      "key": "component",
+      "name_vi": "Thành phần",
+      "name_en": "Component & DDL",
+      "score": 25,
+      "gap_count": 3
+    },
+    {
+      "key": "visual",
+      "name_vi": "Thiết kế trực quan",
+      "name_en": "Visual Design",
+      "score": 50,
+      "gap_count": 1
+    },
+    {
+      "key": "content",
+      "name_vi": "Nội dung",
+      "name_en": "Content & Copy",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "a11y",
+      "name_vi": "Tiếp cận",
+      "name_en": "Accessibility",
+      "score": 75,
+      "gap_count": 1
+    },
+    {
+      "key": "trust",
+      "name_vi": "Tin cậy & Bảo mật",
+      "name_en": "Trust & Security",
+      "score": 25,
+      "gap_count": 3
+    }
+  ],
+  "_ref_enrichment": {
+    "gap_enriched": 0,
+    "uxp_enriched": 1,
+    "sources": [
+      "enriched-data.json",
+      "official-urls.md"
+    ]
+  }
+}

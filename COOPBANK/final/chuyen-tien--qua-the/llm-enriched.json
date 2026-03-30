@@ -1,0 +1,119 @@
+[
+  {
+    "id": "UXP-001",
+    "hiện_trạng": "OTP overlay (CTNST_5): 6 ô nhập nhưng thiếu 'Gửi lại mã', countdown timer, trạng thái lỗi — DDL otp-input-1 violation.",
+    "tác_động": "Chuyển tiền qua thẻ = high-value. Systemic OTP gap: no resend, no timer, no phản hồi lỗi.",
+    "nguyên_tắc": "Nielsen #1 + #9: Full OTP UX bắt buộc.",
+    "đề_xuất_steps": [
+      "Countdown timer",
+      "Resend after 30s",
+      "trạng thái lỗi",
+      "Auto-focus"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Precisely indicate the problem.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-003",
+    "hiện_trạng": "2 variants xác nhận (qua thẻ CTNST_4, qua SĐT CTNST_5) — thông tin hiển thị khác nhau. không nhất quán xác nhận layouts.",
+    "tác_động": "người dùng so sánh 2 flows → nhận thấy inconsistency → distrust. giống nhau action should hiển thị giống nhau info regardless of method.",
+    "nguyên_tắc": "Nielsen #4: nhất quán xác nhận layouts across payment methods.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words mean the same thing.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm subtitle phân biệt: \"Chuyển tiền qua thẻ\" vs \"Chuyển tiền qua số điện thoại\"",
+      "Giữ nguyên label \"Số thẻ thụ hưởng\" cho flow qua thẻ, không mix ..."
+    ]
+  },
+  {
+    "id": "UXP-004",
+    "hiện_trạng": "Biên nhận: 'Mã giao dịch: 0982312' (7 ký tự) — format không chuẩn, thiếu prefix, ngắn bất thường.",
+    "tác_động": "7 digits without prefix = ambiguous. ngân hàng standard: prefix + timestamp-based ID. người dùng không thể xác minh if this is a real giao dịch code.",
+    "nguyên_tắc": "Nielsen #4: giao dịch code format consistency. Standard: 'GD-20260330-0982312'.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Consistency expected.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format chuẩn: \"COOP-2020021522-0982312\" (prefix + date + code)",
+      "Format: \"22:00 — 15/02/2020 (GMT+7)\""
+    ]
+  },
+  {
+    "id": "UXP-005",
+    "hiện_trạng": "Overlay 'Danh bạ thụ hưởng' (CTNST_2): danh sách dài nhưng không có trạng thái trống, không có search/filter.",
+    "tác_động": "Long list without search = scroll-heavy. 50+ beneficiaries → người dùng phải scroll endlessly to find the right one.",
+    "nguyên_tắc": "Nielsen #7: Search + filter for long lists. Hick's Law: reduce visible choices.",
+    "references": [
+      {
+        "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+        "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+        "quote": "Shortcuts speed up interaction.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "\"Không tìm thấy người hưởng. Bạn có thể nhập trực tiếp số thẻ.\" + CTA \"Nhập thủ công\"",
+      "Thêm shadow/fade ở bottom khi list dài hơn viewport"
+    ]
+  },
+  {
+    "id": "UXP-006",
+    "hiện_trạng": "Nội dung giao dịch 'NGUYEN HOANG KHAI chuyen tien' (CTNST_1) — toàn ASCII, thiếu dấu tiếng Việt.",
+    "tác_động": "giống nhau systemic issue: ASCII Vietnamese text on ngân hàng screens = thiếu chuyên nghiệp. 'chuyen tien' → 'chuyển tiền'.",
+    "nguyên_tắc": "Nielsen #2: Proper Vietnamese diacritics.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Speak the users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Auto-generate nội dung mặc định: \"{Tên} chuyển tiền\" (có dấu, sentence case)",
+      "người dùng có thể edit giá trị auto-generated — pre-fill không phải force-fill",
+      "Output format: Vietnamese diacritics, sentence case, không lỗi encoding"
+    ]
+  },
+  {
+    "id": "UXP-007",
+    "hiện_trạng": "Biên nhận: 'nguyen tung' (chữ thường) vs CTNST_4 xác nhận: 'NGUYEN TUNG' (chữ hoa) — không nhất quán casing.",
+    "tác_động": "giống nhau name, khác nhau casing across screens = QA gap. Standardize: Title Case 'Nguyen Tung'.",
+    "nguyên_tắc": "Nielsen #4: Name casing consistency across all screens.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Consistency expected.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Normalize tên thụ hưởng: luôn uppercase cả biên lai lẫn xác nhận",
+      "Viết tắt trên biên lai: \"BIDV\" (đã rõ bên xác nhận). Hoặc tăng width card"
+    ]
+  }
+]

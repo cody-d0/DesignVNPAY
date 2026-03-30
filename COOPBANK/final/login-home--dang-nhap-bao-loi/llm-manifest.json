@@ -1,0 +1,1680 @@
+{
+  "_generator": "enrich_llm.py",
+  "_version": "1.0",
+  "module": {
+    "name": "Đăng nhập báo lỗi",
+    "domain": "Banking",
+    "product": "Co-opBank Mobile Banking",
+    "dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/login-home--dang-nhap-bao-loi"
+  },
+  "system_prompt": "Bạn là UX Auditor chuyên nghiệp cho Banking app (Co-opBank Mobile Banking).\n\nNhiệm vụ: Enrich các finding từ UX audit report. Mỗi finding cần 4-5 fields:\n\n1. **hiện_trạng**: Mô tả chính xác UI hiện tại\n   - PHẢI có artboard ID (vd: \"Trên artboard 7103\")\n   - PHẢI có overlay type nếu có (vd: \"overlay: OTP bottom-sheet\")\n   - PHẢI liệt kê UI elements thực tế có mặt\n   - KHÔNG suy diễn elements không có trong evidence\n\n2. **tác_động**: Hậu quả cụ thể cho người dùng\n   - PHẢI mô tả consequence cho user (bị chặn, mất khả năng, nhầm lẫn...)\n   - PHẢI có domain context (Banking: giao dịch nhạy cảm, trust, compliance...)\n   - KHÔNG dùng severity label (\"nghiêm trọng\", \"critical\", \"major\")\n   - KHÔNG lặp lại problem title\n\n3. **nguyên_tắc**: Heuristic vi phạm + quote + giải thích\n   - PHẢI cite heuristic bằng tên chính xác (Nielsen #N, WCAG X.Y.Z, Laws of UX)\n   - PHẢI có quote gốc tiếng Anh\n   - PHẢI giải thích TẠI SAO design vi phạm nguyên tắc này\n   - Ưu tiên chọn từ heuristic_candidates đã pre-select\n\n4. **đề_xuất_steps**: (chỉ UXP) Array các bước cải thiện\n   - Ít nhất 2 bước\n   - Mỗi bước actionable, có DDL ref nếu liên quan\n   - Spec cụ thể (timeout=60s, color token, component name)\n\n5. **references**: Array các tham chiếu chính thức\n   - Mỗi ref: {name, url, quote, source}\n   - Dữ liệu từ REFERENCE DATABASE bên dưới\n   - KHÔNG bịa URL — chỉ dùng URL từ database\n\nOUTPUT FORMAT: JSON array of objects, mỗi object có id + các fields trên.\n\nREFERENCE DATABASE:\n  Nielsen #1: Nielsen #1 — Visibility of System Status — \"The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.\"\n  Nielsen #10: Nielsen #10 — Help and Documentation — \"It's best if the system doesn't need any additional explanation. However, it may be necessary to provide documentation.\"\n  Nielsen #2: Nielsen #2 — Match Between System and Real World — \"The design should speak the users' language. Use words, phrases, and concepts familiar to the user.\"\n  Nielsen #3: Nielsen #3 — User Control and Freedom — \"Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.\"\n  Nielsen #4: Nielsen #4 — Consistency and Standards — \"Users should not have to wonder whether different words, situations, or actions mean the same thing.\"\n  Nielsen #5: Nielsen #5 — Error Prevention — \"Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.\"\n  Nielsen #6: Nielsen #6 — Recognition Rather Than Recall — \"Minimize the user's memory load by making elements, actions, and options visible.\"\n  Nielsen #7: Nielsen #7 — Flexibility and Efficiency of Use — \"Shortcuts — hidden from novice users — may speed up the interaction for the expert user.\"\n  Nielsen #8: Nielsen #8 — Aesthetic and Minimalist Design — \"Interfaces should not contain information that is irrelevant or rarely needed.\"\n  Nielsen #9: Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors — \"Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.\"\n  Fitts's Law: \"The time to acquire a target is a function of the distance to and size of the target.\"\n  Hick's Law: \"The time it takes to make a decision increases with the number and complexity of choices.\"\n  Jakob's Law: \"Users spend most of their time on other sites. This means that users prefer your site to work the same way.\"\n  Miller's Law: \"The average person can only keep 7 (plus or minus 2) items in their working memory.\"\n  Peak-End Rule: \"People judge an experience largely based on how they felt at its most intense point and at its end.\"\n  Zeigarnik Effect: \"People remember uncompleted or interrupted tasks better than completed tasks.\"\n  Von Restorff Effect: \"When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.\"\n  Doherty Threshold: \"Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.\"\n  Aesthetic-Usability Effect: \"Users often perceive aesthetically pleasing design as design that's more usable.\"\n  WCAG 1.4.11 — Non-text Contrast (Level AA)\n  WCAG 1.4.3 — Contrast (Minimum) (Level AA)\n  WCAG 2.5.5 — Target Size Enhanced (Level AAA)\n  WCAG 2.5.8 — Target Size Minimum (Level AA)\n  WCAG 3.3.1 — Error Identification (Level A)\n  WCAG 3.3.2 — Labels or Instructions (Level A)\n  WCAG 3.3.3 — Error Suggestion (Level AA)\n  WCAG 3.3.4 — Error Prevention: Legal, Financial, Data (Level AA)",
+  "items": [
+    {
+      "id": "UXP-001",
+      "type": "uxp",
+      "finding": {
+        "severity": "Critical",
+        "screen_tag": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "screen_id": "SCR-DLB-001",
+        "problem": "CTA mismatch: Popup-4 thông báo \"đến Quầy giao dịch\" nhưng nút action ghi \"Cài mã PIN\"",
+        "ddl_ref": "UXG-165 (Clarity of action labels)",
+        "solution_draft": "Đổi CTA popup-4 thành \"Đóng\" hoặc \"Tôi đã hiểu\". Nếu có flow PIN thay thế, label cụ thể hơn",
+        "gap_ref": "Check #4, Check #5",
+        "current_user_impact": "Trải nghiệm bị phá vỡ tại Form nhập thông tin: CTA mismatch: Popup-4 thông báo \"đến Quầy giao dịch\" nhưng nút action ghi \"Cài m, buộc user phải thoát và thử lại.",
+        "current_heuristic": "UXG-165"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [
+        {
+          "num": 4,
+          "title": "CTA labels đúng với action thực sự",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: popup-4.png — nút \"Cài mã PIN\" nhưng message nói \"đến Quầy giao dịch\" — contradiction",
+          "ddl_ref": "UXG-165",
+          "category": "Skill B (UXG-165 Clarity)",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 5,
+          "title": "Popup-3 terminology đồng nhất với flow",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: popup-3.png — \"đổi mật khẩu\" nhưng nút \"Cài mã PIN\" — terminology mismatch",
+          "ddl_ref": "UXG-165",
+          "category": "Skill A + Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-002",
+      "type": "uxp",
+      "finding": {
+        "severity": "Critical",
+        "screen_tag": "Đăng nhập báo lỗi › Lỗi - Phiên hết hạn",
+        "screen_id": "SCR-DLB-001",
+        "problem": "Blur background không đủ mờ — số dư tài khoản (20,000,000 VND) vẫn đọc được phía sau popup",
+        "ddl_ref": "UXG-243 (Sensitive data protection)",
+        "solution_draft": "Tăng opacity blur overlay lên ≥80%, hoặc thay bằng solid dark overlay `rgba(0,0,0,0.7)`",
+        "gap_ref": "Check #1",
+        "current_user_impact": "Lỗi nghiêm trọng gây gián đoạn luồng Đăng nhập báo lỗi: blur background không đủ mờ.",
+        "current_heuristic": "UXG-243"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [
+        {
+          "num": 1,
+          "title": "Input field có persistent label phía trên",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: login-with-face-id.png — input chỉ có placeholder \"Mật khẩu\", không có label tĩnh phía trên khi nhập",
+          "ddl_ref": "COMP:text-input-1",
+          "category": "Skill A (text-input-1 spec)",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-003",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Đăng nhập báo lỗi › Đặt lại mật khẩu",
+        "screen_id": "SCR-DLB-001",
+        "problem": "Thiếu `password-strength-1` component — không có progress bar + checklist động",
+        "ddl_ref": "COMP:password-strength-1 · UXG-087 (Real-time validation)",
+        "solution_draft": "Thêm password strength meter với 4 checklist (8-20 ký tự / chữ hoa / số / ký tự đặc biệt) update real-time",
+        "gap_ref": "Check #1, Check #2",
+        "current_user_impact": "Thiếu `password-strength-1` component — không có progress bar + checklist động — gây nhầm lẫn và giảm tin tưởng vào giao diện tại bước Đặt lại mật khẩu.",
+        "current_heuristic": "UXG-087 · COMP:password-strength-1"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [
+        {
+          "num": 1,
+          "title": "Input field có persistent label phía trên",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: login-with-face-id.png — input chỉ có placeholder \"Mật khẩu\", không có label tĩnh phía trên khi nhập",
+          "ddl_ref": "COMP:text-input-1",
+          "category": "Skill A (text-input-1 spec)",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 2,
+          "title": "Input field có error state (red border) khi validate fail",
+          "verdict": "Unverifiable",
+          "evidence": "Không có artboard nào show trạng thái lỗi input, không thể verify",
+          "ddl_ref": "COMP:text-input-1",
+          "category": "Skill A (text-input-1 spec)",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-004",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "screen_id": "SCR-DLB-001",
+        "problem": "Popup-3 yêu cầu đổi mật khẩu nhưng CTA ghi \"Cài mã PIN\" — terminology inconsistency",
+        "ddl_ref": "UXG-165 (Terminology consistency)",
+        "solution_draft": "Đổi CTA thành \"Đổi mật khẩu ngay\" cho popup-3. Giữ \"Cài mã PIN\" chỉ khi flow thực sự cài PIN",
+        "gap_ref": "Check #5, Check #4",
+        "current_user_impact": "Trải nghiệm bị suy giảm đáng kể: popup-3 yêu cầu đổi mật khẩu nhưng CTA ghi \"Cài mã PIN\", ảnh hưởng đến hiệu suất sử dụng.",
+        "current_heuristic": "UXG-165"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [
+        {
+          "num": 4,
+          "title": "CTA labels đúng với action thực sự",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: popup-4.png — nút \"Cài mã PIN\" nhưng message nói \"đến Quầy giao dịch\" — contradiction",
+          "ddl_ref": "UXG-165",
+          "category": "Skill B (UXG-165 Clarity)",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 5,
+          "title": "Popup-3 terminology đồng nhất với flow",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: popup-3.png — \"đổi mật khẩu\" nhưng nút \"Cài mã PIN\" — terminology mismatch",
+          "ddl_ref": "UXG-165",
+          "category": "Skill A + Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-005",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "screen_id": "SCR-DLB-001",
+        "problem": "Popup cập nhật bắt buộc (popup-1) không có nút đóng \"X\" — zero escape hatch",
+        "ddl_ref": "UXG-012 (User control and freedom)",
+        "solution_draft": "Nếu thật sự bắt buộc: hiển thị countdown \"Bắt buộc cập nhật sau X ngày\" thay vì hard block ngay. Nếu không bắt buộc: thêm nút \"Để sau\"",
+        "gap_ref": "Check #10, Check #3",
+        "current_user_impact": "Người dùng gặp khó khăn khi nhập thông tin do popup cập nhật bắt buộc (popup-1) không có nút đóng \"X\" — zero escape hatch, làm tăng thời gian thao tác.",
+        "current_heuristic": "UXG-012"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [
+        {
+          "num": 3,
+          "title": "Popup có dismiss button (X icon)",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: popup.png, popup-2.png, popup-3.png, popup-4.png — không có X icon",
+          "ddl_ref": "UXG-012",
+          "category": "Skill B (UXG-012 User control)",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 10,
+          "title": "Popup update bắt buộc có escape option",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: popup.png — popup bắt buộc chỉ có nút \"Cập nhật\", zero escape",
+          "ddl_ref": "UXG-012",
+          "category": "Skill B (Nielsen #3)",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-006",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Đăng nhập báo lỗi › Đăng nhập lại",
+        "screen_id": "SCR-DLB-001",
+        "problem": "Context break: SCR-DLB-001 dùng Face ID + saved account, SCR-DLB-004 yêu cầu nhập Số điện thoại mới",
+        "ddl_ref": "UXG-089 (Transition context)",
+        "solution_draft": "Thêm dòng hướng dẫn: \"Mật khẩu đã thay đổi. Vui lòng đăng nhập với mật khẩu mới.\" Ưu tiên pre-fill số điện thoại",
+        "gap_ref": "Check #1, Check #3",
+        "current_user_impact": "Người dùng gặp khó khăn khi thao tác do context break: SCR-DLB-001 dùng Face ID + saved account, làm tăng thời gian thao tác.",
+        "current_heuristic": "UXG-089"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [
+        {
+          "num": 1,
+          "title": "Input field có persistent label phía trên",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: login-with-face-id.png — input chỉ có placeholder \"Mật khẩu\", không có label tĩnh phía trên khi nhập",
+          "ddl_ref": "COMP:text-input-1",
+          "category": "Skill A (text-input-1 spec)",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 3,
+          "title": "Popup có dismiss button (X icon)",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: popup.png, popup-2.png, popup-3.png, popup-4.png — không có X icon",
+          "ddl_ref": "UXG-012",
+          "category": "Skill B (UXG-012 User control)",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-007",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Đăng nhập báo lỗi › Đặt lại mật khẩu",
+        "screen_id": "SCR-DLB-001",
+        "problem": "Text ví dụ mật khẩu bị truncate: \"12345678a$...\" — ellipsis cắt ngang ví dụ",
+        "ddl_ref": "UXG-034 (Text readability)",
+        "solution_draft": "Wrap text hoặc dùng bullet points riêng cho mỗi ví dụ",
+        "gap_ref": "Check #5",
+        "current_user_impact": "Chi tiết thiết kế chưa tối ưu tại Đặt lại mật khẩu: text ví dụ mật khẩu bị truncate: \"12345678a$...\" — ellipsis cắt ngang ví dụ.",
+        "current_heuristic": "UXG-034"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [
+        {
+          "num": 5,
+          "title": "Popup-3 terminology đồng nhất với flow",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: popup-3.png — \"đổi mật khẩu\" nhưng nút \"Cài mã PIN\" — terminology mismatch",
+          "ddl_ref": "UXG-165",
+          "category": "Skill A + Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-008",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Đăng nhập báo lỗi › Lỗi - Phiên hết hạn",
+        "screen_id": "SCR-DLB-001",
+        "problem": "Thiếu attempt counter — không cho user biết còn bao nhiêu lần nhập sai trước khi bị khóa",
+        "ddl_ref": "UXG-098 (Error context)",
+        "solution_draft": "Thêm text nhỏ: \"Còn X lần thử\" sau lần nhập sai đầu tiên",
+        "gap_ref": "Check #6",
+        "current_user_impact": "Chi tiết thiết kế chưa tối ưu tại Lỗi - Phiên hết hạn: thiếu attempt counter.",
+        "current_heuristic": "UXG-098"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [
+        {
+          "num": 6,
+          "title": "User name/phone masked đúng format",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: login-with-face-id.png — \"090****882\" — masked correctly",
+          "ddl_ref": "UXG-243",
+          "category": "Skill B (privacy)",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-009",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "screen_id": "SCR-DLB-001",
+        "problem": "Input field \"Mật khẩu\" chỉ có placeholder text, không có floating label",
+        "ddl_ref": "COMP:text-input-1 · UXG-056 (Form label visibility)",
+        "solution_draft": "Dùng `text-input-1` spec với `label-row` persistent label phía trên input",
+        "gap_ref": "Check #1, Check #8, Check #13",
+        "current_user_impact": "Input field \"Mật khẩu\" chỉ có placeholder text, không có floating label — không chặn luồng nhưng giảm tính chuyên nghiệp của giao diện.",
+        "current_heuristic": "UXG-056 · COMP:text-input-1"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [
+        {
+          "num": 1,
+          "title": "Input field có persistent label phía trên",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: login-with-face-id.png — input chỉ có placeholder \"Mật khẩu\", không có label tĩnh phía trên khi nhập",
+          "ddl_ref": "COMP:text-input-1",
+          "category": "Skill A (text-input-1 spec)",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 8,
+          "title": "Primary CTA \"Đăng nhập\" visually prominent",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: Nút Đăng nhập màu xanh lá rõ ràng, contrast đủ",
+          "ddl_ref": "UXG-023",
+          "category": "Skill C (Layer C3)",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 13,
+          "title": "Face ID icon có text label đi kèm",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: login-with-face-id.png — Face ID icon không có text label",
+          "ddl_ref": "UXG-056",
+          "category": "Skill A (text-input-1 label rule) + Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-010",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "screen_id": "SCR-DLB-001",
+        "problem": "Face ID icon không có text label đi kèm",
+        "ddl_ref": "UXG-056 (Label visibility) · fitts",
+        "solution_draft": "Thêm text label \"Face ID\" hoặc tooltip dưới icon (min 12px, WCAG accessible)",
+        "gap_ref": "Check #13, Check #1, Check #2",
+        "current_user_impact": "Face ID icon không có text label đi kèm — không chặn luồng nhưng giảm tính chuyên nghiệp của giao diện.",
+        "current_heuristic": "Fitts's Law · UXG-056"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [
+        {
+          "num": 1,
+          "title": "Input field có persistent label phía trên",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: login-with-face-id.png — input chỉ có placeholder \"Mật khẩu\", không có label tĩnh phía trên khi nhập",
+          "ddl_ref": "COMP:text-input-1",
+          "category": "Skill A (text-input-1 spec)",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 2,
+          "title": "Input field có error state (red border) khi validate fail",
+          "verdict": "Unverifiable",
+          "evidence": "Không có artboard nào show trạng thái lỗi input, không thể verify",
+          "ddl_ref": "COMP:text-input-1",
+          "category": "Skill A (text-input-1 spec)",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 13,
+          "title": "Face ID icon có text label đi kèm",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: login-with-face-id.png — Face ID icon không có text label",
+          "ddl_ref": "UXG-056",
+          "category": "Skill A (text-input-1 label rule) + Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Fitts's Law",
+          "url": "https://lawsofux.com/fittss-law/",
+          "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:fitts",
+          "_ref_id": "laws.fitts"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-011",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Đăng nhập báo lỗi › Lỗi - Phiên hết hạn",
+        "screen_id": "SCR-DLB-001",
+        "problem": "Không có countdown timer trong popup tái xác thực — `countdown-timer-1` spec required",
+        "ddl_ref": "COMP:countdown-timer-1 · UXG-098 (Error context)",
+        "solution_draft": "Thêm `countdown-timer-1` component với timeLeft + isExpired state. Khi expire: auto dismiss + toast thông báo",
+        "gap_ref": "Check #9, Check #6",
+        "current_user_impact": "Trải nghiệm bị suy giảm đáng kể: không có countdown timer trong popup tái xác thực, ảnh hưởng đến hiệu suất sử dụng.",
+        "current_heuristic": "UXG-098 · COMP:countdown-timer-1"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [
+        {
+          "num": 6,
+          "title": "User name/phone masked đúng format",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: login-with-face-id.png — \"090****882\" — masked correctly",
+          "ddl_ref": "UXG-243",
+          "category": "Skill B (privacy)",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 9,
+          "title": "Banner quảng cáo không interfere với auth flow",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: login-with-face-id.png — banner \"Gói vay hỗ trợ mua nhà\" xuất hiện ngay trong màn login — distracting",
+          "ddl_ref": "UXG-078",
+          "category": "Skill B (UXG priority)",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Zeigarnik Effect",
+          "url": "https://lawsofux.com/zeigarnik-effect/",
+          "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:countdown",
+          "_ref_id": "laws.zeigarnik"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-012",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Đăng nhập báo lỗi › Đăng nhập lại",
+        "screen_id": "SCR-DLB-001",
+        "problem": "Trường Số điện thoại không được pre-filled sau khi user hoàn thành đổi mật khẩu",
+        "ddl_ref": "COMP:text-input-1 · UXG-089 (Transition context)",
+        "solution_draft": "Pre-fill `text-input-1` với số điện thoại từ session. Nếu không available: hiện masked placeholder \"090****882\"",
+        "gap_ref": "Check #8, Check #3, Check #1",
+        "current_user_impact": "Trường Số điện thoại không được pre-filled sau khi user hoàn thành đổi mật khẩu — gây nhầm lẫn và giảm tin tưởng vào giao diện tại bước Đăng nhập lại.",
+        "current_heuristic": "UXG-089 · COMP:text-input-1"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [
+        {
+          "num": 1,
+          "title": "Input field có persistent label phía trên",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: login-with-face-id.png — input chỉ có placeholder \"Mật khẩu\", không có label tĩnh phía trên khi nhập",
+          "ddl_ref": "COMP:text-input-1",
+          "category": "Skill A (text-input-1 spec)",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 3,
+          "title": "Popup có dismiss button (X icon)",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: popup.png, popup-2.png, popup-3.png, popup-4.png — không có X icon",
+          "ddl_ref": "UXG-012",
+          "category": "Skill B (UXG-012 User control)",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 8,
+          "title": "Primary CTA \"Đăng nhập\" visually prominent",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: Nút Đăng nhập màu xanh lá rõ ràng, contrast đủ",
+          "ddl_ref": "UXG-023",
+          "category": "Skill C (Layer C3)",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#1@SCR-DLB-001",
+      "type": "gap",
+      "finding": {
+        "num": 1,
+        "title": "Input field có persistent label phía trên",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-001",
+        "screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: login-with-face-id.png — input chỉ có placeholder \"Mật khẩu\", không có label tĩnh phía trên khi nhập",
+        "ddl_ref": "COMP:text-input-1",
+        "ddl_evidence": "COMP:text-input-1",
+        "current_user_impact": "login-with-face-id.png — input chỉ có placeholder \"Mật khẩu\", không có label tĩnh phía trên khi nhập — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#3@SCR-DLB-001",
+      "type": "gap",
+      "finding": {
+        "num": 3,
+        "title": "Popup có dismiss button (X icon)",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-001",
+        "screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: popup.png, popup-2.png, popup-3.png, popup-4.png — không có X icon",
+        "ddl_ref": "UXG-012",
+        "ddl_evidence": "UXG-012",
+        "current_user_impact": "popup.png, popup-2.png, popup-3.png, popup-4.png — không có X icon — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#4@SCR-DLB-001",
+      "type": "gap",
+      "finding": {
+        "num": 4,
+        "title": "CTA labels đúng với action thực sự",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-001",
+        "screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: popup-4.png — nút \"Cài mã PIN\" nhưng message nói \"đến Quầy giao dịch\" — contradiction",
+        "ddl_ref": "UXG-165",
+        "ddl_evidence": "UXG-165",
+        "current_user_impact": "popup-4.png — nút \"Cài mã PIN\" nhưng message nói \"đến Quầy giao dịch\" — contradiction — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#5@SCR-DLB-001",
+      "type": "gap",
+      "finding": {
+        "num": 5,
+        "title": "Popup-3 terminology đồng nhất với flow",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-001",
+        "screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: popup-3.png — \"đổi mật khẩu\" nhưng nút \"Cài mã PIN\" — terminology mismatch",
+        "ddl_ref": "UXG-165",
+        "ddl_evidence": "UXG-165",
+        "current_user_impact": "popup-3.png — \"đổi mật khẩu\" nhưng nút \"Cài mã PIN\" — terminology mismatch — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#9@SCR-DLB-001",
+      "type": "gap",
+      "finding": {
+        "num": 9,
+        "title": "Banner quảng cáo không interfere với auth flow",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-001",
+        "screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: login-with-face-id.png — banner \"Gói vay hỗ trợ mua nhà\" xuất hiện ngay trong màn login — distracting",
+        "ddl_ref": "UXG-078",
+        "ddl_evidence": "UXG-078",
+        "current_user_impact": "login-with-face-id.png — banner \"Gói vay hỗ trợ mua nhà\" xuất hiện ngay trong màn login —... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#10@SCR-DLB-001",
+      "type": "gap",
+      "finding": {
+        "num": 10,
+        "title": "Popup update bắt buộc có escape option",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-001",
+        "screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: popup.png — popup bắt buộc chỉ có nút \"Cập nhật\", zero escape",
+        "ddl_ref": "UXG-012",
+        "ddl_evidence": "UXG-012",
+        "current_user_impact": "popup.png — popup bắt buộc chỉ có nút \"Cập nhật\", zero escape — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#13@SCR-DLB-001",
+      "type": "gap",
+      "finding": {
+        "num": 13,
+        "title": "Face ID icon có text label đi kèm",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-001",
+        "screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: login-with-face-id.png — Face ID icon không có text label",
+        "ddl_ref": "UXG-056",
+        "ddl_evidence": "UXG-056",
+        "current_user_impact": "login-with-face-id.png — Face ID icon không có text label — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-001",
+        "parent_screen_name": "Đăng nhập báo lỗi › Form nhập thông tin",
+        "boundary_type": "auth"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#1@SCR-DLB-002",
+      "type": "gap",
+      "finding": {
+        "num": 1,
+        "title": "Blur overlay đủ che sensitive data (balance)",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-002",
+        "screen_name": "Đăng nhập báo lỗi › Lỗi - Phiên hết hạn",
+        "screen_type": "error",
+        "evidence": "Từ ảnh: login-expired.png — \"20,000,000 VND\" vẫn readable qua blur — security risk",
+        "ddl_ref": "UXG-243",
+        "ddl_evidence": "UXG-243",
+        "current_user_impact": "login-expired.png — \"20,000,000 VND\" vẫn readable qua blur — security risk — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-002",
+        "parent_screen_name": "Đăng nhập báo lỗi › Lỗi - Phiên hết hạn",
+        "boundary_type": "error"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#2@SCR-DLB-002",
+      "type": "gap",
+      "finding": {
+        "num": 2,
+        "title": "Quick re-auth popup có Face ID option",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-002",
+        "screen_name": "Đăng nhập báo lỗi › Lỗi - Phiên hết hạn",
+        "screen_type": "error",
+        "evidence": "Từ ảnh: login-expired.png — chỉ có text input + Bỏ qua/Tiếp tục, không có Face ID button trong popup",
+        "ddl_ref": "COMP:text-input-1",
+        "ddl_evidence": "COMP:text-input-1",
+        "current_user_impact": "login-expired.png — chỉ có text input + Bỏ qua/Tiếp tục, không có Face ID button trong popup — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-002",
+        "parent_screen_name": "Đăng nhập báo lỗi › Lỗi - Phiên hết hạn",
+        "boundary_type": "error"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-DLB-002",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "Attempt counter visible sau lần nhập sai",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-002",
+        "screen_name": "Đăng nhập báo lỗi › Lỗi - Phiên hết hạn",
+        "screen_type": "error",
+        "evidence": "Từ ảnh: không có lần nhập nào thất bại được thiết kế → missing state",
+        "ddl_ref": "UXG-098",
+        "ddl_evidence": "UXG-098",
+        "current_user_impact": "không có lần nhập nào thất bại được thiết kế → missing state — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-002",
+        "parent_screen_name": "Đăng nhập báo lỗi › Lỗi - Phiên hết hạn",
+        "boundary_type": "error"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#9@SCR-DLB-002",
+      "type": "gap",
+      "finding": {
+        "num": 9,
+        "title": "Countdown timer visible trong popup",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-002",
+        "screen_name": "Đăng nhập báo lỗi › Lỗi - Phiên hết hạn",
+        "screen_type": "error",
+        "evidence": "Từ ảnh: login-expired.png — không có timer UI, chỉ có text error + input + 2 buttons",
+        "ddl_ref": "COMP:countdown-timer-1",
+        "ddl_evidence": "COMP:countdown-timer-1",
+        "current_user_impact": "login-expired.png — không có timer UI, chỉ có text error + input + 2 buttons — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-002",
+        "parent_screen_name": "Đăng nhập báo lỗi › Lỗi - Phiên hết hạn",
+        "boundary_type": "error"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Zeigarnik Effect",
+          "url": "https://lawsofux.com/zeigarnik-effect/",
+          "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:countdown",
+          "_ref_id": "laws.zeigarnik"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#1@SCR-DLB-003",
+      "type": "gap",
+      "finding": {
+        "num": 1,
+        "title": "Password strength meter với progress bar",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-003",
+        "screen_name": "Đăng nhập báo lỗi › Đặt lại mật khẩu",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: change-password.png — không có progress bar, không có checklist động. Chỉ có text tĩnh",
+        "ddl_ref": "COMP:password-strength-1",
+        "ddl_evidence": "COMP:password-strength-1",
+        "current_user_impact": "change-password.png — không có progress bar, không có checklist động. Chỉ có text tĩnh — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-003",
+        "parent_screen_name": "Đăng nhập báo lỗi › Đặt lại mật khẩu",
+        "boundary_type": "form"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#2@SCR-DLB-003",
+      "type": "gap",
+      "finding": {
+        "num": 2,
+        "title": "Checklist real-time updates khi nhập",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-003",
+        "screen_name": "Đăng nhập báo lỗi › Đặt lại mật khẩu",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: checklist tĩnh, không có checkmark/X indicator per rule",
+        "ddl_ref": "COMP:password-strength-1",
+        "ddl_evidence": "COMP:password-strength-1",
+        "current_user_impact": "checklist tĩnh, không có checkmark/X indicator per rule — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-003",
+        "parent_screen_name": "Đăng nhập báo lỗi › Đặt lại mật khẩu",
+        "boundary_type": "form"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#5@SCR-DLB-003",
+      "type": "gap",
+      "finding": {
+        "num": 5,
+        "title": "Text điều kiện không bị truncate",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-003",
+        "screen_name": "Đăng nhập báo lỗi › Đặt lại mật khẩu",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: \"Ví dụ: abc@1234; a&123456; 12345678a$...\" bị cắt với \"...\" — text truncation",
+        "ddl_ref": "UXG-034",
+        "ddl_evidence": "UXG-034",
+        "current_user_impact": "\"Ví dụ: abc@1234; a&123456; 12345678a$...\" bị cắt với \"...\" — text truncation — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": "1234",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-003",
+        "parent_screen_name": "Đăng nhập báo lỗi › Đặt lại mật khẩu",
+        "boundary_type": "form"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#8@SCR-DLB-003",
+      "type": "gap",
+      "finding": {
+        "num": 8,
+        "title": "3 input fields có persistent labels",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-003",
+        "screen_name": "Đăng nhập báo lỗi › Đặt lại mật khẩu",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: các fields chỉ dùng placeholder labels, không có static label phía trên",
+        "ddl_ref": "COMP:text-input-1",
+        "ddl_evidence": "COMP:text-input-1",
+        "current_user_impact": "các fields chỉ dùng placeholder labels, không có static label phía trên — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-003",
+        "parent_screen_name": "Đăng nhập báo lỗi › Đặt lại mật khẩu",
+        "boundary_type": "form"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#1@SCR-DLB-004",
+      "type": "gap",
+      "finding": {
+        "num": 1,
+        "title": "Transition context sau đổi mật khẩu",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-004",
+        "screen_name": "Đăng nhập báo lỗi › Đăng nhập lại",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: re-login.png — không có message \"Hãy đăng nhập với mật khẩu mới\" — context break",
+        "ddl_ref": "UXG-089",
+        "ddl_evidence": "UXG-089",
+        "current_user_impact": "re-login.png — không có message \"Hãy đăng nhập với mật khẩu mới\" — context break — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-004",
+        "parent_screen_name": "Đăng nhập báo lỗi › Đăng nhập lại",
+        "boundary_type": "form"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#3@SCR-DLB-004",
+      "type": "gap",
+      "finding": {
+        "num": 3,
+        "title": "Phone number pre-filled sau flow",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-004",
+        "screen_name": "Đăng nhập báo lỗi › Đăng nhập lại",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: Số điện thoại field trống — user phải nhập lại từ đầu",
+        "ddl_ref": "UXG-089",
+        "ddl_evidence": "UXG-089",
+        "current_user_impact": "Số điện thoại field trống — user phải nhập lại từ đầu — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-004",
+        "parent_screen_name": "Đăng nhập báo lỗi › Đăng nhập lại",
+        "boundary_type": "form"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-DLB-004",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "Peak-End Rule: Kết thúc flow positive",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-004",
+        "screen_name": "Đăng nhập báo lỗi › Đăng nhập lại",
+        "screen_type": "form",
+        "evidence": "Re-login sau error không có positive reinforcement — peak-end experience negative",
+        "ddl_ref": "peak-end",
+        "ddl_evidence": "peak-end",
+        "current_user_impact": "Re-login sau error không có positive reinforcement — peak-end experience negative — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-004",
+        "parent_screen_name": "Đăng nhập báo lỗi › Đăng nhập lại",
+        "boundary_type": "form"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Peak-End Rule",
+          "url": "https://lawsofux.com/peak-end-rule/",
+          "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:peak",
+          "_ref_id": "laws.peak_end"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#8@SCR-DLB-004",
+      "type": "gap",
+      "finding": {
+        "num": 8,
+        "title": "Phone number pre-filled sau đổi mật khẩu",
+        "severity": "Minor",
+        "screen_id": "SCR-DLB-004",
+        "screen_name": "Đăng nhập báo lỗi › Đăng nhập lại",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: re-login.png — Số điện thoại field trống, không pre-filled",
+        "ddl_ref": "COMP:text-input-1",
+        "ddl_evidence": "COMP:text-input-1",
+        "current_user_impact": "re-login.png — Số điện thoại field trống, không pre-filled — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-DLB-004",
+        "parent_screen_name": "Đăng nhập báo lỗi › Đăng nhập lại",
+        "boundary_type": "form"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Đăng nhập báo lỗi",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    }
+  ],
+  "stats": {
+    "uxp_count": 12,
+    "gap_count": 19,
+    "total_items": 31,
+    "fields_to_generate": 136
+  }
+}

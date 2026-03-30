@@ -1,0 +1,152 @@
+[
+  {
+    "id": "UXP-001",
+    "hiện_trạng": "OTP xác thực thiếu countdown timer, resend button, trạng thái lỗi — vi phạm DDL otp-input-1 spec.",
+    "tác_động": "Chuyển tiền qua TK = high-value. OTP fail → tiền không gửi được, người dùng stuck.",
+    "nguyên_tắc": "Nielsen #1: Timer + resend bắt buộc cho OTP.",
+    "đề_xuất_steps": [
+      "Countdown: 02:00",
+      "Resend after 30s",
+      "trạng thái lỗi: red cells",
+      "Auto-focus"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-002",
+    "hiện_trạng": "6 artboards form nhập — không có inline validation. Errors chỉ hiển thị khi submit.",
+    "tác_động": "người dùng điền sai → submit → error popup → quay lại sửa → submit lại. Real-time validation = fix immediately.",
+    "nguyên_tắc": "Nielsen #9: Inline validation per field. WCAG 3.3.1: Error at field level.",
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Precisely indicate the problem.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm variant trạng thái lỗi cho tất cả input fields (viền đỏ + thông báo lỗi cụ thể)",
+      "Xác thực real-time: số tài khoản (tối thiểu 6 chữ số), số tiền (..."
+    ]
+  },
+  {
+    "id": "UXP-003",
+    "hiện_trạng": "Trường 'Số tiền' trống — không có placeholder, không có format hint (VND, min/max).",
+    "tác_động": "người dùng không biết: number only? Có chấm phân cách? Min/max bao nhiêu? Helper text: '50,000 — 500,000,000 VND'.",
+    "nguyên_tắc": "WCAG 3.3.2: Input instructions. Placeholder + min/max helper.",
+    "references": [
+      {
+        "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+        "quote": "Labels provided when content requires user input.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Hiển thị dòng \"Hai mươi triệu đồng\" real-time ngay dưới ô nhập khi đang gõ",
+      "Cập nhật real-time khi người dùng thay đổi con số",
+      "--"
+    ]
+  },
+  {
+    "id": "UXP-004",
+    "hiện_trạng": "Dropdown 'Chọn phương thức xác thực' hiển thị SMS OTP là lựa chọn duy nhất — dropdown cho 1 option = overhead.",
+    "tác_động": "1-option dropdown = không cần thiết interaction. hiển thị inline: 'Xác thực: SMS OTP'. Dropdown justified for 2+ options.",
+    "nguyên_tắc": "Hick's Law: 1 option doesn't need selection UI.",
+    "references": [
+      {
+        "name": "Hick's Law",
+        "url": "https://lawsofux.com/hicks-law/",
+        "quote": "Decision time increases with number and complexity of choices.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Nếu chỉ có 1 phương thức: hiển thị static text \"Xác thực bằng SMS OTP\"",
+      "Nếu từ 2+ phương thức: giữ dropdown",
+      "--"
+    ]
+  },
+  {
+    "id": "UXP-005",
+    "hiện_trạng": "Biên nhận kết quả thiếu Share/Print/Download actions — DDL biên lai-preview-1 spec requires export CTAs.",
+    "tác_động": "người dùng phải screenshot biên lai = thiếu chuyên nghiệp. PDF download + share = ngân hàng essential.",
+    "nguyên_tắc": "Nielsen #7: Export actions bắt buộc for receipts.",
+    "references": [
+      {
+        "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+        "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+        "quote": "Shortcuts speed up interaction.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm dòng \"Phí giao dịch: 2,000 VND\" trên biên nhận kết quả",
+      "Đặt sau ngân hàng thụ hưởng, trước mã giao dịch",
+      "--"
+    ]
+  },
+  {
+    "id": "UXP-006",
+    "hiện_trạng": "Nội dung giao dịch auto-fill 'NGUYEN HOANG KHAI chuyen tien' — thiếu dấu tiếng Việt, all-caps name.",
+    "tác_động": "ASCII text on Vietnamese ngân hàng = thiếu chuyên nghiệp. 'chuyen tien' → 'chuyển tiền'. Name capitalization không nhất quán.",
+    "nguyên_tắc": "Nielsen #2: Proper Vietnamese diacritics. Match real-world language.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Speak the users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm nhãn \"[Tự động]\" hoặc helper text \"Nội dung có thể chỉnh sửa\"",
+      "--"
+    ]
+  },
+  {
+    "id": "UXP-007",
+    "hiện_trạng": "Tên người thụ hưởng 'NGUYEN TUNG' viết hoa trên cả xác nhận và biên nhận — khó đọc, không natural.",
+    "tác_động": "ALL CAPS names = khó đọc, tạo cảm giác máy móc. Title Case: 'Nguyen Tung' = natural, chuyên nghiệp.",
+    "nguyên_tắc": "Nielsen #2: Natural language formatting. Title Case for names.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Speak the users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đảm bảo tên người thụ hưởng đồng nhất xuyên suốt flow (từ form → xác nhận → result)",
+      "Chọn format chuẩn (viết hoa hoặc Title Case)",
+      "--"
+    ]
+  },
+  {
+    "id": "UXP-008",
+    "hiện_trạng": "Trường thụ hưởng placeholder ngắn — thiếu hint format: 'Nhập số tài khoản hoặc tên người nhận'.",
+    "tác_động": "Ambiguous input = người dùng guesses. Placeholder should clarify: số tài khoản or name? What format?",
+    "nguyên_tắc": "WCAG 3.3.2: Descriptive placeholder text.",
+    "references": [
+      {
+        "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+        "quote": "Labels provided.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm helper text: \"Nhập số tài khoản, số thẻ hoặc số điện thoại người nhận\"",
+      "--"
+    ]
+  }
+]

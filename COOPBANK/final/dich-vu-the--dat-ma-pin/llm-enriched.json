@@ -1,0 +1,407 @@
+[
+  {
+    "id": "Gap#1@SCR-PIN-001",
+    "hiện_trạng": "Màn hình chính dịch vụ thẻ (SCR-PIN-001) hiển thị 4 action icons dạng grid (Cài đặt PIN, Mở khóa thẻ, Khóa thẻ, Đổi PIN). Các icons có visual size ước tính ~40×40px — nhỏ hơn chuẩn WCAG 2.5.8 (44×44 CSS pixels) và Apple HIG (44pt).",
+    "tác_động": "Touch target nhỏ tăng mistouch rate, đặc biệt với người dùng lớn tuổi — nhóm khách hàng chính của ngân hàng. 4 icons nằm gần nhau amplify vấn đề: tap nhầm action khác có thể dẫn đến flow không mong muốn (VD: tap 'Khóa thẻ' thay vì 'Cài đặt PIN').",
+    "nguyên_tắc": "Fitts's Law: icon nhỏ hơn yêu cầu target rộng hơn. WCAG 2.5.8 yêu cầu minimum 24×24px nhưng phương pháp tốt nhất mobile là 44×44px với ≥ 8px spacing giữa targets.",
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+        "source": "Laws of UX"
+      },
+      {
+        "name": "WCAG 2.5.8 — Target Size Minimum (Level AA)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html",
+        "quote": "The size of the target for pointer inputs is at least 24 by 24 CSS pixels.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng kích thước vùng chạm tối thiểu 44×44dp theo chuẩn WCAG 2.5.5",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-PIN-001",
+    "hiện_trạng": "4 action icons trên grid dịch vụ thẻ (SCR-PIN-001) đều cùng visual weight, size, và color treatment — không có visual distinction cho action 'Cài đặt PIN thẻ' dù đây là primary action trên screen context 'Đặt mã PIN'.",
+    "tác_động": "người dùng phải scan và đọc label tất cả 4 icons thay vì nhận diện ngay action cần thực hiện. Khi vào từ deep link hoặc flow đặt PIN, thiếu phân cấp trực quan khiến time-to-action tăng vì phải cognitive process equal-weight options.",
+    "nguyên_tắc": "Von Restorff Effect: \"When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.\" 4 icons identical weight = no Von Restorff benefit. Primary action nên visually distinct để tăng immediate recognition.",
+    "references": [
+      {
+        "name": "Von Restorff Effect",
+        "url": "https://lawsofux.com/von-restorff-effect/",
+        "quote": "When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.",
+        "source": "Laws of UX"
+      },
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung thành phần còn thiếu vào giao diện hiện tại",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-PIN-001",
+    "hiện_trạng": "Trên card thẻ (SCR-PIN-001), Hạn mức hiển thị '******** VND' mà không có eye icon để reveal, trong khi Số thẻ cùng screen có eye icon (ic_eye) cho reveal/ẩn. Pattern masked data không nhất quán giữa 2 fields trên cùng card.",
+    "tác_động": "Inconsistency tạo confusion: người dùng nhìn thấy eye icon ở Số thẻ → expect cùng interaction ở Hạn mức → không tìm thấy → wonder nếu Hạn mức không thể xem. Perceived broken feature, dù thực tế có thể là design decision.",
+    "nguyên_tắc": "Nielsen #4 — Consistency and Standards: Cùng pattern (masked data + reveal) phải apply nhất quán trên cùng screen. Nếu 1 field masked có reveal, tất cả masked fields nên có reveal hoặc có clear reason tại sao không.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Jakob's Law",
+        "url": "https://lawsofux.com/jakobs-law/",
+        "quote": "Users spend most of their time on other sites. This means that users prefer your site to work the same way as all the other sites they already know.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung eye icon để reveal vào thiết kế màn hình",
+      "Đồng bộ format hiển thị giữa tất cả màn hình trong cùng flow",
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-PIN-002",
+    "hiện_trạng": "Form đặt PIN (SCR-PIN-002) có 2 fields: 'Nhập mã PIN' và 'Nhập lại mã PIN'. Khi 2 giá trị không khớp, không có inline trạng thái lỗi hiển thị dưới field 'Nhập lại mã PIN'. Error chỉ xuất hiện khi submit — dạng popup hoặc overlay.",
+    "tác_động": "người dùng nhập 2 PINs khác nhau nhưng không biết cho đến khi submit → phải re-enter cả 2. Với PIN input qua custom numpad (slow input), mỗi retry mất thêm ~10 giây. Real-time match indicator giúp detect mismatch ngay khi nhập xong field 2.",
+    "nguyên_tắc": "Nielsen #9 — Help người dùng Recognize, Diagnose, and Recover from Errors: Error must precisely indicate the problem. WCAG 3.3.1 — Error Identification: item in error phải được identify rõ ràng bằng text.",
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "WCAG 3.3.1 — Error Identification (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html",
+        "quote": "If an input error is automatically detected, the item that is in error is identified and the error is described to the user in text.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung inline trạng thái lỗi hiển thị dưới field 'Nhập lại mã PIN' vào thiết kế màn hình",
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Triển khai inline validation real-time — kiểm tra ngay khi người dùng rời trường nhập",
+      "Đồng bộ format hiển thị giữa tất cả màn hình trong cùng flow"
+    ]
+  },
+  {
+    "id": "Gap#2@SCR-PIN-002",
+    "hiện_trạng": "CTA 'Xác nhận' trên form PIN (SCR-PIN-002) navigate trực tiếp đến auth overlay — không có loading spinner hoặc processing indicator giữa tap và response. Zero feedback gap giữa người dùng action và system response.",
+    "tác_động": "Không có phản hồi trực quan CTA đã nhận được input → người dùng có thể tap nhiều lần. Đặc biệt rủi ro khi PIN change là irreversible action — double submission có thể gây state confusion trên server.",
+    "nguyên_tắc": "Nielsen #1 — Visibility of System Status: Feedback ngay lập tức sau người dùng action là requirement cơ bản. Doherty Threshold: response > 400ms mà không có indicator = perceived broken.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Doherty Threshold",
+        "url": "https://lawsofux.com/doherty-threshold/",
+        "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung thành phần còn thiếu vào giao diện hiện tại",
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Thêm trạng thái loading với skeleton hoặc spinner kèm message giải thích",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-PIN-002",
+    "hiện_trạng": "Warning về lockout (khóa sau 5 lần sai) chỉ xuất hiện trong auth overlay — không hiển thị trên main form PIN (SCR-PIN-002). người dùng bắt đầu nhập PIN mà không biết rule lockout applied.",
+    "tác_động": "người dùng thử nhiều lần PIN cũ → bị khóa bất ngờ → phải liên hệ ngân hàng mở khóa. Hiển thị warning upfront giảm lỗi vô ý và volume hỗ trợ khách hàng. Lockout trên thẻ ngân hàng có hậu quả lớn — thẻ bị khóa khi cần giao dịch gấp.",
+    "nguyên_tắc": "Nielsen #5 — Error Prevention: Warning phải hiển thị trước khi người dùng bắt đầu task, không phải hidden trong sub-flow. Prevention tốt nhất là informed người dùng trước khi action.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung thành phần còn thiếu vào giao diện hiện tại",
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-PIN-002",
+    "hiện_trạng": "CTA label trên form PIN (SCR-PIN-002) thay đổi giữa states: State 1 hiển thị 'Xác nhận', State 2 hiển thị 'Tiếp tục'. 2 labels khác nhau cho cùng 1 primary action button trên cùng screen.",
+    "tác_động": "Label inconsistency gây confusion: 'Xác nhận' suggest finality (hoàn tất), 'Tiếp tục' suggest more steps ahead. người dùng phải re-evaluate expected outcome mỗi khi nhìn button — tải nhận thức thừa. không nhất quán CTA cũng gây nghi ngờ: 'Đây có phải cùng 1 button không?'",
+    "nguyên_tắc": "Nielsen #4 — Consistency: Cùng 1 action phải cùng label. CTA label changes between states vi phạm internal consistency — UI nên predictable, đặc biệt cho primary action.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Đồng bộ format hiển thị giữa tất cả màn hình trong cùng flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-PIN-002",
+    "hiện_trạng": "Rules/notice section phía dưới form PIN (SCR-PIN-002) bị truncate (cắt nội dung) khi keyboard mở. người dùng không thể đọc hết rules quan trọng về PIN trong khi đang nhập PIN. Content bị clip bởi keyboard.",
+    "tác_động": "người dùng bỏ lỡ rules quan trọng (VD: yêu cầu format PIN, restrictions) → nhập PIN sai → submit → error → re-try. Content truncation trong context security (PIN rules) nghiêm trọng hơn context thường — mỗi rule có thể ngăn chặn 1 loại lỗi.",
+    "nguyên_tắc": "Nielsen #6 — Recognition: Critical information phải visible khi cần — PIN rules phải readable khi người dùng đang nhập PIN. Content truncation = recognition failure. Postel's Law: system nên robust khi handle screen size constraints.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Postel's Law",
+        "url": "https://lawsofux.com/postels-law/",
+        "quote": "Be liberal in what you accept, and conservative in what you send.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-PIN-002",
+    "hiện_trạng": "Form PIN (SCR-PIN-002) sử dụng custom numpad thay vì system keyboard. Custom numpad không hỗ trợ paste — khi người dùng có PIN được generated/saved từ password manager, không thể paste vào field.",
+    "tác_động": "Block paste = force manual entry cho 12 digits (6 PIN × 2 fields). người dùng với password manager (phương pháp tốt nhất security) bị penalize. NIST guideline khuyến nghị cho phép paste vào PIN/password fields vì paste từ manager an toàn hơn manual entry.",
+    "nguyên_tắc": "Nielsen #7 — Flexibility and Efficiency: Custom numpad block paste = giảm efficiency cho power người dùng. WCAG recommends không block paste vào credential fields. Never Block Paste là web security phương pháp tốt nhất từ NCSC (UK National Cyber Security Centre).",
+    "references": [
+      {
+        "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+        "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+        "quote": "Shortcuts — hidden from novice users — may speed up the interaction for the expert user.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#7@SCR-PIN-002",
+    "hiện_trạng": "6 cells cho PIN input trên form (SCR-PIN-002) không có individual ARIA labels. trình đọc màn hình không thể communicate 'Ô số 1 of 6', 'Ô số 2 of 6' — tất cả cells unnamed từ khả năng tiếp cận perspective.",
+    "tác_động": "Người dùng trình đọc màn hình (visually impaired) không thể navigate và nhập PIN — core ngân hàng function inaccessible. Vi phạm trực tiếp requirement legal về khả năng tiếp cận trong dịch vụ tài chính.",
+    "nguyên_tắc": "WCAG 4.1.2 — Name, Role, Value: \"For all người dùng interface components, the name and role can be programmatically determined.\" PIN cells thiếu accessible name = violate at Level A (minimum requirement).",
+    "references": [
+      {
+        "name": "WCAG 4.1.2 — Name, Role, Value (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html",
+        "quote": "For all user interface components, the name and role can be programmatically determined.",
+        "source": "W3C"
+      },
+      {
+        "name": "WCAG 1.3.1 — Info and Relationships (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships.html",
+        "quote": "Information, structure, and relationships conveyed through presentation can be programmatically determined.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung individual ARIA labels vào thiết kế màn hình",
+      "Thêm khả năng tiếp cận label tiếng Việt đầy đủ cho trình đọc màn hình",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#8@SCR-PIN-002",
+    "hiện_trạng": "Dialog Facepay trên form PIN (SCR-PIN-002) có nút 'Đồng ý' nhưng không rõ action destination — submit, dismiss, hay navigate. Error dialog cho Facepay cũng thiếu lý do lỗi cụ thể và recovery action.",
+    "tác_động": "người dùng nhấn 'Đồng ý' mà không biết result sẽ là gì — anxiety tăng khi liên quan đến thẻ ngân hàng. Ambiguous CTA trong dialog security context là trust violation — người dùng cần predictability tuyệt đối.",
+    "nguyên_tắc": "Nielsen #6 — Recognition: Button label phải indicate outcome rõ ràng. 'Đồng ý' là ambiguous — nên thay bằng action-specific label: 'Thử lại', 'Hủy bỏ', 'Quay lại'. Nielsen #3 — người dùng Control: clear exit from trạng thái lỗi.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung lý do lỗi cụ thể và recovery action vào thiết kế màn hình",
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive"
+    ]
+  },
+  {
+    "id": "Gap#11@SCR-PIN-002",
+    "hiện_trạng": "Field 'Nhập lại mã PIN' trên form (SCR-PIN-002) — khi người dùng nhập đủ 6 chấm, không có match/mismatch indicator so với field 1. Cả 2 fields đều hiển thị 6 dots identically — người dùng không biết PINs có khớp hay không cho đến submit.",
+    "tác_động": "Thiếu realtime feedback làm tăng error rate: người dùng nhập PIN xác nhận sai → submit → error popup → re-enter cả 2 fields. Mỗi retry cycle mất ~15 giây (12 digits × custom numpad). Match indicator ở field 2 ngăn chặn 100% mismatch errors trước submit.",
+    "nguyên_tắc": "Nielsen #1 — Visibility: PIN match status là system state cần hiển thị realtime. Thiếu indicator = người dùng blind đến validation result. Standard pattern: ✓ (match) hoặc ✗ + red highlight (mismatch) khi field 2 đủ digits.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung match/mismatch indicator so với field 1 vào thiết kế màn hình",
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow"
+    ]
+  },
+  {
+    "id": "Gap#14@SCR-PIN-002",
+    "hiện_trạng": "Warning text về lockout (khóa sau 5 lần sai) trên form PIN (SCR-PIN-002) hiển thị cùng font style, size, và color với body text. Không có warning color (amber/red), icon cảnh báo, hoặc visual emphasis phân biệt warning từ regular content.",
+    "tác_động": "Warning text blend vào content thường → người dùng dễ bỏ qua → nhập sai nhiều lần → bị lock thẻ. Lockout ngân hàng card có impact lớn: không giao dịch được cho đến khi unlock qua chi nhánh. Warning thiếu urgency = fail to ngăn chặn high-consequence error.",
+    "nguyên_tắc": "Nielsen #5 — Error Prevention: Warning phải visually urgent để người dùng notice trước khi lỗi xảy ra. Von Restorff Effect: warning text cần differ from surrounding content để được noticed và remembered.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Von Restorff Effect",
+        "url": "https://lawsofux.com/von-restorff-effect/",
+        "quote": "When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung warning color (amber/red) vào thiết kế màn hình",
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-PIN-003",
+    "hiện_trạng": "Face auth screen (SCR-PIN-003) — sau khi face detected, UI static — không có spinner, progress bar, hoặc processing animation. người dùng nhìn thấy face frame nhưng không biết system đang processing hay stuck.",
+    "tác_động": "Face verification thường mất 1-3 giây. Không có processing indicator → người dùng di chuyển face ra khỏi frame vì tưởng failed → process restart. Mỗi false restart thêm 3-5 giây. Frustration tăng nhanh trong biometric context.",
+    "nguyên_tắc": "Nielsen #1 — Visibility: Processing state sau detection là critical feedback. Doherty Threshold: bất kỳ gap > 400ms không có phản hồi trực quan đều perceived as broken. Standard: 'Đang xác thực...' + spinner ngay sau face detected.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Doherty Threshold",
+        "url": "https://lawsofux.com/doherty-threshold/",
+        "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung spinner, progress bar vào thiết kế màn hình",
+      "Thêm trạng thái loading với skeleton hoặc spinner kèm message giải thích",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow"
+    ]
+  },
+  {
+    "id": "Gap#2@SCR-PIN-003",
+    "hiện_trạng": "Face auth screen (SCR-PIN-003) chỉ có 1 artboard — không có trạng thái lỗi hoặc retry flow khi face authentication thất bại. Không hiển thị lý do thất bại, retry count, hoặc alternative authentication method.",
+    "tác_động": "Face auth fail (lighting, glasses, mask) → người dùng stuck — không biết nên thử lại hay có option khác. Thiếu fallback authentication method (PIN/OTP) khiến người dùng hoàn toàn blocked nếu face auth không work. Dead end tại security-critical step.",
+    "nguyên_tắc": "Nielsen #9 — Help người dùng Recover: trạng thái lỗi phải hiển thị lý do + recovery options. Nielsen #3 — người dùng Control: phải có escape hatch khi biometric fails — fallback to PIN/OTP. Single auth method without fallback = fragile design.",
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung trạng thái lỗi hoặc retry flow khi face authentication thất bại vào thiết kế màn hình",
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-PIN-003",
+    "hiện_trạng": "Flow nhảy từ PIN form (SCR-PIN-002) sang Face auth (SCR-PIN-003) không có transition screen, explanation, hoặc bridging context. người dùng đang nhập PIN bỗng chuyển sang camera face scan mà không hiểu tại sao cần face auth thêm.",
+    "tác_động": "Context switch đột ngột tạo confusion: 'Tại sao cần face auth khi đã nhập PIN?' → người dùng deny camera permission vì không expect → flow broken. Thiếu explanation về security rationale (2FA) khiến người dùng feel over-secured thay vì protected.",
+    "nguyên_tắc": "Nielsen #6 — Recognition: người dùng cần context explanation cho unexpected step. Nielsen #10 — Help and Documentation: complex/unfamiliar security flows cần inline explanation. Transition screen: 'Để bảo mật, vui lòng xác thực khuôn mặt'.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #10 — Help and Documentation",
+        "url": "https://www.nngroup.com/articles/help-and-documentation/",
+        "quote": "It's best if the system doesn't need any additional explanation. However, it may be necessary to provide documentation to help users understand how to complete their tasks.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung transition screen vào thiết kế màn hình",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  }
+]

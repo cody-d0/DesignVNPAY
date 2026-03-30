@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>UX Audit — Thanh toán dư nợ thẻ | Co-opBank Mobile Banking · Co-opBank</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+/* ═══ DESIGN TOKENS — Light Theme (WCAG AA) ═══ */
+:root {
+  --bg-base:#ffffff; --bg-surface:#f8fafc; --bg-card:#ffffff; --bg-card-hover:#f1f5f9;
+  --text-primary:#0f172a; --text-secondary:#475569; --text-muted:#64748b;
+  --accent-gold:#b45309; --accent-purple:#7c3aed; --accent-blue:#2563eb;
+  --sev-critical:#b91c1c; --sev-critical-bg:rgba(185,28,28,.08); --sev-critical-fg:#b91c1c;
+  --sev-major:#c2410c; --sev-major-bg:rgba(194,65,12,.08); --sev-major-fg:#c2410c;
+  --sev-minor:#92400e; --sev-minor-bg:rgba(146,64,14,.08); --sev-minor-fg:#92400e;
+  --sev-pass:#15803d; --sev-pass-bg:rgba(21,128,61,.08); --sev-pass-fg:#15803d;
+  --border:#e2e8f0; --border-light:#cbd5e1;
+  --font-sans:'Manrope',system-ui,-apple-system,sans-serif;
+  --font-display:'Manrope',system-ui,sans-serif;
+  --font-mono:'Manrope',system-ui,sans-serif;
+}
+
+/* ═══ RESET ═══ */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-primary);line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ═══ HERO ═══ */
+.hero{background:linear-gradient(135deg,#f8fafc 0%,#e0e7ff 40%,#dbeafe 70%,#f8fafc 100%);padding:64px 56px 72px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-120px;top:-120px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.06),transparent 70%)}
+.hero::after{content:'';position:absolute;left:-80px;bottom:-80px;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.04),transparent 70%)}
+.hero-label{font-family:var(--font-sans);font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--accent-purple);margin-bottom:12px;font-weight:700}
+.hero h1{font-family:var(--font-display);font-size:42px;font-weight:800;line-height:1.15;margin-bottom:8px;color:var(--text-primary)}
+.hero-sub{color:var(--text-secondary);font-size:15px;margin-bottom:40px}
+.hero-stats{display:flex;gap:48px;flex-wrap:wrap}
+.stat-item{text-align:center}
+.stat-num{font-family:var(--font-sans);font-size:44px;font-weight:800;line-height:1;display:block;color:var(--text-primary)}
+.stat-num.gap-c{color:var(--sev-critical)}
+.stat-label{font-family:var(--font-sans);font-size:10px;color:var(--text-secondary);margin-top:6px;text-transform:uppercase;letter-spacing:1.5px;font-weight:600}
+.hero-score{position:absolute;right:56px;top:50%;transform:translateY(-50%);z-index:1}
+
+/* ═══ NAV ═══ */
+.nav{background:var(--bg-base);border-bottom:1px solid var(--border);padding:0 56px;display:flex;gap:0;position:sticky;top:0;z-index:100}
+.nav a{color:var(--text-secondary);text-decoration:none;padding:14px 20px;font-size:12px;font-weight:600;letter-spacing:.3px;border-bottom:2px solid transparent;transition:all .25s}
+.nav a:hover{color:var(--accent-blue);border-bottom-color:var(--accent-blue)}
+
+/* ═══ SECTIONS ═══ */
+.section{max-width:1100px;margin:0 auto;padding:56px 56px 0}
+.section-title{font-family:var(--font-display);font-size:24px;font-weight:800;margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;color:var(--text-primary)}
+.section-title .icon{font-size:20px}
+
+/* ═══ BADGES ═══ */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-family:var(--font-sans);font-size:11px;font-weight:700;letter-spacing:.3px}
+.badge.critical{background:var(--sev-critical-bg);color:var(--sev-critical-fg)}
+.badge.major{background:var(--sev-major-bg);color:var(--sev-major-fg)}
+.badge.minor{background:var(--sev-minor-bg);color:var(--sev-minor-fg)}
+
+/* ═══ FINDING CARDS — Table-based scannable layout ═══ */
+.finding-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;transition:all .2s}
+.finding-card:hover{box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.finding-accent{height:3px}
+.finding-accent.critical{background:var(--sev-critical)}.finding-accent.major{background:var(--sev-major)}.finding-accent.minor{background:var(--sev-minor)}
+
+/* Card header */
+.card-header{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--bg-surface)}
+.card-id{font-family:var(--font-sans);font-size:12px;font-weight:700;color:var(--accent-blue);background:rgba(37,99,235,.08);padding:2px 8px;border-radius:4px}
+.card-header h3{font-size:14px;font-weight:700;color:var(--text-primary);line-height:1.4;flex:1}
+
+/* Card body — screenshot + data table side by side */
+.card-body{display:grid;grid-template-columns:500px 1fr;gap:0}
+.card-visual{background:var(--bg-surface);padding:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid var(--border);min-width:500px}
+.phone-frame{position:relative;border:2px solid var(--border-light);border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);cursor:pointer;transition:transform .2s}
+.phone-frame:hover{transform:scale(1.02)}
+.phone-frame img{max-width:150px;width:100%;display:block}
+
+/* Data table inside card */
+.card-table{width:100%;border-collapse:collapse}
+.card-table tr{border-bottom:1px solid var(--border)}
+.card-table tr:last-child{border-bottom:none}
+.card-table td{padding:10px 16px;font-size:13px;line-height:1.5;vertical-align:top}
+.card-table .td-label{width:110px;font-family:var(--font-sans);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);white-space:nowrap;padding-top:12px}
+.card-table .td-value{color:var(--text-secondary)}
+.card-table .td-value.proposal{background:rgba(22,163,74,.04)}
+.card-table .td-value.proposal ul{padding-left:16px;margin:0}.card-table .td-value.proposal li{font-size:12.5px;color:#15803d;margin-bottom:2px}
+
+/* Card footer */
+.card-footer{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:10px 16px;border-top:1px solid var(--border);background:var(--bg-surface)}
+.card-footer details{width:100%}
+.finding-tags{display:flex;gap:6px;flex-wrap:wrap}
+.card-tag{background:rgba(37,99,235,.08);color:var(--accent-blue);font-family:var(--font-sans);font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+
+
+
+/* Proposed solution box */
+.proposed-box{background:rgba(22,163,74,.04);border-radius:6px;padding:8px 12px}
+.proposed-box ul{padding-left:16px;margin:0}.proposed-box li{font-size:12.5px;color:#15803d;margin-bottom:2px;line-height:1.5}
+
+/* ═══ DETAILS (Progressive disclosure) ═══ */
+details{margin:0}details summary{cursor:pointer;font-family:var(--font-sans);font-size:11px;color:var(--accent-purple);font-weight:700;padding:4px 0}
+.detail-content{width:100%;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;padding:10px;margin-top:6px;font-family:var(--font-sans);font-size:11px;color:var(--text-muted);line-height:1.6;word-break:break-all}
+
+/* ═══ REFERENCE SOURCES ═══ */
+.ref-sources{margin:6px 0 0;padding-left:16px;font-size:11px;list-style:none}
+.ref-sources li{margin-bottom:4px;line-height:1.4}
+.ref-sources a{color:var(--accent-blue);text-decoration:none;font-weight:600}
+.ref-sources a:hover{text-decoration:underline}
+.ref-sources em{color:var(--text-muted);font-style:italic}
+
+/* ═══ METHODOLOGY ═══ */
+.method-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.method-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px 20px;transition:all .25s}
+.method-card:hover{background:var(--bg-card-hover);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.method-icon{font-size:28px;margin-bottom:12px}
+.method-card h4{font-size:13px;font-weight:700;margin-bottom:8px;color:var(--text-primary)}
+.method-card p{font-size:12px;color:var(--text-secondary);line-height:1.5}
+
+/* ═══ SCORECARD ═══ */
+.scorecard-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.score-item{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;align-items:center;gap:16px;transition:all .25s}
+.score-item:hover{background:var(--bg-card-hover)}
+.score-info h4{font-size:13px;font-weight:700;margin-bottom:4px;color:var(--text-primary)}
+.score-info p{font-size:12px;color:var(--text-secondary)}
+
+/* ═══ GAP CARDS — Table-based scannable layout ═══ */
+.gap-screen{font-family:var(--font-sans);font-size:11px;font-weight:700;color:var(--accent-blue);background:rgba(37,99,235,.08);padding:3px 8px;border-radius:4px;white-space:nowrap}
+.gap-card{border:1px solid var(--border);border-radius:10px;margin-bottom:12px;background:var(--bg-card);overflow:hidden;transition:all .2s}
+.gap-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.05)}
+
+/* Gap card header */
+.gap-header{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bg-surface);border-bottom:1px solid var(--border)}
+.gap-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--accent-blue);color:#fff;font-family:var(--font-sans);font-size:11px;font-weight:800;flex-shrink:0}
+.gap-ref{font-family:var(--font-sans);font-size:10px;color:var(--accent-purple);background:rgba(124,58,237,.08);padding:1px 6px;border-radius:4px;font-weight:600;margin-left:auto}
+
+/* Gap data table */
+.gap-table{width:100%;border-collapse:collapse}
+.gap-table tr{border-bottom:1px solid var(--border)}
+.gap-table tr:last-child{border-bottom:none}
+.gap-table td{padding:8px 16px;font-size:12.5px;line-height:1.5;vertical-align:top}
+.gap-table .td-label{width:120px;font-family:var(--font-sans);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);white-space:nowrap;padding-top:10px}
+.gap-table .td-value{color:var(--text-secondary)}
+.gap-table .td-ddl{font-style:italic;color:var(--text-muted);font-size:12px}
+.gap-table .td-ref{padding:6px 16px}
+
+/* ═══ IMAGE LIGHTBOX ═══ */
+.img-cite{display:inline-block;background:#EFF6FF;color:#2563EB;font-size:10px;padding:1px 6px;border-radius:4px;font-family:var(--font-mono);margin-left:4px;cursor:pointer;transition:all .2s}
+.img-cite:hover{background:#DBEAFE;transform:scale(1.05);box-shadow:0 1px 4px rgba(37,99,235,.25)}
+.lightbox-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;flex-direction:column;opacity:0;transition:opacity .3s}
+.lightbox-overlay.active{display:flex;opacity:1}
+.lightbox-overlay img{max-width:90vw;max-height:80vh;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.5);object-fit:contain}
+.lightbox-close{position:absolute;top:20px;right:28px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.12);border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.lightbox-close:hover{background:rgba(255,255,255,.25)}
+.lightbox-caption{color:rgba(255,255,255,.8);font-size:13px;font-family:var(--font-mono);margin-top:12px;padding:4px 16px;background:rgba(255,255,255,.08);border-radius:8px}
+
+/* ═══ FOOTER ═══ */
+footer{background:var(--bg-surface);border-top:1px solid var(--border);color:var(--text-muted);text-align:center;padding:28px 56px;margin-top:72px;font-size:12px}
+footer strong{color:var(--text-secondary)}
+
+/* ═══ ANIMATION ═══ */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:960px){
+  .card-body{grid-template-columns:1fr}.card-visual{border-right:none;border-bottom:1px solid var(--border);padding:20px}
+  .phone-frame{min-width:unset;max-width:420px;margin:0 auto}
+  .hero-score{display:none}
+  .scorecard-grid,.method-grid{grid-template-columns:1fr}
+  .hero{padding:32px 24px}.section{padding:32px 24px 0}.nav{padding:0 16px;overflow-x:auto}
+  .card-table .td-label,.gap-table .td-label{width:90px}
+}
+@media(prefers-reduced-motion:reduce){
+  .reveal{transition-duration:.01ms!important}.finding-card,.method-card,.score-item,.gap-card{transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="#summary">Tổng quan</a>
+  <a href="#method">Phương pháp</a>
+  <a href="#findings">Phát hiện</a>
+  <a href="#scorecard" style="display:none">Scorecard</a>
+  <a href="#gaps">Gaps</a>
+</nav>
+
+<section class="hero" id="top">
+  <div class="hero-label">UX Audit Report</div>
+  <h1>Co-opBank · Thanh toán dư nợ thẻ</h1>
+  <p class="hero-sub">Co-opBank Mobile Banking</p>
+  <div class="hero-stats">
+    <div class="stat-item"><span class="stat-num">7</span><span class="stat-label">Màn hình</span></div>
+    <div class="stat-item"><span class="stat-num">54</span><span class="stat-label">Tổng kiểm tra</span></div>
+    <div class="stat-item"><span class="stat-num gap-c">19</span><span class="stat-label">Cần cải thiện</span></div>
+    <div class="stat-item"><span class="stat-num">12</span><span class="stat-label">Đề xuất</span></div>
+  </div>
+  <div class="hero-score"><svg width="110" height="110" viewBox="0 0 110 110"><circle cx="55" cy="55" r="51" fill="none" stroke="#e2e8f0" stroke-width="8"/><circle cx="55" cy="55" r="51" fill="none" stroke="#b91c1c" stroke-width="8" stroke-dasharray="320" stroke-dashoffset="182" stroke-linecap="round" transform="rotate(-90 55 55)"/><text x="55" y="60" text-anchor="middle" font-family="var(--font-sans)" font-size="24" font-weight="800" fill="#b91c1c">43%</text></svg></div>
+</section>
+
+<section class="section" id="summary">
+  <div class="section-title"><span class="icon">📊</span> 01 · Tổng quan kết quả kiểm tra</div>
+  <div style="display:flex;gap:12px;margin-bottom:28px">
+    <span class="badge critical">🔴 4 Nghiêm trọng</span><span class="badge major">🟡 6 Quan trọng</span><span class="badge minor">⚪ 2 Cải thiện</span>
+  </div>
+  <div class="scorecard-grid">
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#b91c1c" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="97" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#b91c1c">38%</text></svg></div>
+      <div class="score-info">
+        <h4>SCR-TDN-001 — Danh sách thẻ › Danh sách (`SCR-TDN-001`)</h4>
+        <p>SCR-TDN-001 · list · <span style="color:var(--sev-critical-fg)">1 Gap</span></p>
+      </div>
+    </div>
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#c2410c" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="69" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#c2410c">56%</text></svg></div>
+      <div class="score-info">
+        <h4>SCR-TDN-002 — Thanh toán dư nợ › Form nhập thông tin (`SCR-TDN-002`)</h4>
+        <p>SCR-TDN-002 · form · <span style="color:var(--sev-critical-fg)">1 Gap</span></p>
+      </div>
+    </div>
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#b91c1c" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="97" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#b91c1c">38%</text></svg></div>
+      <div class="score-info">
+        <h4>SCR-TDN-003 — Thanh toán dư nợ - Nhập số tiền › Form nhập thông tin (`SCR-TDN-003`)</h4>
+        <p>SCR-TDN-003 · form · <span style="color:var(--sev-critical-fg)">3 Gap</span></p>
+      </div>
+    </div>
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#c2410c" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="78" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#c2410c">50%</text></svg></div>
+      <div class="score-info">
+        <h4>SCR-TDN-004 — Thanh toán dư nợ - Xác nhận › Xác nhận giao dịch (`SCR-TDN-004`)</h4>
+        <p>SCR-TDN-004 · confirm · <span style="color:var(--sev-critical-fg)">4 Gap</span></p>
+      </div>
+    </div>
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#b91c1c" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="89" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#b91c1c">43%</text></svg></div>
+      <div class="score-info">
+        <h4>SCR-TDN-005 — Thanh toán dư nợ - Kết quả › Kết quả giao dịch (`SCR-TDN-005`)</h4>
+        <p>SCR-TDN-005 · result · <span style="color:var(--sev-critical-fg)">3 Gap</span></p>
+      </div>
+    </div>
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#c2410c" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="78" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#c2410c">50%</text></svg></div>
+      <div class="score-info">
+        <h4>SCR-TDN-006 — Danh sách sao kê thẻ › Danh sách (`SCR-TDN-006`)</h4>
+        <p>SCR-TDN-006 · list · <span style="color:var(--sev-critical-fg)">3 Gap</span></p>
+      </div>
+    </div>
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#b91c1c" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="157" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#b91c1c">0%</text></svg></div>
+      <div class="score-info">
+        <h4>SCR-TDN-007 — Chi tiết sao kê - Hệ thống › Chi tiết (`SCR-TDN-007`)</h4>
+        <p>SCR-TDN-007 · detail · <span style="color:var(--sev-critical-fg)">4 Gap</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section reveal" id="method">
+  <div class="section-title"><span class="icon">🔬</span> 02 · Phương pháp đánh giá</div>
+  <div class="method-grid">
+    <div class="method-card"><div class="method-icon">🔍</div><h4>Heuristic Evaluation</h4><p>Đánh giá theo 10 heuristics của Nielsen Norman Group. Mỗi phát hiện được liên kết với heuristic cụ thể bị vi phạm.</p></div>
+    <div class="method-card"><div class="method-icon">🧩</div><h4>Component Spec Analysis</h4><p>So sánh thiết kế Figma với DDL component specifications để phát hiện gap về states, props và behavior.</p></div>
+    <div class="method-card"><div class="method-icon">👁️</div><h4>Vision Inspection</h4><p>Phân tích trực quan từng màn hình: alignment, contrast, typography, touch targets, overlay detection.</p></div>
+    <div class="method-card"><div class="method-icon">⚖️</div><h4>UX Law Cross-Reference</h4><p>Áp dụng Fitts's Law, Hick's Law, Peak-End Rule và các nguyên tắc thiết kế vào từng màn hình.</p></div>
+  </div>
+</section>
+
+<section class="section" id="findings">
+  <div class="section-title"><span class="icon">🔎</span> 03 · Các vấn đề được phát hiện</div>
+  <div style="margin-bottom:36px">
+    <div style="background:var(--sev-critical-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-critical-fg);margin-bottom:20px;letter-spacing:.3px">🔴 Nghiêm trọng — Cần xử lý ngay</div>
+    <div class="finding-card reveal">
+      <div class="finding-accent critical"></div>
+      <div class="card-header"><span class="card-id">UXP-001</span><h3>PIN overlay thiếu &quot;Gửi lại&quot; button — DDL otp-input-1 spec requires canResend...</h3><span class="badge critical">Critical</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/thanh-toan-du-no-xac-nhan.png')"><img src="ui/thanh-toan-du-no-xac-nhan.png" alt="PIN overlay thiếu &quot;Gửi lại&quot; button — DDL otp-input-1 spec requires canResend sta" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">PIN overlay trên flow thanh toán dư nợ thiếu nút 'Gửi lại'. DDL otp-input-1 spec yêu cầu canResend state nhưng design không triển khai. Khi PIN/OTP hết hạn hoặc nhập sai quá số lần, người dùng không có recovery path tại screen hiện tại.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">người dùng bị blocked tại authentication step cuối cùng của flow thanh toán — phải restart toàn bộ flow (chọn thẻ → nhập số tiền → xác nhận → PIN). Đặc biệt nghiêm trọng cho flow tài chính: người dùng đã commit thanh toán nhưng không hoàn thành được.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #3 — người dùng Control and Freedom: 'Gửi lại' là emergency exit khi authentication fails. Thiếu resend = dead end tại critical financial step.</li><li>WCAG 3.3.4 — Error Prevention (Financial): giao dịch tài chính cần reversibility và recovery mechanisms.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Thêm nút 'Gửi lại mã' sau countdown hết, cooldown 30s</li><li>Countdown timer visible dưới PIN/OTP cells</li><li>Rate limiting: max 3 resends per giao dịch</li><li>Feedback: 'Mã mới đã gửi' xác nhận</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Thanh toán dư nợ - Xác nhận › Xác nhận giao dịch (SCR-TDN-004)</span></div>
+        <details><summary>📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/user-control-and-freedom/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #3 — User Control and Freedom →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action."</div></div><div style="margin-bottom:6px"><a href="https://www.w3.org/WAI/WCAG22/Understanding/error-prevention-legal-financial-data.html" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">WCAG 3.3.4 — Error Prevention (Legal, Financial, Data) →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"For web pages that cause legal commitments or financial transactions, submissions are reversible, checked, or confirmed."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">COMP:otp-input-1 (canResend state)</span></div></div></details>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent critical"></div>
+      <div class="card-header"><span class="card-id">UXP-002</span><h3>Thiếu remaining-attempts counter trước PIN lockout — user không biết còn mấy...</h3><span class="badge critical">Critical</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/thanh-toan-du-no-xac-nhan.png')"><img src="ui/thanh-toan-du-no-xac-nhan.png" alt="Thiếu remaining-attempts counter trước PIN lockout — user không biết còn mấy lần" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">Trước PIN lockout, hệ thống không hiển thị remaining-attempts counter. Warning text tĩnh 'bị khóa sau 5 lần' nhưng không ghi đang ở lần thử thứ mấy. người dùng nhập sai liên tục mà không biết proximity to lockout.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">PIN lockout trên thanh toán dư nợ = không thanh toán được → phí phạt lãi nếu gần deadline. người dùng phải đến chi nhánh mở lại PIN. Attempt counter cho phép informed decision: 'Còn 1 lần, nên kiểm tra lại PIN trước khi thử.'</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #1 — Visibility of System Status: attempt count là critical security status cần real-time hiển thị.</li><li>Nielsen #5 — Error Prevention: counter giúp người dùng self-regulate — biết còn ít lần → cẩn thận hơn.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Hiển thị 'Lần thử 2/5' — update sau mỗi attempt</li><li>Color escalation: green (1-2) → amber (3) → red (4-5)</li><li>xác nhận dialog tại attempt 4/5: 'Bạn còn 1 lần thử. Tiếp tục?'</li><li>Post-lockout: clear recovery path với hotline/chi nhánh</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Thanh toán dư nợ - Xác nhận › Xác nhận giao dịch (SCR-TDN-004)</span></div>
+        <details><summary>📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #1 — Visibility of System Status →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/slips/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #5 — Error Prevention →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Good error messages are important, but the best designs carefully prevent problems from occurring in the first place."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG security_banking</span></div></div></details>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent critical"></div>
+      <div class="card-header"><span class="card-id">UXP-003</span><h3>Amount mismatch: header &quot;500,000 VND&quot; vs detail &quot;1,500,000 VND&quot; — data...</h3><span class="badge critical">Critical</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/thanh-toan-du-no-ket-qua.png')"><img src="ui/thanh-toan-du-no-ket-qua.png" alt="Amount mismatch: header &quot;500,000 VND&quot; vs detail &quot;1,500,000 VND&quot; — data inconsist" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">Header hiển thị '500,000 VND' nhưng chi tiết giao dịch ghi '1,500,000 VND' — data inconsistency giữa 2 vị trí trên cùng screen/flow. người dùng nhìn thấy 2 số tiền khác nhau cho cùng giao dịch.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">Data inconsistency tài chính là critical trust violation. người dùng: 'Tôi trả 500K hay 1.5M?' → confusion → có thể cancel giao dịch dù đúng → hoặc xác nhận sai số tiền. Mất trust vào hệ thống tài chính. Đây có thể là bug, nhưng design phải có data validation.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #4 — Consistency: Cùng 1 data point (giao dịch amount) phải identical mọi nơi hiển thị. Internal inconsistency = design/data error cần fix.</li><li>WCAG 3.3.4: financial data phải accurate và confirmed.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Audit data flow: đảm bảo amount từ single source of truth → hiển thị nhất quán</li><li>xác nhận screen: bold amount + checksum alignment giữa header/detail</li><li>Automated test: amount displayed ở mọi vị trí phải match</li><li>UX copy review: format tiền tệ nhất quán (xxx,xxx VND)</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Thanh toán dư nợ - Kết quả › Kết quả giao dịch (SCR-TDN-005)</span></div>
+        <details><summary>📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/consistency-and-standards/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #4 — Consistency and Standards →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Users should not have to wonder whether different words, situations, or actions mean the same thing."</div></div><div style="margin-bottom:6px"><a href="https://www.w3.org/WAI/WCAG22/Understanding/error-prevention-legal-financial-data.html" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">WCAG 3.3.4 — Error Prevention (Legal, Financial, Data) →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"For web pages that cause legal commitments or financial transactions, submissions are reversible, checked, or confirmed."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-165 (data consistency)</span></div></div></details>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent critical"></div>
+      <div class="card-header"><span class="card-id">UXP-004</span><h3>PDF viewer mất app navigation bar — blank screen chỉ có text, user mất context</h3><span class="badge critical">Critical</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/chi-tiet-sao-ke-he-thong.png')"><img src="ui/chi-tiet-sao-ke-he-thong.png" alt="PDF viewer mất app navigation bar — blank screen chỉ có text, user mất context" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">PDF viewer màn sao kê (SCR-TDN-007) hiển thị blank screen chỉ có text tiêu đề — mất app navigation bar hoàn toàn. người dùng mất context: không biết đang ở đâu trong app, không có back button chuẩn, không có app header.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">Blank PDF viewer screen = người dùng disoriented: 'App bị crash à?'. Thiếu navigation bar buộc người dùng dùng system gesture (swipe back) — không discover-able cho nhiều người dùng, đặc biệt elderly/less tech-savvy ngân hàng customers.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #1 — Visibility: Navigation bar là persistent system status — location awareness. Removing it = người dùng lost.</li><li>Nielsen #3: back button là emergency exit.</li><li>WCAG 2.4.8 — Location: người dùng phải biết vị trí hiện tại trong site/app.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Giữ app header/navigation bar trên PDF viewer screen</li><li>Header title: 'Sao kê tháng 11/2025' — cho context</li><li>Thêm share/download button trên header</li><li>trạng thái tải: skeleton/spinner trước khi PDF render</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Chi tiết sao kê - Hệ thống › Chi tiết (SCR-TDN-007)</span></div>
+        <details><summary>📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #1 — Visibility of System Status →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/user-control-and-freedom/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #3 — User Control and Freedom →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG (navigation persistence)</span></div></div></details>
+      </div>
+    </div>
+  </div>
+  <div style="margin-bottom:36px">
+    <div style="background:var(--sev-major-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-major-fg);margin-bottom:20px;letter-spacing:.3px">🟡 Quan trọng — Ưu tiên cao</div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-header"><span class="card-id">UXP-005</span><h3>Prefilled text typo &quot;Thanh toán the tin dung&quot; — thiếu diacritics</h3><span class="badge major">Major</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/thanh-toan-du-no.png')"><img src="ui/thanh-toan-du-no.png" alt="Prefilled text typo &quot;Thanh toán the tin dung&quot; — thiếu diacritics" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">Prefilled text giao dịch hiển thị 'Thanh toán the tin dung' — thiếu dấu tiếng Việt ('thẻ tín dụng'). Typo content trong giao dịch tài chính context. Lỗi hiển thị rõ trên artboard SCR-TDN-002.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">Typo trong financial context giảm perceived professionalism và trust. 'the tin dung' vs 'thẻ tín dụng' — ngân hàng app phải impeccable về content quality. người dùng có thể question: 'App thiếu cẩn thận với text, liệu có cẩn thận với tiền?'</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #2 — Match Real World: Content phải correct language, bao gồm diacritics. 'the tin dung' không phải tiếng Việt chuẩn — là system encoding error được expose cho người dùng.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Fix prefilled text: 'Thanh toán thẻ tín dụng' — proper Vietnamese diacritics</li><li>Audit toàn bộ prefilled texts cho encoding issues</li><li>triển khai string validation: reject non-diacritic Vietnamese in người dùng-facing content</li><li>QA checklist: kiểm tra diacritics trên tất cả static content</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Thanh toán dư nợ › Form nhập thông tin (SCR-TDN-002)</span></div>
+        <details><summary>📚 1 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language. Use words, phrases, and concepts familiar to the user."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-165 (content accuracy)</span></div></div></details>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-header"><span class="card-id">UXP-006</span><h3>&quot;sẽ được cập nhật tro...&quot; — &quot;n&quot; là literal placeholder, vi phạm Doherty...</h3><span class="badge major">Major</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/thanh-toan-du-no-ket-qua.png')"><img src="ui/thanh-toan-du-no-ket-qua.png" alt="&quot;sẽ được cập nhật trong n giờ&quot; — &quot;n&quot; là literal placeholder, vi phạm Doherty Thr" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">Kết quả giao dịch hiển thị 'sẽ được cập nhật trong n giờ' — chữ 'n' là literal placeholder, không phải giá trị thực. người dùng đọc 'n giờ' = meaningless. SCR-TDN-005 artboard xác nhận.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">Placeholder text lọt ra production = thiếu chuyên nghiệp. người dùng không biết chờ bao lâu: 1 giờ hay 24 giờ? Doherty Threshold: nếu người dùng không biết expected wait time, anxiety tăng — đặc biệt cho giao dịch tài chính.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #1 — Visibility: processing time là status người dùng cần biết — 'n giờ' fails to communicate.</li><li>Nielsen #2: 'n' là developer language, not người dùng language. Content phải specific: '24 giờ' hoặc '1-2 ngày làm việc'.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>thay thế 'n giờ' thành specific time: '24 giờ' hoặc '1-2 ngày làm việc'</li><li>Nếu variable time, dùng range: 'trong vòng 2-24 giờ'</li><li>Thêm push notification setting: 'Thông báo khi cập nhật xong'</li><li>QA check: scan tất cả content cho placeholders ({n}, {x}, etc.)</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Thanh toán dư nợ - Kết quả › Kết quả giao dịch (SCR-TDN-005)</span></div>
+        <details><summary>📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://lawsofux.com/doherty-threshold/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Doherty Threshold →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Productivity soars when a computer and its users interact at a pace (&lt;400ms) that ensures that neither has to wait on the other."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #1 — Visibility of System Status →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">Doherty Threshold</span></div></div></details>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-header"><span class="card-id">UXP-007</span><h3>Empty state thiếu illustration và action button — DDL empty-state-1 requires...</h3><span class="badge major">Major</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/danh-sach-sao-ke-the.png')"><img src="ui/danh-sach-sao-ke-the.png" alt="Empty state thiếu illustration và action button — DDL empty-state-1 requires ico" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">trạng thái trống trên danh sách sao kê (SCR-TDN-006) hiển thị 'Quý khách chưa có sao kê...' — text only, thiếu illustration (DDL empty-state-1 requires icon) và thiếu CTA button (DDL requires hasCta).</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">Dead end UX: người dùng thấy empty → no guidance → back. CTA 'Xem hướng dẫn' hoặc 'Liên hệ hỗ trợ' cho phép người dùng act. Illustration tăng perceived quality cho ngân hàng app.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #6 — Recognition: Visible CTA guides người dùng to next action. Thiếu CTA = người dùng phải recall navigation. Aesthetic-Usability: illustration empty states perceived as more polished.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Thêm illustration/icon theo DDL empty-state-1 spec</li><li>Thêm CTA: 'Xem sao kê online' hoặc 'Thẻ chưa có giao dịch, bắt đầu sử dụng'</li><li>Description text: giải thích khi nào sẽ có sao kê (sau chu kỳ đầu tiên)</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Danh sách sao kê thẻ › Danh sách (SCR-TDN-006)</span></div>
+        <details><summary>📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/recognition-and-recall/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #6 — Recognition Rather Than Recall →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Minimize the user's memory load by making elements, actions, and options visible."</div></div><div style="margin-bottom:6px"><a href="https://lawsofux.com/aesthetic-usability-effect/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Aesthetic-Usability Effect →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Users often perceive aesthetically pleasing design as design that's more usable."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">COMP:empty-state-1 (hasCta, icon states)</span></div></div></details>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-header"><span class="card-id">UXP-008</span><h3>Không có loading indicator và error state cho PDF viewer</h3><span class="badge major">Major</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/chi-tiet-sao-ke-he-thong.png')"><img src="ui/chi-tiet-sao-ke-he-thong.png" alt="Không có loading indicator và error state cho PDF viewer" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">PDF viewer (SCR-TDN-007) không có loading indicator khi tải sao kê và không có trạng thái lỗi khi load fails. Screen blank — người dùng không biết đang load hay lỗi.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">Blank screen ambiguity: loading hay crash? người dùng chờ vô hạn hoặc force close app. PDF files thường lớn → load time &gt; 3s → cần loading indicator. Thiếu trạng thái lỗi = người dùng stuck nếu network fail.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #1 — Visibility: trạng thái tải phải communicated — spinner hoặc progress bar. 3+ seconds without feedback = người dùng assumes system broken (Nielsen response time threshold).</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Thêm loading spinner/skeleton khi PDF đang tải</li><li>Progress bar nếu file size known: '50% loaded'</li><li>trạng thái lỗi: 'Không thể tải sao kê. Thử lại?' với retry button</li><li>Timeout: sau 30s, hiển thị trạng thái lỗi thay vì forever loading</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Chi tiết sao kê - Hệ thống › Chi tiết (SCR-TDN-007)</span></div>
+        <details><summary>📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #1 — Visibility of System Status →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time."</div></div><div style="margin-bottom:6px"><a href="https://lawsofux.com/doherty-threshold/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Doherty Threshold →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Productivity soars when a computer and its users interact at a pace (&lt;400ms) that ensures that neither has to wait on the other."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-221 (loading indicators) · UXG error_recovery</span></div></div></details>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-header"><span class="card-id">UXP-009</span><h3>Error dialog &quot;Thông báo&quot; + &quot;Đóng&quot; — ambiguous recovery action</h3><span class="badge major">Major</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/thanh-toan-du-no-xac-nhan.png')"><img src="ui/thanh-toan-du-no-xac-nhan.png" alt="Error dialog &quot;Thông báo&quot; + &quot;Đóng&quot; — ambiguous recovery action" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">Error dialog hiển thị title 'Thông báo' + button 'Đóng' — không phân biệt error vs info notification. Button 'Đóng' ambiguous: đóng dialog hay cancel giao dịch? Artboard error cases xác nhận pattern.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">Ambiguous error dialog: 'Thông báo' dùng cho cả success/error/info = người dùng không biết severity. 'Đóng' không constructive — so với 'Thử lại' hoặc 'Quay lại' cho rõ recovery action. người dùng hesitate khi button label unclear.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #9 — Error Recovery: Error messages must precisely indicate problem AND suggest solution. 'Thông báo' + 'Đóng' fails both criteria — neither identifies problem nor suggests recovery.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Phân biệt dialog type: error (red icon), success (green), info (blue)</li><li>Title specific: 'Lỗi xác thực' thay vì generic 'Thông báo'</li><li>Button labels actionable: 'Thử lại' (primary) + 'Hủy' (secondary)</li><li>Error body: mô tả rõ lỗi gì + hướng sửa</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Thanh toán dư nợ - Nhập số tiền › Form nhập thông tin (SCR-TDN-003)</span></div>
+        <details><summary>📚 1 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/error-message-guidelines/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG error_recovery</span></div></div></details>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-header"><span class="card-id">UXP-010</span><h3>Numpad layout inconsistent: key &quot;0&quot; spans double width + 2 style khác nhau...</h3><span class="badge major">Major</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/thanh-toan-du-no-nhap-so-tien.png')"><img src="ui/thanh-toan-du-no-nhap-so-tien.png" alt="Numpad layout inconsistent: key &quot;0&quot; spans double width + 2 style khác nhau trong" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">Numpad layout không nhất quán trong flow thanh toán dư nợ: key '0' spans double width ở 1 screen nhưng standard width ở screen khác. 2 visual styles cho cùng numpad component trong cùng flow.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">Motor memory disruption: người dùng đã learn vị trí '0' ở screen trước → screen sau layout khác → mistouch. Đặc biệt quan trọng cho amount entry — mistyped digit = wrong payment amount. Consistency violation trong cùng flow.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #4 — Consistency: Cùng component (numpad) trong cùng flow phải identical. Layout inconsistency disrupts muscle memory.</li><li>Jakob's Law: numpad layout phải match what người dùng know from other apps/ATM.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Standardize numpad: 3×4 grid nhất quán trên tất cả screens</li><li>Key '0' cùng width với keys khác — standard telephone layout</li><li>nhất quán styling: font, color, size, spacing giữa tất cả numpad instances</li><li>DDL numpad-1 compliance: follow spec exactly</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Thanh toán dư nợ - Nhập số tiền › Form nhập thông tin (SCR-TDN-003)</span></div>
+        <details><summary>📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/consistency-and-standards/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #4 — Consistency and Standards →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Users should not have to wonder whether different words, situations, or actions mean the same thing."</div></div><div style="margin-bottom:6px"><a href="https://lawsofux.com/jakobs-law/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Jakob's Law →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Users spend most of their time on other sites. This means that users prefer your site to work the same way as all the other sites they already know."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">COMP:numpad-1 (uniform 3×4 grid)</span></div></div></details>
+      </div>
+    </div>
+  </div>
+  <div style="margin-bottom:36px">
+    <div style="background:var(--sev-minor-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-minor-fg);margin-bottom:20px;letter-spacing:.3px">⚪ Cải thiện — Nâng cao trải nghiệm</div>
+    <div class="finding-card reveal">
+      <div class="finding-accent minor"></div>
+      <div class="card-header"><span class="card-id">UXP-011</span><h3>Transaction ID không có tap-to-copy</h3><span class="badge minor">Minor</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/thanh-toan-du-no-ket-qua.png')"><img src="ui/thanh-toan-du-no-ket-qua.png" alt="Transaction ID không có tap-to-copy" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">giao dịch ID (VD: '12312323') trên kết quả giao dịch (SCR-TDN-005) hiển thị plain text đỏ — không có copy icon hoặc tap-to-copy functionality.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">người dùng cần giao dịch ID cho tra soát/khiếu nại: phải đọc ID → mở notepad → gõ lại → error-prone. Tap-to-copy = 1 tap thay vì manual transcription 8+ digits. Standard feature trên mọi ngân hàng app.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #7 — Flexibility: tap-to-copy là shortcut efficiency cho common follow-up task (save/share giao dịch reference). Thiếu nó buộc manual workflow.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Thêm copy icon bên phải giao dịch ID</li><li>Tap ID hoặc icon → copy to clipboard + toast 'Đã sao chép'</li><li>Style: text underline hoặc icon gợi ý interactivity</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Thanh toán dư nợ - Kết quả › Kết quả giao dịch (SCR-TDN-005)</span></div>
+        <details><summary>📚 1 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/flexibility-efficiency-heuristic/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #7 — Flexibility and Efficiency of Use →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Shortcuts — hidden from novice users — may speed up the interaction for the expert user."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG (copy affordance)</span></div></div></details>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent minor"></div>
+      <div class="card-header"><span class="card-id">UXP-012</span><h3>Thiếu ngày publication cho sao kê — chỉ có month/year</h3><span class="badge minor">Minor</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/danh-sach-sao-ke-the.png')"><img src="ui/danh-sach-sao-ke-the.png" alt="Thiếu ngày publication cho sao kê — chỉ có month/year" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">Danh sách sao kê (SCR-TDN-006) chỉ hiển thị month/year ('Sao kê tháng 11/2025') — thiếu ngày publish. người dùng không biết sao kê được generate ngày nào, data update đến khi nào.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">Thiếu publish date → người dùng không biết freshness: 'Sao kê này có giao dịch cuối tháng không?' Đặc biệt quan trọng cho reconciliation — người dùng cần biết cutoff date chính xác.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #1 — Visibility: Publication date là metadata cần visible cho financial documents. người dùng cần to know data recency for informed decisions.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Thêm ngày publish: 'Sao kê tháng 11/2025 — Tạo ngày 05/12/2025'</li><li>Hoặc subtitle: 'Kỳ sao kê: 01/11 — 30/11/2025'</li><li>Highlight new/unread statements với badge</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Danh sách sao kê thẻ › Danh sách (SCR-TDN-006)</span></div>
+        <details><summary>📚 1 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #1 — Visibility of System Status →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">—</span></div></div></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="scorecard" style="display:none">
+  <div class="section-title"><span class="icon">📊</span> 04 · Đánh giá theo danh mục heuristic</div>
+  <div class="scorecard-grid">
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#c2410c" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="93" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#c2410c">55%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Luồng người dùng</h4><p>Flow &amp; Navigation</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#15803d" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#15803d">100%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Thành phần</h4><p>Component &amp; DDL</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#15803d" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#15803d">100%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Thiết kế trực quan</h4><p>Visual Design</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#15803d" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#15803d">100%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Nội dung</h4><p>Content &amp; Copy</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#15803d" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#15803d">100%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Tiếp cận</h4><p>Accessibility</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#15803d" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#15803d">100%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Tin cậy &amp; Bảo mật</h4><p>Trust &amp; Security</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="gaps" style="padding-top:48px">
+  <div class="section-title"><span class="icon">📋</span> Tổng hợp Gap (19 hạng mục)</div>
+  <p style="color:var(--text-muted);font-size:14px;margin-bottom:20px">Các hạng mục kiểm tra chưa đạt chuẩn theo từng màn hình — checklist cải thiện từ ux-review-report</p>
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">SCR-TDN-001</span>
+      <strong style="font-size:14px">SCR-TDN-001 — Danh sách thẻ › Danh sách (`SCR-TDN-001`)</strong> · <em>list</em>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">5</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">&quot;Thẻ tín dụng ③&quot; badge is dynamic</strong>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">If hardcoded: count won't update when cards added/removed → misleading. Dynamic badge essential for accuracy.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #1 — Visibility: Badge count phải reflect actual state. Hardcoded = potential mismatch với reality.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/danh-sach-the.png')">📸 danh-sach-the.png</span></div>
+          <div style="color:#444">Evidence: badge count appears hardcoded in Figma design. Should reflect actual card count.</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language. Use words, phrases, and concepts familiar to the user."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #1 — Visibility of System Status →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should always keep users informed about what is going on."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+  </div>
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">SCR-TDN-002</span>
+      <strong style="font-size:14px">SCR-TDN-002 — Thanh toán dư nợ › Form nhập thông tin (`SCR-TDN-002`)</strong> · <em>form</em>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">11</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Prefilled text &quot;Thanh toán the tin dung&quot; — correct spelling</strong> · <a href="https://www.nngroup.com/articles/flexibility-efficiency-heuristic/" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">Nielsen Norman Group →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Content quality issue propagates through flow — giống nhau typo appears on xác nhận and result screens. chuyên nghiệp ngân hàng content must be error-free.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #2 — Match Real World: correct language including diacritics is fundamental.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/thanh-toan-du-no.png')">📸 thanh-toan-du-no.png</span></div>
+          <div style="color:#444">Vision: &quot;Thanh toán the tin dung&quot; clearly visible — missing diacritics. Should be &quot;Thanh toán thẻ tín dụng&quot;.</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 1 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language. Use words, phrases, and concepts familiar to the user."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+  </div>
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">SCR-TDN-003</span>
+      <strong style="font-size:14px">SCR-TDN-003 — Thanh toán dư nợ - Nhập số tiền › Form nhập thông tin (`SCR-TDN-003`)</strong> · <em>form</em>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">19</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Amount input: auto-format with thousand separators</strong> · <a href="https://www.nngroup.com/articles/aesthetic-minimalist-design/" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">Nielsen Norman Group →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Large amounts (50,000,000) khó đọc without separators → typo risk. '50000000' vs '50,000,000' — second is verifiable at-a-glance. Financial amount errors have real monetary impact.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #5 — Error Prevention: auto-format prevents misread/mistype. Standard ngân hàng UX: format as người dùng types.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/thanh-toan-du-no-nhap-so-tien.png')">📸 thanh-toan-du-no-nhap-so-tien.png</span></div>
+          <div style="color:#444">Vision: input field shows cursor only — no format preview. No comma separator visible in design.</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language. Use words, phrases, and concepts familiar to the user."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/slips/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #5 — Error Prevention →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Good error messages are important, but the best designs carefully prevent problems from occurring in the first place."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">20</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Max amount hint visible and prominent</strong>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">người dùng may miss max limit → enter exceeding amount → error → re-enter. Prominent hint prevents overshoot errors proactively.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #1 — Visibility: Constraint information (max amount) phải clearly visible, not hidden by low contrast.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/thanh-toan-du-no-nhap-so-tien.png')">📸 thanh-toan-du-no-nhap-so-tien.png</span></div>
+          <div style="color:#444">Vision (Skill C actual): &quot;Tối đa...&quot; color appears very light gray on white — low contrast. Est. contrast ratio fails WCAG AA (4.5:1).</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language. Use words, phrases, and concepts familiar to the user."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #1 — Visibility of System Status →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should always keep users informed about what is going on."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">25</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Numpad layout: consistent 3×4 grid across flow</strong>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Layout inconsistency disrupts muscle memory. Key '0' used frequently in Vietnamese currency amounts (xxx,000) — mistouch = incorrect amount.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #4 — Consistency: Standard numpad layout is universal convention. Non-standard layout = learned convention violated.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/thanh-toan-du-no-nhap-so-tien.png')">📸 thanh-toan-du-no-nhap-so-tien.png</span></div>
+          <div style="color:#444">Vision (Skill C — NEW): numpad-1 spec requires uniform 3×4 grid. Actual: key &quot;0&quot; spans double width. Also: 2 different numpad styles used in same flow (Amount vs PIN) — inconsistency.</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language. Use words, phrases, and concepts familiar to the user."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/consistency-and-standards/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #4 — Consistency and Standards →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Users should not have to wonder whether different words, situations, or actions mean the same thing."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+  </div>
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">SCR-TDN-004</span>
+      <strong style="font-size:14px">SCR-TDN-004 — Thanh toán dư nợ - Xác nhận › Xác nhận giao dịch (`SCR-TDN-004`)</strong> · <em>confirm</em>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">25</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">[DDL otp-input-1] `canResend` state: resend button visible</strong> · <a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">Nielsen Norman Group →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">OTP expired → người dùng stuck at authentication → must restart payment flow entirely. Critical for time-sensitive debt payments.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #3 — người dùng Control: Resend button = recovery mechanism at authentication. thiếu = dead end.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/thanh-toan-du-no-xac-nhan.png')">📸 thanh-toan-du-no-xac-nhan.png</span></div>
+          <div style="color:#444">DDL `otp-input-1` spec requires `canResend` state + 'Gửi lại'/resend button. Vision: PIN overlay has 6 cells + numpad + &quot;Xác nhận&quot; only. NO resend UI.</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language. Use words, phrases, and concepts familiar to the user."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/user-control-and-freedom/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #3 — User Control and Freedom →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Users often perform actions by mistake. They need a clearly marked 'emergency exit'."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">26</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">[DDL otp-input-1] `timeLeft` state: countdown timer visible</strong> · <a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">Nielsen Norman Group →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">người dùng nhập OTP chậm → hết hạn giữa chừng → error. Countdown lets người dùng gauge remaining time and urgency.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #1 — Visibility: OTP validity time is time-critical status that must be displayed.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/thanh-toan-du-no-xac-nhan.png')">📸 thanh-toan-du-no-xac-nhan.png</span></div>
+          <div style="color:#444">DDL `otp-input-1` spec has `timeLeft: 60` default. Vision: no countdown timer visible in PIN overlay.</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language. Use words, phrases, and concepts familiar to the user."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #1 — Visibility of System Status →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should always keep users informed about what is going on."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">30</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Remaining attempts counter after incorrect PIN</strong>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Surprise lockout at authentication step of giao dịch tài chính. người dùng không thể calibrate behavior without knowing attempt count.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #5 — Error Prevention: Attempt counter prevents accidental lockout by enabling self-regulation.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/thanh-toan-du-no-xac-nhan.png')">📸 thanh-toan-du-no-xac-nhan.png</span></div>
+          <div style="color:#444">Vision: warning text static — no dynamic &quot;Còn X lần&quot; counter. Critical for trust.</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language. Use words, phrases, and concepts familiar to the user."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/slips/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #5 — Error Prevention →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Good error messages are important, but the best designs carefully prevent problems from occurring in the first place."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">34</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Transaction note spelling error on confirm screen</strong> · <a href="https://www.nngroup.com/articles/consistency-and-standards/" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">Nielsen Norman Group →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Typo on xác nhận screen is final check before financial commitment — undermines confidence. người dùng might worry about data accuracy.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #2 — Match Real World: xác nhận screens must be impeccable — they represent the last-mile trust checkpoint.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/thanh-toan-du-no-xac-nhan.png')">📸 thanh-toan-du-no-xac-nhan.png</span></div>
+          <div style="color:#444">Vision: &quot;Thanh toán the tin dung&quot; — carries over from form. Must fix upstream.</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/slips/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #5 — Error Prevention →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Good error messages are important, but the best designs carefully prevent problems from occurring in the first place."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+  </div>
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">SCR-TDN-005</span>
+      <strong style="font-size:14px">SCR-TDN-005 — Thanh toán dư nợ - Kết quả › Kết quả giao dịch (`SCR-TDN-005`)</strong> · <em>result</em>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">38</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Transaction amount matches confirmed amount</strong>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Critical data inconsistency in financial flow — người dùng không thể trust which amount was actually debited. Must check bank statement separately to xác minh. Trust violation.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #4 — Consistency: giống nhau giao dịch amount must hiển thị identically across all screens.</li><li>WCAG 3.3.4: financial data accuracy is Level AA requirement.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/thanh-toan-du-no-xac-nhan.png')">📸 thanh-toan-du-no-ket-qua.png</span></div>
+          <div style="color:#444">Vision: &quot;500,000 VND&quot; on result. Confirmed amount on SCR-TDN-004 was &quot;1,500,000 VND&quot;. Data inconsistency — must verify with real API data.</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 3 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language. Use words, phrases, and concepts familiar to the user."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/consistency-and-standards/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #4 — Consistency and Standards →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Users should not have to wonder whether different words, situations, or actions mean the same thing."</div></div><div style="margin-bottom:6px"><a href="https://www.w3.org/WAI/WCAG22/Understanding/error-prevention-legal-financial-data.html" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">WCAG 3.3.4 — Error Prevention →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"For financial transactions, submissions are reversible, checked, or confirmed."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">39</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">&quot;n giờ&quot; processing time: should be specific</strong> · <a href="https://www.nngroup.com/articles/recognition-and-recall/" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">Nielsen Norman Group →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Placeholder in production = thiếu chuyên nghiệp. người dùng gets no useful timing information. 'n giờ' is meaningless.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #1 — Visibility: Processing time must be specific.</li><li>Nielsen #2: 'n' is developer language.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/thanh-toan-du-no-ket-qua.png')">📸 thanh-toan-du-no-ket-qua.png</span></div>
+          <div style="color:#444">Vision: &quot;sẽ được cập nhật trong n giờ&quot; — &quot;n&quot; is literal placeholder. Doherty Threshold: users need specific timeframe. Should show &quot;2-4 giờ làm việc&quot;.</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://lawsofux.com/doherty-threshold/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Doherty Threshold →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Productivity soars when a computer and its users interact at a pace (&lt;400ms) that ensures that neither has to wait on the other."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #1 — Visibility of System Status →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should always keep users informed about what is going on."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">40</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Transaction ID: copyable</strong>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">người dùng phải manually transcribe 8+ digit ID for support/dispute. Copy function saves time and prevents transcription errors.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #7 — Flexibility: Copy shortcut for reference IDs is standard ngân hàng pattern.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/thanh-toan-du-no-ket-qua.png')">📸 thanh-toan-du-no-ket-qua.png</span></div>
+          <div style="color:#444">Vision: &quot;12312323&quot; displayed in red. Copy icon not visible. Should have tap-to-copy.</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language. Use words, phrases, and concepts familiar to the user."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/flexibility-efficiency-heuristic/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #7 — Flexibility and Efficiency of Use →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Shortcuts may speed up the interaction for the expert user."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+  </div>
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">SCR-TDN-006</span>
+      <strong style="font-size:14px">SCR-TDN-006 — Danh sách sao kê thẻ › Danh sách (`SCR-TDN-006`)</strong> · <em>list</em>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">45</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">[DDL empty-state-1] Empty state: has illustration</strong> · <a href="https://www.nngroup.com/articles/recognition-and-recall/" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">Nielsen Norman Group →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Incomplete DDL implementation: visual quality below spec. trạng thái trống without illustration = unfinished look.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Aesthetic-Usability Effect: Visual polish increases perceived usability. Empty states are critical first impressions.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/danh-sach-sao-ke-the.png')">📸 danh-sach-sao-ke-the.png</span></div>
+          <div style="color:#444">DDL `empty-state-1` spec requires icon + title + description + optional CTA. Vision: empty state has text only — NO illustration, NO action button.</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/recognition-and-recall/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #6 — Recognition Rather Than Recall →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Minimize the user's memory load by making elements, actions, and options visible."</div></div><div style="margin-bottom:6px"><a href="https://lawsofux.com/aesthetic-usability-effect/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Aesthetic-Usability Effect →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Users often perceive aesthetically pleasing design as design that's more usable."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">46</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Empty state: action button for next step</strong> · <a href="https://www.nngroup.com/articles/recognition-and-recall/" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">Nielsen Norman Group →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">người dùng sees trạng thái trống → no guidance → exits. CTA could guide to first giao dịch or explain when statements generate.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #6 — Recognition: CTA makes next action visible instead of relying on người dùng recall of navigation.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/danh-sach-sao-ke-the.png')">📸 danh-sach-sao-ke-the.png</span></div>
+          <div style="color:#444">Vision: empty state &quot;Quý khách chưa có sao kê...&quot; — no action. Should have &quot;Xem thẻ khác&quot; or expected date.</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 1 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/recognition-and-recall/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #6 — Recognition Rather Than Recall →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Minimize the user's memory load by making elements, actions, and options visible."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">49</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">No date of statement publication shown</strong>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">người dùng không thể determine statement freshness or cutoff date. Important for reconciliation and dispute deadlines.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #1 — Visibility: Document metadata (date) is essential context for financial records.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/danh-sach-sao-ke-the.png')">📸 danh-sach-sao-ke-the.png</span></div>
+          <div style="color:#444">Vision: only month/year label (e.g., &quot;Sao kê tháng 11/2025&quot;). No file size, no date.</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language. Use words, phrases, and concepts familiar to the user."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #1 — Visibility of System Status →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should always keep users informed about what is going on."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+  </div>
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">SCR-TDN-007</span>
+      <strong style="font-size:14px">SCR-TDN-007 — Chi tiết sao kê - Hệ thống › Chi tiết (`SCR-TDN-007`)</strong> · <em>detail</em>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">50</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">App navigation bar retained in system viewer</strong>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">người dùng disoriented — 'Is app crashed?' No visible way to navigate back. Must rely on system gesture which many người dùng don't know.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #1 — Visibility: App chrome (navigation bar) must persist across all screens.</li><li>Nielsen #3: Back button = emergency exit.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/chi-tiet-sao-ke-he-thong.png')">📸 chi-tiet-sao-ke-he-thong.png</span></div>
+          <div style="color:#444">Vision: blank screen with only &quot;Xem file sao kê thẻ&quot; text. No app header, no back button. User loses navigation context.</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language. Use words, phrases, and concepts familiar to the user."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/user-control-and-freedom/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #3 — User Control and Freedom →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Users need a clearly marked 'emergency exit'."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">51</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Loading state for PDF content</strong> · <a href="https://www.nngroup.com/articles/recognition-and-recall/" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">Nielsen Norman Group →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">PDF files can be large → multi-second load. Without spinner/progress, người dùng assumes failure after ~3s. May force-quit app unnecessarily.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #1 — Visibility: trạng thái tải must be communicated. 3+ seconds silence = perceived failure.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/chi-tiet-sao-ke-he-thong.png')">📸 chi-tiet-sao-ke-he-thong.png</span></div>
+          <div style="color:#444">Vision: placeholder only. No loading indicator visible in design.</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language. Use words, phrases, and concepts familiar to the user."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #1 — Visibility of System Status →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should always keep users informed about what is going on."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">52</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Error state if PDF fails to load</strong>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">No error recovery: người dùng stuck on blank screen. Need: 'Không thể tải file. Thử lại?' + retry button.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #9 — Error Recovery: Error states must be designed, not left to default browser behavior.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/chi-tiet-sao-ke-he-thong.png')">📸 chi-tiet-sao-ke-he-thong.png</span></div>
+          <div style="color:#444">Vision: no error state designed. Need: &quot;Không thể tải file&quot; + &quot;Thử lại&quot; button.</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language. Use words, phrases, and concepts familiar to the user."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/error-message-guidelines/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Error messages should precisely indicate the problem and constructively suggest a solution."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">53</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Breadcrumb: which statement user is viewing</strong>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">người dùng viewing PDF cannot xác minh which month's statement they opened. Must navigate back to check. Breadcrumb provides persistent context.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>WCAG 2.4.8 — Location: người dùng phải know their current position within the app. Breadcrumb/title fulfills this requirement.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/chi-tiet-sao-ke-he-thong.png')">📸 chi-tiet-sao-ke-he-thong.png</span></div>
+          <div style="color:#444">Vision: no title showing &quot;Sao kê tháng 11/2025&quot;. User loses context.</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language. Use words, phrases, and concepts familiar to the user."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #1 — Visibility of System Status →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should always keep users informed about what is going on."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)"></span></div></div></details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><strong>Co-opBank Mobile Banking</strong> · Thanh toán dư nợ thẻ · Đánh giá DDL-grounded</p>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})
+  },{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+});
+
+function openLightbox(src){
+  const lb=document.getElementById('lightbox');
+  const img=document.getElementById('lightbox-img');
+  const cap=document.getElementById('lightbox-caption');
+  img.src=src;
+  cap.textContent=src.split('/').pop();
+  lb.classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(e){
+  if(e.target.tagName==='IMG')return;
+  const lb=document.getElementById('lightbox');
+  lb.classList.remove('active');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeLightbox({target:{tagName:''}});
+});
+</script>
+
+<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox(event)" aria-label="Close">&times;</button>
+  <img id="lightbox-img" src="" alt="Evidence screenshot">
+  <div class="lightbox-caption" id="lightbox-caption"></div>
+</div>
+</body>
+</html>

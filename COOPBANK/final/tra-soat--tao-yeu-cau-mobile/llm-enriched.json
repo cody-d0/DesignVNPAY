@@ -1,0 +1,465 @@
+[
+  {
+    "id": "UXP-001",
+    "hiện_trạng": "Số tài khoản trong danh sách giao dịch không được masked — PII exposed on giao dịch list for dispute filing.",
+    "tác_động": "Account numbers visible in dispute context = double exposure risk. người dùng showing screen to support staff → all account data visible to bystanders.",
+    "nguyên_tắc": "Nielsen #5: Default masking for sensitive financial data. Especially on dispute screens shared with others.",
+    "đề_xuất_steps": [
+      "Mask account numbers: '****3123'",
+      "Tap-to-reveal mechanism",
+      "nhất quán masking across all dispute screens"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "The best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-002",
+    "hiện_trạng": "OTP Modal thiếu countdown timer và 'Gửi lại OTP' — vi phạm DDL otp-input-1 spec. OTP cells dạng dash, active state unclear.",
+    "tác_động": "Systemic OTP gap. Dispute OTP = critical — failed OTP → người dùng không thể file complaint → financial loss continues.",
+    "nguyên_tắc": "Nielsen #1: Timer + resend = bắt buộc for all OTP flows.",
+    "đề_xuất_steps": [
+      "Countdown timer: 02:00",
+      "Resend after 30s",
+      "Active cell highlight",
+      "trạng thái lỗi: red + message"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Precisely indicate problem.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-003",
+    "hiện_trạng": "trạng thái trống (mobile-10): chỉ text 'Không có kết quả tìm kiếm' — thiếu illustration, thiếu CTA 'Xóa tìm kiếm'.",
+    "tác_động": "Text-only trạng thái trống = uninviting. No CTA to reset search → người dùng phải manually clear filter.",
+    "nguyên_tắc": "Nielsen #6: trạng thái trống with illustration + guidance CTA.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize memory load.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm illustration (ví dụ: icon tìm kiếm empty), subtitle gợi ý (\"Thử tìm với từ khóa khác\")",
+      "link action \"Xóa bộ lọc\""
+    ]
+  },
+  {
+    "id": "UXP-004",
+    "hiện_trạng": "Chi tiết giao dịch thiếu CTA để tiếp tục — người dùng views giao dịch detail but can't take action (file dispute from here).",
+    "tác_động": "Dead-end screen. người dùng sees problematic giao dịch → no 'Tạo yêu cầu tra soát' CTA → must navigate back, find the feature separately.",
+    "nguyên_tắc": "Peak-End Rule: Last screen in a flow should enable next action. Contextual CTA from detail → dispute.",
+    "references": [
+      {
+        "name": "Peak-End Rule",
+        "url": "https://lawsofux.com/peak-end-rule/",
+        "quote": "People judge experiences by peaks and ends.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm CTA \"Tra soát giao dịch này\" ở cuối màn hình chi tiết để người dùng có thể proceed ngay từ detail view",
+      "xác minh implementation trên cả iOS và Android — đảm bảo nhất quán",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-005",
+    "hiện_trạng": "bắt buộc fields (Lý do tra soát, TK thu phí) thiếu indicator (*) và validation. người dùng doesn't know which fields are bắt buộc.",
+    "tác_động": "Submit with thiếu bắt buộc fields → error → form reset potentially. bắt buộc indicator prevents.",
+    "nguyên_tắc": "WCAG 3.3.2: bắt buộc field indicators. Nielsen #5: ngăn chặn submission errors.",
+    "references": [
+      {
+        "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+        "quote": "Labels provided when content requires user input.",
+        "source": "W3C"
+      },
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent problems.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm dấu (*) đỏ cho trường bắt buộc",
+      "hiển thị \"Vui lòng chọn lý do tra soát\" khi submit thiếu"
+    ]
+  },
+  {
+    "id": "UXP-006",
+    "hiện_trạng": "CTA 'Tiếp tục' không disable khi form trống — người dùng can tap submit on empty form.",
+    "tác_động": "Tap submit on empty → error popup → frustration. Button should be disabled until bắt buộc fields filled.",
+    "nguyên_tắc": "Nielsen #5: Disable submit until form valid. Progressive disclosure of CTA.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent problems from occurring.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "triển khai disabled state cho nút \"Tiếp tục\" (opacity thấp hơn",
+      "không clickable) khi chưa điền đủ các trường bắt buộc"
+    ]
+  },
+  {
+    "id": "UXP-007",
+    "hiện_trạng": "Success checkmark icon uses brand blue instead of green — semantic color mismatch. Blue = info/neutral, green = success.",
+    "tác_động": "Blue checkmark ≠ clear success signal. người dùng accustomed to green = success from all other apps. Brand color overriding UX convention.",
+    "nguyên_tắc": "Jakob's Law: người dùng kỳ vọng green = success from other apps. Semantic colors > brand colors for status.",
+    "references": [
+      {
+        "name": "Jakob's Law",
+        "url": "https://lawsofux.com/jakobs-law/",
+        "quote": "Users prefer your site to work like ones they already know.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thay success checkmark từ brand blue (#1E3A8A) sang semantic green (#16A34A hoặc token `colors.success`) để align với convention",
+      "Tăng kích thước và proximity của target elements — Fitts' Law",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-008",
+    "hiện_trạng": "Tab active state: blue underline but font weight giống nhau as inactive. Low contrast differentiation.",
+    "tác_động": "Subtle active indicator → người dùng may not register which tab is selected, especially in bright light.",
+    "nguyên_tắc": "Nielsen #1: Active state must be clearly distinguishable. Bold weight + color + underline.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng font-weight tab active (600 vs 400)",
+      "chỉ báo underline màu Brand Blue #1E3A8A"
+    ]
+  },
+  {
+    "id": "UXP-009",
+    "hiện_trạng": "Tight spacing giữa time '18:00' và date '20/02/2025' — text feels cramped, hard to distinguish.",
+    "tác_động": "Compressed metadata = scan difficulty. '20/02/2025 18:00' needs clear separator or layout.",
+    "nguyên_tắc": "Gestalt Proximity: Adequate spacing between distinct info pieces.",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Visual clarity through spacing.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng line-height hoặc padding giữa label",
+      "value trong read-only giao dịch summary card"
+    ]
+  },
+  {
+    "id": "UXP-010",
+    "hiện_trạng": "OTP cells dash style, border mỏng nhạt — khó thấy vị trí nhập. Active cell not distinguished.",
+    "tác_động": "Faint OTP input cells → người dùng không thể see where to type. Especially problematic for older người dùng.",
+    "nguyên_tắc": "WCAG 1.4.11: Non-text contrast 3:1 for UI components.",
+    "references": [
+      {
+        "name": "WCAG 1.4.11 — Non-text Contrast (Level AA)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html",
+        "quote": "Visual information required to identify UI components has 3:1 contrast.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng border width của OTP cells từ 1px lên 2px",
+      "dùng màu `#374151` thay vì màu nhạt hiện tại"
+    ]
+  },
+  {
+    "id": "Gap#2@SCR-TRS-001",
+    "hiện_trạng": "Tab active state underline only — font giống nhau weight as inactive.",
+    "tác_động": "Weak active indicator.",
+    "nguyên_tắc": "Nielsen #1: Clear active state.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #1 để cải thiện trải nghiệm",
+      "Khắc phục: Weak active indicator.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-TRS-002",
+    "hiện_trạng": "Date range filter — no visible constraint on max range.",
+    "tác_động": "người dùng may select 1-year range → performance issue or empty results.",
+    "nguyên_tắc": "Nielsen #5: Constrain inputs to valid ranges.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent problems.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm tính năng tìm kiếm/lọc cho danh sách dài — hỗ trợ tìm nhanh theo keyword",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TRS-003",
+    "hiện_trạng": "Account numbers in list not masked.",
+    "tác_động": "PII exposure in giao dịch list.",
+    "nguyên_tắc": "Nielsen #5: Default masking.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent problems.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TRS-003",
+    "hiện_trạng": "trạng thái trống text-only — no illustration.",
+    "tác_động": "DDL spec requires illustration.",
+    "nguyên_tắc": "Nielsen #6: Visual guidance.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Guide users.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái trống với illustration, message hướng dẫn và CTA rõ ràng",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-TRS-003",
+    "hiện_trạng": "trạng thái trống no action button.",
+    "tác_động": "Dead-end trạng thái trống.",
+    "nguyên_tắc": "Nielsen #6: CTA in trạng thái trống.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Guide.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Thiết kế trạng thái trống với illustration, message hướng dẫn và CTA rõ ràng",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TRS-003",
+    "hiện_trạng": "Search placeholder 'Tìm kiếm' — no guidance on searchable fields.",
+    "tác_động": "người dùng doesn't know what to search by: giao dịch code? Amount? Date?",
+    "nguyên_tắc": "Nielsen #6: Contextual search placeholder.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize load.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Thêm tính năng tìm kiếm/lọc cho danh sách dài — hỗ trợ tìm nhanh theo keyword",
+      "Thêm helper text bên dưới trường nhập: giải thích format mong đợi hoặc ví dụ"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TRS-004",
+    "hiện_trạng": "No bắt buộc field indicators (*).",
+    "tác_động": "người dùng guesses which fields bắt buộc.",
+    "nguyên_tắc": "WCAG 3.3.2: bắt buộc indicators.",
+    "references": [
+      {
+        "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+        "quote": "Labels provided.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc WCAG 3.3.2 để cải thiện trải nghiệm",
+      "Khắc phục: người dùng guesses which fields bắt buộc.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TRS-004",
+    "hiện_trạng": "CTA 'Tiếp tục' always enabled — no disabled state.",
+    "tác_động": "Submit on empty form possible.",
+    "nguyên_tắc": "Nielsen #5: Disable until valid.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TRS-005",
+    "hiện_trạng": "Date/time spacing tight in giao dịch summary.",
+    "tác_động": "Hard to scan date + time.",
+    "nguyên_tắc": "Nielsen #8: Visual spacing.",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Clarity.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #8 để cải thiện trải nghiệm",
+      "Khắc phục: Hard to scan date + time.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TRS-006",
+    "hiện_trạng": "No CTA on giao dịch detail screen.",
+    "tác_động": "Dead-end detail view.",
+    "nguyên_tắc": "Peak-End Rule: Last screen → next action CTA.",
+    "references": [
+      {
+        "name": "Peak-End Rule",
+        "url": "https://lawsofux.com/peak-end-rule/",
+        "quote": "Judged by peaks and ends.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TRS-007",
+    "hiện_trạng": "OTP no countdown timer.",
+    "tác_động": "thiếu time feedback.",
+    "nguyên_tắc": "Nielsen #1: Timer.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TRS-007",
+    "hiện_trạng": "OTP no resend button.",
+    "tác_động": "người dùng stuck.",
+    "nguyên_tắc": "Nielsen #1: Resend path.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#8@SCR-TRS-007",
+    "hiện_trạng": "OTP cells dash style — no active highlight.",
+    "tác_động": "Can't see which cell is active.",
+    "nguyên_tắc": "WCAG 1.4.11: Non-text contrast.",
+    "references": [
+      {
+        "name": "WCAG 1.4.11 — Non-text Contrast (Level AA)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html",
+        "quote": "3:1 contrast for UI.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#2@SCR-TRS-008",
+    "hiện_trạng": "Success icon brand blue instead of semantic green.",
+    "tác_động": "Color confusion for trạng thái thành công.",
+    "nguyên_tắc": "Jakob's Law: Green = success convention.",
+    "references": [
+      {
+        "name": "Jakob's Law",
+        "url": "https://lawsofux.com/jakobs-law/",
+        "quote": "Work like known sites.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Jakob's Law để cải thiện trải nghiệm",
+      "Khắc phục: Color confusion for trạng thái thành công.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  }
+]

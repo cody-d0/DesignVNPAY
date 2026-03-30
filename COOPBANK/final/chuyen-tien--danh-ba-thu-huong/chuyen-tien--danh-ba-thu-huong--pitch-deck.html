@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>UX Audit — Co-opBank KHCN · Danh bạ thụ hưởng | Co-opBank Mobile Banking · Co-opBank</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+/* ═══ DESIGN TOKENS — Light Theme (WCAG AA) ═══ */
+:root {
+  --bg-base:#ffffff; --bg-surface:#f8fafc; --bg-card:#ffffff; --bg-card-hover:#f1f5f9;
+  --text-primary:#0f172a; --text-secondary:#475569; --text-muted:#64748b;
+  --accent-gold:#b45309; --accent-purple:#7c3aed; --accent-blue:#2563eb;
+  --sev-critical:#b91c1c; --sev-critical-bg:rgba(185,28,28,.08); --sev-critical-fg:#b91c1c;
+  --sev-major:#c2410c; --sev-major-bg:rgba(194,65,12,.08); --sev-major-fg:#c2410c;
+  --sev-minor:#92400e; --sev-minor-bg:rgba(146,64,14,.08); --sev-minor-fg:#92400e;
+  --sev-pass:#15803d; --sev-pass-bg:rgba(21,128,61,.08); --sev-pass-fg:#15803d;
+  --border:#e2e8f0; --border-light:#cbd5e1;
+  --font-sans:'Manrope',system-ui,-apple-system,sans-serif;
+  --font-display:'Manrope',system-ui,sans-serif;
+  --font-mono:'Manrope',system-ui,sans-serif;
+}
+
+/* ═══ RESET ═══ */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-primary);line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ═══ HERO ═══ */
+.hero{background:linear-gradient(135deg,#f8fafc 0%,#e0e7ff 40%,#dbeafe 70%,#f8fafc 100%);padding:64px 56px 72px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-120px;top:-120px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.06),transparent 70%)}
+.hero::after{content:'';position:absolute;left:-80px;bottom:-80px;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.04),transparent 70%)}
+.hero-label{font-family:var(--font-sans);font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--accent-purple);margin-bottom:12px;font-weight:700}
+.hero h1{font-family:var(--font-display);font-size:42px;font-weight:800;line-height:1.15;margin-bottom:8px;color:var(--text-primary)}
+.hero-sub{color:var(--text-secondary);font-size:15px;margin-bottom:40px}
+.hero-stats{display:flex;gap:48px;flex-wrap:wrap}
+.stat-item{text-align:center}
+.stat-num{font-family:var(--font-sans);font-size:44px;font-weight:800;line-height:1;display:block;color:var(--text-primary)}
+.stat-num.gap-c{color:var(--sev-critical)}
+.stat-label{font-family:var(--font-sans);font-size:10px;color:var(--text-secondary);margin-top:6px;text-transform:uppercase;letter-spacing:1.5px;font-weight:600}
+.hero-score{position:absolute;right:56px;top:50%;transform:translateY(-50%);z-index:1}
+
+/* ═══ NAV ═══ */
+.nav{background:var(--bg-base);border-bottom:1px solid var(--border);padding:0 56px;display:flex;gap:0;position:sticky;top:0;z-index:100}
+.nav a{color:var(--text-secondary);text-decoration:none;padding:14px 20px;font-size:12px;font-weight:600;letter-spacing:.3px;border-bottom:2px solid transparent;transition:all .25s}
+.nav a:hover{color:var(--accent-blue);border-bottom-color:var(--accent-blue)}
+
+/* ═══ SECTIONS ═══ */
+.section{max-width:1100px;margin:0 auto;padding:56px 56px 0}
+.section-title{font-family:var(--font-display);font-size:24px;font-weight:800;margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;color:var(--text-primary)}
+.section-title .icon{font-size:20px}
+
+/* ═══ BADGES ═══ */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-family:var(--font-sans);font-size:11px;font-weight:700;letter-spacing:.3px}
+.badge.critical{background:var(--sev-critical-bg);color:var(--sev-critical-fg)}
+.badge.major{background:var(--sev-major-bg);color:var(--sev-major-fg)}
+.badge.minor{background:var(--sev-minor-bg);color:var(--sev-minor-fg)}
+
+/* ═══ FINDING CARDS — Table-based scannable layout ═══ */
+.finding-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;transition:all .2s}
+.finding-card:hover{box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.finding-accent{height:3px}
+.finding-accent.critical{background:var(--sev-critical)}.finding-accent.major{background:var(--sev-major)}.finding-accent.minor{background:var(--sev-minor)}
+
+/* Card header */
+.card-header{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--bg-surface)}
+.card-id{font-family:var(--font-sans);font-size:12px;font-weight:700;color:var(--accent-blue);background:rgba(37,99,235,.08);padding:2px 8px;border-radius:4px}
+.card-header h3{font-size:14px;font-weight:700;color:var(--text-primary);line-height:1.4;flex:1}
+
+/* Card body — screenshot + data table side by side */
+.card-body{display:grid;grid-template-columns:500px 1fr;gap:0}
+.card-visual{background:var(--bg-surface);padding:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid var(--border);min-width:500px}
+.phone-frame{position:relative;border:2px solid var(--border-light);border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);cursor:pointer;transition:transform .2s}
+.phone-frame:hover{transform:scale(1.02)}
+.phone-frame img{max-width:150px;width:100%;display:block}
+
+/* Data table inside card */
+.card-table{width:100%;border-collapse:collapse}
+.card-table tr{border-bottom:1px solid var(--border)}
+.card-table tr:last-child{border-bottom:none}
+.card-table td{padding:10px 16px;font-size:13px;line-height:1.5;vertical-align:top}
+.card-table .td-label{width:110px;font-family:var(--font-sans);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);white-space:nowrap;padding-top:12px}
+.card-table .td-value{color:var(--text-secondary)}
+.card-table .td-value.proposal{background:rgba(22,163,74,.04)}
+.card-table .td-value.proposal ul{padding-left:16px;margin:0}.card-table .td-value.proposal li{font-size:12.5px;color:#15803d;margin-bottom:2px}
+
+/* Card footer */
+.card-footer{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:10px 16px;border-top:1px solid var(--border);background:var(--bg-surface)}
+.card-footer details{width:100%}
+.finding-tags{display:flex;gap:6px;flex-wrap:wrap}
+.card-tag{background:rgba(37,99,235,.08);color:var(--accent-blue);font-family:var(--font-sans);font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+
+
+
+/* Proposed solution box */
+.proposed-box{background:rgba(22,163,74,.04);border-radius:6px;padding:8px 12px}
+.proposed-box ul{padding-left:16px;margin:0}.proposed-box li{font-size:12.5px;color:#15803d;margin-bottom:2px;line-height:1.5}
+
+/* ═══ DETAILS (Progressive disclosure) ═══ */
+details{margin:0}details summary{cursor:pointer;font-family:var(--font-sans);font-size:11px;color:var(--accent-purple);font-weight:700;padding:4px 0}
+.detail-content{width:100%;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;padding:10px;margin-top:6px;font-family:var(--font-sans);font-size:11px;color:var(--text-muted);line-height:1.6;word-break:break-all}
+
+/* ═══ REFERENCE SOURCES ═══ */
+.ref-sources{margin:6px 0 0;padding-left:16px;font-size:11px;list-style:none}
+.ref-sources li{margin-bottom:4px;line-height:1.4}
+.ref-sources a{color:var(--accent-blue);text-decoration:none;font-weight:600}
+.ref-sources a:hover{text-decoration:underline}
+.ref-sources em{color:var(--text-muted);font-style:italic}
+
+/* ═══ METHODOLOGY ═══ */
+.method-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.method-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px 20px;transition:all .25s}
+.method-card:hover{background:var(--bg-card-hover);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.method-icon{font-size:28px;margin-bottom:12px}
+.method-card h4{font-size:13px;font-weight:700;margin-bottom:8px;color:var(--text-primary)}
+.method-card p{font-size:12px;color:var(--text-secondary);line-height:1.5}
+
+/* ═══ SCORECARD ═══ */
+.scorecard-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.score-item{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;align-items:center;gap:16px;transition:all .25s}
+.score-item:hover{background:var(--bg-card-hover)}
+.score-info h4{font-size:13px;font-weight:700;margin-bottom:4px;color:var(--text-primary)}
+.score-info p{font-size:12px;color:var(--text-secondary)}
+
+/* ═══ GAP CARDS — Table-based scannable layout ═══ */
+.gap-screen{font-family:var(--font-sans);font-size:11px;font-weight:700;color:var(--accent-blue);background:rgba(37,99,235,.08);padding:3px 8px;border-radius:4px;white-space:nowrap}
+.gap-card{border:1px solid var(--border);border-radius:10px;margin-bottom:12px;background:var(--bg-card);overflow:hidden;transition:all .2s}
+.gap-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.05)}
+
+/* Gap card header */
+.gap-header{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bg-surface);border-bottom:1px solid var(--border)}
+.gap-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--accent-blue);color:#fff;font-family:var(--font-sans);font-size:11px;font-weight:800;flex-shrink:0}
+.gap-ref{font-family:var(--font-sans);font-size:10px;color:var(--accent-purple);background:rgba(124,58,237,.08);padding:1px 6px;border-radius:4px;font-weight:600;margin-left:auto}
+
+/* Gap data table */
+.gap-table{width:100%;border-collapse:collapse}
+.gap-table tr{border-bottom:1px solid var(--border)}
+.gap-table tr:last-child{border-bottom:none}
+.gap-table td{padding:8px 16px;font-size:12.5px;line-height:1.5;vertical-align:top}
+.gap-table .td-label{width:120px;font-family:var(--font-sans);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);white-space:nowrap;padding-top:10px}
+.gap-table .td-value{color:var(--text-secondary)}
+.gap-table .td-ddl{font-style:italic;color:var(--text-muted);font-size:12px}
+.gap-table .td-ref{padding:6px 16px}
+
+/* ═══ IMAGE LIGHTBOX ═══ */
+.img-cite{display:inline-block;background:#EFF6FF;color:#2563EB;font-size:10px;padding:1px 6px;border-radius:4px;font-family:var(--font-mono);margin-left:4px;cursor:pointer;transition:all .2s}
+.img-cite:hover{background:#DBEAFE;transform:scale(1.05);box-shadow:0 1px 4px rgba(37,99,235,.25)}
+.lightbox-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;flex-direction:column;opacity:0;transition:opacity .3s}
+.lightbox-overlay.active{display:flex;opacity:1}
+.lightbox-overlay img{max-width:90vw;max-height:80vh;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.5);object-fit:contain}
+.lightbox-close{position:absolute;top:20px;right:28px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.12);border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.lightbox-close:hover{background:rgba(255,255,255,.25)}
+.lightbox-caption{color:rgba(255,255,255,.8);font-size:13px;font-family:var(--font-mono);margin-top:12px;padding:4px 16px;background:rgba(255,255,255,.08);border-radius:8px}
+
+/* ═══ FOOTER ═══ */
+footer{background:var(--bg-surface);border-top:1px solid var(--border);color:var(--text-muted);text-align:center;padding:28px 56px;margin-top:72px;font-size:12px}
+footer strong{color:var(--text-secondary)}
+
+/* ═══ ANIMATION ═══ */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:960px){
+  .card-body{grid-template-columns:1fr}.card-visual{border-right:none;border-bottom:1px solid var(--border);padding:20px}
+  .phone-frame{min-width:unset;max-width:420px;margin:0 auto}
+  .hero-score{display:none}
+  .scorecard-grid,.method-grid{grid-template-columns:1fr}
+  .hero{padding:32px 24px}.section{padding:32px 24px 0}.nav{padding:0 16px;overflow-x:auto}
+  .card-table .td-label,.gap-table .td-label{width:90px}
+}
+@media(prefers-reduced-motion:reduce){
+  .reveal{transition-duration:.01ms!important}.finding-card,.method-card,.score-item,.gap-card{transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="#summary">Tổng quan</a>
+  <a href="#method">Phương pháp</a>
+  <a href="#findings">Phát hiện</a>
+  <a href="#scorecard" style="display:none">Scorecard</a>
+  <a href="#gaps">Gaps</a>
+</nav>
+
+<section class="hero" id="top">
+  <div class="hero-label">UX Audit Report</div>
+  <h1>Co-opBank · Co-opBank KHCN · Danh bạ thụ hưởng</h1>
+  <p class="hero-sub">Co-opBank Mobile Banking</p>
+  <div class="hero-stats">
+    <div class="stat-item"><span class="stat-num">4</span><span class="stat-label">Màn hình</span></div>
+    <div class="stat-item"><span class="stat-num">57</span><span class="stat-label">Tổng kiểm tra</span></div>
+    <div class="stat-item"><span class="stat-num gap-c">12</span><span class="stat-label">Cần cải thiện</span></div>
+    <div class="stat-item"><span class="stat-num">12</span><span class="stat-label">Đề xuất</span></div>
+  </div>
+  <div class="hero-score"><svg width="110" height="110" viewBox="0 0 110 110"><circle cx="55" cy="55" r="51" fill="none" stroke="#e2e8f0" stroke-width="8"/><circle cx="55" cy="55" r="51" fill="none" stroke="#15803d" stroke-width="8" stroke-dasharray="320" stroke-dashoffset="74" stroke-linecap="round" transform="rotate(-90 55 55)"/><text x="55" y="60" text-anchor="middle" font-family="var(--font-sans)" font-size="24" font-weight="800" fill="#15803d">77%</text></svg></div>
+</section>
+
+<section class="section" id="summary">
+  <div class="section-title"><span class="icon">📊</span> 01 · Tổng quan kết quả kiểm tra</div>
+  <div style="display:flex;gap:12px;margin-bottom:28px">
+    <span class="badge critical">🔴 4 Nghiêm trọng</span><span class="badge major">🟡 5 Quan trọng</span><span class="badge minor">⚪ 3 Cải thiện</span>
+  </div>
+  <div class="scorecard-grid">
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#c2410c" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="55" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#c2410c">65%</text></svg></div>
+      <div class="score-info">
+        <h4>Danh bạ thụ hưởng › Danh sách (`SCR-DB-001`)</h4>
+        <p>SCR-DB-001 · list · <span style="color:var(--sev-critical-fg)">7 Gap</span></p>
+      </div>
+    </div>
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#15803d" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="13" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#15803d">92%</text></svg></div>
+      <div class="score-info">
+        <h4>Danh bạ thụ hưởng › Tìm kiếm (`SCR-DB-002`)</h4>
+        <p>SCR-DB-002 · list · <span style="color:var(--sev-critical-fg)">1 Gap</span></p>
+      </div>
+    </div>
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#15803d" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="27" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#15803d">83%</text></svg></div>
+      <div class="score-info">
+        <h4>Danh bạ thụ hưởng › Chi tiết (`SCR-DB-003`)</h4>
+        <p>SCR-DB-003 · detail · <span style="color:var(--sev-critical-fg)">2 Gap</span></p>
+      </div>
+    </div>
+    <div class="score-item reveal">
+      <div style="flex-shrink:0"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="28" cy="28" r="25" fill="none" stroke="#15803d" stroke-width="5" stroke-dasharray="157" stroke-dashoffset="36" stroke-linecap="round" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="800" fill="#15803d">77%</text></svg></div>
+      <div class="score-info">
+        <h4>Danh bạ thụ hưởng › Form nhập thông tin (`SCR-DB-004`)</h4>
+        <p>SCR-DB-004 · form · <span style="color:var(--sev-critical-fg)">2 Gap</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section reveal" id="method">
+  <div class="section-title"><span class="icon">🔬</span> 02 · Phương pháp đánh giá</div>
+  <div class="method-grid">
+    <div class="method-card"><div class="method-icon">🔍</div><h4>Heuristic Evaluation</h4><p>Đánh giá theo 10 heuristics của Nielsen Norman Group. Mỗi phát hiện được liên kết với heuristic cụ thể bị vi phạm.</p></div>
+    <div class="method-card"><div class="method-icon">🧩</div><h4>Component Spec Analysis</h4><p>So sánh thiết kế Figma với DDL component specifications để phát hiện gap về states, props và behavior.</p></div>
+    <div class="method-card"><div class="method-icon">👁️</div><h4>Vision Inspection</h4><p>Phân tích trực quan từng màn hình: alignment, contrast, typography, touch targets, overlay detection.</p></div>
+    <div class="method-card"><div class="method-icon">⚖️</div><h4>UX Law Cross-Reference</h4><p>Áp dụng Fitts's Law, Hick's Law, Peak-End Rule và các nguyên tắc thiết kế vào từng màn hình.</p></div>
+  </div>
+</section>
+
+<section class="section" id="findings">
+  <div class="section-title"><span class="icon">🔎</span> 03 · Các vấn đề được phát hiện</div>
+  <div style="margin-bottom:36px">
+    <div style="background:var(--sev-critical-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-critical-fg);margin-bottom:20px;letter-spacing:.3px">🔴 Nghiêm trọng — Cần xử lý ngay</div>
+    <div class="finding-card reveal">
+      <div class="finding-accent critical"></div>
+      <div class="card-header"><span class="card-id">UXP-001</span><h3>Toast hướng dẫn &quot;Chọn danh bạ mà Qúy ...&quot; hiện ngay khi vào màn hình delete...</h3><span class="badge critical">Critical</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/contact.png')"><img src="ui/contact.png" alt="Toast hướng dẫn &quot;Chọn danh bạ mà Qúy khách muốn xóa&quot; hiện ngay khi vào màn hình " loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">Màn hình Danh sách (contact.png) hiển thị toast hướng dẫn &quot;Chọn danh bạ mà Qúy khách muốn xóa&quot; ngay khi vào delete mode. Toast không có nút dismiss (×), không auto-dismiss, và chứa lỗi chính tả &quot;Qúy&quot; thay vì &quot;Quý&quot;. Thanh toast nằm phía trên danh sách contact với nền trắng viền bo tròn.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">Người dùng không thể tự tắt toast hướng dẫn, toast chiếm diện tích hiển thị và che khuất phần đầu danh sách. Lỗi chính tả &quot;Qúy&quot; trong ứng dụng ngân hàng làm giảm mức độ tin tưởng của khách hàng vào tính chuyên nghiệp của hệ thống — yếu tố then chốt trong dịch vụ tài chính.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #3 — người dùng Control and Freedom: &quot;người dùng often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.&quot; Toast không có dismiss action vi phạm quyền kiểm soát của người dùng — họ không thể loại bỏ thông báo khi đã đọc xong.</li><li>Fitts's Law cũng bị vi phạm vì thiếu target (×) để tương tác.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Thêm icon × (close) ở bên phải toast, kích thước tối thiểu 44×44px theo WCAG 2.5.8</li><li>triển khai auto-dismiss sau 5 giây với animation fade-out 300ms</li><li>Sửa lỗi chính tả: &quot;Qúy&quot; → &quot;Quý&quot; trên toàn bộ ứng dụng</li><li>Cân nhắc chuyển toast sang dạng inline banner để không che khuất nội dung</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Danh bạ thụ hưởng › Danh sách</span></div>
+        <details><summary>📚 3 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://lawsofux.com/fittss-law/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Fitts's Law →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The time to acquire a target is a function of the distance to and size of the target."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/user-control-and-freedom/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #3 — User Control and Freedom →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action."</div></div><div style="margin-bottom:6px"><a href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">WCAG 2.5.8 — Target Size Minimum (Level AA) →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The size of the target for pointer inputs is at least 24 by 24 CSS pixels."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-10 · UXG-78 · Law:fitts</span></div></div></details>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent critical"></div>
+      <div class="card-header"><span class="card-id">UXP-002</span><h3>Hiển thị 4 hàng thông tin với layout label-value ngang: &quot;Loại chuyển tiền&quot; bị...</h3><span class="badge critical">Critical</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/contact-details.png')"><img src="ui/contact-details.png" alt="Từ ảnh contact-details" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">Màn hình Chi tiết danh bạ (contact-details.png) hiển thị 4 hàng thông tin với layout label-value ngang: &quot;Loại chuyển tiền&quot; bị truncate thành &quot;Loại chuyển&quot; do cùng dòng với giá trị &quot;Chuyển tiền nhanh 24/7 qua tài khoản&quot;. Label và value chồng lấn nhau, gây khó đọc — đặc biệt với giá trị dài như tên ngân hàng &quot;BIDV - Ngân hàng đầu tư và phát triển Việt Nam&quot;.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">Người dùng không thể đọc đầy đủ thông tin danh bạ thụ hưởng trước khi thực hiện giao dịch. Trong ngân hàng app, thông tin bị cắt xén có thể dẫn đến chuyển tiền nhầm người nhận, gây hậu quả tài chính nghiêm trọng và khó hoàn lại.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #8 — Aesthetic and Minimalist Design: &quot;Giao diện không nên chứa thông tin không liên quan hoặc hiếm khi cần thiết.&quot; Ở đây ngược lại — thông tin CẦN THIẾT bị ẩn do layout không phù hợp.</li><li>WCAG 1.4.12 (Text Spacing) cũng bị ảnh hưởng vì text overlap nhau.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Chuyển sang layout 2-line (vertical stack): label phía trên (font-size: 13px, color: muted), value phía dưới (font-size: 15px, color: foreground)</li><li>Đảm bảo label &quot;Loại chuyển tiền&quot; hiển thị đầy đủ, không truncate</li><li>Value dài (tên ngân hàng) cho phép wrap multi-line thay vì ellipsis</li><li>Tăng row height tối thiểu lên 56px để chứa 2-line layout</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Danh bạ thụ hưởng › Chi tiết</span></div>
+        <details><summary>📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://lawsofux.com/peak-end-rule/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Peak-End Rule →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"People judge an experience largely based on how they felt at its most intense point and at its end."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/aesthetic-minimalist-design/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #8 — Aesthetic and Minimalist Design →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Interfaces should not contain information that is irrelevant or rarely needed."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-165 · Law:peak-end</span></div></div></details>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent critical"></div>
+      <div class="card-header"><span class="card-id">UXP-009</span><h3>Bulk delete flow yêu cầu user nhấn icon 🗑 để vào &quot;delete mode&quot; trước khi chọn...</h3><span class="badge critical">Critical</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/contact.png')"><img src="ui/contact.png" alt="Bulk delete flow yêu cầu user nhấn icon 🗑 để vào &quot;delete mode&quot; trước khi chọn co" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">Bulk delete flow yêu cầu nhấn icon 🗑 trước khi chọn contacts — sai thứ tự cognitive Select-then-Act.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">người dùng phải học mode trước khi hành động. Đúng: chọn trước → action sau (Gmail pattern).</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #7: Select-then-act pattern.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Đổi sang Select-first: long-press để enter selection mode → chọn contacts → contextual action bar hiện &quot;Xóa&quot; + &quot;Hủy&quot; + count badge</li><li>Clear visual differentiation: header đổi màu + contextual actions thay thế default toolbar</li><li>Exit path rõ ràng: &quot;Hủy chọn&quot; button hoặc back gesture → trở về normal mode</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Danh bạ thụ hưởng › Danh sách</span></div>
+        <details><summary>📚 1 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/flexibility-efficiency-heuristic/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #7 — Flexibility and Efficiency of Use →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Shortcuts speed up interaction."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">Law:mental-model · UXG-35</span></div></div></details>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent critical"></div>
+      <div class="card-header"><span class="card-id">UXP-010</span><h3>Delete mode không có visual state change rõ ràng — header/background không đổi,...</h3><span class="badge critical">Critical</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/contact.png')"><img src="ui/contact.png" alt="Delete mode không có visual state change rõ ràng — header/background không đổi, " loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">Delete mode không có visual state change — header/background không đổi, FAB (+) vẫn visible gây mode confusion.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">người dùng không biết đang ở delete mode hay normal mode. Nhấn + có thể thêm thay vì xóa.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #1: Mode state phải visible. Header đổi màu/text khi delete mode.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Header đổi background (darker/accent) + count badge &quot;Đã chọn N&quot; + FAB ẩn + back button → &quot;Hủy chọn&quot;</li><li>Clear visual differentiation: header đổi màu + contextual actions thay thế default toolbar</li><li>Exit path rõ ràng: &quot;Hủy chọn&quot; button hoặc back gesture → trở về normal mode</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Danh bạ thụ hưởng › Danh sách</span></div>
+        <details><summary>📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language. Use words, phrases, and concepts familiar to the user."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #1 — Visibility of System Status →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Keep users informed."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">Law:mental-model · Nielsen #2</span></div></div></details>
+      </div>
+    </div>
+  </div>
+  <div style="margin-bottom:36px">
+    <div style="background:var(--sev-major-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-major-fg);margin-bottom:20px;letter-spacing:.3px">🟡 Quan trọng — Ưu tiên cao</div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-header"><span class="card-id">UXP-003</span><h3>Hiển thị trạng thái lỗi khi số tài khoản không tồn tại: text lỗi &quot;Số tài...</h3><span class="badge major">Major</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/add-new-3.png')"><img src="ui/add-new-3.png" alt="Từ ảnh add-new-3" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">Màn hình Thêm mới danh bạ (thêm-new-3.png) hiển thị trạng thái lỗi khi số tài khoản không tồn tại: text lỗi &quot;Số tài khoản/Số thẻ không tồn tại&quot; màu đỏ (#dc2626) xuất hiện bên dưới input field. Tuy nhiên, border của input field vẫn giữ nguyên màu default (gray), không chuyển sang destructive state. Nút &quot;Thêm mới&quot; vẫn ở trạng thái enabled dù form invalid.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">Người dùng có thể bỏ sót lỗi vì chỉ có text nhỏ báo lỗi mà không có visual cue mạnh (border đỏ, icon cảnh báo). Trong ngữ cảnh ngân hàng, submit form với dữ liệu sai có thể tạo danh bạ không hợp lệ, gây lỗi khi thực hiện chuyển tiền sau này.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #9 — Help người dùng Recognize, Diagnose, and Recover from Errors: &quot;Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.&quot; trạng thái lỗi hiện tại thiếu 2/3 tín hiệu chuẩn (border color + icon), chỉ có text — giảm khả năng nhận diện lỗi.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Đổi border input sang destructive color (#dc2626) khi error, sử dụng DDL token {base.destructive}</li><li>Thêm icon ⚠️ (16×16px) trước thông báo lỗi text</li><li>Disable nút &quot;Thêm mới&quot; khi form chứa validation error (opacity: 0.5, pointer-events: none)</li><li>Thêm aria-invalid=&quot;true&quot; và aria-describedby cho khả năng tiếp cận</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Danh bạ thụ hưởng › Form nhập thông tin</span></div>
+        <details><summary>📚 3 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://lawsofux.com/doherty-threshold/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Doherty Threshold →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Productivity soars when a computer and its users interact at a pace (&lt;400ms) that ensures that neither has to wait on the other."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/error-message-guidelines/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution."</div></div><div style="margin-bottom:6px"><a href="https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">WCAG 3.3.1 — Error Identification (Level A) →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"If an input error is automatically detected, the item that is in error is identified and the error is described to the user in text."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-243 · COMP:text-input-1 · Law:doherty</span></div></div></details>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-header"><span class="card-id">UXP-004</span><h3>Hiển thị trạng thái trống khi chưa có danh bạ thụ hưởng: chỉ có dòng text nhỏ...</h3><span class="badge major">Major</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/search-3.png')"><img src="ui/search-3.png" alt="Từ ảnh search-3" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">Màn hình Tìm kiếm (search-3.png) hiển thị trạng thái trống khi chưa có danh bạ thụ hưởng: chỉ có dòng text nhỏ &quot;Quý khách chưa có danh bạ thụ hưởng&quot; (font-size ~14px, color muted) ở giữa màn hình trống. Không có illustration/icon, không có CTA button hướng dẫn thêm mới. Phía dưới có callout bubble &quot;Nhấn vào đây để thêm mới danh bạ thụ hưởng&quot; trỏ vào FAB (+) nhưng đây là annotation design, không phải UI element.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">Người dùng mới lần đầu vào màn hình Danh bạ sẽ thấy giao diện trống với thông điệp tối thiểu, không biết bước tiếp theo là gì. Thiếu visual engagement và guidance rõ ràng làm tăng tỷ lệ thoát (bounce rate) tại điểm onboarding quan trọng của tính năng chuyển tiền.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #6 — Recognition Rather Than Recall: &quot;Giảm thiểu tải nhớ của người dùng bằng cách hiển thị rõ ràng các phần tử, hành động và tùy chọn.&quot; trạng thái trống thiếu visual cue (icon, illustration) và CTA inline — buộc người dùng phải tự tìm cách thêm danh bạ thay vì được hướng dẫn trực tiếp.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Thêm illustration icon 48×48px (hình contact/address book) phía trên text</li><li>Đổi heading thành bold: &quot;Chưa có danh bạ thụ hưởng&quot; (font-weight: 600)</li><li>Thêm subtitle: &quot;Thêm người thụ hưởng để chuyển tiền nhanh hơn&quot; (color: muted)</li><li>Thêm CTA button inline: &quot;+ Thêm danh bạ&quot; bên dưới subtitle, style outline hoặc primary</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Danh bạ thụ hưởng › Tìm kiếm</span></div>
+        <details><summary>📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/recognition-and-recall/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #6 — Recognition Rather Than Recall →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Minimize the user's memory load by making elements, actions, and options visible."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #1 — Visibility of System Status →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">COMP:empty-state-1</span></div></div></details>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-header"><span class="card-id">UXP-005</span><h3>Hiển thị keyboard số và cursor đang active tại trường &quot;Tên gợi nhớ&quot;</h3><span class="badge major">Major</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/contact-details-2.png')"><img src="ui/contact-details-2.png" alt="Từ ảnh contact-details-2" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">Màn hình Chi tiết danh bạ ở edit mode (contact-details-2.png) hiển thị keyboard số và cursor đang active tại trường &quot;Tên gợi nhớ&quot;. Footer chỉ có một nút &quot;Cập nhật&quot; (primary button), không có nút &quot;Hủy&quot; hoặc option cancel. Nút &quot;Thực hiện giao dịch&quot; đã biến mất khi vào edit mode. Back button (←) ở header vẫn hiện nhưng không rõ behavior khi có unsaved changes.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">Người dùng đang chỉnh sửa tên gợi nhớ không có cách nào hủy thay đổi ngoài việc nhấn back — nhưng không rõ back sẽ save hay discard. Trong ngân hàng app, thay đổi thông tin danh bạ ảnh hưởng trực tiếp đến giao dịch chuyển tiền, cần có cơ chế undo/cancel rõ ràng để tránh sai sót.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #3 — người dùng Control and Freedom: &quot;người dùng often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.&quot; Edit mode thiếu exit rõ ràng — chỉ có &quot;Cập nhật&quot; (commit) mà không có &quot;Hủy&quot; (abort), vi phạm nguyên tắc emergency exit.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Thêm nút &quot;Hủy&quot; (outline style) bên trái nút &quot;Cập nhật&quot; trong footer</li><li>Khi nhấn back (←) với unsaved changes → hiển thị xác nhận dialog: &quot;Bạn có muốn lưu thay đổi?&quot; với 3 options: Lưu / Không lưu / Tiếp tục chỉnh sửa</li><li>Cân nhắc giữ nút &quot;Thực hiện giao dịch&quot; visible (disabled) để context không mất đột ngột</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Danh bạ thụ hưởng › Chi tiết</span></div>
+        <details><summary>📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/user-control-and-freedom/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #3 — User Control and Freedom →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/slips/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #5 — Error Prevention →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Good error messages are important, but the best designs carefully prevent problems from occurring in the first place."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-4</span></div></div></details>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-header"><span class="card-id">UXP-011</span><h3>Confirmation dialog sai framing: title generic &quot;Thông báo&quot;, button &quot;Đồng ý&quot;...</h3><span class="badge major">Major</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/popup.png')"><img src="ui/popup.png" alt="Confirmation dialog sai framing: title generic &quot;Thông báo&quot;, button &quot;Đồng ý&quot; posi" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">xác nhận dialog: title generic &quot;Thông báo&quot;, button &quot;Đồng ý&quot; positive framing cho destructive action.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">&quot;Đồng ý&quot; = positive. Destructive xác nhận phải dùng specific language: &quot;Xóa 3 người thụ hưởng&quot;.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #5: Destructive actions = specific xác nhận. Primary: &quot;Giữ lại&quot;, Secondary: &quot;Xóa&quot;.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Title → &quot;Xóa N danh bạ thụ hưởng?&quot;</li><li>Body → mô tả hậu quả</li><li>Buttons: [Hủy] [Xóa] (red/destructive ở trái)</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Danh bạ thụ hưởng › Danh sách</span></div>
+        <details><summary>📚 1 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/slips/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #5 — Error Prevention →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Good error messages are important, but the best designs carefully prevent problems from occurring in the first place."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-35 · UXG-4 · Nielsen #5</span></div></div></details>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent major"></div>
+      <div class="card-header"><span class="card-id">UXP-012</span><h3>Sau xóa không có undo — xóa vĩnh viễn ngay lập tức. Trong banking context, danh...</h3><span class="badge major">Major</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/contact.png')"><img src="ui/contact.png" alt="Sau xóa không có undo — xóa vĩnh viễn ngay lập tức. Trong banking context, danh " loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">Sau xóa không có undo — xóa vĩnh viễn ngay lập tức. Danh bạ thụ hưởng chứa thông tin đã xác minh.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">Xóa người thụ hưởng = xóa verified account info. Phải re-xác minh nếu cần lại. Undo snackbar 10s = safety net.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #3: Undo = emergency exit. Snackbar &quot;Đã xóa. Hoàn tác&quot; trong 10s.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Toast sau xóa: &quot;Đã xóa N danh bạ · Hoàn tác&quot; — tap &quot;Hoàn tác&quot; trong 5s để recover</li><li>Timeout 5-10s — auto-dismiss sau khi hết thời gian undo</li><li>Soft delete: giữ data 30 ngày trước khi permanent delete</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Danh bạ thụ hưởng › Danh sách</span></div>
+        <details><summary>📚 1 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/user-control-and-freedom/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #3 — User Control and Freedom →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-4 · Nielsen #3</span></div></div></details>
+      </div>
+    </div>
+  </div>
+  <div style="margin-bottom:36px">
+    <div style="background:var(--sev-minor-bg);padding:10px 18px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--sev-minor-fg);margin-bottom:20px;letter-spacing:.3px">⚪ Cải thiện — Nâng cao trải nghiệm</div>
+    <div class="finding-card reveal">
+      <div class="finding-accent minor"></div>
+      <div class="card-header"><span class="card-id">UXP-006</span><h3>Hiển thị danh sách dài với chiều cao 1222px, bao gồm 4 sections (Chuyển tiền...</h3><span class="badge minor">Minor</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/contact-2.png')"><img src="ui/contact-2.png" alt="Từ ảnh contact-2" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">Màn hình Danh sách (contact-2.png) hiển thị danh sách dài với chiều cao 1222px, bao gồm 4 sections (Chuyển tiền nội bộ, 24/7 qua tài khoản, 24/7 qua thẻ, Chuyển tiền nội bộ). Tất cả sections đều đang expand, cùng với toast hướng dẫn xóa ở trên. Khi scroll xuống, section headers không sticky — người dùng mất context đang ở section nào.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">Với danh sách dài &gt;1200px, người dùng phải scroll nhiều lần và mất định hướng vị trí trong danh sách. Khi cần tìm contact thuộc loại chuyển tiền cụ thể, phải scroll ngược lên để xác nhận section header — tăng thời gian thao tác và tải nhận thức.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Hick's Law: &quot;Thời gian ra quyết định tăng theo số lượng và độ phức tạp của các lựa chọn.&quot; Tất cả sections expand đồng thời + không sticky headers tạo ra quá nhiều choices visible cùng lúc, làm chậm quá trình tìm kiếm contact.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>triển khai sticky section headers (position: sticky, top: 0) khi scroll — header section hiện tại luôn visible</li><li>Mặc định collapse các sections, chỉ expand section đầu tiên hoặc section được người dùng tap</li><li>Thêm count badge bên cạnh section header: &quot;Chuyển tiền nội bộ (3)&quot; để người dùng biết số lượng trước khi expand</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Danh bạ thụ hưởng › Danh sách</span></div>
+        <details><summary>📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://lawsofux.com/hicks-law/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Hick's Law →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The time it takes to make a decision increases with the number and complexity of choices."</div></div><div style="margin-bottom:6px"><a href="https://lawsofux.com/millers-law/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Miller's Law →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The average person can only keep 7 (plus or minus 2) items in their working memory."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-52 · Law:hicks</span></div></div></details>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent minor"></div>
+      <div class="card-header"><span class="card-id">UXP-007</span><h3>Hiển thị tên chủ tài khoản &quot;NGUYEN HOANG HIEU&quot; được auto-resolve từ số tài khoản</h3><span class="badge minor">Minor</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/add-new-2.png')"><img src="ui/add-new-2.png" alt="Từ ảnh add-new-2" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">Màn hình Thêm mới danh bạ (thêm-new-2.png) hiển thị tên chủ tài khoản &quot;NGUYEN HOANG HIEU&quot; được auto-resolve từ số tài khoản. Tên hiển thị bằng chữ in hoa hoàn toàn (ALL CAPS), không có label giải thích phía trên, xuất hiện như một dòng text độc lập giữa input &quot;Số tài khoản&quot; và &quot;Tên gợi nhớ&quot;. Không rõ đây là thông tin read-only hay editable.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">Người dùng không biết dòng text ALL CAPS là gì — tên chủ tài khoản, tên gợi nhớ, hay kết quả xác minh. Thiếu label tạo ambiguity, đặc biệt nguy hiểm trong ngân hàng app nơi người dùng cần xác nhận chính xác danh tính người nhận tiền trước khi lưu.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Nielsen #2 — Match Between System and Real World: &quot;The design should speak the người dùng' language. Use words, phrases, and concepts familiar to người dùng.&quot; Tên ALL CAPS không khớp cách người dùng đọc tên trong đời thực.</li><li>WCAG 3.3.2 (Labels or Instructions) cũng bị vi phạm vì thiếu label cho trường dữ liệu.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Thêm label &quot;Tên chủ tài khoản&quot; (font-size: 13px, color: muted) phía trên dòng tên</li><li>Chuyển tên sang Title Case (&quot;Nguyen Hoang Hieu&quot;) hoặc thêm note &quot;(theo ngân hàng)&quot; để giải thích format ALL CAPS</li><li>Thêm icon ✓ xanh bên cạnh tên để indicate đây là kết quả xác minh thành công từ hệ thống ngân hàng</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Danh bạ thụ hưởng › Form nhập thông tin</span></div>
+        <details><summary>📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #2 — Match Between System and Real World →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The design should speak the users' language. Use words, phrases, and concepts familiar to the user."</div></div><div style="margin-bottom:6px"><a href="https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">WCAG 3.3.2 — Labels or Instructions (Level A) →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Labels or instructions are provided when content requires user input."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-88</span></div></div></details>
+      </div>
+    </div>
+    <div class="finding-card reveal">
+      <div class="finding-accent minor"></div>
+      <div class="card-header"><span class="card-id">UXP-008</span><h3>Hiển thị FAB (+) ở vị trí bottom-right (y≈744px) trong khi bottom navigation...</h3><span class="badge minor">Minor</span></div>
+      <div class="card-body">
+        <div class="card-visual">
+          <div class="phone-frame" onclick="openLightbox('ui/contact-3.png')"><img src="ui/contact-3.png" alt="Từ ảnh contact-3" loading="lazy"></div>
+        </div>
+        <div>
+          <table class="card-table">
+            <tr><td class="td-label">Hiện trạng</td><td class="td-value">Màn hình Danh sách ở multi-select mode (contact-3.png) hiển thị FAB (+) ở vị trí bottom-right (y≈744px) trong khi bottom navigation bar bắt đầu ở y≈740px. FAB chồng lấn trực tiếp lên icon &quot;Xóa (2)&quot; ở bottom bar. Khoảng cách giữa FAB và nav bar &lt; 4px, không có padding/margin phân cách.</td></tr>
+            <tr><td class="td-label">Tác động</td><td class="td-value">Vùng touch target của FAB và bottom nav chồng lấn, gây mis-tap khi người dùng muốn nhấn FAB nhưng vô tình kích hoạt nav item hoặc ngược lại. Với independent touch area &lt; 44px, risk mis-tap tăng đáng kể trên thiết bị có màn hình nhỏ.</td></tr>
+            <tr><td class="td-label">Nguyên tắc vi phạm</td><td class="td-value"><ul style="margin:0;padding-left:18px"><li>Fitts's Law: &quot;Thời gian để đạt tới mục tiêu phụ thuộc vào khoảng cách và kích thước của mục tiêu.&quot; Khi 2 interactive targets quá gần nhau (overlap), thời gian acquire target chính xác tăng exponentially — đặc biệt bất tiện trên mobile với ngón tay lớn hơn cursor.</li></ul></td></tr>
+            <tr><td class="td-label">Đề xuất</td><td class="td-value proposal"><ul><li>Nâng FAB lên trên bottom nav với khoảng cách tối thiểu 16px (y ≤ 680px)</li><li>Đảm bảo independent touch area giữa FAB và nav bar ≥ 8px theo WCAG 2.5.8</li><li>Cân nhắc ẩn FAB khi ở delete/multi-select mode vì thao tác &quot;thêm mới&quot; không liên quan đến flow &quot;xóa&quot;</li></ul></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="finding-tags"><span class="card-tag">Danh bạ thụ hưởng › Danh sách</span></div>
+        <details><summary>📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://lawsofux.com/fittss-law/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Fitts's Law →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The time to acquire a target is a function of the distance to and size of the target."</div></div><div style="margin-bottom:6px"><a href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">WCAG 2.5.8 — Target Size Minimum (Level AA) →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The size of the target for pointer inputs is at least 24 by 24 CSS pixels."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-32 · Law:fitts</span></div></div></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="scorecard" style="display:none">
+  <div class="section-title"><span class="icon">📊</span> 04 · Đánh giá theo danh mục heuristic</div>
+  <div class="scorecard-grid">
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#c2410c" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="68" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#c2410c">67%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Luồng người dùng</h4><p>Flow &amp; Navigation</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#15803d" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#15803d">100%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Thành phần</h4><p>Component &amp; DDL</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#15803d" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="50" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#15803d">76%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Thiết kế trực quan</h4><p>Visual Design</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#15803d" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#15803d">100%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Nội dung</h4><p>Content &amp; Copy</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#15803d" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#15803d">100%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Tiếp cận</h4><p>Accessibility</p></div>
+    </div>
+    <div class="score-item reveal" style="flex-direction:column;text-align:center">
+      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="33" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="36" cy="36" r="33" fill="none" stroke="#15803d" stroke-width="6" stroke-dasharray="207" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 36 36)"/><text x="36" y="41" text-anchor="middle" font-family="var(--font-sans)" font-size="14" font-weight="800" fill="#15803d">100%</text></svg>
+      <div class="score-info" style="margin-top:8px;text-align:center"><h4>Tin cậy &amp; Bảo mật</h4><p>Trust &amp; Security</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="gaps" style="padding-top:48px">
+  <div class="section-title"><span class="icon">📋</span> Tổng hợp Gap (12 hạng mục)</div>
+  <p style="color:var(--text-muted);font-size:14px;margin-bottom:20px">Các hạng mục kiểm tra chưa đạt chuẩn theo từng màn hình — checklist cải thiện từ ux-review-report</p>
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">SCR-DB-001</span>
+      <strong style="font-size:14px">Danh bạ thụ hưởng › Danh sách (`SCR-DB-001`)</strong> · <em>list</em>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">8</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Toast hướng dẫn xóa</strong> · <a href="https://www.nngroup.com/articles/user-control-and-freedom/" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">Nielsen Norman Group →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Toast không tắt được chiếm diện tích và gây phiền nhiễu. Lỗi chính tả trong ứng dụng ngân hàng ảnh hưởng trực tiếp đến ấn tượng chuyên nghiệp và độ tin cậy của hệ thống.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #3 — người dùng Control and Freedom: &quot;người dùng often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.&quot; Toast không dismiss được vi phạm quyền kiểm soát của người dùng.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/popup.png')">📸 contact.png</span></div>
+          <div style="color:#444">Từ ảnh contact.png: toast không có dismiss (×). Typo &quot;Qúy&quot; → UXP-001</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://lawsofux.com/fittss-law/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Fitts's Law →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The time to acquire a target is a function of the distance to and size of the target."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/user-control-and-freedom/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #3 — User Control and Freedom →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-10</span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">12</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">FAB không overlap với nav bar</strong> · <a href="https://lawsofux.com/fittss-law/" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">Laws of UX →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Vùng touch chồng lấn giữa FAB và bottom nav gây mis-tap, đặc biệt trên thiết bị màn hình nhỏ. Người dùng muốn thêm danh bạ mới có thể vô tình navigate sang tab khác.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Fitts's Law: &quot;Thời gian để đạt tới mục tiêu phụ thuộc vào khoảng cách và kích thước của mục tiêu.&quot; Overlap giữa 2 touch targets vi phạm nguyên tắc — khoảng cách giữa targets quá nhỏ làm tăng error rate.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/contact-3.png')">📸 contact-3.png</span></div>
+          <div style="color:#444">Từ ảnh contact-3.png: FAB y=744, nav y=740 → overlap → UXP-008</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 1 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://lawsofux.com/fittss-law/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Fitts's Law →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The time to acquire a target is a function of the distance to and size of the target."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-32</span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">13</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Sticky section headers (long scroll)</strong> · <a href="https://lawsofux.com/hicks-law/" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">Laws of UX →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Người dùng mất context loại chuyển tiền khi scroll qua danh sách dài, phải scroll ngược để xác nhận section hiện tại. Tăng thời gian tìm kiếm và tải nhận thức.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Hick's Law: &quot;Thời gian ra quyết định tăng theo số lượng và độ phức tạp của các lựa chọn.&quot; Hiển thị tất cả contacts từ mọi section cùng lúc mà không có sticky header tạo cognitive overload.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/contact-2.png')">📸 contact-2.png</span></div>
+          <div style="color:#444">Từ ảnh contact-2.png: 1222px height, no sticky headers → UXP-006</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 1 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://lawsofux.com/hicks-law/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Hick's Law →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"The time it takes to make a decision increases with the number and complexity of choices."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-52</span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">17</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Mental Model — Select-then-Act pattern</strong> · <a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">Nielsen Norman Group →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Bulk delete yêu cầu nhấn 🗑 trước khi chọn → sai thứ tự cognitive. Chuẩn ngành (Gmail, iOS): chọn... — vi phạm Flow &amp; Navigation</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Flow &amp; Navigation (Luồng người dùng)</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/contact.png')">📸 contact.png</span></div>
+          <div style="color:#444">Bulk delete yêu cầu nhấn 🗑 trước khi chọn → sai thứ tự cognitive. Chuẩn ngành (Gmail, iOS): chọn trước, hành động sau → UXP-009</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 1 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/flexibility-efficiency-heuristic/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #7 — Flexibility and Efficiency of Use →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Shortcuts speed up interaction."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">mental-model</span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">18</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Mode visibility — delete mode state</strong> · <a href="https://www.nngroup.com/articles/match-system-real-world/" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">Nielsen Norman Group →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Delete mode không có visual indicator: header/background không đổi, FAB (+) vẫn visible → mode... — vi phạm Flow &amp; Navigation</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Flow &amp; Navigation (Luồng người dùng)</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/contact.png')">📸 contact.png</span></div>
+          <div style="color:#444">Delete mode không có visual indicator: header/background không đổi, FAB (+) vẫn visible → mode confusion → UXP-010</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 1 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/visibility-system-status/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #1 — Visibility of System Status →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Keep informed."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">Nielsen #2</span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">19</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Confirm dialog — destructive framing</strong>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Title &quot;Thông báo&quot; generic; &quot;Đồng ý&quot; positive framing cho destructive; button phải = primary cho xóa... — vi phạm Flow &amp; Navigation</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Flow &amp; Navigation (Luồng người dùng)</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/popup.png')">📸 contact.png</span></div>
+          <div style="color:#444">Title &quot;Thông báo&quot; generic; &quot;Đồng ý&quot; positive framing cho destructive; button phải = primary cho xóa → UXP-011</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 1 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/slips/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #5 — Error Prevention →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Prevent."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-35</span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">20</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Undo — recovery path sau xóa</strong>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Xóa vĩnh viễn ngay, không có undo. Banking context: danh bạ đã xác minh mất vĩnh viễn → UXP-012 — vi phạm Flow &amp; Navigation</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Flow &amp; Navigation (Luồng người dùng)</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/contact.png')">📸 contact.png</span></div>
+          <div style="color:#444">Xóa vĩnh viễn ngay, không có undo. Banking context: danh bạ đã xác minh mất vĩnh viễn → UXP-012</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 1 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/user-control-and-freedom/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #3 — User Control and Freedom →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Emergency exit."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-4</span></div></div></details>
+    </div>
+  </div>
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">SCR-DB-002</span>
+      <strong style="font-size:14px">Danh bạ thụ hưởng › Tìm kiếm (`SCR-DB-002`)</strong> · <em>list</em>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">4</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Empty state khi chưa có danh bạ</strong> · <a href="https://www.nngroup.com/articles/recognition-and-recall/" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">Nielsen Norman Group →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Màn hình trống với thông điệp tối thiểu không cung cấp guidance cho người dùng mới. Thiếu engagement point làm tăng tỷ lệ thoát tại bước onboarding tính năng quản lý danh bạ — một tính năng quan trọng để tăng tốc chuyển tiền.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #6 — Recognition Rather Than Recall: &quot;Giảm thiểu tải nhớ của người dùng bằng cách hiển thị rõ ràng các phần tử, hành động và tùy chọn.&quot; trạng thái trống thiếu actionable CTA buộc người dùng phải nhớ/tìm FAB (+) ở góc màn hình thay vì được hướng dẫn trực tiếp.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/search-3.png')">📸 search-3.png</span></div>
+          <div style="color:#444">Từ ảnh search-3.png: chỉ text, thiếu icon + CTA → UXP-004</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://lawsofux.com/peak-end-rule/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Peak-End Rule →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"People judge an experience largely based on how they felt at its most intense point and at its end."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/recognition-and-recall/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #6 — Recognition Rather Than Recall →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Minimize the user's memory load by making elements, actions, and options visible."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">COMP:empty-state-1</span></div></div></details>
+    </div>
+  </div>
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">SCR-DB-003</span>
+      <strong style="font-size:14px">Danh bạ thụ hưởng › Chi tiết (`SCR-DB-003`)</strong> · <em>detail</em>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">4</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Text readability — label-value layout</strong> · <a href="https://www.nngroup.com/articles/aesthetic-minimalist-design/" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">Nielsen Norman Group →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Thông tin bị cắt xén khiến người dùng không thể xác nhận đầy đủ loại hình chuyển tiền của danh bạ. Trong ngân hàng, kiểm tra thông tin người nhận trước giao dịch là bước bắt buộc — label truncate gây uncertainty.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #8 — Aesthetic and Minimalist Design: &quot;Giao diện không nên chứa thông tin không liên quan hoặc hiếm khi cần thiết.&quot; Thông tin cần thiết bị ẩn do layout constraint — cần restructure để hiển thị đầy đủ.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/contact-details.png')">📸 contact-details.png</span></div>
+          <div style="color:#444">Từ ảnh contact-details.png: label &quot;Loại chuyển&quot; truncated, value overlap → UXP-002</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://lawsofux.com/peak-end-rule/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Peak-End Rule →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"People judge an experience largely based on how they felt at its most intense point and at its end."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/aesthetic-minimalist-design/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #8 — Aesthetic and Minimalist Design →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Interfaces should not contain information that is irrelevant or rarely needed."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-165</span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">6</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Edit mode — cancel option</strong> · <a href="https://www.nngroup.com/articles/user-control-and-freedom/" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">Nielsen Norman Group →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Thiếu cancel option buộc người dùng phải commit (Cập nhật) hoặc dùng back button mà không biết thay đổi có bị mất hay không. Uncertainty này đặc biệt nghiêm trọng trong ngân hàng app nơi thao tác sai có thể ảnh hưởng đến giao dịch tài chính.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>Nielsen #3 — người dùng Control and Freedom: &quot;người dùng often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.&quot; Thiếu nút Hủy rõ ràng vi phạm nguyên tắc emergency exit.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/contact-details-2.png')">📸 contact-details-2.png</span></div>
+          <div style="color:#444">Từ ảnh contact-details-2.png: chỉ &quot;Cập nhật&quot;, thiếu &quot;Hủy&quot; → UXP-005</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://lawsofux.com/doherty-threshold/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Doherty Threshold →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Productivity soars when a computer and its users interact at a pace (&lt;400ms) that ensures that neither has to wait on the other."</div></div><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/user-control-and-freedom/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #3 — User Control and Freedom →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-4</span></div></div></details>
+    </div>
+  </div>
+  <div class="gap-screen-group" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <span class="gap-screen">SCR-DB-004</span>
+      <strong style="font-size:14px">Danh bạ thụ hưởng › Form nhập thông tin (`SCR-DB-004`)</strong> · <em>form</em>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">6</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Error state — invalid account</strong> · <a href="https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">W3C →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Error signal yếu (chỉ text, thiếu border + icon) khiến người dùng dễ bỏ qua lỗi và nhấn submit. Trong ngân hàng app, tạo danh bạ với số tài khoản không hợp lệ gây lỗi cascade khi thực hiện chuyển tiền.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>WCAG 3.3.1 — Error Identification: &quot;If an input error is automatically detected, the item that is in error is identified and the error is described to người dùng in text.&quot; trạng thái lỗi cần multi-channel feedback (text + visual + state) để đảm bảo nhận diện.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/add-new-3.png')">📸 add-new-3.png</span></div>
+          <div style="color:#444">Từ ảnh add-new-3.png: error text red nhưng field border vẫn default → UXP-003</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://lawsofux.com/doherty-threshold/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Doherty Threshold →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Productivity soars when a computer and its users interact at a pace (&lt;400ms) that ensures that neither has to wait on the other."</div></div><div style="margin-bottom:6px"><a href="https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">WCAG 3.3.1 — Error Identification (Level A) →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"If an input error is automatically detected, the item that is in error is identified and the error is described to the user in text."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">COMP:text-input-1</span></div></div></details>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;margin-bottom:12px;background:#fafbfc">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">7</span>
+        <strong style="font-size:13.5px;color:#1a1a2e">Auto-resolved name — label missing</strong> · <a href="https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html" target="_blank" style="color:#2563eb;text-decoration:none;font-size:10px">W3C →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:12.5px;line-height:1.55">
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🎯 Tác động đến người dùng</div>
+          <div style="color:#444">Người dùng không biết dòng text ALL CAPS đại diện cho thông tin gì — tên chủ tài khoản hay trường nhập liệu. Ambiguity này gây confusion trong quy trình xác minh người nhận tiền — bước quan trọng nhất của tính năng thêm danh bạ.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">📐 Nguyên tắc vi phạm</div>
+          <div style="color:#444"><ul style="margin:0;padding-left:18px"><li>WCAG 3.3.2 — Labels or Instructions: &quot;Labels or instructions are provided when content requires người dùng input.&quot; Dù đây là read-only field, vẫn cần label để người dùng hiểu ý nghĩa của dữ liệu hiển thị.</li></ul></div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-weight:600;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">🔍 Bằng chứng &amp; Phân tích <span class="img-cite" onclick="openLightbox('ui/add-new-2.png')">📸 add-new-2.png</span></div>
+          <div style="color:#444">Từ ảnh add-new-2.png: &quot;NGUYEN HOANG HIEU&quot; uppercase, no label → UXP-007</div>
+        </div>
+      </div>
+      <details style="margin-top:10px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">📚 2 nguồn · Tham chiếu kỹ thuật →</summary><div style="padding:8px 0;font-size:11.5px;line-height:1.6"><div style="margin-bottom:6px"><a href="https://www.nngroup.com/articles/aesthetic-minimalist-design/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">Nielsen #8 — Aesthetic and Minimalist Design →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Interfaces should not contain information that is irrelevant or rarely needed."</div></div><div style="margin-bottom:6px"><a href="https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600">WCAG 3.3.2 — Labels or Instructions (Level A) →</a><div style="color:#64748b;font-style:italic;margin-top:2px">"Labels or instructions are provided when content requires user input."</div></div><div style="margin-top:6px"><span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:3px;font-size:10px;font-family:var(--font-mono)">UXG-88</span></div></div></details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><strong>Co-opBank Mobile Banking</strong> · Co-opBank KHCN · Danh bạ thụ hưởng · Đánh giá DDL-grounded</p>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})
+  },{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+});
+
+function openLightbox(src){
+  const lb=document.getElementById('lightbox');
+  const img=document.getElementById('lightbox-img');
+  const cap=document.getElementById('lightbox-caption');
+  img.src=src;
+  cap.textContent=src.split('/').pop();
+  lb.classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(e){
+  if(e.target.tagName==='IMG')return;
+  const lb=document.getElementById('lightbox');
+  lb.classList.remove('active');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeLightbox({target:{tagName:''}});
+});
+</script>
+
+<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox(event)" aria-label="Close">&times;</button>
+  <img id="lightbox-img" src="" alt="Evidence screenshot">
+  <div class="lightbox-caption" id="lightbox-caption"></div>
+</div>
+</body>
+</html>

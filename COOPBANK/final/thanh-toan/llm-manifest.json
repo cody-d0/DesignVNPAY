@@ -1,0 +1,1718 @@
+{
+  "_generator": "enrich_llm.py",
+  "_version": "1.0",
+  "module": {
+    "name": "Co-opBank KHCN · Thanh toán",
+    "domain": "Banking",
+    "product": "Co-opBank Mobile Banking",
+    "dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/thanh-toan"
+  },
+  "system_prompt": "Bạn là UX Auditor chuyên nghiệp cho Banking app (Co-opBank Mobile Banking).\n\nNhiệm vụ: Enrich các finding từ UX audit report. Mỗi finding cần 4-5 fields:\n\n1. **hiện_trạng**: Mô tả chính xác UI hiện tại\n   - PHẢI có artboard ID (vd: \"Trên artboard 7103\")\n   - PHẢI có overlay type nếu có (vd: \"overlay: OTP bottom-sheet\")\n   - PHẢI liệt kê UI elements thực tế có mặt\n   - KHÔNG suy diễn elements không có trong evidence\n\n2. **tác_động**: Hậu quả cụ thể cho người dùng\n   - PHẢI mô tả consequence cho user (bị chặn, mất khả năng, nhầm lẫn...)\n   - PHẢI có domain context (Banking: giao dịch nhạy cảm, trust, compliance...)\n   - KHÔNG dùng severity label (\"nghiêm trọng\", \"critical\", \"major\")\n   - KHÔNG lặp lại problem title\n\n3. **nguyên_tắc**: Heuristic vi phạm + quote + giải thích\n   - PHẢI cite heuristic bằng tên chính xác (Nielsen #N, WCAG X.Y.Z, Laws of UX)\n   - PHẢI có quote gốc tiếng Anh\n   - PHẢI giải thích TẠI SAO design vi phạm nguyên tắc này\n   - Ưu tiên chọn từ heuristic_candidates đã pre-select\n\n4. **đề_xuất_steps**: (chỉ UXP) Array các bước cải thiện\n   - Ít nhất 2 bước\n   - Mỗi bước actionable, có DDL ref nếu liên quan\n   - Spec cụ thể (timeout=60s, color token, component name)\n\n5. **references**: Array các tham chiếu chính thức\n   - Mỗi ref: {name, url, quote, source}\n   - Dữ liệu từ REFERENCE DATABASE bên dưới\n   - KHÔNG bịa URL — chỉ dùng URL từ database\n\nOUTPUT FORMAT: JSON array of objects, mỗi object có id + các fields trên.\n\nREFERENCE DATABASE:\n  Nielsen #1: Nielsen #1 — Visibility of System Status — \"The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.\"\n  Nielsen #10: Nielsen #10 — Help and Documentation — \"It's best if the system doesn't need any additional explanation. However, it may be necessary to provide documentation.\"\n  Nielsen #2: Nielsen #2 — Match Between System and Real World — \"The design should speak the users' language. Use words, phrases, and concepts familiar to the user.\"\n  Nielsen #3: Nielsen #3 — User Control and Freedom — \"Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.\"\n  Nielsen #4: Nielsen #4 — Consistency and Standards — \"Users should not have to wonder whether different words, situations, or actions mean the same thing.\"\n  Nielsen #5: Nielsen #5 — Error Prevention — \"Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.\"\n  Nielsen #6: Nielsen #6 — Recognition Rather Than Recall — \"Minimize the user's memory load by making elements, actions, and options visible.\"\n  Nielsen #7: Nielsen #7 — Flexibility and Efficiency of Use — \"Shortcuts — hidden from novice users — may speed up the interaction for the expert user.\"\n  Nielsen #8: Nielsen #8 — Aesthetic and Minimalist Design — \"Interfaces should not contain information that is irrelevant or rarely needed.\"\n  Nielsen #9: Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors — \"Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.\"\n  Fitts's Law: \"The time to acquire a target is a function of the distance to and size of the target.\"\n  Hick's Law: \"The time it takes to make a decision increases with the number and complexity of choices.\"\n  Jakob's Law: \"Users spend most of their time on other sites. This means that users prefer your site to work the same way.\"\n  Miller's Law: \"The average person can only keep 7 (plus or minus 2) items in their working memory.\"\n  Peak-End Rule: \"People judge an experience largely based on how they felt at its most intense point and at its end.\"\n  Zeigarnik Effect: \"People remember uncompleted or interrupted tasks better than completed tasks.\"\n  Von Restorff Effect: \"When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.\"\n  Doherty Threshold: \"Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.\"\n  Aesthetic-Usability Effect: \"Users often perceive aesthetically pleasing design as design that's more usable.\"\n  WCAG 1.4.11 — Non-text Contrast (Level AA)\n  WCAG 1.4.3 — Contrast (Minimum) (Level AA)\n  WCAG 2.5.5 — Target Size Enhanced (Level AAA)\n  WCAG 2.5.8 — Target Size Minimum (Level AA)\n  WCAG 3.3.1 — Error Identification (Level A)\n  WCAG 3.3.2 — Labels or Instructions (Level A)\n  WCAG 3.3.3 — Error Suggestion (Level AA)\n  WCAG 3.3.4 — Error Prevention: Legal, Financial, Data (Level AA)",
+  "items": [
+    {
+      "id": "UXP-001",
+      "type": "uxp",
+      "finding": {
+        "severity": "Critical",
+        "screen_tag": "Thanh toán vé xem phim › Xác nhận giao dịch, Thanh toán vé tàu › Xác nhận giao dịch",
+        "screen_id": "SCR-TT-001",
+        "problem": "Từ ảnh 1001thanh-toan-ve-xem-phim",
+        "ddl_ref": "UXG-52 · COMP:otp-input-1 · Law:cognitive-load",
+        "solution_draft": "Áp dụng Smart Summary: chỉ hiện key fields (số tiền, TK nguồn, dịch vụ) + expandable \"Xem chi tiết\"; Sửa \"đặt lịch\" → context cụ thể: \"thanh toán v...",
+        "gap_ref": "Check #7",
+        "current_user_impact": "Người dùng không thể hoàn thành thao tác thao tác do từ ảnh 1001thanh-toan-ve-xem-phim.",
+        "current_heuristic": "UXG-52 · COMP:otp-input-1 · Cognitive's Law"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-001",
+        "parent_screen_name": "Thanh toán Vietlott › Form nhập thông tin",
+        "boundary_type": "form"
+      },
+      "related_checks": [
+        {
+          "num": 7,
+          "title": "Fitts's Law — CTA ≥44px",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: CTA 48px height full-width",
+          "ddl_ref": "fitts",
+          "category": "Skill A",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-003",
+      "type": "uxp",
+      "finding": {
+        "severity": "Critical",
+        "screen_tag": "Thanh toán vé tàu › Form nhập thông tin",
+        "screen_id": "SCR-TT-001",
+        "problem": "Từ ảnh thanh-toan-ve-tau-2",
+        "ddl_ref": "UXG-52 · Law:cognitive-load",
+        "solution_draft": "Collapsible sections — mặc định expanded nhưng tap header thu gọn; Thêm sticky summary bar (tổng tiền + số vé) ở top khi cuộn; CTA \"Tiếp tục\" stick...",
+        "gap_ref": "Check #4",
+        "current_user_impact": "Lỗi nghiêm trọng gây gián đoạn luồng Thanh toán vé tàu: từ ảnh thanh-toan-ve-tau-2.",
+        "current_heuristic": "UXG-52 · Cognitive's Law"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-001",
+        "parent_screen_name": "Thanh toán Vietlott › Form nhập thông tin",
+        "boundary_type": "form"
+      },
+      "related_checks": [
+        {
+          "num": 4,
+          "title": "CTA \"Tiếp tục\" full-width sticky",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: CTA navy full-width ở bottom",
+          "ddl_ref": "—",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-004",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Thanh toán Vietlott › Xác nhận giao dịch, Thanh toán vé xem phim › Xác nhận giao dịch, Thanh toán vé tàu › Xác nhận giao dịch",
+        "screen_id": "SCR-TT-001",
+        "problem": "Từ ảnh 1001thanh-toan-ve-xem-phim",
+        "ddl_ref": "UXG-78",
+        "solution_draft": "Context-specific: \"kiểm tra lại thông tin thanh toán vé xem phim\"",
+        "gap_ref": "Check #1, Check #1, Check #1",
+        "current_user_impact": "Người dùng gặp khó khăn khi thao tác do từ ảnh 1001thanh-toan-ve-xem-phim, làm tăng thời gian thao tác.",
+        "current_heuristic": "UXG-78"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-001",
+        "parent_screen_name": "Thanh toán Vietlott › Form nhập thông tin",
+        "boundary_type": "form"
+      },
+      "related_checks": [
+        {
+          "num": 1,
+          "title": "Header hiển thị title + back + home",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: \"Thanh toán mua xổ số Vietlott\" + back + home icon",
+          "ddl_ref": "COMP:app-header-1",
+          "category": "Skill B",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-005",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Thanh toán vé xem phim › Xác nhận giao dịch",
+        "screen_id": "SCR-TT-001",
+        "problem": "Từ ảnh 1001thanh-toan-ve-xem-phim",
+        "ddl_ref": "UXG-165",
+        "solution_draft": "Nếu chỉ 1 option → hiện text tĩnh thay vì dropdown; Nếu lộ trình có 2+ methods → giữ dropdown",
+        "gap_ref": "Check #6, Check #6, Check #6",
+        "current_user_impact": "Người dùng gặp khó khăn khi thao tác do từ ảnh 1001thanh-toan-ve-xem-phim, làm tăng thời gian thao tác.",
+        "current_heuristic": "UXG-165"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-001",
+        "parent_screen_name": "Thanh toán Vietlott › Form nhập thông tin",
+        "boundary_type": "form"
+      },
+      "related_checks": [
+        {
+          "num": 6,
+          "title": "Account chevron dropdown",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: chevron down visible = chọn TK khác",
+          "ddl_ref": "—",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-006",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Thanh toán vé xem phim › Kết quả giao dịch, Thanh toán vé tàu › Kết quả giao dịch",
+        "screen_id": "SCR-TT-001",
+        "problem": "Từ ảnh 1003thanh-toan-ve-xem-phim",
+        "ddl_ref": "UXG-78",
+        "solution_draft": "Thay XXXXX bằng số tổng đài thật (1900xxxx); Số tổng đài clickable (tel: link)",
+        "gap_ref": "Check #4, Check #4",
+        "current_user_impact": "Trải nghiệm bị suy giảm đáng kể: từ ảnh 1003thanh-toan-ve-xem-phim, ảnh hưởng đến hiệu suất sử dụng.",
+        "current_heuristic": "UXG-78"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-001",
+        "parent_screen_name": "Thanh toán Vietlott › Form nhập thông tin",
+        "boundary_type": "form"
+      },
+      "related_checks": [
+        {
+          "num": 4,
+          "title": "CTA \"Tiếp tục\" full-width sticky",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: CTA navy full-width ở bottom",
+          "ddl_ref": "—",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-007",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Thanh toán vé xem phim › Form nhập thông tin",
+        "screen_id": "SCR-TT-001",
+        "problem": "Từ ảnh 1000thanh-toan-ve-xem-phim",
+        "ddl_ref": "UXG-78",
+        "solution_draft": "Dùng realistic sample: \"Nguyễn Văn A\", \"098****123\"",
+        "gap_ref": "Check #4, Check #7, Check #3, Check #3",
+        "current_user_impact": "Người dùng gặp khó khăn khi nhập thông tin do từ ảnh 1000thanh-toan-ve-xem-phim, làm tăng thời gian thao tác.",
+        "current_heuristic": "UXG-78"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-001",
+        "parent_screen_name": "Thanh toán Vietlott › Form nhập thông tin",
+        "boundary_type": "form"
+      },
+      "related_checks": [
+        {
+          "num": 3,
+          "title": "Thông tin dịch vụ read-only",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: 3 info rows (Dịch vụ, Mã TT, Số tiền) read-only",
+          "ddl_ref": "—",
+          "category": "Skill B",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 4,
+          "title": "CTA \"Tiếp tục\" full-width sticky",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: CTA navy full-width ở bottom",
+          "ddl_ref": "—",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 7,
+          "title": "Fitts's Law — CTA ≥44px",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: CTA 48px height full-width",
+          "ddl_ref": "fitts",
+          "category": "Skill A",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-008",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Thanh toán vé tàu › Form nhập thông tin",
+        "screen_id": "SCR-TT-001",
+        "problem": "Từ ảnh thanh-toan-ve-tau-1",
+        "ddl_ref": "UXG-243",
+        "solution_draft": "Fix: Tổng tiền > Giảm. VD: Tổng 120K, Giảm 40K, TT 80K; Fix: Ga đến chiều về = Hà Nội (inverse chiều đi)",
+        "gap_ref": "Check #3, Check #6",
+        "current_user_impact": "Người dùng gặp khó khăn khi nhập thông tin do từ ảnh thanh-toan-ve-tau-1, làm tăng thời gian thao tác.",
+        "current_heuristic": "UXG-243"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-001",
+        "parent_screen_name": "Thanh toán Vietlott › Form nhập thông tin",
+        "boundary_type": "form"
+      },
+      "related_checks": [
+        {
+          "num": 3,
+          "title": "Thông tin dịch vụ read-only",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: 3 info rows (Dịch vụ, Mã TT, Số tiền) read-only",
+          "ddl_ref": "—",
+          "category": "Skill B",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 6,
+          "title": "Account chevron dropdown",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: chevron down visible = chọn TK khác",
+          "ddl_ref": "—",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-009",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Thanh toán vé xem phim › Kết quả, Thanh toán vé tàu › Kết quả",
+        "screen_id": "SCR-TT-001",
+        "problem": "Từ ảnh: Nút \"Lưu ảnh\" lưu screenshot — không phải PDF biên nhận",
+        "ddl_ref": "COMP:receipt-preview-1",
+        "solution_draft": "Thêm \"Tải biên nhận PDF\" cạnh \"Lưu ảnh\"",
+        "gap_ref": "Check #5, Check #6",
+        "current_user_impact": "Chi tiết thiết kế chưa tối ưu tại Kết quả: từ ảnh: Nút \"Lưu ảnh\" lưu screenshot — không phải PDF biên nhận.",
+        "current_heuristic": "COMP:receipt-preview-1"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-001",
+        "parent_screen_name": "Thanh toán Vietlott › Form nhập thông tin",
+        "boundary_type": "form"
+      },
+      "related_checks": [
+        {
+          "num": 5,
+          "title": "Section header có icon cảnh báo",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: icon đỏ bên trái \"Thông tin thanh toán\"",
+          "ddl_ref": "—",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 6,
+          "title": "Account chevron dropdown",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: chevron down visible = chọn TK khác",
+          "ddl_ref": "—",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-010",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Thanh toán Vietlott › Xác nhận giao dịch, Thanh toán vé xem phim › Xác nhận giao dịch, Thanh toán vé tàu › Xác nhận giao dịch",
+        "screen_id": "SCR-TT-001",
+        "problem": "Từ ảnh: Confirm screens thiếu home icon ở header — chỉ có back arrow",
+        "ddl_ref": "COMP:app-header-1",
+        "solution_draft": "Thêm home icon cho confirm screens",
+        "gap_ref": "Check #6",
+        "current_user_impact": "Từ ảnh: Confirm screens thiếu home icon ở header — chỉ có back arrow, có thể cải thiện để nâng cao trải nghiệm tổng thể.",
+        "current_heuristic": "COMP:app-header-1"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-001",
+        "parent_screen_name": "Thanh toán Vietlott › Form nhập thông tin",
+        "boundary_type": "form"
+      },
+      "related_checks": [
+        {
+          "num": 6,
+          "title": "Account chevron dropdown",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: chevron down visible = chọn TK khác",
+          "ddl_ref": "—",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-011",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Thanh toán Vietlott › Kết quả, Thanh toán vé xem phim › Kết quả, Thanh toán vé tàu › Kết quả",
+        "screen_id": "SCR-TT-001",
+        "problem": "Từ ảnh: Result screens chỉ có CTA \"Tạo giao dịch mới\" (outlined)",
+        "ddl_ref": "— · Law:peak-end",
+        "solution_draft": "\"Về trang chủ\" (filled) + \"Tạo giao dịch mới\" (outlined)",
+        "gap_ref": "Check #6, Check #6, Check #5",
+        "current_user_impact": "Chi tiết thiết kế chưa tối ưu tại Kết quả: từ ảnh: Result screens chỉ có CTA \"Tạo giao dịch mới\" (outlined).",
+        "current_heuristic": "Peak-End Rule · Peak's Law"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-001",
+        "parent_screen_name": "Thanh toán Vietlott › Form nhập thông tin",
+        "boundary_type": "form"
+      },
+      "related_checks": [
+        {
+          "num": 5,
+          "title": "Section header có icon cảnh báo",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: icon đỏ bên trái \"Thông tin thanh toán\"",
+          "ddl_ref": "—",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 6,
+          "title": "Account chevron dropdown",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: chevron down visible = chọn TK khác",
+          "ddl_ref": "—",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Peak-End Rule",
+          "url": "https://lawsofux.com/peak-end-rule/",
+          "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:peak",
+          "_ref_id": "laws.peak_end"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-012",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Thanh toán Vietlott › Xác nhận giao dịch, Thanh toán vé xem phim › Xác nhận giao dịch, Thanh toán vé tàu › Xác nhận giao dịch",
+        "screen_id": "SCR-TT-001",
+        "problem": "Từ ảnh thanh-toan-vietlot",
+        "ddl_ref": "COMP:otp-input-1 · Law:fitts",
+        "solution_draft": "Tăng cellGap lên 12px; Thêm 24px padding giữa cells và CTA",
+        "gap_ref": "Check #7",
+        "current_user_impact": "Từ ảnh thanh-toan-vietlot — không chặn luồng nhưng giảm tính chuyên nghiệp của giao diện.",
+        "current_heuristic": "Fitts's Law · COMP:otp-input-1 · Fitts's Law"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-001",
+        "parent_screen_name": "Thanh toán Vietlott › Form nhập thông tin",
+        "boundary_type": "form"
+      },
+      "related_checks": [
+        {
+          "num": 7,
+          "title": "Fitts's Law — CTA ≥44px",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: CTA 48px height full-width",
+          "ddl_ref": "fitts",
+          "category": "Skill A",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Fitts's Law",
+          "url": "https://lawsofux.com/fittss-law/",
+          "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:fitts",
+          "_ref_id": "laws.fitts"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#8@SCR-TT-001",
+      "type": "gap",
+      "finding": {
+        "num": 8,
+        "title": "Hick's Law — limited actions",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-001",
+        "screen_name": "Thanh toán Vietlott › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: chỉ 1 CTA nhưng icon cảnh báo đỏ gây confusion — không rõ cảnh báo gì",
+        "ddl_ref": "hicks",
+        "ddl_evidence": "hicks",
+        "current_user_impact": "chỉ 1 CTA nhưng icon cảnh báo đỏ gây confusion — không rõ cảnh báo gì — vi phạm Component & DDL",
+        "current_heuristic": "Component & DDL (Thành phần)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-001",
+        "parent_screen_name": "Thanh toán Vietlott › Form nhập thông tin",
+        "boundary_type": "form"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Hick's Law",
+          "url": "https://lawsofux.com/hicks-law/",
+          "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:hick",
+          "_ref_id": "laws.hick"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#1@SCR-TT-002",
+      "type": "gap",
+      "finding": {
+        "num": 1,
+        "title": "Banner cảnh báo kiểm tra thông tin",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-002",
+        "screen_name": "Thanh toán Vietlott › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh: banner \"đặt lịch\" không khớp context \"Vietlott\" → UXP-004",
+        "ddl_ref": "UXG-78",
+        "ddl_evidence": "UXG-78",
+        "current_user_impact": "banner \"đặt lịch\" không khớp context \"Vietlott\" → UXP-004 — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-002",
+        "parent_screen_name": "Thanh toán Vietlott › Xác nhận giao dịch",
+        "boundary_type": "confirm"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#4@SCR-TT-002",
+      "type": "gap",
+      "finding": {
+        "num": 4,
+        "title": "OTP timer + resend button",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-002",
+        "screen_name": "Thanh toán Vietlott › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh: OTP overlay — 6 cells, NO timer, NO resend → UXP-002",
+        "ddl_ref": "COMP:otp-input-1",
+        "ddl_evidence": "COMP:otp-input-1",
+        "current_user_impact": "OTP overlay — 6 cells, NO timer, NO resend → UXP-002 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-002",
+        "parent_screen_name": "Thanh toán Vietlott › Xác nhận giao dịch",
+        "boundary_type": "confirm"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Zeigarnik Effect",
+          "url": "https://lawsofux.com/zeigarnik-effect/",
+          "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:timer",
+          "_ref_id": "laws.zeigarnik"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-TT-002",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "Auth dropdown single-option",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-002",
+        "screen_name": "Thanh toán Vietlott › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh: SMS OTP là option duy nhất → dropdown redundant → UXP-005",
+        "ddl_ref": "—",
+        "ddl_evidence": "—",
+        "current_user_impact": "SMS OTP là option duy nhất → dropdown redundant → UXP-005 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-002",
+        "parent_screen_name": "Thanh toán Vietlott › Xác nhận giao dịch",
+        "boundary_type": "confirm"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#7@SCR-TT-002",
+      "type": "gap",
+      "finding": {
+        "num": 7,
+        "title": "Cognitive load — redundant confirm",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-002",
+        "screen_name": "Thanh toán Vietlott › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh: 5 rows duplicate từ form → UXP-001",
+        "ddl_ref": "UXG-52",
+        "ddl_evidence": "UXG-52",
+        "current_user_impact": "5 rows duplicate từ form → UXP-001 — vi phạm Component & DDL",
+        "current_heuristic": "Component & DDL (Thành phần)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-002",
+        "parent_screen_name": "Thanh toán Vietlott › Xác nhận giao dịch",
+        "boundary_type": "confirm"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#5@SCR-TT-003",
+      "type": "gap",
+      "finding": {
+        "num": 5,
+        "title": "PDF receipt option",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-003",
+        "screen_name": "Thanh toán Vietlott › Kết quả giao dịch",
+        "screen_type": "result",
+        "evidence": "Từ ảnh: chỉ \"Lưu ảnh\" — thiếu PDF → UXP-009",
+        "ddl_ref": "COMP:receipt-preview-1",
+        "ddl_evidence": "COMP:receipt-preview-1",
+        "current_user_impact": "chỉ \"Lưu ảnh\" — thiếu PDF → UXP-009 — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-003",
+        "parent_screen_name": "Thanh toán Vietlott › Kết quả giao dịch",
+        "boundary_type": "result"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-TT-003",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "Primary exit CTA — \"Về trang chủ\"",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-003",
+        "screen_name": "Thanh toán Vietlott › Kết quả giao dịch",
+        "screen_type": "result",
+        "evidence": "Từ ảnh: chỉ \"Tạo giao dịch mới\" + home icon nhỏ → UXP-011",
+        "ddl_ref": "—",
+        "ddl_evidence": "—",
+        "current_user_impact": "chỉ \"Tạo giao dịch mới\" + home icon nhỏ → UXP-011 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-003",
+        "parent_screen_name": "Thanh toán Vietlott › Kết quả giao dịch",
+        "boundary_type": "result"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#4@SCR-TT-004",
+      "type": "gap",
+      "finding": {
+        "num": 4,
+        "title": "Thông tin KH placeholder raw",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-004",
+        "screen_name": "Thanh toán vé xem phim › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: \"[Customer name]\", \"[Phone number]\" → placeholder raw → UXP-007",
+        "ddl_ref": "UXG-78",
+        "ddl_evidence": "UXG-78",
+        "current_user_impact": "\"[Customer name]\", \"[Phone number]\" → placeholder raw → UXP-007 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-004",
+        "parent_screen_name": "Thanh toán vé xem phim › Form nhập thông tin",
+        "boundary_type": "form"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#7@SCR-TT-004",
+      "type": "gap",
+      "finding": {
+        "num": 7,
+        "title": "Email realistic",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-004",
+        "screen_name": "Thanh toán vé xem phim › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: \"email@examplemail.com\" — placeholder → UXP-007",
+        "ddl_ref": "—",
+        "ddl_evidence": "—",
+        "current_user_impact": "\"email@examplemail.com\" — placeholder → UXP-007 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-004",
+        "parent_screen_name": "Thanh toán vé xem phim › Form nhập thông tin",
+        "boundary_type": "form"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#1@SCR-TT-005",
+      "type": "gap",
+      "finding": {
+        "num": 1,
+        "title": "Banner contextualization",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-005",
+        "screen_name": "Thanh toán vé xem phim › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh: \"đặt lịch\" ≠ \"vé xem phim\" → UXP-004",
+        "ddl_ref": "UXG-78",
+        "ddl_evidence": "UXG-78",
+        "current_user_impact": "\"đặt lịch\" ≠ \"vé xem phim\" → UXP-004 — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-005",
+        "parent_screen_name": "Thanh toán vé xem phim › Xác nhận giao dịch",
+        "boundary_type": "confirm"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#3@SCR-TT-005",
+      "type": "gap",
+      "finding": {
+        "num": 3,
+        "title": "Nhà cung cấp placeholder",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-005",
+        "screen_name": "Thanh toán vé xem phim › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh: \"[provider name]\" placeholder visible → UXP-007",
+        "ddl_ref": "UXG-78",
+        "ddl_evidence": "UXG-78",
+        "current_user_impact": "\"[provider name]\" placeholder visible → UXP-007 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-005",
+        "parent_screen_name": "Thanh toán vé xem phim › Xác nhận giao dịch",
+        "boundary_type": "confirm"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#4@SCR-TT-005",
+      "type": "gap",
+      "finding": {
+        "num": 4,
+        "title": "OTP timer + resend",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-005",
+        "screen_name": "Thanh toán vé xem phim › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh 1002: OTP overlay no timer → UXP-002",
+        "ddl_ref": "COMP:otp-input-1",
+        "ddl_evidence": "COMP:otp-input-1",
+        "current_user_impact": "Từ ảnh 1002: OTP overlay no timer → UXP-002 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": "1002",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-005",
+        "parent_screen_name": "Thanh toán vé xem phim › Xác nhận giao dịch",
+        "boundary_type": "confirm"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Zeigarnik Effect",
+          "url": "https://lawsofux.com/zeigarnik-effect/",
+          "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:timer",
+          "_ref_id": "laws.zeigarnik"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-TT-005",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "Auth dropdown",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-005",
+        "screen_name": "Thanh toán vé xem phim › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh: single-option SMS OTP dropdown → UXP-005",
+        "ddl_ref": "—",
+        "ddl_evidence": "—",
+        "current_user_impact": "single-option SMS OTP dropdown → UXP-005 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-005",
+        "parent_screen_name": "Thanh toán vé xem phim › Xác nhận giao dịch",
+        "boundary_type": "confirm"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#3@SCR-TT-006",
+      "type": "gap",
+      "finding": {
+        "num": 3,
+        "title": "Customer name placeholder",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-006",
+        "screen_name": "Thanh toán vé xem phim › Kết quả giao dịch",
+        "screen_type": "result",
+        "evidence": "Từ ảnh: \"[Customer name]\" in result → UXP-007",
+        "ddl_ref": "UXG-78",
+        "ddl_evidence": "UXG-78",
+        "current_user_impact": "\"[Customer name]\" in result → UXP-007 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-006",
+        "parent_screen_name": "Thanh toán vé xem phim › Kết quả giao dịch",
+        "boundary_type": "result"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#4@SCR-TT-006",
+      "type": "gap",
+      "finding": {
+        "num": 4,
+        "title": "Hotline placeholder XXXXX",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-006",
+        "screen_name": "Thanh toán vé xem phim › Kết quả giao dịch",
+        "screen_type": "result",
+        "evidence": "Từ ảnh: \"tổng đài XXXXX\" → UXP-006",
+        "ddl_ref": "UXG-78",
+        "ddl_evidence": "UXG-78",
+        "current_user_impact": "\"tổng đài XXXXX\" → UXP-006 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-006",
+        "parent_screen_name": "Thanh toán vé xem phim › Kết quả giao dịch",
+        "boundary_type": "result"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-TT-006",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "Primary exit CTA",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-006",
+        "screen_name": "Thanh toán vé xem phim › Kết quả giao dịch",
+        "screen_type": "result",
+        "evidence": "Từ ảnh: chỉ \"Tạo giao dịch mới\" outlined → UXP-011",
+        "ddl_ref": "—",
+        "ddl_evidence": "—",
+        "current_user_impact": "chỉ \"Tạo giao dịch mới\" outlined → UXP-011 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-006",
+        "parent_screen_name": "Thanh toán vé xem phim › Kết quả giao dịch",
+        "boundary_type": "result"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#3@SCR-TT-007",
+      "type": "gap",
+      "finding": {
+        "num": 3,
+        "title": "Data logic — sum correct",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-007",
+        "screen_name": "Thanh toán vé tàu › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh: 20K tổng < 100K giảm = impossible → UXP-008",
+        "ddl_ref": "UXG-243",
+        "ddl_evidence": "UXG-243",
+        "current_user_impact": "20K tổng < 100K giảm = impossible → UXP-008 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-007",
+        "parent_screen_name": "Thanh toán vé tàu › Form nhập thông tin",
+        "boundary_type": "form"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#4@SCR-TT-007",
+      "type": "gap",
+      "finding": {
+        "num": 4,
+        "title": "Long scroll form",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-007",
+        "screen_name": "Thanh toán vé tàu › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh tau-2: artboard 1407px, 20 rows → UXP-003",
+        "ddl_ref": "UXG-52",
+        "ddl_evidence": "UXG-52",
+        "current_user_impact": "Từ ảnh tau-2: artboard 1407px, 20 rows → UXP-003 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-007",
+        "parent_screen_name": "Thanh toán vé tàu › Form nhập thông tin",
+        "boundary_type": "form"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-TT-007",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "Chiều về data copy error",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-007",
+        "screen_name": "Thanh toán vé tàu › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh tau-2: \"Ga đến: Sài Gòn\" = ga đi → UXP-008",
+        "ddl_ref": "UXG-243",
+        "ddl_evidence": "UXG-243",
+        "current_user_impact": "Từ ảnh tau-2: \"Ga đến: Sài Gòn\" = ga đi → UXP-008 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-007",
+        "parent_screen_name": "Thanh toán vé tàu › Form nhập thông tin",
+        "boundary_type": "form"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#1@SCR-TT-008",
+      "type": "gap",
+      "finding": {
+        "num": 1,
+        "title": "Banner text mismatch",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-008",
+        "screen_name": "Thanh toán vé tàu › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh: \"đặt lịch\" ≠ \"vé tàu\" → UXP-004",
+        "ddl_ref": "UXG-78",
+        "ddl_evidence": "UXG-78",
+        "current_user_impact": "\"đặt lịch\" ≠ \"vé tàu\" → UXP-004 — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-008",
+        "parent_screen_name": "Thanh toán vé tàu › Xác nhận giao dịch",
+        "boundary_type": "confirm"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#4@SCR-TT-008",
+      "type": "gap",
+      "finding": {
+        "num": 4,
+        "title": "OTP timer + resend",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-008",
+        "screen_name": "Thanh toán vé tàu › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh tau-4: no timer, no resend → UXP-002",
+        "ddl_ref": "COMP:otp-input-1",
+        "ddl_evidence": "COMP:otp-input-1",
+        "current_user_impact": "Từ ảnh tau-4: no timer, no resend → UXP-002 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-008",
+        "parent_screen_name": "Thanh toán vé tàu › Xác nhận giao dịch",
+        "boundary_type": "confirm"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Zeigarnik Effect",
+          "url": "https://lawsofux.com/zeigarnik-effect/",
+          "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:timer",
+          "_ref_id": "laws.zeigarnik"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-TT-008",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "Auth single-option",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-008",
+        "screen_name": "Thanh toán vé tàu › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh: SMS OTP single dropdown → UXP-005",
+        "ddl_ref": "—",
+        "ddl_evidence": "—",
+        "current_user_impact": "SMS OTP single dropdown → UXP-005 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-008",
+        "parent_screen_name": "Thanh toán vé tàu › Xác nhận giao dịch",
+        "boundary_type": "confirm"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#7@SCR-TT-008",
+      "type": "gap",
+      "finding": {
+        "num": 7,
+        "title": "OTP spacing tight",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-008",
+        "screen_name": "Thanh toán vé tàu › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh: cells compact, CTA close → UXP-012",
+        "ddl_ref": "COMP:otp-input-1",
+        "ddl_evidence": "COMP:otp-input-1",
+        "current_user_impact": "cells compact, CTA close → UXP-012 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-008",
+        "parent_screen_name": "Thanh toán vé tàu › Xác nhận giao dịch",
+        "boundary_type": "confirm"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#4@SCR-TT-009",
+      "type": "gap",
+      "finding": {
+        "num": 4,
+        "title": "Hotline XXXXX",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-009",
+        "screen_name": "Thanh toán vé tàu › Kết quả giao dịch",
+        "screen_type": "result",
+        "evidence": "Từ ảnh: \"tổng đài XXXXX\" → UXP-006",
+        "ddl_ref": "UXG-78",
+        "ddl_evidence": "UXG-78",
+        "current_user_impact": "\"tổng đài XXXXX\" → UXP-006 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-009",
+        "parent_screen_name": "Thanh toán vé tàu › Kết quả giao dịch",
+        "boundary_type": "result"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#5@SCR-TT-009",
+      "type": "gap",
+      "finding": {
+        "num": 5,
+        "title": "Primary exit CTA",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-009",
+        "screen_name": "Thanh toán vé tàu › Kết quả giao dịch",
+        "screen_type": "result",
+        "evidence": "Từ ảnh: chỉ \"Tạo giao dịch mới\" → UXP-011",
+        "ddl_ref": "—",
+        "ddl_evidence": "—",
+        "current_user_impact": "chỉ \"Tạo giao dịch mới\" → UXP-011 — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-009",
+        "parent_screen_name": "Thanh toán vé tàu › Kết quả giao dịch",
+        "boundary_type": "result"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-TT-009",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "PDF receipt",
+        "severity": "Minor",
+        "screen_id": "SCR-TT-009",
+        "screen_name": "Thanh toán vé tàu › Kết quả giao dịch",
+        "screen_type": "result",
+        "evidence": "Từ ảnh: chỉ \"Lưu ảnh\" → UXP-009",
+        "ddl_ref": "COMP:receipt-preview-1",
+        "ddl_evidence": "COMP:receipt-preview-1",
+        "current_user_impact": "chỉ \"Lưu ảnh\" → UXP-009 — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TT-009",
+        "parent_screen_name": "Thanh toán vé tàu › Kết quả giao dịch",
+        "boundary_type": "result"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank KHCN · Thanh toán",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    }
+  ],
+  "stats": {
+    "uxp_count": 11,
+    "gap_count": 26,
+    "total_items": 37,
+    "fields_to_generate": 159
+  }
+}

@@ -1,0 +1,1625 @@
+{
+  "meta": {
+    "client_name": "Co-opBank",
+    "product_name": "Co-opBank Mobile Banking",
+    "module_name": "Co-opBank Mobile Banking",
+    "domain": "Banking",
+    "section": "",
+    "module_dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/tra-soat--tra-cuu-yeu-cau"
+  },
+  "stats": {
+    "screen_count": 3,
+    "check_count": 48,
+    "gap_count": 28,
+    "pass_count": 16,
+    "proposal_count": 10,
+    "overall_score": 33,
+    "overall_score_color": "#b91c1c",
+    "overall_score_offset": 214,
+    "overall_weighted_score": 86,
+    "severity_counts": {
+      "critical": 1,
+      "major": 6,
+      "minor": 3
+    }
+  },
+  "screens": [
+    {
+      "id": "SCR-TCY-001",
+      "name": "Tra cứu yêu cầu › Form nhập thông tin (`SCR-TCY-001`)",
+      "type": "form",
+      "score": 33,
+      "score_color": "#b91c1c",
+      "score_offset": 105,
+      "weighted_score": 85,
+      "gap_count": 10,
+      "artboard_count": 3
+    },
+    {
+      "id": "SCR-TCY-002",
+      "name": "Danh sách yêu cầu tra soát › Danh sách (`SCR-TCY-002`)",
+      "type": "list",
+      "score": 40,
+      "score_color": "#b91c1c",
+      "score_offset": 94,
+      "weighted_score": 90,
+      "gap_count": 8,
+      "artboard_count": 2
+    },
+    {
+      "id": "SCR-TCY-003",
+      "name": "Chi tiết yêu cầu tra soát › Chi tiết (`SCR-TCY-003`)",
+      "type": "detail",
+      "score": 27,
+      "score_color": "#b91c1c",
+      "score_offset": 115,
+      "weighted_score": 83,
+      "gap_count": 10,
+      "artboard_count": 2
+    }
+  ],
+  "uxps": [
+    {
+      "id": "UXP-001",
+      "severity": "Critical",
+      "screen_tag": "Chi tiết yêu cầu tra soát › Chi tiết",
+      "problem": "Trường \"Tài khoản nguồn\" hiển thị đầy đủ 13 chữ số (1212390002122) không có masking, không có toggle ẩn/hiện",
+      "gap_ref": "Check #15, Check #1",
+      "ddl_ref": "UXG-76 · banking-security · Law:fitts",
+      "solution": "Vị trí",
+      "screenshot_path": "ui/tra-cuu-yeu-cau-4.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Fitts's Law",
+          "url": "https://lawsofux.com/fittss-law/",
+          "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "The best designs carefully prevent problems from occurring in the first place.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Full account PII on dispute screen = high-risk. Dispute screens often shown to others (bank staff, screenshots for reference).",
+      "heuristic": "Nielsen #5: Mask by default. '1212***2122'. Especially critical on screens shared for dispute resolution.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+        "source": "Laws of UX"
+      },
+      "hiện_trạng": "TK nguồn '1212390002122' — 13 chữ số không mask, không separator trên dispute detail screens.",
+      "solution_steps": [
+        "Mask: '1212***2122'",
+        "Tap-to-reveal toggle",
+        "Copy masked version by default"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-002",
+      "severity": "Major",
+      "screen_tag": "Tra cứu yêu cầu › Form nhập thông tin",
+      "problem": "Sau khi bấm \"Tìm kiếm\", không có loading state",
+      "gap_ref": "Check #2, Check #9, Check #2",
+      "ddl_ref": "UXG-61 · UXG-78 · Law:doherty",
+      "solution": "Vị trí",
+      "screenshot_path": "ui/tra-cuu-yeu-cau-1.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Doherty Threshold",
+          "url": "https://lawsofux.com/doherty-threshold/",
+          "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "Large date range query may take seconds. No spinner → người dùng taps again → potential duplicate requests.",
+      "heuristic": "Doherty Threshold: Processing feedback within 400ms.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "No trạng thái tải after pressing 'Tìm kiếm' — no feedback during search.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Vị trí",
+        "xác minh implementation trên cả iOS và Android — đảm bảo nhất quán",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-003",
+      "severity": "Major",
+      "screen_tag": "Tra cứu yêu cầu › Form nhập thông tin",
+      "problem": "Validation lỗi chỉ hiển thị qua popup \"Thông báo\"",
+      "gap_ref": "Check #10, Check #1, Check #16",
+      "ddl_ref": "UXG-56 · UXG-44 · UXG-33",
+      "solution": "Vị trí",
+      "screenshot_path": "ui/tra-cuu-yeu-cau-1.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Precisely indicate the problem and constructively suggest a solution.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "WCAG 3.3.1 — Error Identification (Level A)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html",
+          "quote": "The item that is in error is identified.",
+          "source": "W3C"
+        }
+      ],
+      "user_impact": "Popup validation = bad UX. người dùng dismisses popup → forgets which field → tries giống nhau thing. Inline error next to field = immediate fix.",
+      "heuristic": "Nielsen #9: Inline errors at field level. WCAG 3.3.1: Error identified at item.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Validation error shown via popup 'Thông báo' only — no inline field-level errors. người dùng phải dismiss popup, remember which field was wrong.",
+      "solution_steps": [
+        "Inline error text below each invalid field",
+        "Red border on error field",
+        "Scroll to first error with focus"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-004",
+      "severity": "Major",
+      "screen_tag": "Tra cứu yêu cầu › Form nhập thông tin",
+      "problem": "Label hiển thị \"Trang thái tra soát\" (thiếu chữ \"g\") — lỗi chính tả visible trên 2 artboard",
+      "gap_ref": "Check #15",
+      "ddl_ref": "UXG-76",
+      "solution": "Vị trí",
+      "screenshot_path": "ui/tra-cuu-yeu-cau-1.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Nielsen #4 — Consistency and Standards",
+          "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+          "quote": "Users should not have to wonder whether different words mean the same thing.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Repeated typo across screens → systematic QA gap. Financial app typo = trust erosion.",
+      "heuristic": "Nielsen #4: Text correctness across all instances. Systemic typo = no spell-check in design process.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Typo: 'Trang thái tra soát' — đúng: 'Trạng thái tra soát'. Thiếu chữ 'g'. Visible trên 2 artboards.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Vị trí",
+        "Kiểm tra consistency pattern này với các flow tương tự trong app",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-005",
+      "severity": "Major",
+      "screen_tag": "Danh sách yêu cầu tra soát › Danh sách",
+      "problem": "Empty state chỉ có 1 text \"Không có kết quả tìm kiếm\"",
+      "gap_ref": "Check #1, Check #3, Check #1",
+      "ddl_ref": "UXG-79 · UXG-90 · Law:peak-end",
+      "solution": "Vị trí",
+      "screenshot_path": "ui/tra-cuu-yeu-cau-6.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Peak-End Rule",
+          "url": "https://lawsofux.com/peak-end-rule/",
+          "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Nielsen #6 — Recognition Rather Than Recall",
+          "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+          "quote": "Minimize memory load.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "DDL empty-state-1 requires icon + title + description + optional CTA. Current = minimal text.",
+      "heuristic": "Nielsen #6: trạng thái trống = guidance opportunity. DDL compliance bắt buộc.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "trạng thái trống: text-only 'Không có kết quả tìm kiếm'. No icon, no description, no CTA.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Vị trí",
+        "Thêm illustration + message giải thích và CTA để người dùng bắt đầu",
+        "Differentiate giữa \"chưa có data\" vs \"đang loading\" vs \"lỗi load\""
+      ]
+    },
+    {
+      "id": "UXP-006",
+      "severity": "Major",
+      "screen_tag": "Danh sách yêu cầu tra soát › Danh sách",
+      "problem": "3 status badges phân biệt chỉ bằng màu",
+      "gap_ref": "Check #6, Check #7, Check #7",
+      "ddl_ref": "UXG-37 · UXG-36",
+      "solution": "Vị trí",
+      "screenshot_path": "ui/tra-cuu-yeu-cau-3.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "WCAG 1.4.1 — Use of Color (Level A)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html",
+          "quote": "Color is not used as the only visual means of conveying information.",
+          "source": "W3C"
+        }
+      ],
+      "user_impact": "Color-only badges = inaccessible for color-blind người dùng (~8% male population). WCAG 1.4.1 violation.",
+      "heuristic": "WCAG 1.4.1: Color not the only visual means. thêm icons or text patterns per status.",
+      "ref_count": 2,
+      "hiện_trạng": "3 status badges (Đã tiếp nhận, Nghi vấn, Đã xử lý) phân biệt chỉ bằng màu sắc — no icon or text pattern difference.",
+      "solution_steps": [
+        "Icon per status: ✓ (Đã xử lý), ⏳ (Đã tiếp nhận), ⚠ (Nghi vấn)",
+        "Border pattern + icon + color = triple indicator"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-007",
+      "severity": "Major",
+      "screen_tag": "Chi tiết yêu cầu tra soát › Chi tiết",
+      "problem": "Link \"Chi tiết giao dịch ›\" không có affordance: text màu thường, no underline, chevron nhỏ, touch target < 44px",
+      "gap_ref": "Check #5, Check #6, Check #4",
+      "ddl_ref": "UXG-4 · UXG-165 · Law:fitts",
+      "solution": "Vị trí",
+      "screenshot_path": "ui/tra-cuu-yeu-cau-4.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Fitts's Law",
+          "url": "https://lawsofux.com/fittss-law/",
+          "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Nielsen #6 — Recognition Rather Than Recall",
+          "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+          "quote": "Make elements visible.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Link without link tín hiệu tương tác = invisible navigation. người dùng doesn't know it's tappable → misses detail view.",
+      "heuristic": "Nielsen #6: Links must look like links. Underline or distinct color + adequate touch target.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+        "source": "Laws of UX"
+      },
+      "hiện_trạng": "Link 'Chi tiết giao dịch ›' — text color normal, no underline, chevron nhỏ, touch target small. Không trông interactive.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Vị trí",
+        "hiển thị context đầy đủ on-screen — giảm memory load cho người dùng",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-008",
+      "severity": "Minor",
+      "screen_tag": "Tra cứu yêu cầu › Form nhập thông tin",
+      "problem": "Popup \"Thông báo\" minimal: không icon, không suggestion hành động",
+      "gap_ref": "Check #6, Check #11, Check #9",
+      "ddl_ref": "UXG-35 · UXG-44 · Law:peak-end",
+      "solution": "Vị trí",
+      "screenshot_path": "ui/tra-cuu-yeu-cau-7.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Peak-End Rule",
+          "url": "https://lawsofux.com/peak-end-rule/",
+          "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Constructively suggest a solution.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Icon-less popup = missed severity signal. Error vs info vs warning → all look giống nhau.",
+      "heuristic": "Nielsen #9: Error messages should be constructive with specific guidance.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Popup 'Thông báo' minimal — no icon, no action suggestion. Generic error hiển thị.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Vị trí",
+        "thông báo lỗi phải actionable: nêu rõ nguyên nhân + cách fix",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-009",
+      "severity": "Minor",
+      "screen_tag": "Chi tiết yêu cầu tra soát › Chi tiết",
+      "problem": "Badge \"Đã xử lý\" (artboard 5) contrast ~3",
+      "gap_ref": "Check #8, Check #7, Check #8",
+      "ddl_ref": "UXG-37 · UXG-36",
+      "solution": "Vị trí",
+      "screenshot_path": "ui/tra-cuu-yeu-cau-5.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "WCAG 1.4.3 — Contrast (Minimum) (Level AA)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+          "quote": "Text has contrast ratio of at least 4.5:1.",
+          "source": "W3C"
+        }
+      ],
+      "user_impact": "Low contrast badge text = khó đọc for many người dùng, especially in bright environments.",
+      "heuristic": "WCAG 1.4.3: Minimum 4.5:1 contrast for text.",
+      "ref_count": 2,
+      "hiện_trạng": "Badge 'Đã xử lý' (artboard 5) — contrast ~3:1, borderline below 4.5:1 WCAG AA minimum.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Vị trí",
+        "xác minh implementation trên cả iOS và Android — đảm bảo nhất quán",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-010",
+      "severity": "Minor",
+      "screen_tag": "Chi tiết yêu cầu tra soát › Chi tiết",
+      "problem": "Trường \"Kết quả: — —\" khi pending — screen reader đọc \"dash dash\", không có meaning",
+      "gap_ref": "Check #9, Check #11",
+      "ddl_ref": "UXG-44",
+      "solution": "Vị trí",
+      "screenshot_path": "ui/tra-cuu-yeu-cau-4.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "WCAG 1.1.1 — Non-text Content (Level A)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html",
+          "quote": "All non-text content has text alternative.",
+          "source": "W3C"
+        }
+      ],
+      "user_impact": "trình đọc màn hình người dùng hear 'dash dash' = meaningless. Should be 'Đang chờ kết quả' or use aria-label.",
+      "heuristic": "WCAG 1.1.1: Text alternatives with meaning. Placeholder '— —' needs accessible label.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "'Kết quả: — —' khi pending — trình đọc màn hình đọc 'dash dash', no semantic meaning.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Vị trí",
+        "xác minh implementation trên cả iOS và Android — đảm bảo nhất quán",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    }
+  ],
+  "gaps_by_screen": [
+    {
+      "screen_id": "SCR-TCY-001",
+      "screen_name": "Tra cứu yêu cầu › Form nhập thông tin (`SCR-TCY-001`)",
+      "screen_type": "form",
+      "gaps": [
+        {
+          "num": 1,
+          "title": "text-input-1: error state — inline validation",
+          "ref": "UXG-56",
+          "severity": "Major",
+          "user_impact": "Poor error UX.",
+          "heuristic": "WCAG 3.3.1.",
+          "evidence": "DDL text-input-1: states=[value,error,focused]. Từ ảnh tra-cuu-yeu-cau-1.png+2.png: chỉ default/filled state. error state MISSING. UXG-56.",
+          "screenshot": "tra-cuu-yeu-cau-1.png",
+          "screen_id": "SCR-TCY-001",
+          "screen_name": "Tra cứu yêu cầu › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-1.png",
+          "_img_tier": 1,
+          "description": "No inline validation — errors via popup only.",
+          "ddl_evidence": "",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "WCAG 3.3.1 — Error Identification (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html",
+              "quote": "Item in error identified.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No inline validation — errors via popup only.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 2,
+          "title": "loading-spinner-1: loading state sau submit",
+          "ref": "UXG-61",
+          "severity": "Major",
+          "user_impact": "No feedback.",
+          "heuristic": "Doherty Threshold.",
+          "evidence": "DDL loading-spinner-1: idle=animating. Từ ảnh: không có loading variant artboard. Doherty Threshold violation. UXG-61 UXG-78.",
+          "screenshot": "tra-cuu-yeu-cau-1.png",
+          "screen_id": "SCR-TCY-001",
+          "screen_name": "Tra cứu yêu cầu › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-1.png",
+          "_img_tier": 5,
+          "description": "No trạng thái tải after submit.",
+          "ddl_evidence": "",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Doherty Threshold",
+              "url": "https://lawsofux.com/doherty-threshold/",
+              "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Nielsen #4 — Consistency and Standards",
+            "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+            "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No trạng thái tải after submit.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 3,
+          "title": "empty-state-1: icon trong popup Thông báo",
+          "ref": "UXG-79",
+          "severity": "Minor",
+          "user_impact": "No severity signal.",
+          "heuristic": "Nielsen #9.",
+          "evidence": "DDL empty-state-1: icon required. Từ ảnh tra-cuu-yeu-cau-7.png: popup title+text+Đóng, không có icon. UXG-79.",
+          "screenshot": "tra-cuu-yeu-cau-7.png",
+          "screen_id": "SCR-TCY-001",
+          "screen_name": "Tra cứu yêu cầu › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-7.png",
+          "_img_tier": 1,
+          "description": "Popup no icon.",
+          "ddl_evidence": "",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+              "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+              "quote": "Constructive.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Popup no icon.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 4,
+          "title": "Fitts Law: calendar icon touch target ≥44px",
+          "ref": "UXG-165",
+          "severity": "Minor",
+          "user_impact": "Hard to tap.",
+          "heuristic": "Fitts's Law: 44px.",
+          "evidence": "DDL Fitts Law trigger (button). Từ ảnh tra-cuu-yeu-cau-1.png: calendar icon ~20px visible, ước tính < 44px. UXG-165.",
+          "screenshot": "tra-cuu-yeu-cau-1.png",
+          "screen_id": "SCR-TCY-001",
+          "screen_name": "Tra cứu yêu cầu › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-1.png",
+          "_img_tier": 1,
+          "description": "Calendar icon touch target small.",
+          "ddl_evidence": "",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Calendar icon touch target small.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "Peak-End Rule: error popup experience",
+          "ref": "UXG-35",
+          "severity": "Major",
+          "user_impact": "Peak-End: bad final impression.",
+          "heuristic": "Peak-End Rule.",
+          "evidence": "DDL Peak-End Rule (error state). Từ ảnh tra-cuu-yeu-cau-7.png: popup minimal, không có icon, không có alternative action. UXG-35.",
+          "screenshot": "tra-cuu-yeu-cau-7.png",
+          "screen_id": "SCR-TCY-001",
+          "screen_name": "Tra cứu yêu cầu › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-7.png",
+          "_img_tier": 1,
+          "description": "Error popup poor experience.",
+          "ddl_evidence": "",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            }
+          ],
+          "hiện_trạng": "Error popup poor experience.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 9,
+          "title": "UXG-61: Submit feedback loading sau CTA",
+          "ref": "UXG-61",
+          "severity": "Major",
+          "user_impact": "No processing indication.",
+          "heuristic": "Nielsen #1.",
+          "evidence": "UXG-61 Submit Feedback (High). Từ ảnh: không có loading state artboard sau tap Tìm kiếm.",
+          "screenshot": "tra-cuu-yeu-cau-1.png",
+          "screen_id": "SCR-TCY-001",
+          "screen_name": "Tra cứu yêu cầu › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-1.png",
+          "_img_tier": 5,
+          "description": "No submit loading feedback.",
+          "ddl_evidence": "",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Doherty Threshold",
+              "url": "https://lawsofux.com/doherty-threshold/",
+              "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Keep informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "hiện_trạng": "No submit loading feedback.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 10,
+          "title": "UXG-56: Inline validation vs popup only",
+          "ref": "UXG-56",
+          "severity": "Major",
+          "user_impact": "người dùng không thể locate error field.",
+          "heuristic": "Nielsen #9.",
+          "evidence": "UXG-56 Inline Validation. Error chỉ có popup Thông báo, không có inline per field.",
+          "screenshot": "tra-cuu-yeu-cau-1.png",
+          "screen_id": "SCR-TCY-001",
+          "screen_name": "Tra cứu yêu cầu › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-1.png",
+          "_img_tier": 5,
+          "description": "Popup-only validation vs inline.",
+          "ddl_evidence": "",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+              "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+              "quote": "Indicate problem.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+            "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+            "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Popup-only validation vs inline.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 11,
+          "title": "UXG-44: Error message actionable",
+          "ref": "UXG-44",
+          "severity": "Minor",
+          "user_impact": "Doesn't suggest fix.",
+          "heuristic": "Nielsen #9.",
+          "evidence": "UXG-44 Error Messages (High). Từ ảnh tra-cuu-yeu-cau-7.png: message có hướng dẫn chung nhưng thiếu suggest cụ thể.",
+          "screenshot": "tra-cuu-yeu-cau-7.png",
+          "screen_id": "SCR-TCY-001",
+          "screen_name": "Tra cứu yêu cầu › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-7.png",
+          "_img_tier": 1,
+          "description": "thông báo lỗi not actionable.",
+          "ddl_evidence": "",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+              "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+              "quote": "Suggest solution.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+            "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+            "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "thông báo lỗi not actionable.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 15,
+          "title": "Typo: Trang thái → Trạng thái",
+          "ref": "UXG-76",
+          "severity": "Major",
+          "user_impact": "Repeated typo.",
+          "heuristic": "Nielsen #4.",
+          "evidence": "Từ ảnh tra-cuu-yeu-cau-1.png+2.png: label Trang thái tra soát — thiếu chữ g. UXG-76.",
+          "screenshot": "tra-cuu-yeu-cau-1.png",
+          "screen_id": "SCR-TCY-001",
+          "screen_name": "Tra cứu yêu cầu › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-1.png",
+          "_img_tier": 1,
+          "description": "Typo 'Trang thái' → 'Trạng thái'.",
+          "ddl_evidence": "",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Consistency.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "hiện_trạng": "Typo 'Trang thái' → 'Trạng thái'.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 16,
+          "title": "Date range validation: Từ ngày ≤ Đến ngày",
+          "ref": "UXG-56",
+          "severity": "Major",
+          "user_impact": "Invalid range → API error.",
+          "heuristic": "Nielsen #5: ngăn chặn invalid dates.",
+          "evidence": "Skill B flow_check: has_error=false cho date validation. Không có artboard cho invalid date range. UXG-56.",
+          "screenshot": "tra-cuu-yeu-cau-1.png",
+          "screen_id": "SCR-TCY-001",
+          "screen_name": "Tra cứu yêu cầu › Form nhập thông tin",
+          "screen_type": "form",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-1.png",
+          "_img_tier": 5,
+          "description": "Date range validation: Từ ngày ≤ Đến ngày not enforced.",
+          "ddl_evidence": "",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Prevent.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+            "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+            "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Date range validation: Từ ngày ≤ Đến ngày not enforced.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-TCY-002",
+      "screen_name": "Danh sách yêu cầu tra soát › Danh sách (`SCR-TCY-002`)",
+      "screen_type": "list",
+      "gaps": [
+        {
+          "num": 1,
+          "title": "empty-state-1: icon + description + CTA",
+          "ref": "UXG-79",
+          "severity": "Major",
+          "user_impact": "DDL not met.",
+          "heuristic": "Nielsen #6.",
+          "evidence": "DDL empty-state-1: icon required, CTA optional. Từ ảnh tra-cuu-yeu-cau-6.png: chỉ 1 text Không có kết quả tìm kiếm, không icon, không CTA. UXG-79 UXG-90.",
+          "screenshot": "tra-cuu-yeu-cau-6.png",
+          "screen_id": "SCR-TCY-002",
+          "screen_name": "Danh sách yêu cầu tra soát › Danh sách",
+          "screen_type": "list",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-6.png",
+          "_img_tier": 1,
+          "description": "trạng thái trống no icon/CTA.",
+          "ddl_evidence": "",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Guide.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "trạng thái trống no icon/CTA.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 2,
+          "title": "loading-spinner-1: loading state khi fetch",
+          "ref": "UXG-78",
+          "severity": "Major",
+          "user_impact": "No feedback.",
+          "heuristic": "Doherty Threshold.",
+          "evidence": "DDL loading-spinner-1. Không có loading variant artboard cho màn hình danh sách. UXG-78.",
+          "screenshot": "tra-cuu-yeu-cau-3.png",
+          "screen_id": "SCR-TCY-002",
+          "screen_name": "Danh sách yêu cầu tra soát › Danh sách",
+          "screen_type": "list",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-3.png",
+          "_img_tier": 5,
+          "description": "No loading when fetching dispute list.",
+          "ddl_evidence": "",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Doherty Threshold",
+              "url": "https://lawsofux.com/doherty-threshold/",
+              "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #4 — Consistency and Standards",
+            "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+            "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No loading when fetching dispute list.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 3,
+          "title": "Doherty Threshold: feedback khi fetch list",
+          "ref": "UXG-78",
+          "severity": "Major",
+          "user_impact": "Processing not indicated.",
+          "heuristic": "Doherty Threshold.",
+          "evidence": "DDL Doherty Threshold auto-match. Không có loading/skeleton screen. UXG-78.",
+          "screenshot": "tra-cuu-yeu-cau-3.png",
+          "screen_id": "SCR-TCY-002",
+          "screen_name": "Danh sách yêu cầu tra soát › Danh sách",
+          "screen_type": "list",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-3.png",
+          "_img_tier": 5,
+          "description": "giống nhau as Gap#2 — Doherty feedback.",
+          "ddl_evidence": "",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Doherty Threshold",
+              "url": "https://lawsofux.com/doherty-threshold/",
+              "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Nielsen #4 — Consistency and Standards",
+            "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+            "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "giống nhau as Gap#2 — Doherty feedback.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "UXG-37: Color Only — status badges",
+          "ref": "UXG-37",
+          "severity": "Major",
+          "user_impact": "Color-blind inaccessible.",
+          "heuristic": "WCAG 1.4.1.",
+          "evidence": "UXG-37 Color Only (High). Từ ảnh tra-cuu-yeu-cau-3.png: 3 badges phân biệt chỉ bằng màu, không icon. ~8% người dùng mù màu bị ảnh hưởng.",
+          "screenshot": "tra-cuu-yeu-cau-3.png",
+          "screen_id": "SCR-TCY-002",
+          "screen_name": "Danh sách yêu cầu tra soát › Danh sách",
+          "screen_type": "list",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-3.png",
+          "_img_tier": 1,
+          "description": "Status badges color-only.",
+          "ddl_evidence": "",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "WCAG 1.4.1 — Use of Color (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html",
+              "quote": "Not only means.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 1,
+          "hiện_trạng": "Status badges color-only.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 7,
+          "title": "WCAG AA: badge Nghi vấn contrast",
+          "ref": "UXG-36",
+          "severity": "Major",
+          "user_impact": "Below WCAG AA.",
+          "heuristic": "WCAG 1.4.3.",
+          "evidence": "Từ ảnh tra-cuu-yeu-cau-3.png: badge Nghi vấn — nền xám nhạt, text xám, est. ~3.5:1 < 4.5:1. FAIL WCAG AA. UXG-36.",
+          "screenshot": "tra-cuu-yeu-cau-3.png",
+          "screen_id": "SCR-TCY-002",
+          "screen_name": "Danh sách yêu cầu tra soát › Danh sách",
+          "screen_type": "list",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-3.png",
+          "_img_tier": 1,
+          "description": "Badge 'Nghi vấn' contrast low.",
+          "ddl_evidence": "",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "WCAG 1.4.3 — Contrast (Minimum) (Level AA)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+              "quote": "4.5:1.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Badge 'Nghi vấn' contrast low.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 8,
+          "title": "WCAG AA: badge Đã xử lý contrast",
+          "ref": "UXG-36",
+          "severity": "Minor",
+          "user_impact": "Near violation.",
+          "heuristic": "WCAG 1.4.3.",
+          "evidence": "Từ ảnh: badge Đã xử lý — est. ~4:1 borderline < 4.5:1. FAIL WCAG AA. UXG-36.",
+          "screenshot": "tra-cuu-yeu-cau-3.png",
+          "screen_id": "SCR-TCY-002",
+          "screen_name": "Danh sách yêu cầu tra soát › Danh sách",
+          "screen_type": "list",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-3.png",
+          "_img_tier": 5,
+          "description": "Badge 'Đã xử lý' contrast borderline.",
+          "ddl_evidence": "",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "WCAG 1.4.3 — Contrast (Minimum) (Level AA)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+              "quote": "4.5:1.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Badge 'Đã xử lý' contrast borderline.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 11,
+          "title": "UXG-78: Loading indicator khi fetch",
+          "ref": "UXG-78",
+          "severity": "Major",
+          "user_impact": "No processing indicator.",
+          "heuristic": "Nielsen #1.",
+          "evidence": "UXG-78 Loading Indicators (High). Không có artboard loading state.",
+          "screenshot": "tra-cuu-yeu-cau-3.png",
+          "screen_id": "SCR-TCY-002",
+          "screen_name": "Danh sách yêu cầu tra soát › Danh sách",
+          "screen_type": "list",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-3.png",
+          "_img_tier": 5,
+          "description": "No loading artboard when fetching.",
+          "ddl_evidence": "",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #4 — Consistency and Standards",
+            "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+            "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No loading artboard when fetching.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 14,
+          "title": "Banking: transaction ID copyable",
+          "ref": "",
+          "severity": "Minor",
+          "user_impact": "Manual transcription for support.",
+          "heuristic": "Nielsen #7.",
+          "evidence": "product_context: Trust paramount. #123123 không có copy affordance visible từ ảnh.",
+          "screenshot": "tra-cuu-yeu-cau-3.png",
+          "screen_id": "SCR-TCY-002",
+          "screen_name": "Danh sách yêu cầu tra soát › Danh sách",
+          "screen_type": "list",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-3.png",
+          "_img_tier": 5,
+          "description": "giao dịch ID #123123 not copyable.",
+          "ddl_evidence": "",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+              "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+              "quote": "Shortcuts.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "giao dịch ID #123123 not copyable.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-TCY-003",
+      "screen_name": "Chi tiết yêu cầu tra soát › Chi tiết (`SCR-TCY-003`)",
+      "screen_type": "detail",
+      "gaps": [
+        {
+          "num": 1,
+          "title": "Account number masking — PII",
+          "ref": "",
+          "severity": "Critical",
+          "user_impact": "Must mask.",
+          "heuristic": "Nielsen #5.",
+          "evidence": "Từ ảnh tra-cuu-yeu-cau-4.png+5.png: Tài khoản nguồn 1212390002122 — 13 số đầy đủ, không masked. product_context: Security-first. banking-security.",
+          "screenshot": "tra-cuu-yeu-cau-4.png",
+          "screen_id": "SCR-TCY-003",
+          "screen_name": "Chi tiết yêu cầu tra soát › Chi tiết",
+          "screen_type": "detail",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-4.png",
+          "_img_tier": 1,
+          "description": "số tài khoản '1212390002122' fully visible — PII.",
+          "ddl_evidence": "",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Prevent.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "hiện_trạng": "số tài khoản '1212390002122' fully visible — PII.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 2,
+          "title": "loading-spinner-1: loading state chi tiết",
+          "ref": "UXG-78",
+          "severity": "Minor",
+          "user_impact": "No feedback.",
+          "heuristic": "Doherty Threshold.",
+          "evidence": "DDL loading-spinner-1. Không có loading state artboard khi navigate list→detail. UXG-78.",
+          "screenshot": "tra-cuu-yeu-cau-4.png",
+          "screen_id": "SCR-TCY-003",
+          "screen_name": "Chi tiết yêu cầu tra soát › Chi tiết",
+          "screen_type": "detail",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-4.png",
+          "_img_tier": 5,
+          "description": "No trạng thái tải for detail screen.",
+          "ddl_evidence": "",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Doherty Threshold",
+              "url": "https://lawsofux.com/doherty-threshold/",
+              "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #4 — Consistency and Standards",
+            "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+            "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No trạng thái tải for detail screen.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 3,
+          "title": "receipt-preview-1: section visual separator",
+          "ref": "",
+          "severity": "Minor",
+          "user_impact": "Content blends together.",
+          "heuristic": "Gestalt.",
+          "evidence": "DDL receipt-preview-1: sections cần separator rõ. Từ ảnh: 2 sections chỉ chia bởi whitespace, không có divider line.",
+          "screenshot": "tra-cuu-yeu-cau-4.png",
+          "screen_id": "SCR-TCY-003",
+          "screen_name": "Chi tiết yêu cầu tra soát › Chi tiết",
+          "screen_type": "detail",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-4.png",
+          "_img_tier": 5,
+          "description": "biên lai sections without visual separators.",
+          "ddl_evidence": "",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Visible.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "biên lai sections without visual separators.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 4,
+          "title": "Doherty Threshold: loading chi tiết",
+          "ref": "UXG-78",
+          "severity": "Minor",
+          "user_impact": "Doherty violation.",
+          "heuristic": "Doherty.",
+          "evidence": "DDL Doherty auto-match. Không có skeleton/loading state. UXG-78.",
+          "screenshot": "tra-cuu-yeu-cau-4.png",
+          "screen_id": "SCR-TCY-003",
+          "screen_name": "Chi tiết yêu cầu tra soát › Chi tiết",
+          "screen_type": "detail",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-4.png",
+          "_img_tier": 5,
+          "description": "No skeleton/loading for detail.",
+          "ddl_evidence": "",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Doherty Threshold",
+              "url": "https://lawsofux.com/doherty-threshold/",
+              "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Nielsen #4 — Consistency and Standards",
+            "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+            "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No skeleton/loading for detail.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 5,
+          "title": "Fitts Law: Chi tiết giao dịch touch target",
+          "ref": "UXG-165",
+          "severity": "Major",
+          "user_impact": "Hard to tap.",
+          "heuristic": "Fitts's Law.",
+          "evidence": "Từ ảnh tra-cuu-yeu-cau-4.png: row Chi tiết giao dịch — text row, touch target ước tính < 44px. Fitts Law. UXG-165.",
+          "screenshot": "tra-cuu-yeu-cau-4.png",
+          "screen_id": "SCR-TCY-003",
+          "screen_name": "Chi tiết yêu cầu tra soát › Chi tiết",
+          "screen_type": "detail",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-4.png",
+          "_img_tier": 1,
+          "description": "'Chi tiết giao dịch' row too small touch target.",
+          "ddl_evidence": "",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "'Chi tiết giao dịch' row too small touch target.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "UXG-4: Link Chi tiết giao dịch affordance",
+          "ref": "UXG-4",
+          "severity": "Major",
+          "user_impact": "Invisible navigation.",
+          "heuristic": "Nielsen #6.",
+          "evidence": "UXG-4 Navigation (High). Từ ảnh: text màu thường, no underline, no background. Không rõ là clickable. Information Scent thấp.",
+          "screenshot": "tra-cuu-yeu-cau-4.png",
+          "screen_id": "SCR-TCY-003",
+          "screen_name": "Chi tiết yêu cầu tra soát › Chi tiết",
+          "screen_type": "detail",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-4.png",
+          "_img_tier": 5,
+          "description": "Link 'Chi tiết giao dịch' no tín hiệu tương tác.",
+          "ddl_evidence": "",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Visible.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 1,
+          "hiện_trạng": "Link 'Chi tiết giao dịch' no tín hiệu tương tác.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 7,
+          "title": "UXG-37: Status badge color-only",
+          "ref": "UXG-37",
+          "severity": "Major",
+          "user_impact": "khả năng tiếp cận gap.",
+          "heuristic": "WCAG 1.4.1.",
+          "evidence": "UXG-37 Color Only (High). Từ ảnh: badges Đã tiếp nhận/Đã xử lý phân biệt chỉ bằng màu. Không có icon.",
+          "screenshot": "tra-cuu-yeu-cau-4.png",
+          "screen_id": "SCR-TCY-003",
+          "screen_name": "Chi tiết yêu cầu tra soát › Chi tiết",
+          "screen_type": "detail",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-4.png",
+          "_img_tier": 5,
+          "description": "Status badges color-only on detail.",
+          "ddl_evidence": "",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "WCAG 1.4.1 — Use of Color (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html",
+              "quote": "Not only means.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Status badges color-only on detail.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 8,
+          "title": "WCAG AA: badge Đã xử lý contrast artboard 5",
+          "ref": "UXG-36",
+          "severity": "Minor",
+          "user_impact": "Below WCAG.",
+          "heuristic": "WCAG 1.4.3.",
+          "evidence": "Từ ảnh tra-cuu-yeu-cau-5.png: badge Đã xử lý faded, est. ~3.8:1 < 4.5:1. FAIL WCAG AA. UXG-36.",
+          "screenshot": "tra-cuu-yeu-cau-5.png",
+          "screen_id": "SCR-TCY-003",
+          "screen_name": "Chi tiết yêu cầu tra soát › Chi tiết",
+          "screen_type": "detail",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-5.png",
+          "_img_tier": 1,
+          "description": "Badge 'Đã xử lý' contrast low on detail.",
+          "ddl_evidence": "",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "WCAG 1.4.3 — Contrast (Minimum) (Level AA)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+              "quote": "4.5:1.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Badge 'Đã xử lý' contrast low on detail.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 9,
+          "title": "Kết quả pending state unclear",
+          "ref": "UXG-44",
+          "severity": "Minor",
+          "user_impact": "trình đọc màn hình confusion.",
+          "heuristic": "WCAG 1.1.1.",
+          "evidence": "Từ ảnh tra-cuu-yeu-cau-4.png: field Kết quả = — —. Screen reader reads dash dash, no meaning. UXG-44.",
+          "screenshot": "tra-cuu-yeu-cau-4.png",
+          "screen_id": "SCR-TCY-003",
+          "screen_name": "Chi tiết yêu cầu tra soát › Chi tiết",
+          "screen_type": "detail",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-4.png",
+          "_img_tier": 1,
+          "description": "'Kết quả: — —' no semantic meaning for assistive tech.",
+          "ddl_evidence": "",
+          "ref_count": 4,
+          "references": [
+            {
+              "name": "Doherty Threshold",
+              "url": "https://lawsofux.com/doherty-threshold/",
+              "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Peak-End Rule",
+              "url": "https://lawsofux.com/peak-end-rule/",
+              "quote": "People judge an experience largely based on how they felt at its most intense point and at its end.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "WCAG 1.1.1 — Non-text Content (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html",
+              "quote": "Text alternative.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 1,
+          "_enriched_ref": {
+            "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+            "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+            "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "'Kết quả: — —' no semantic meaning for assistive tech.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 14,
+          "title": "Section icon S accessible label",
+          "ref": "UXG-38",
+          "severity": "Minor",
+          "user_impact": "trình đọc màn hình: 'image' with no description.",
+          "heuristic": "WCAG 1.1.1.",
+          "evidence": "UXG-38 Alt Text. Từ ảnh: icon đỏ S bên trái section headers, no accessible label visible.",
+          "screenshot": "tra-cuu-yeu-cau-4.png",
+          "screen_id": "SCR-TCY-003",
+          "screen_name": "Chi tiết yêu cầu tra soát › Chi tiết",
+          "screen_type": "detail",
+          "screenshot_path": "ui/tra-cuu-yeu-cau-4.png",
+          "_img_tier": 5,
+          "description": "Section icon 'S' without accessible label.",
+          "ddl_evidence": "",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "WCAG 1.1.1 — Non-text Content (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html",
+              "quote": "Alt text.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Section icon 'S' without accessible label.",
+          "_enriched_by": "llm"
+        }
+      ]
+    }
+  ],
+  "heuristics": [
+    {
+      "key": "flow",
+      "name_vi": "Luồng người dùng",
+      "name_en": "Flow & Navigation",
+      "score": 36,
+      "gap_count": 28
+    },
+    {
+      "key": "component",
+      "name_vi": "Thành phần",
+      "name_en": "Component & DDL",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "visual",
+      "name_vi": "Thiết kế trực quan",
+      "name_en": "Visual Design",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "content",
+      "name_vi": "Nội dung",
+      "name_en": "Content & Copy",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "a11y",
+      "name_vi": "Tiếp cận",
+      "name_en": "Accessibility",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "trust",
+      "name_vi": "Tin cậy & Bảo mật",
+      "name_en": "Trust & Security",
+      "score": 100,
+      "gap_count": 0
+    }
+  ],
+  "_score_discrepancies": [
+    {
+      "screen_id": "SCR-TCY-001",
+      "field": "pass_count",
+      "claimed": 0,
+      "actual": 6
+    },
+    {
+      "screen_id": "SCR-TCY-001",
+      "field": "gap_count",
+      "claimed": 0,
+      "actual": 10
+    },
+    {
+      "screen_id": "SCR-TCY-001",
+      "field": "score",
+      "claimed": "0%",
+      "actual": "33%"
+    },
+    {
+      "screen_id": "SCR-TCY-002",
+      "field": "pass_count",
+      "claimed": 0,
+      "actual": 6
+    },
+    {
+      "screen_id": "SCR-TCY-002",
+      "field": "gap_count",
+      "claimed": 0,
+      "actual": 8
+    },
+    {
+      "screen_id": "SCR-TCY-002",
+      "field": "score",
+      "claimed": "0%",
+      "actual": "40%"
+    },
+    {
+      "screen_id": "SCR-TCY-003",
+      "field": "pass_count",
+      "claimed": 0,
+      "actual": 4
+    },
+    {
+      "screen_id": "SCR-TCY-003",
+      "field": "gap_count",
+      "claimed": 0,
+      "actual": 10
+    },
+    {
+      "screen_id": "SCR-TCY-003",
+      "field": "score",
+      "claimed": "0%",
+      "actual": "27%"
+    }
+  ],
+  "_ref_enrichment": {
+    "gap_enriched": 11,
+    "uxp_enriched": 4,
+    "sources": [
+      "enriched-data.json",
+      "official-urls.md"
+    ]
+  }
+}

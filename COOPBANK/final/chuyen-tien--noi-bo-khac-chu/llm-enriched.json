@@ -1,0 +1,424 @@
+[
+  {
+    "id": "UXP-001",
+    "hiện_trạng": "OTP bottom sheet trên màn xác nhận (SCR-CTNBKC-002) hiển thị 6 ô nhập OTP đều trống với cùng style — không có highlight ô đang active. Thiếu nút 'Gửi lại mã' và countdown timer cho thời hạn OTP. Khi OTP hết hạn, người dùng không có cách request mã mới từ screen này.",
+    "tác_động": "Người dùng không biết ô nào đang nhận input → tap nhầm vị trí. Khi OTP hết hạn hoặc không nhận được mã, bị kẹt — phải quay lại từ đầu flow chuyển tiền. Trong ngân hàng, re-start toàn bộ flow tài chính tạo friction cao và risk abandon giao dịch.",
+    "nguyên_tắc": "Nielsen #1 — Visibility of System Status: \"Thiết kế phải luôn thông báo cho người dùng biết điều gì đang xảy ra, thông qua phản hồi phù hợp trong thời gian hợp lý.\" Thiếu active cell highlight = người dùng không biết system đang expect input ở đâu. Thiếu countdown = không biết còn bao lâu để nhập mã. Zeigarnik Effect: task bị interrupted (OTP hết hạn) mà không có recovery path tăng frustration.",
+    "đề_xuất_steps": [
+      "Highlight ô đang active bằng border color primary + cursor blink animation",
+      "Thêm countdown timer hiển thị thời gian còn lại (VD: '02:45') bên dưới ô OTP",
+      "Thêm nút 'Gửi lại mã' xuất hiện sau countdown hết — include cooldown 30s giữa các lần gửi",
+      "triển khai auto-paste: detect OTP từ SMS và auto-fill 6 ô"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Zeigarnik Effect",
+        "url": "https://lawsofux.com/zeigarnik-effect/",
+        "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+        "source": "Laws of UX"
+      }
+    ]
+  },
+  {
+    "id": "UXP-002",
+    "hiện_trạng": "Trường 'Số tiền' trên form chuyển tiền (SCR-CTNBKC-001) chỉ hiển thị giá trị số (VD: 20,000,000 VND) mà không có text representation bằng chữ viết (VD: 'Hai mươi triệu đồng'). Chữ viết chỉ xuất hiện ở màn Xác nhận nhưng không có trên form nhập và biên lai.",
+    "tác_động": "Với số tiền lớn (hàng chục/trăm triệu), người dùng dễ nhầm số chữ số 0. Thiếu text representation tại form input — nơi người dùng nhập liệu — nghĩa là verification chỉ có ở bước sau. Sai 1 số 0 = sai 10 lần số tiền, là lỗi tài chính không thể chấp nhận.",
+    "nguyên_tắc": "Nielsen #5 — Error Prevention: \"Thông báo lỗi tốt là quan trọng, nhưng thiết kế tốt nhất là cẩn thận ngăn ngừa vấn đề xảy ra ngay từ đầu.\" Text representation real-time khi nhập là error prevention mechanism — cho phép người dùng xác minh bằng 2 kênh (số + chữ) tại point of input. Nielsen #6 — Recognition: chữ viết giúp recognize giá trị nhanh hơn recall từ chuỗi số dài.",
+    "đề_xuất_steps": [
+      "Hiển thị text representation real-time ngay dưới trường Số tiền: '= Hai mươi triệu đồng'",
+      "Consistency: hiển thị chữ viết trên cả 3 screens (form, xác nhận, biên lai)",
+      "Format số tiền với thousand separator rõ ràng: 20,000,000 VND",
+      "Thêm visual emphasis (bold/larger font) cho text representation để dễ scan"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-003",
+    "hiện_trạng": "CTA 'Tiếp tục' trên form chuyển tiền (SCR-CTNBKC-001) bị đẩy dưới fold khi form dài — artboard đo được 1098px trong khi viewport chỉ 812px. Khi keyboard mở, button hoàn toàn bị che khuất. Người dùng phải scroll down để tìm CTA sau khi điền xong form.",
+    "tác_động": "người dùng hoàn thành nhập form nhưng không thấy nút submit — nghĩ form chưa sẵn sàng hoặc thiếu bước nào. Phải scroll tìm CTA tạo extra step trong flow tài chính. Trên mobile với keyboard mở, CTA completely invisible — người dùng mới có thể stuck tại đây.",
+    "nguyên_tắc": "Fitts's Law: \"Thời gian để đạt tới mục tiêu phụ thuộc vào khoảng cách và kích thước của mục tiêu.\" CTA dưới fold = distance tối đa. Nielsen #6 — Recognition: CTA phải visible để người dùng recognize next action thay vì recall phải scroll. phương pháp tốt nhất: sticky CTA bottom bar cho form dài.",
+    "đề_xuất_steps": [
+      "triển khai sticky CTA bar cố định ở bottom viewport — luôn visible bất kể scroll position",
+      "Thêm safe area padding để CTA không bị home indicator che trên iPhone X+",
+      "Khi keyboard mở, auto-scroll form để field đang focus visible + CTA accessible",
+      "Cân nhắc split form thành 2 steps nếu > 5 fields để tránh form quá dài"
+    ],
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+        "source": "Laws of UX"
+      },
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-004",
+    "hiện_trạng": "Màn kết quả (SCR-CTNBKC-003) hiển thị amount mismatch: header ghi '50,000 VND' nhưng detail section ghi '20,000,000 VND'. Hai giá trị trong cùng 1 screen cho cùng 1 giao dịch hiển thị số tiền hoàn toàn khác nhau.",
+    "tác_động": "Data mismatch trên cùng 1 screen là red flag nghiêm trọng nhất trong ngân hàng — người dùng nhìn thấy 2 số tiền khác nhau ngay lập tức panic: 'Hệ thống đã chuyển bao nhiêu thực tế?'. Dẫn đến call center overload và mất trust vào ứng dụng ngay khi hoàn thành giao dịch — worst possible moment.",
+    "nguyên_tắc": "Nielsen #4 — Consistency and Standards: \"Người dùng không nên phải thắc mắc liệu các từ, tình huống hoặc hành động khác nhau có cùng ý nghĩa hay không.\" Cùng 1 data point (amount) hiển thị 2 giá trị trên 1 screen = vi phạm consistency ở mức cơ bản nhất. Đây là data integrity issue, không chỉ UI issue.",
+    "đề_xuất_steps": [
+      "Đảm bảo single source of truth cho amount — header và detail đọc từ cùng 1 data field",
+      "Fix sample data trong design file để phản ánh real data flow",
+      "triển khai automated design QA check cho data consistency across screens",
+      "Header nên hiển thị cùng format và giá trị với detail section"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Jakob's Law",
+        "url": "https://lawsofux.com/jakobs-law/",
+        "quote": "Users spend most of their time on other sites. This means that users prefer your site to work the same way as all the other sites they already know.",
+        "source": "Laws of UX"
+      }
+    ]
+  },
+  {
+    "id": "UXP-005",
+    "hiện_trạng": "Dropdown 'Phương thức xác thực' trên màn xác nhận (SCR-CTNBKC-002) chỉ có duy nhất 1 option 'SMS OTP'. Dropdown chiếm diện tích và tạo decision point cho người dùng dù chỉ có 1 lựa chọn khả dụng. người dùng phải tap mở dropdown để thấy không có option nào khác.",
+    "tác_động": "Tạo không cần thiết tải nhận thức — người dùng thấy dropdown → expect multiple choices → tap mở → chỉ có 1 option → select nó. 3 interactions thừa cho quyết định không có lựa chọn. Hick's Law penalty cho perceived complexity mà không thêm value.",
+    "nguyên_tắc": "Hick's Law: \"Thời gian ra quyết định tăng theo số lượng và độ phức tạp của các lựa chọn.\" Dropdown với 1 option tạo false complexity — UI suggest choice nhưng không có choice thực sự. Nielsen #8 — Aesthetic and Minimalist Design: element không cần thiết nên loại bỏ hoặc simplify.",
+    "đề_xuất_steps": [
+      "Khi chỉ có 1 phương thức, auto-select và hiển thị dạng read-only label thay vì dropdown",
+      "Chỉ hiển thị dropdown khi có ≥ 2 options (VD: SMS OTP + Soft OTP + Biometric)",
+      "Nếu cần hiển thị method đang dùng, dùng chip/badge style thay vì interactive dropdown",
+      "Giảm vertical space chiếm dụng của element này trên xác nhận screen"
+    ],
+    "references": [
+      {
+        "name": "Hick's Law",
+        "url": "https://lawsofux.com/hicks-law/",
+        "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+        "source": "Laws of UX"
+      },
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-006",
+    "hiện_trạng": "Banner instruction trên màn xác nhận (SCR-CTNBKC-002) chứa lỗi chính tả 'Qúy khách' — sai dấu thanh trên chữ u (đúng: 'Quý khách'). Lỗi xuất hiện trên banner text tại step xác nhận giao dịch tài chính.",
+    "tác_động": "Lỗi chính tả tại ngân hàng app erode trust — khách hàng quen với standard cao từ ngân hàng truyền thống. Tại step xác nhận (moment of highest financial anxiety), bất kỳ signal bất thường nào đều amplify doubt về reliability của hệ thống.",
+    "nguyên_tắc": "Nielsen #4 — Consistency and Standards: Content phải tuân theo Vietnamese language standards. Lỗi chính tả vi phạm linguistic consistency — basic quality signal cho chuyên nghiệp ngân hàng app.",
+    "đề_xuất_steps": [
+      "Sửa 'Qúy khách' → 'Quý khách' trên toàn bộ ứng dụng",
+      "Audit toàn bộ static text content cho lỗi tương tự",
+      "Integrate Vietnamese spell-check vào design review process"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-007",
+    "hiện_trạng": "Trường 'Nội dung chuyển tiền' auto-fill giá trị không dấu tiếng Việt ('NGUYEN HOANG KHAI chuyen tien') và thiếu label chỉ báo '[Tự động]' hoặc 'Auto-filled'. Text viết hoa toàn bộ tên, không dấu — không theo chuẩn hiển thị tên tiếng Việt.",
+    "tác_động": "Người dùng có thể nhầm auto-filled content với input họ đã nhập → không sửa dù cần sửa. Tên không dấu viết hoa khó đọc và không match mô hình tâm lý tên tiếng Việt. Thiếu indicator 'auto-filled' vi phạm transparency — người dùng không biết data đến từ đâu.",
+    "nguyên_tắc": "Nielsen #2 — Match Between System and Real World: \"The design should speak the người dùng' language.\" Tên không dấu viết hoa là machine language, không phải người dùng language. Nielsen #1 — Visibility: auto-filled content phải clearly labeled để người dùng biết nguồn gốc data.",
+    "đề_xuất_steps": [
+      "Auto-fill có dấu tiếng Việt nếu hệ thống hỗ trợ",
+      "Thêm subtle indicator '[Tự động]' hoặc icon auto-fill bên cạnh field",
+      "Dùng proper case thay vì ALL CAPS: 'Nguyễn Hoàng Khai chuyển tiền'",
+      "Cho phép người dùng edit easily — pre-select all text khi focus vào field"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-008",
+    "hiện_trạng": "Biên nhận trên màn kết quả (SCR-CTNBKC-003) thiếu thông tin phí giao dịch và VAT. Ngoài ra, thời gian đặt lịch hiển thị '15/02/2020 22:00' (ngày trong quá khứ) trong khi 'Ngày bắt đầu' ghi '15/05/2023' — data không nhất quán giữa 2 fields liên quan trên cùng biên lai.",
+    "tác_động": "Thiếu phí GD trên biên lai khiến người dùng không biết tổng chi phí thực tế — mất kiểm soát tài chính. Data inconsistency (ngày quá khứ vs tương lai) signal prototype error nhưng nếu xảy ra trong production, gây confusion nghiêm trọng về timeline giao dịch.",
+    "nguyên_tắc": "Nielsen #1 — Visibility: Phí GD và thời gian chính xác là system status cần hiển thị đầy đủ. Nielsen #4 — Consistency: dates phải logical và nhất quán với nhau trên cùng biên lai. Thiếu phí trên biên lai cũng vi phạm WCAG 3.3.4 — cung cấp đầy đủ thông tin cho người dùng review giao dịch tài chính.",
+    "đề_xuất_steps": [
+      "Hiển thị phí giao dịch + VAT + tổng phí trên biên lai",
+      "Fix data inconsistency: thời gian đặt lịch phải ≤ ngày bắt đầu",
+      "Thêm timestamp format nhất quán: dd/MM/yyyy HH:mm cho tất cả date fields",
+      "kiểm tra date logic: alerting khi dates không tuân theo business rules"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "Gap#8@SCR-CTNBKC-001",
+    "hiện_trạng": "Form screen (SCR-CTNBKC-001) — trường Số tiền chỉ hiển thị giá trị số + 'VND', không có text representation bằng chữ viết. DDL UXG-165 yêu cầu hiển thị chữ viết song song với số để người dùng double-check.",
+    "tác_động": "Thiếu chữ viết tại point of input — nơi prevention cần nhất. Sai 1 chữ số 0 trong amount hàng chục triệu = sai 10x giá trị, lỗi tài chính nghiêm trọng chỉ phát hiện ở bước sau (xác nhận) hoặc sau khi chuyển xong.",
+    "nguyên_tắc": "Nielsen #5 — Error Prevention: Dual-channel verification (số + chữ) tại point of input là phương pháp tốt nhất cho financial forms. Thiếu channel thứ 2 = giảm 50% khả năng phát hiện lỗi trước submit.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung text representation bằng chữ viết vào thiết kế màn hình",
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo"
+    ]
+  },
+  {
+    "id": "Gap#14@SCR-CTNBKC-001",
+    "hiện_trạng": "CTA 'Tiếp tục' trên form screen (SCR-CTNBKC-001) — artboard 1098px vs viewport 812px, CTA nằm dưới fold. Trên State 2 (form đã điền), CTA bị keyboard che thêm khi người dùng đang nhập liệu.",
+    "tác_động": "người dùng hoàn thành form nhưng CTA invisible — phải scroll tìm. Workflow bị interrupt: nhập xong → dismiss keyboard → scroll → tìm CTA → tap. Thêm 3 steps thừa trong flow tài chính core.",
+    "nguyên_tắc": "Fitts's Law: CTA dưới fold = maximum distance. người dùng phải travel toàn bộ viewport để reach target. phương pháp tốt nhất mobile: sticky bottom CTA cho forms quan trọng.",
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+        "source": "Laws of UX"
+      },
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#7@SCR-CTNBKC-002",
+    "hiện_trạng": "Dropdown 'Phương thức xác thực' trên xác nhận screen (SCR-CTNBKC-002) chỉ có 1 option 'SMS OTP'. Interactive dropdown element cho single-option scenario.",
+    "tác_động": "tín hiệu tương tác giả: dropdown suggest choices nhưng không có choice. người dùng tap → see 1 item → select it = 3 không cần thiết interactions. tải nhận thức tăng vì người dùng phải evaluate 'decision' không có alternative.",
+    "nguyên_tắc": "Hick's Law: Dropdown với 1 option vẫn trigger decision process. Nielsen #8: UI element chiếm space và attention mà không cung cấp value = violate minimalist design.",
+    "references": [
+      {
+        "name": "Hick's Law",
+        "url": "https://lawsofux.com/hicks-law/",
+        "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+        "source": "Laws of UX"
+      },
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Loại bỏ dropdown khi chỉ có 1 lựa chọn — hiển thị trực tiếp giá trị mặc định",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive"
+    ]
+  },
+  {
+    "id": "Gap#12@SCR-CTNBKC-002",
+    "hiện_trạng": "OTP input trên xác nhận screen (SCR-CTNBKC-002): 6 ô đều trống, cùng border style — không có visual distinction cho ô đang active. Cursor position ambiguous khi start typing.",
+    "tác_động": "người dùng không chắc input sẽ vào ô nào → hesitation → tap vào ô đầu tiên manually trước khi type. Misalignment giữa perceived focus và actual focus gây nhập sai vị trí — phải xóa và nhập lại.",
+    "nguyên_tắc": "Nielsen #1 — Visibility: Active input state phải visually distinct. người dùng cần biết system đang 'listen' ở đâu. Standard OTP component highlight active cell bằng primary border + cursor indicator.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung visual distinction cho ô đang active vào thiết kế màn hình",
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive"
+    ]
+  },
+  {
+    "id": "Gap#13@SCR-CTNBKC-002",
+    "hiện_trạng": "OTP section trên xác nhận screen (SCR-CTNBKC-002) không có nút 'Gửi lại mã' và countdown timer. Khi mã OTP hết hạn hoặc không nhận được, người dùng không có action nào để recover — dead end tại authentication step.",
+    "tác_động": "người dùng bị lock tại OTP step không có escape hatch: OTP hết hạn → no resend → phải back toàn bộ flow → nhập lại form → request OTP mới. Mỗi restart flow = ~2 phút friction thêm, risk abandon giao dịch. Đặc biệt frustrating nếu SMS delivery delayed.",
+    "nguyên_tắc": "Nielsen #3 — người dùng Control and Freedom: \"người dùng cần a clearly marked 'emergency exit' to leave the unwanted action.\" Thiếu 'Gửi lại mã' = thiếu recovery mechanism tại critical step. Zeigarnik Effect: task bị interrupted (OTP expired) mà không có clear path forward tăng negative memory.",
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Zeigarnik Effect",
+        "url": "https://lawsofux.com/zeigarnik-effect/",
+        "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung nút 'Gửi lại mã' và countdown timer vào thiết kế màn hình",
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow"
+    ]
+  },
+  {
+    "id": "Gap#16@SCR-CTNBKC-002",
+    "hiện_trạng": "Banner text trên xác nhận screen (SCR-CTNBKC-002) chứa 'Qúy khách' — sai dấu thanh (đúng: 'Quý khách'). Lỗi chính tả trên content instruction tại bước xác nhận giao dịch.",
+    "tác_động": "Spelling error tại authentication step — moment of highest trust. ngân hàng người dùng kỳ vọng zero errors in text. Vi phạm perceived quality reduces confidence tại step quan trọng nhất.",
+    "nguyên_tắc": "Nielsen #4 — Consistency and Standards: Vietnamese language standard requires correct diacritics. Spelling error = violation of basic content quality standard in financial application.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Đồng bộ format hiển thị giữa tất cả màn hình trong cùng flow",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-CTNBKC-003",
+    "hiện_trạng": "Result screen (SCR-CTNBKC-003): header hiển thị '50,000 VND' nhưng detail section hiển thị '20,000,000 VND'. Amount mismatch trên cùng 1 screen — 2 giá trị khác nhau 400 lần.",
+    "tác_động": "Mức sai lệch 50K vs 20M trên cùng biên lai tạo immediate panic: 'Hệ thống chuyển bao nhiêu thật?'. người dùng sẽ contact ngân hàng ngay lập tức. Nếu data inconsistency trong prototype, cần fix trước khi handoff dev — otherwise production app sẽ inherit bug.",
+    "nguyên_tắc": "Nielsen #4 — Consistency: Hai representations của cùng 1 value trên 1 screen phải identical. Đây là data integrity requirement cơ bản nhất — vi phạm ở đây là blocker cho trust.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đồng bộ format hiển thị giữa tất cả màn hình trong cùng flow",
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#10@SCR-CTNBKC-003",
+    "hiện_trạng": "biên lai trên result screen (SCR-CTNBKC-003) không hiển thị phí giao dịch và VAT. Chỉ có số tiền chuyển, thông tin TK, và nội dung — thiếu breakdown chi phí. người dùng không biết tổng chi phí thực tế của giao dịch.",
+    "tác_động": "Người dùng không thấy phí → không kiểm soát được tổng chi phí. Khi reconcile sao kê cuối tháng, thấy số tiền trừ khác với số tiền trên biên lai → confusion. Financial transparency yêu cầu hiển thị đầy đủ chi phí tại point of giao dịch.",
+    "nguyên_tắc": "Nielsen #1 — Visibility of System Status: Phí GD là phần của giao dịch result — ẩn nó = incomplete system status. WCAG 3.3.4: giao dịch tài chính cần hiển thị đầy đủ thông tin cho người dùng review.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "WCAG 3.3.4 — Error Prevention: Legal, Financial, Data (Level AA)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-prevention-legal-financial-data.html",
+        "quote": "For web pages that cause legal commitments or financial transactions, the submission is checked and the user is given the opportunity to correct them.",
+        "source": "W3C"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung breakdown chi phí vào thiết kế màn hình",
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#13@SCR-CTNBKC-003",
+    "hiện_trạng": "biên lai trên result screen (SCR-CTNBKC-003) hiển thị 'Thời gian đặt lịch: 15/02/2020 22:00' (ngày trong quá khứ) trong khi 'Ngày bắt đầu: 15/05/2023' — 3 năm chênh lệch. Data logic inconsistency: thời gian tạo lệnh không thể trước ngày bắt đầu hiệu lực.",
+    "tác_động": "Date inconsistency nghiêm trọng: ngày đặt trong quá khứ (2020) vs ngày bắt đầu tương lai (2023) không hợp lệ về mặt logic. Nếu production emit data tương tự, người dùng sẽ question validity của toàn bộ giao dịch. Trong audit trail và compliance, date inconsistency là red flag.",
+    "nguyên_tắc": "Nielsen #4 — Consistency: Dates trên cùng 1 biên lai phải logically nhất quán (creation_date ≤ start_date ≤ end_date). Vi phạm temporal consistency signal deeper data quality issue.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đồng bộ format hiển thị giữa tất cả màn hình trong cùng flow",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  }
+]

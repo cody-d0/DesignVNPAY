@@ -1,0 +1,505 @@
+[
+  {
+    "id": "UXP-001",
+    "hiện_trạng": "Số tài khoản '012547288' và '1231231232' hiển thị đầy đủ không mask trên màn thông tin tất toán (artboard 1500). PII fully exposed on savings settlement screen.",
+    "tác_động": "Account numbers + context (tất toán = settlement) = high-value target. Attacker knows exact accounts being closed → can impersonate bank to collect 'final settlement' info.",
+    "nguyên_tắc": "Nielsen #5 — Error Prevention: Default masking prevents exposure. PII visible only on explicit reveal.",
+    "đề_xuất_steps": [
+      "Mask: '0125***88' / '1231***232'",
+      "Eye icon toggle: tap to reveal 5 giây",
+      "Apply uniform masking policy across all screens"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "The best designs carefully prevent problems from occurring in the first place.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-002",
+    "hiện_trạng": "OTP trên SCR-TK4-002 (artboard 1505): 6 cells nhưng thiếu canResend button, countdown timer, trạng thái lỗi theo DDL otp-input-1 spec.",
+    "tác_động": "OTP không nhận → người dùng stuck. Timer hết → OTP reject → người dùng confused. Đây là financial settlement → cần full OTP UX.",
+    "nguyên_tắc": "Nielsen #1: Timer = time-critical status. Nielsen #9: OTP error phải specific.",
+    "đề_xuất_steps": [
+      "Countdown timer: 02:00 visible",
+      "Resend button after 30s cooldown",
+      "trạng thái lỗi: red cells + 'Mã PIN không đúng'",
+      "Auto-focus first cell"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Precisely indicate the problem.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-003",
+    "hiện_trạng": "thông báo lỗi (artboard 1504): 'Ảnh xác thực khuôn mặt không hợp lệ. Quý khách vui lòng thử lại' — generic, no specific reason (lighting? angle? mask?).",
+    "tác_động": "người dùng retries giống nhau way → giống nhau failure. Specific: 'Vui lòng đảm bảo đủ ánh sáng' or 'Không đeo khẩu trang'. Without guidance → frustration cycle.",
+    "nguyên_tắc": "Nielsen #9: Error messages must indicate exact problem and suggest specific fix.",
+    "đề_xuất_steps": [
+      "Specific error: 'Ánh sáng không đủ — vui lòng di chuyển đến nơi sáng hơn'",
+      "Visual guide: hiển thị correct/incorrect face capture examples",
+      "Retry counter: 'Còn 2 lần thử'"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Constructively suggest a solution.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-004",
+    "hiện_trạng": "20+ fields liệt kê liên tục trên artboard 1500 — no section dividers, no visual grouping. Settlement details flat list.",
+    "tác_động": "20 flat rows = severe cognitive overload for important financial decision (tất toán). người dùng phải xác minh all before confirming → scan fatigue → miss errors.",
+    "nguyên_tắc": "Miller's Law: Chunk 20 items. Visual sections: 'Thông tin sổ', 'Số tiền', 'Người thụ hưởng'.",
+    "references": [
+      {
+        "name": "Miller's Law",
+        "url": "https://lawsofux.com/millers-law/",
+        "quote": "7±2 items in working memory.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Phân nhóm 4 sections với divider:",
+      "Thông tin cơ bản,",
+      "Kỳ hạn & Lãi suất,",
+      "Tích luỹ định kỳ,",
+      "Phương thức tất toán. Thêm scroll indicato..."
+    ]
+  },
+  {
+    "id": "UXP-005",
+    "hiện_trạng": "xác nhận popup (artboard 1502-2): 'Huỷ' và 'Đồng ý' cùng style — không phân biệt primary/secondary. Financial settlement xác nhận.",
+    "tác_động": "Equal-weight buttons on destructive action (tất toán = irreversible). người dùng may tap 'Đồng ý' accidentally. 'Đồng ý' should be primary, 'Huỷ' secondary.",
+    "nguyên_tắc": "Nielsen #5: Destructive xác nhận = clear hierarchy. Primary (filled), secondary (text/outlined).",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent problems.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "\"Đồng ý\": filled primary button (background-primary",
+      "text-white). \"Huỷ\": text-only hoặc outlined secondary button"
+    ]
+  },
+  {
+    "id": "UXP-006",
+    "hiện_trạng": "Bottom-sheet Soft OTP (artboard 1505) chỉ có 'nhập mã PIN'. Thiếu giao dịch summary: số tiền tất toán, TK nguồn — người dùng xác nhận OTP nhưng không biết đang xác nhận gì.",
+    "tác_động": "OTP without giao dịch context = blind xác nhận. người dùng phải remember giao dịch details from previous screen. If switching apps to get OTP, context lost entirely.",
+    "nguyên_tắc": "Nielsen #6: giao dịch summary in OTP = recognition. Doherty: context preserved during OTP entry.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize memory load.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm summary dòng đầu bottom-sheet: \"Thay đổi: Tất toán/ rút gốc online → Tại quầy\" trước OTP input",
+      "hiển thị context đầy đủ on-screen — giảm memory load cho người dùng",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-007",
+    "hiện_trạng": "Success popup (artboard 1506): chỉ checkmark + generic message + 'Đóng'. Thiếu: mã giao dịch, số tiền, TK nhận. người dùng không thể xác minh settlement completed correctly.",
+    "tác_động": "Success without details = 'Did it settle correctly? How much did I receive?' người dùng phải navigate to giao dịch history to xác minh.",
+    "nguyên_tắc": "Nielsen #1: trạng thái thành công phải hiển thị result details: amount, recipient, giao dịch ID.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm: Phương thức mới \"Tất toán/ rút gốc online\"",
+      "thời gian thay đổi",
+      "1 button \"Xem chi tiết tài khoản\" bên cạnh \"Đóng\""
+    ]
+  },
+  {
+    "id": "UXP-008",
+    "hiện_trạng": "Màn camera face scan (artboard 1503): không có progress indicator. Auto-capture process without phản hồi trực quan.",
+    "tác_động": "người dùng doesn't know if system is actively scanning, processing, or waiting. 'Should I hold still? Is it working?'",
+    "nguyên_tắc": "Nielsen #1: Biometric capture = active system status. Progress ring or animation bắt buộc.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm:",
+      "Circular progress trên khung oval khi processing;",
+      "Text \"Đang xử lý...\" dưới khung;",
+      "DDL loading-spinner-1 overlay khi xác minh serve..."
+    ]
+  },
+  {
+    "id": "UXP-009",
+    "hiện_trạng": "OTP cells ~44px, DDL spec requires 48px. Minor sizing below spec.",
+    "tác_động": "4px difference minor but below DDL spec. Consistency with design system bắt buộc.",
+    "nguyên_tắc": "Nielsen #4: Follow design system specifications.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Consistency expected.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng cell size lên 48px theo DDL spec. Thêm active border (2px solid primary) cho cell focus (activeIndex). Filled cells dùng dot mask",
+      "Kiểm tra consistency pattern này với các flow tương tự trong app",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-010",
+    "hiện_trạng": "Bottom-menu 'Chức năng khác' (artboard 1501) chỉ có 2 items (Giấy xác nhận, Thông tin sổ). 2-item menu overhead: bottom sheet for 2 items = over-engineered.",
+    "tác_động": "2 items don't justify a bottom sheet. Could be inline buttons. Bottom sheet adds interaction step.",
+    "nguyên_tắc": "Hick's Law: 2 options = hiển thị inline. Bottom sheet justified for 4+ items.",
+    "references": [
+      {
+        "name": "Hick's Law",
+        "url": "https://lawsofux.com/hicks-law/",
+        "quote": "Decision time increases with choices.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm vào header bottom-menu: \"Tài khoản ****7288 — Chức năng khác\" để người dùng xác nhận đang thao tác đúng tài khoản",
+      "Highlight active state rõ ràng (bold + underline hoặc accent color)",
+      "Support swipe gesture giữa các tab trên mobile"
+    ]
+  },
+  {
+    "id": "UXP-011",
+    "hiện_trạng": "Camera face scan screen (artboard 1503): no explicit 'Huỷ' button. Only small back arrow in header. người dùng may feel trapped in camera mode.",
+    "tác_động": "Camera = permission-intensive screen. người dùng phải feel they can exit immediately. Small back arrow ≠ clear exit.",
+    "nguyên_tắc": "Nielsen #3: Camera/biometric screens need prominent cancel button.",
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Emergency exit needed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm nút \"Huỷ\" / \"Thoát\" ở góc dưới hoặc text button rõ hơn bên dưới khung camera",
+      "Đảm bảo người dùng có thể undo hoặc thoát ở mọi bước trong flow",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-012",
+    "hiện_trạng": "Error screen (artboard 1504): 'Thoát' và 'Thử lại' cùng style, cùng prominence. Primary action unclear.",
+    "tác_động": "'Thử lại' should be primary (người dùng's goal = complete settlement). 'Thoát' = secondary escape.",
+    "nguyên_tắc": "Nielsen #8: CTA hierarchy. Primary (filled) vs secondary (outlined/text).",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Visual hierarchy.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "\"Thử lại\": filled primary button. \"Thoát\": outlined secondary hoặc text button",
+      "Loại bỏ thông tin thừa — chỉ hiển thị content cần thiết cho task hiện tại",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TK4-001",
+    "hiện_trạng": "Account numbers fully visible — PII exposure.",
+    "tác_động": "Must mask by default.",
+    "nguyên_tắc": "Nielsen #5: Default masking.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent problems.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TK4-001",
+    "hiện_trạng": "20+ fields flat list — no grouping.",
+    "tác_động": "Information overload for financial decision.",
+    "nguyên_tắc": "Miller's Law: Chunk into sections.",
+    "references": [
+      {
+        "name": "Miller's Law",
+        "url": "https://lawsofux.com/millers-law/",
+        "quote": "7±2 items.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TK4-001",
+    "hiện_trạng": "Bottom-menu header chỉ 'Chức năng khác' — generic title.",
+    "tác_động": "No context: 'Chức năng khác' of what? Nên: 'Chức năng tất toán'.",
+    "nguyên_tắc": "Nielsen #2: Context-specific titles.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Speak users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #2 để cải thiện trải nghiệm",
+      "Khắc phục: No context: 'Chức năng khác' of what? Nên: 'Chức năng tất toán'.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#7@SCR-TK4-001",
+    "hiện_trạng": "Success popup: icon + message + 'Đóng' — minimal feedback.",
+    "tác_động": "Settlement success without details = trust gap.",
+    "nguyên_tắc": "Nielsen #1: Success needs result details.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TK4-002",
+    "hiện_trạng": "Popup 'Huỷ'/'Đồng ý' giống nhau style — no hierarchy.",
+    "tác_động": "Equal buttons on destructive xác nhận.",
+    "nguyên_tắc": "Nielsen #5: Button hierarchy for destructive actions.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent problems.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TK4-002",
+    "hiện_trạng": "OTP bottom-sheet thiếu giao dịch summary.",
+    "tác_động": "Blind OTP xác nhận — no context shown.",
+    "nguyên_tắc": "Nielsen #6: giao dịch context in OTP.",
+    "references": [
+      {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize memory load.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung giao dịch summary vào thiết kế màn hình",
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-TK4-002",
+    "hiện_trạng": "OTP cells ~44px, no active focus state visibility.",
+    "tác_động": "người dùng không thể see which cell is active.",
+    "nguyên_tắc": "Nielsen #1: Active state visibility.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Tăng kích thước vùng chạm tối thiểu 44×44dp theo chuẩn WCAG 2.5.5",
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TK4-002",
+    "hiện_trạng": "No resend mechanism for OTP.",
+    "tác_động": "OTP not received → người dùng stuck.",
+    "nguyên_tắc": "Nielsen #1: Timer + resend bắt buộc.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#7@SCR-TK4-002",
+    "hiện_trạng": "No wrong-PIN artboard — trạng thái lỗi not designed.",
+    "tác_động": "Dev must improvise wrong PIN feedback.",
+    "nguyên_tắc": "Nielsen #9: Error states must be designed.",
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Indicate problem.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TK4-003",
+    "hiện_trạng": "No loading indicator during face scan auto-capture.",
+    "tác_động": "người dùng doesn't know system is actively scanning.",
+    "nguyên_tắc": "Nielsen #1: Processing feedback.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm trạng thái loading với skeleton hoặc spinner kèm message giải thích",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TK4-003",
+    "hiện_trạng": "Only small back arrow as exit — no prominent cancel button on camera screen.",
+    "tác_động": "người dùng feels trapped in camera mode.",
+    "nguyên_tắc": "Nielsen #3: Prominent exit for permission-heavy screens.",
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Emergency exit.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#2@SCR-TK4-004",
+    "hiện_trạng": "thông báo lỗi generic — no specific face scan failure reason.",
+    "tác_động": "người dùng retries giống nhau way → giống nhau failure.",
+    "nguyên_tắc": "Nielsen #9: Specific error guidance.",
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Suggest solution.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TK4-004",
+    "hiện_trạng": "'Thoát'/'Thử lại' giống nhau style — no CTA hierarchy.",
+    "tác_động": "Primary action unclear on error screen.",
+    "nguyên_tắc": "Nielsen #8: CTA hierarchy.",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Visual hierarchy.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TK4-004",
+    "hiện_trạng": "No retry counter shown — người dùng doesn't know remaining attempts.",
+    "tác_động": "Unlimited perceived retries or sudden lockout without warning.",
+    "nguyên_tắc": "Nielsen #1: Attempt counter = system status for security flows.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #1 để cải thiện trải nghiệm",
+      "Khắc phục: Unlimited perceived retries or sudden lockout without warning.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  }
+]

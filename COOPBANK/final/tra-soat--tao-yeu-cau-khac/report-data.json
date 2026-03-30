@@ -1,0 +1,1015 @@
+{
+  "meta": {
+    "client_name": "Co-opBank",
+    "product_name": "Co-opBank Mobile Banking",
+    "module_name": "Tạo yêu cầu tra soát khác",
+    "domain": "Banking",
+    "section": "",
+    "module_dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/tra-soat--tao-yeu-cau-khac"
+  },
+  "stats": {
+    "screen_count": 5,
+    "check_count": 44,
+    "gap_count": 13,
+    "pass_count": 31,
+    "proposal_count": 10,
+    "overall_score": 70,
+    "overall_score_color": "#15803d",
+    "overall_score_offset": 96,
+    "overall_weighted_score": 85,
+    "severity_counts": {
+      "critical": 3,
+      "major": 4,
+      "minor": 3
+    }
+  },
+  "screens": [
+    {
+      "id": "SCR-TRK-001",
+      "name": "Tra soát khiếu nại › Danh sách (`SCR-TRK-001`)",
+      "type": "list",
+      "score": 83,
+      "score_color": "#15803d",
+      "score_offset": 27,
+      "weighted_score": 94,
+      "gap_count": 1,
+      "artboard_count": 1
+    },
+    {
+      "id": "SCR-TRK-002",
+      "name": "Tạo yêu cầu tra soát › Form nhập thông tin (empty) (`SCR-TRK-002`)",
+      "type": "form",
+      "score": 67,
+      "score_color": "#c2410c",
+      "score_offset": 52,
+      "weighted_score": 81,
+      "gap_count": 3,
+      "artboard_count": 1
+    },
+    {
+      "id": "SCR-TRK-003",
+      "name": "Tạo yêu cầu tra soát › Form nhập thông tin (filled) (`SCR-TRK-003`)",
+      "type": "form",
+      "score": 71,
+      "score_color": "#15803d",
+      "score_offset": 46,
+      "weighted_score": 100,
+      "gap_count": 2,
+      "artboard_count": 1
+    },
+    {
+      "id": "SCR-TRK-004",
+      "name": "Xác nhận yêu cầu tra soát › Xác nhận giao dịch (`SCR-TRK-004`)",
+      "type": "confirm",
+      "score": 58,
+      "score_color": "#c2410c",
+      "score_offset": 66,
+      "weighted_score": 69,
+      "gap_count": 5,
+      "artboard_count": 3
+    },
+    {
+      "id": "SCR-TRK-005",
+      "name": "Kết quả giao dịch › Kết quả tra soát (`SCR-TRK-005`)",
+      "type": "result",
+      "score": 80,
+      "score_color": "#15803d",
+      "score_offset": 31,
+      "weighted_score": 90,
+      "gap_count": 2,
+      "artboard_count": 1
+    }
+  ],
+  "uxps": [
+    {
+      "id": "UXP-001",
+      "severity": "Critical",
+      "screen_tag": "Xác nhận yêu cầu tra soát › Xác nhận giao dịch",
+      "problem": "OTP bottom sheet thiếu countdown timer và nút \"Gửi lại OTP\" — vi phạm DDL `otp-input-1` spec (`canResend`, `timeLeft` states)",
+      "gap_ref": "Check #6",
+      "ddl_ref": "`COMP:otp-input-1`",
+      "solution": "Bổ sung: (1) Countdown timer \"Mã OTP hết hạn sau: 1:00\" bên dưới 6 cells, (2) Nút \"Gửi lại mã\" (disabled trong countdown, active sau 60s), (3) Acti...",
+      "screenshot_path": "ui/tra-soat-khac-3.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "Keep users informed about what is going on.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Precisely indicate the problem.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "OTP cho tra soát giao dịch = financial dispute → cần full security UX. Timer expired silently → rejection. No resend → restart entire complaint.",
+      "heuristic": "Nielsen #1: OTP timer = time-critical status. DDL spec mandates canResend + timeLeft states.",
+      "ref_count": 3,
+      "_enriched_ref": {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "OTP bottom sheet thiếu countdown timer và nút 'Gửi lại OTP' — vi phạm DDL otp-input-1 spec. 6 cells without time feedback.",
+      "solution_steps": [
+        "Countdown: 02:00 visible next to OTP cells",
+        "Resend after 30s cooldown",
+        "Auto-focus first cell",
+        "trạng thái lỗi: red border + 'OTP không đúng'"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-002",
+      "severity": "Critical",
+      "screen_tag": "Xác nhận yêu cầu tra soát › Xác nhận giao dịch",
+      "problem": "Trường \"Loại giai dịch\" có typo — đúng là \"Loại giao dịch\". Lỗi chính tả trên màn xác nhận gây mất tin tưởng (Trust paramount)",
+      "gap_ref": "Check #4",
+      "ddl_ref": "`UXG-CONTENT-01`",
+      "solution": "Sửa \"giai\" → \"giao\" trong label trường. Audit toàn bộ labels trong flow để phát hiện typo tương tự",
+      "screenshot_path": "ui/tra-soat-khac-3.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #4 — Consistency and Standards",
+          "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+          "quote": "Users should not have to wonder whether different words mean the same thing.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Typo on dispute xác nhận = severe trust issue. If app can't spell correctly, how trustworthy is the dispute resolution process?",
+      "heuristic": "Nielsen #4: Typographic precision bắt buộc. Financial disputes = zero-tolerance for text errors.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Typo: 'Loại giai dịch' — đúng là 'Loại giao dịch'. Lỗi chính tả trên màn xác nhận tra soát.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Sửa \"giai\" → \"giao\" trong label trường. Audit toàn bộ labels trong flow để phát hiện typo tương tự",
+        "Kiểm tra consistency pattern này với các flow tương tự trong app",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-003",
+      "severity": "Critical",
+      "screen_tag": "Xác nhận yêu cầu tra soát › Chi tiết giao dịch (bottom sheet)",
+      "problem": "\"Trạng thái giao dịch: Label 2\" — giá trị placeholder chưa được thay thế bằng trạng thái thực. Hiển thị \"Label 2\" trên màn client-facing là lỗi nghiêm trọng",
+      "gap_ref": "Check #10",
+      "ddl_ref": "`UXG-CONTENT-01`",
+      "solution": "Map \"Label 2\" sang giá trị thực: \"Thành công\" / \"Đang xử lý\" / \"Thất bại\" với badge màu semantic tương ứng (green/orange/red)",
+      "screenshot_path": "ui/tra-soat-mobile-11.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Nielsen #2 — Match Between System and Real World",
+          "url": "https://www.nngroup.com/articles/match-system-real-world/",
+          "quote": "Speak the users' language.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Placeholder 'Label 2' in production-facing design = critical QA gap. người dùng sees 'Label 2' → 'App broken?'. Destroys trust completely on dispute screen.",
+      "heuristic": "Nielsen #2: Real content bắt buộc. Placeholder in xác nhận screen = design review failure.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "'Trạng thái giao dịch: Label 2' — placeholder text chưa replaced. Raw placeholder visible trên xác nhận screen.",
+      "solution_steps": [
+        "thay thế 'Label 2' with actual status: 'Đang xử lý' / 'Chờ xác nhận'",
+        "QA: scan all designs for 'Label' pattern",
+        "Design review checklist: no placeholders in final designs"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-004",
+      "severity": "Major",
+      "screen_tag": "Tạo yêu cầu tra soát › Form nhập thông tin",
+      "problem": "9 fields trong 1 màn không có grouping — Hick's Law: quá nhiều lựa chọn visual cùng lúc gây cognitive overload",
+      "gap_ref": "Check #7",
+      "ddl_ref": "`UXG-FORM-03`",
+      "solution": "Chia form thành 2 sections: (1) \"Thông tin giao dịch\" (Ngày, Loại, Số TK, Số tiền, Số thẻ nhận, Mã GD) và (2) \"Thông tin tra soát\" (Lý do, Nội dung...",
+      "screenshot_path": "ui/tra-soat-khac-1.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Hick's Law",
+          "url": "https://lawsofux.com/hicks-law/",
+          "quote": "Decision time increases with number and complexity of choices.",
+          "source": "Laws of UX"
+        },
+        {
+          "name": "Miller's Law",
+          "url": "https://lawsofux.com/millers-law/",
+          "quote": "7±2 items in working memory.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "9 ungrouped fields → người dùng overwhelmed. Can't quickly identify which fields complete, which need input.",
+      "heuristic": "Hick's Law: Too many choices simultaneously. Miller's Law: Group into sections.",
+      "ref_count": 3,
+      "hiện_trạng": "9 fields trong 1 màn không có grouping — flat list gây cognitive overload. Dispute form without sections.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Chia form thành 2 sections:",
+        "\"Thông tin giao dịch\" (Ngày, Loại, Số TK, Số tiền, Số thẻ nhận, Mã GD) và",
+        "\"Thông tin tra soát\" (Lý do, Nội dung..."
+      ]
+    },
+    {
+      "id": "UXP-005",
+      "severity": "Major",
+      "screen_tag": "Tạo yêu cầu tra soát › Form nhập thông tin",
+      "problem": "Các fields không có placeholder text gợi ý format — người dùng không biết nhập gì. Đặc biệt: \"Ngày giao dịch\" thiếu hint \"DD/MM/YYYY\", \"Mã giao dịch\" thiếu \"Ví dụ: #123456\"",
+      "gap_ref": "Check #3, Check #4",
+      "ddl_ref": "`COMP:text-input-1`",
+      "solution": "Thêm placeholder cho mỗi field. Ngày GD: \"DD/MM/YYYY\". Mã GD: \"Xem trong lịch sử giao dịch\". Nội dung: \"Mô tả chi tiết vấn đề...\"",
+      "screenshot_path": "ui/tra-soat-khac-1.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+          "quote": "Labels provided when content requires user input.",
+          "source": "W3C"
+        }
+      ],
+      "user_impact": "No placeholder → người dùng guesses format → error → frustration. Especially critical: date format, giao dịch ID format.",
+      "heuristic": "WCAG 3.3.2: Labels or instructions when người dùng input bắt buộc.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Form fields thiếu placeholder text gợi ý format — 'Ngày giao dịch' không hint format (dd/mm/yyyy). người dùng doesn't know expected input format.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm placeholder cho mỗi field. Ngày GD: \"DD/MM/YYYY\". Mã GD: \"Xem trong lịch sử giao dịch\". Nội dung: \"Mô tả chi tiết vấn đề...\"",
+        "xác minh implementation trên cả iOS và Android — đảm bảo nhất quán",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-006",
+      "severity": "Major",
+      "screen_tag": "Xác nhận yêu cầu tra soát › Chi tiết giao dịch (bottom sheet)",
+      "problem": "Close button \"×\" trong bottom sheet có size 20×20px — dưới ngưỡng touch target 44×44px (Fitts's Law). User khó dismiss bottom sheet",
+      "gap_ref": "Check #9",
+      "ddl_ref": "`UXG-ACC-01`",
+      "solution": "Tăng hit area của \"×\" lên 44×44px (có thể giữ icon nhỏ với padding). Hoặc thêm drag handle ở top của bottom sheet để dismiss bằng swipe",
+      "screenshot_path": "ui/tra-soat-mobile-11.png",
+      "_img_tier": 1,
+      "references": [
+        {
+          "name": "Fitts's Law",
+          "url": "https://lawsofux.com/fittss-law/",
+          "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "20px close button = nearly impossible to tap accurately on mobile. người dùng frustrated trying to dismiss bottom sheet.",
+      "heuristic": "Fitts's Law: 44px minimum. 20px = less than half bắt buộc size.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Close button '×' trong bottom sheet size 20×20px — dưới 44×44px minimum touch target.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Tăng vùng chạm của \"×\" lên 44×44px (có thể giữ icon nhỏ với padding). Hoặc thêm drag handle ở top của bottom sheet để dismiss bằng swipe",
+        "Audit toàn bộ interactive elements trong màn hình — đảm bảo tất cả ≥ 44×44px",
+        "Test trên thiết bị thực với ngón tay — xác minh không bị mis-tap adjacent elements"
+      ]
+    },
+    {
+      "id": "UXP-007",
+      "severity": "Major",
+      "screen_tag": "Kết quả giao dịch › Kết quả tra soát",
+      "problem": "\"trong thời gian tra soát quy định\" — quá mơ hồ, không có SLA cụ thể. User không biết phải chờ bao lâu (Doherty Threshold: user cần feedback về khi nào kết quả đến)",
+      "gap_ref": "Check #7",
+      "ddl_ref": "`COMP:receipt-preview-1`",
+      "solution": "Thêm SLA cụ thể: \"Co-opBank sẽ xử lý và thông báo kết quả trong vòng **5-7 ngày làm việc**\"",
+      "screenshot_path": "ui/tra-soat-khac-6.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "Keep users informed.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Vague timeline = anxiety. người dùng keeps checking app daily. Specific SLA: '15 ngày làm việc' sets expectations and reduces support calls.",
+      "heuristic": "Nielsen #1: Expected timeline = system status. Doherty: Time expectation reduces perceived wait.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "'Trong thời gian tra soát quy định' — mơ hồ, không có SLA cụ thể. người dùng không biết chờ 3 ngày, 30 ngày, hay 90 ngày.",
+      "solution_steps": [
+        "'Thời gian xử lý dự kiến: 15 ngày làm việc'",
+        "Progress tracker: Đã tiếp nhận → Đang xử lý → Hoàn thành",
+        "Push notification when status changes"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-008",
+      "severity": "Minor",
+      "screen_tag": "Kết quả giao dịch › Kết quả tra soát",
+      "problem": "\"Mã tra soát: UT123123\" không có tap-to-copy. User cần mã này để follow-up với ngân hàng",
+      "gap_ref": "Check #4",
+      "ddl_ref": "`UXG-DATA-01`",
+      "solution": "Thêm copy icon bên cạnh UT123123. Tap → toast \"Đã sao chép mã tra soát\"",
+      "screenshot_path": "ui/tra-soat-khac-6.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+          "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+          "quote": "Shortcuts speed up the interaction.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Reference code without copy = manual transcription. Error-prone when calling bank: 'UT123123' → người dùng types 'UT12312' wrong.",
+      "heuristic": "Nielsen #7: Copy-to-clipboard shortcut essential for reference numbers.",
+      "ref_count": 2,
+      "hiện_trạng": "Mã tra soát 'UT123123' không có tap-to-copy. người dùng cần this code for follow-up with bank.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm copy icon bên cạnh UT",
+        "Tap → toast \"Đã sao chép mã tra soát\""
+      ]
+    },
+    {
+      "id": "UXP-009",
+      "severity": "Minor",
+      "screen_tag": "Tạo yêu cầu tra soát › Form nhập thông tin (đã điền)",
+      "problem": "Character counter \"6/500\" cho Nội dung tra soát có màu gray nhạt (~#999999) trên nền trắng — est. contrast 2.3:1, dưới ngưỡng WCAG AA 4.5:1",
+      "gap_ref": "Check #3",
+      "ddl_ref": "`TOKEN:base.muted-foreground`",
+      "solution": "Dùng màu counter ≥ #767676 (contrast 4.54:1 vs white). Hoặc dùng token `base.muted-foreground` đã pass WCAG",
+      "screenshot_path": "ui/tra-soat-khac-1.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "WCAG 1.4.3 — Contrast (Minimum) (Level AA)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+          "quote": "Text has a contrast ratio of at least 4.5:1.",
+          "source": "W3C"
+        }
+      ],
+      "user_impact": "Low contrast counter = invisible for low-vision người dùng. They won't know remaining characters.",
+      "heuristic": "WCAG 1.4.3: Minimum 4.5:1 contrast for text.",
+      "ref_count": 2,
+      "hiện_trạng": "Character counter '6/500' color gray ~#999999 trên white bg — estimated contrast ratio ~2.8:1, below WCAG 4.5:1 minimum.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Dùng màu counter ≥ #767676 (contrast 4.54:1 vs white). Hoặc dùng token `base.muted-foreground` đã pass WCAG",
+        "Real-time update counter khi selection thay đổi",
+        "Disable thêm khi đạt max — hiển thị tooltip \"Đã đạt giới hạn N\""
+      ]
+    },
+    {
+      "id": "UXP-010",
+      "severity": "Minor",
+      "screen_tag": "Tra soát khiếu nại › Danh sách",
+      "problem": "Tab \"Tra cứu yêu cầu\" không có badge count — người dùng không biết có bao nhiêu yêu cầu đang xử lý",
+      "gap_ref": "Check #6",
+      "ddl_ref": "`UXG-NAV-01`",
+      "solution": "Thêm badge số (VD \"2\") vào tab \"Tra cứu yêu cầu\" khi có yêu cầu đang chờ xử lý",
+      "screenshot_path": "ui/tra-soat-khac-0.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "Keep users informed.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "No badge = no reason to check. người dùng forgets about pending disputes. Badge '3' = 'I have 3 active disputes, let me check.'",
+      "heuristic": "Nielsen #1: Pending count = system status for ongoing processes.",
+      "ref_count": 2,
+      "hiện_trạng": "Tab 'Tra cứu yêu cầu' không có badge count — người dùng không biết có bao nhiêu yêu cầu đang xử lý.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm badge số (VD \"2\") vào tab \"Tra cứu yêu cầu\" khi có yêu cầu đang chờ xử lý",
+        "Color coding nhất quán: đỏ = urgent/overdue, vàng = attention, xanh = info",
+        "Hiển thị persistent (không auto-dismiss) cho critical alerts"
+      ]
+    }
+  ],
+  "gaps_by_screen": [
+    {
+      "screen_id": "SCR-TRK-001",
+      "screen_name": "Tra soát khiếu nại › Danh sách (`SCR-TRK-001`)",
+      "screen_type": "list",
+      "gaps": [
+        {
+          "num": 6,
+          "title": "Empty area bên dưới 2 items có guidance",
+          "ref": "UXG-EMPTY-01",
+          "severity": "Minor",
+          "user_impact": "Dead space without helpful info.",
+          "heuristic": "Nielsen #8: Purposeful use of space.",
+          "evidence": "From ảnh: Vùng dưới 2 items = gray trống, không có micro-copy guidance \"Chọn loại tra soát để bắt đầu\"",
+          "screenshot": "tra-soat-khac-0.png",
+          "screen_id": "SCR-TRK-001",
+          "screen_name": "Tra soát khiếu nại › Danh sách",
+          "screen_type": "list",
+          "screenshot_path": "ui/tra-soat-khac-0.png",
+          "_img_tier": 5,
+          "description": "Empty gray area below 2 items — no guidance content.",
+          "ddl_evidence": "UXG-EMPTY-01",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+              "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+              "quote": "Every element should serve purpose.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Empty gray area below 2 items — no guidance content.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-TRK-002",
+      "screen_name": "Tạo yêu cầu tra soát › Form nhập thông tin (empty) (`SCR-TRK-002`)",
+      "screen_type": "form",
+      "gaps": [
+        {
+          "num": 3,
+          "title": "Placeholder text gợi ý format",
+          "ref": "COMP:text-input-1",
+          "severity": "Minor",
+          "user_impact": "người dùng doesn't know input format.",
+          "heuristic": "WCAG 3.3.2: Input instructions.",
+          "evidence": "From ảnh: Không có placeholder text trong bất kỳ field nào — fields trống không có hint",
+          "screenshot": "tra-soat-khac-1.png",
+          "screen_id": "SCR-TRK-002",
+          "screen_name": "Tạo yêu cầu tra soát › Form nhập thông tin (empty)",
+          "screen_type": "form",
+          "screenshot_path": "ui/tra-soat-khac-1.png",
+          "_img_tier": 5,
+          "description": "No placeholder text in any form field.",
+          "ddl_evidence": "COMP:text-input-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "WCAG 3.3.2 — Labels or Instructions (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+              "quote": "Labels provided.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No placeholder text in any form field.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 4,
+          "title": "Helper text/context cho Mã giao dịch",
+          "ref": "COMP:text-input-1",
+          "severity": "Minor",
+          "user_impact": "người dùng doesn't know where giao dịch code is: 'Check giao dịch history'.",
+          "heuristic": "Nielsen #6: Contextual help.",
+          "evidence": "From ảnh: Không có helper text \"Xem trong lịch sử GD\" — user không biết lấy mã ở đâu",
+          "screenshot": "tra-soat-khac-1.png",
+          "screen_id": "SCR-TRK-002",
+          "screen_name": "Tạo yêu cầu tra soát › Form nhập thông tin (empty)",
+          "screen_type": "form",
+          "screenshot_path": "ui/tra-soat-khac-1.png",
+          "_img_tier": 5,
+          "description": "Mã giao dịch field — no helper text guiding where to find it.",
+          "ddl_evidence": "COMP:text-input-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Minimize memory load.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Mã giao dịch field — no helper text guiding where to find it.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 7,
+          "title": "Form grouping — 9 fields có section header",
+          "ref": "UXG-FORM-03",
+          "severity": "Minor",
+          "user_impact": "All fields equal weight → cognitive overload.",
+          "heuristic": "Miller's Law: Sub-group long field lists.",
+          "evidence": "From ảnh: Chỉ có 1 section \"Thông tin tra soát\" cho tất cả 9 fields — thiếu chunking theo nhóm",
+          "screenshot": "tra-soat-khac-1.png",
+          "screen_id": "SCR-TRK-002",
+          "screen_name": "Tạo yêu cầu tra soát › Form nhập thông tin (empty)",
+          "screen_type": "form",
+          "screenshot_path": "ui/tra-soat-khac-1.png",
+          "_img_tier": 5,
+          "description": "9 fields under single section header — no sub-grouping.",
+          "ddl_evidence": "UXG-FORM-03",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Miller's Law",
+              "url": "https://lawsofux.com/millers-law/",
+              "quote": "7±2 items.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "9 fields under single section header — no sub-grouping.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-TRK-003",
+      "screen_name": "Tạo yêu cầu tra soát › Form nhập thông tin (filled) (`SCR-TRK-003`)",
+      "screen_type": "form",
+      "gaps": [
+        {
+          "num": 3,
+          "title": "Character counter contrast đủ WCAG",
+          "ref": "TOKEN:base.muted-foreground",
+          "severity": "Minor",
+          "user_impact": "Below WCAG 4.5:1 minimum.",
+          "heuristic": "WCAG 1.4.3: Contrast minimum.",
+          "evidence": "From ảnh: Counter gray (~#999999) est. contrast 2.3:1 vs white — FAIL WCAG AA (4.5:1 required)",
+          "screenshot": "tra-soat-khac-2.png",
+          "screen_id": "SCR-TRK-003",
+          "screen_name": "Tạo yêu cầu tra soát › Form nhập thông tin (filled)",
+          "screen_type": "form",
+          "screenshot_path": "ui/tra-soat-khac-2.png",
+          "_img_tier": 5,
+          "description": "Character counter gray ~#999 — contrast ~2.8:1.",
+          "ddl_evidence": "TOKEN:base.muted-foreground",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+              "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+              "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "WCAG 1.4.3 — Contrast (Minimum) (Level AA)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+              "quote": "4.5:1 contrast ratio.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Character counter gray ~#999 — contrast ~2.8:1.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "Inline validation state (valid indicator)",
+          "ref": "COMP:text-input-1",
+          "severity": "Minor",
+          "user_impact": "người dùng doesn't know if input is valid.",
+          "heuristic": "Nielsen #1: Validation feedback.",
+          "evidence": "From ảnh: Không có checkmark/indicator nào show field valid sau khi điền — user không biết field ok",
+          "screenshot": "tra-soat-khac-2.png",
+          "screen_id": "SCR-TRK-003",
+          "screen_name": "Tạo yêu cầu tra soát › Form nhập thông tin (filled)",
+          "screen_type": "form",
+          "screenshot_path": "ui/tra-soat-khac-2.png",
+          "_img_tier": 5,
+          "description": "No inline validation indicator after field completed.",
+          "ddl_evidence": "COMP:text-input-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Keep informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No inline validation indicator after field completed.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-TRK-004",
+      "screen_name": "Xác nhận yêu cầu tra soát › Xác nhận giao dịch (`SCR-TRK-004`)",
+      "screen_type": "confirm",
+      "gaps": [
+        {
+          "num": 4,
+          "title": "Label typo \"Loại giai dịch\"",
+          "ref": "UXG-CONTENT-01",
+          "severity": "Minor",
+          "user_impact": "giống nhau typo on xác nhận: trust issue.",
+          "heuristic": "Nielsen #4: Text correctness.",
+          "evidence": "From ảnh: Rõ ràng thấy \"Loại giai dịch\" thay vì \"Loại giao dịch\" — typo trên màn xác nhận",
+          "screenshot": "tra-soat-khac-3.png",
+          "screen_id": "SCR-TRK-004",
+          "screen_name": "Xác nhận yêu cầu tra soát › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/tra-soat-khac-3.png",
+          "_img_tier": 5,
+          "description": "Typo 'Loại giai dịch'.",
+          "ddl_evidence": "UXG-CONTENT-01",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+              "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+              "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "No confusion.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Typo 'Loại giai dịch'.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "OTP countdown timer",
+          "ref": "COMP:otp-input-1",
+          "severity": "Minor",
+          "user_impact": "No time feedback for OTP validity.",
+          "heuristic": "Nielsen #1: Timer bắt buộc.",
+          "evidence": "DDL `otp-input-1` spec: `timeLeft` state required. From ảnh: Không có countdown timer trong OTP sheet",
+          "screenshot": "tra-soat-khac-3.png",
+          "screen_id": "SCR-TRK-004",
+          "screen_name": "Xác nhận yêu cầu tra soát › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/tra-soat-khac-3.png",
+          "_img_tier": 5,
+          "description": "OTP thiếu countdown timer.",
+          "ddl_evidence": "COMP:otp-input-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Keep informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "OTP thiếu countdown timer.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 7,
+          "title": "OTP resend button",
+          "ref": "COMP:otp-input-1",
+          "severity": "Minor",
+          "user_impact": "người dùng stuck if OTP not received.",
+          "heuristic": "Nielsen #1: Resend = recovery path.",
+          "evidence": "DDL `otp-input-1` spec: `canResend` + resend button required. From ảnh: Chỉ có 6 cells + CTA \"Xác nhận\"",
+          "screenshot": "tra-soat-khac-3.png",
+          "screen_id": "SCR-TRK-004",
+          "screen_name": "Xác nhận yêu cầu tra soát › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/tra-soat-khac-3.png",
+          "_img_tier": 5,
+          "description": "OTP thiếu resend button.",
+          "ddl_evidence": "COMP:otp-input-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Keep informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #1 — Visibility of System Status",
+            "url": "https://www.nngroup.com/articles/visibility-system-status/",
+            "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "OTP thiếu resend button.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 9,
+          "title": "Bottom sheet close button size",
+          "ref": "UXG-ACC-01",
+          "severity": "Minor",
+          "user_impact": "Touch target violation.",
+          "heuristic": "Fitts's Law: 44px minimum.",
+          "evidence": "From ảnh tra-soat-mobile-11.png: Close \"×\" icon 20×20px — dưới ngưỡng 44px touch target",
+          "screenshot": "tra-soat-mobile-11.png",
+          "screen_id": "SCR-TRK-004",
+          "screen_name": "Xác nhận yêu cầu tra soát › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/tra-soat-mobile-11.png",
+          "_img_tier": 1,
+          "description": "Close '×' button 20×20px — tiny target.",
+          "ddl_evidence": "UXG-ACC-01",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+              "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+              "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "Target size matters.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #3 — User Control and Freedom",
+            "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+            "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Close '×' button 20×20px — tiny target.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 10,
+          "title": "\"Trạng thái giao dịch\" có giá trị thực",
+          "ref": "UXG-CONTENT-01",
+          "severity": "Minor",
+          "user_impact": "Placeholder in production = broken.",
+          "heuristic": "Nielsen #2: Real content.",
+          "evidence": "From ảnh tra-soat-mobile-11.png: \"Label 2\" - placeholder chưa map sang status thực",
+          "screenshot": "tra-soat-mobile-11.png",
+          "screen_id": "SCR-TRK-004",
+          "screen_name": "Xác nhận yêu cầu tra soát › Xác nhận giao dịch",
+          "screen_type": "confirm",
+          "screenshot_path": "ui/tra-soat-mobile-11.png",
+          "_img_tier": 1,
+          "description": "'Label 2' placeholder for giao dịch status.",
+          "ddl_evidence": "UXG-CONTENT-01",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+              "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+              "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "Real language.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "'Label 2' placeholder for giao dịch status.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-TRK-005",
+      "screen_name": "Kết quả giao dịch › Kết quả tra soát (`SCR-TRK-005`)",
+      "screen_type": "result",
+      "gaps": [
+        {
+          "num": 4,
+          "title": "Mã tra soát tap-to-copy",
+          "ref": "UXG-DATA-01",
+          "severity": "Minor",
+          "user_impact": "Manual transcription needed.",
+          "heuristic": "Nielsen #7: Copy shortcut.",
+          "evidence": "From ảnh: Không có copy icon/action cho UT123123 — user cần mã này để follow-up",
+          "screenshot": "tra-soat-khac-6.png",
+          "screen_id": "SCR-TRK-005",
+          "screen_name": "Kết quả giao dịch › Kết quả tra soát",
+          "screen_type": "result",
+          "screenshot_path": "ui/tra-soat-khac-6.png",
+          "_img_tier": 5,
+          "description": "Mã tra soát UT123123 — no copy function.",
+          "ddl_evidence": "UXG-DATA-01",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+              "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+              "quote": "Shortcuts.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Mã tra soát UT123123 — no copy function.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 7,
+          "title": "SLA thời gian xử lý cụ thể",
+          "ref": "COMP:receipt-preview-1",
+          "severity": "Minor",
+          "user_impact": "No specific timeline = anxiety.",
+          "heuristic": "Nielsen #1: Specific timeline.",
+          "evidence": "From ảnh: \"trong thời gian tra soát quy định\" — mơ hồ, không có SLA ngày cụ thể",
+          "screenshot": "tra-soat-khac-6.png",
+          "screen_id": "SCR-TRK-005",
+          "screen_name": "Kết quả giao dịch › Kết quả tra soát",
+          "screen_type": "result",
+          "screenshot_path": "ui/tra-soat-khac-6.png",
+          "_img_tier": 5,
+          "description": "Vague SLA: 'trong thời gian quy định'.",
+          "ddl_evidence": "COMP:receipt-preview-1",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Keep informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Vague SLA: 'trong thời gian quy định'.",
+          "_enriched_by": "llm"
+        }
+      ]
+    }
+  ],
+  "heuristics": [
+    {
+      "key": "flow",
+      "name_vi": "Luồng người dùng",
+      "name_en": "Flow & Navigation",
+      "score": 54,
+      "gap_count": 6
+    },
+    {
+      "key": "component",
+      "name_vi": "Thành phần",
+      "name_en": "Component & DDL",
+      "score": 0,
+      "gap_count": 3
+    },
+    {
+      "key": "visual",
+      "name_vi": "Thiết kế trực quan",
+      "name_en": "Visual Design",
+      "score": 86,
+      "gap_count": 4
+    },
+    {
+      "key": "content",
+      "name_vi": "Nội dung",
+      "name_en": "Content & Copy",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "a11y",
+      "name_vi": "Tiếp cận",
+      "name_en": "Accessibility",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "trust",
+      "name_vi": "Tin cậy & Bảo mật",
+      "name_en": "Trust & Security",
+      "score": 100,
+      "gap_count": 0
+    }
+  ],
+  "_ref_enrichment": {
+    "gap_enriched": 8,
+    "uxp_enriched": 6,
+    "sources": [
+      "enriched-data.json",
+      "official-urls.md"
+    ]
+  }
+}

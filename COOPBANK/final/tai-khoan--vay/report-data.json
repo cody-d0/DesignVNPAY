@@ -1,0 +1,1892 @@
+{
+  "meta": {
+    "client_name": "Co-opBank",
+    "product_name": "Co-opBank Mobile Banking",
+    "module_name": "Tài khoản vay",
+    "domain": "banking",
+    "section": "",
+    "module_dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/tai-khoan--vay"
+  },
+  "stats": {
+    "screen_count": 4,
+    "check_count": 45,
+    "gap_count": 29,
+    "pass_count": 16,
+    "proposal_count": 22,
+    "overall_score": 36,
+    "overall_score_color": "#b91c1c",
+    "overall_score_offset": 205,
+    "overall_weighted_score": 69,
+    "severity_counts": {
+      "critical": 5,
+      "major": 10,
+      "minor": 7
+    }
+  },
+  "screens": [
+    {
+      "id": "SCR-TAV-001",
+      "name": "Tài khoản Tổng quan (`SCR-TAV-001`)",
+      "type": "list",
+      "score": 42,
+      "score_color": "#b91c1c",
+      "score_offset": 91,
+      "weighted_score": 75,
+      "gap_count": 7,
+      "artboard_count": 1
+    },
+    {
+      "id": "SCR-TAV-002",
+      "name": "Thong tin tai khoan vay (`SCR-TAV-002`)",
+      "type": "detail",
+      "score": 33,
+      "score_color": "#b91c1c",
+      "score_offset": 105,
+      "weighted_score": 64,
+      "gap_count": 8,
+      "artboard_count": 1
+    },
+    {
+      "id": "SCR-TAV-003",
+      "name": "Chi tiet giao dich (`SCR-TAV-003`)",
+      "type": "detail",
+      "score": 44,
+      "score_color": "#b91c1c",
+      "score_offset": 88,
+      "weighted_score": 70,
+      "gap_count": 5,
+      "artboard_count": 1
+    },
+    {
+      "id": "SCR-TAV-004",
+      "name": "Lich su giao dich (`SCR-TAV-004`)",
+      "type": "list",
+      "score": 25,
+      "score_color": "#b91c1c",
+      "score_offset": 118,
+      "weighted_score": 67,
+      "gap_count": 9,
+      "artboard_count": 1
+    }
+  ],
+  "uxps": [
+    {
+      "id": "UXP-001",
+      "severity": "Critical",
+      "screen_tag": "Thông tin tài khoản vay › Chi tiết",
+      "problem": "Thiếu CTA \"Trả nợ\" / \"Thanh toán khoản vay\" — người dùng không thể thực hiện action quan trọng nhất",
+      "gap_ref": "Check #3",
+      "ddl_ref": "—",
+      "solution": "Thêm primary CTA \"Trả nợ ngay\" ở bottom action bar (height ≥ 44px, CTA color #CA8A04)",
+      "screenshot_path": "ui/account-2.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+          "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+          "quote": "Shortcuts may speed up the interaction for the expert user.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Nielsen #3 — User Control and Freedom",
+          "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+          "quote": "Users need a clearly marked 'emergency exit'.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "thiếu primary CTA = dead-end screen. người dùng phải navigate ra ngoài, tìm menu khác để trả nợ. ngân hàng #1 use case cho loan screen = repayment. Bounce rate cao khi key action absent.",
+      "heuristic": "Nielsen #7 — Flexibility: Primary action phải accessible trực tiếp từ context screen. người dùng đang xem khoản vay → next logical action = trả nợ. thiếu CTA = broken người dùng journey.",
+      "ref_count": 3,
+      "hiện_trạng": "Màn hình chi tiết khoản vay (SCR-TAV-002) thiếu CTA 'Trả nợ' / 'Thanh toán khoản vay' — người dùng xem thông tin vay nhưng không thể thực hiện action quan trọng nhất: trả nợ. Chỉ có 'Lịch sử giao dịch' link.",
+      "solution_steps": [
+        "Thêm primary CTA 'Trả nợ' (green, full-width) dưới thông tin khoản vay",
+        "Secondary CTA: 'Lịch sử giao dịch' (outlined style)",
+        "Sticky bottom bar nếu content dài: CTA always visible"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-002",
+      "severity": "Critical",
+      "screen_tag": "Tài khoản › Danh sách",
+      "problem": "Số tài khoản `12300123123000` hiển thị đầy đủ không masked",
+      "gap_ref": "Check #8",
+      "ddl_ref": "—",
+      "solution": "Mask by default: `123001••••••000`, toggle show/hide bằng eye icon",
+      "screenshot_path": "ui/account.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "The best designs carefully prevent problems from occurring in the first place.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "số tài khoản exposure = social engineering risk. Attacker biết STK → pretend to be bank → request verification. Mask theo standard: '1230***3000'.",
+      "heuristic": "Nielsen #5 — Error Prevention: Default masking prevents accidental exposure. Reveal only on explicit tap.",
+      "ref_count": 2,
+      "hiện_trạng": "Số tài khoản vay '12300123123000' hiển thị đầy đủ không masked trên SCR-TAV-001. Financial số tài khoản fully exposed.",
+      "solution_steps": [
+        "Mask số tài khoản: '1230***3000'",
+        "Eye icon toggle: tap to reveal full number 5 giây → auto-ẩn",
+        "Copy button: copies full number to clipboard (without showing on screen)"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-003",
+      "severity": "Critical",
+      "screen_tag": "Thông tin tài khoản vay › Chi tiết",
+      "problem": "PII (tên, số TK) không masked — HA NGUYEN QUANG, 012547288 exposed",
+      "gap_ref": "Check #4",
+      "ddl_ref": "—",
+      "solution": "Mask tên: \"HA •••••• QUANG\", số TK: \"•••••••288\" với toggle eye icon",
+      "screenshot_path": "ui/account-2.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "The best designs carefully prevent problems from occurring in the first place.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Full name + CMND = identity theft. ngân hàng screen showing PII to anyone who accesses phone. Must mask: 'HA N***G Q***G', CMND '0125***88'.",
+      "heuristic": "Nielsen #5: PII masking by default. Privacy by design principle — sensitive data hidden unless explicitly revealed.",
+      "ref_count": 2,
+      "hiện_trạng": "PII exposed: tên 'HA NGUYEN QUANG', CMND '012547288' hiển thị full text trên SCR-TAV-002. Sensitive personal data unmasked.",
+      "solution_steps": [
+        "Mask tên: 'HA N***G QUANG' hoặc chỉ hiện first name",
+        "Mask CMND: '0125***88'",
+        "Tap-to-reveal mechanism cho mỗi PII field"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-004",
+      "severity": "Critical",
+      "screen_tag": "Chi tiết giao dịch › Chi tiết",
+      "problem": "Không có trạng thái giao dịch (Thành công / Thất bại / Đang xử lý)",
+      "gap_ref": "Check #4",
+      "ddl_ref": "—",
+      "solution": "Thêm status badge ngay dưới header (màu xanh/đỏ/vàng tùy trạng thái)",
+      "screenshot_path": "ui/account-3.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "giao dịch status = most critical info trên biên lai. Without status badge, người dùng asks: 'Tiền đã trả thành công chưa? Cần trả lại không?' Critical trust issue cho giao dịch tài chính.",
+      "heuristic": "Nielsen #1 — Visibility: giao dịch status là system status #1 cần hiển thị prominently. Green badge 'Thành công' hoặc red 'Thất bại' phải ở top of biên lai.",
+      "ref_count": 2,
+      "hiện_trạng": "Màn biên lai/biên lai (SCR-TAV-003) không có trạng thái giao dịch: thiếu badge 'Thành công' / 'Thất bại' / 'Đang xử lý'. người dùng xem biên lai nhưng không biết giao dịch đã thành công hay chưa.",
+      "solution_steps": [
+        "Status badge at top: ✅ Thành công (green) / ❌ Thất bại (red) / ⏳ Đang xử lý (amber)",
+        "Large, prominent — first element người dùng sees on biên lai",
+        "If failed: include reason + retry CTA"
+      ],
+      "_enriched_by": "llm"
+    },
+    {
+      "id": "UXP-005",
+      "severity": "Critical",
+      "screen_tag": "Lịch sử giao dịch › Danh sách",
+      "problem": "Số TK `90997987123123123` trong balance card không masked",
+      "gap_ref": "Check #5",
+      "ddl_ref": "—",
+      "solution": "Mask: `90997••••••23123`, toggle eye icon trên balance card",
+      "screenshot_path": "ui/transaction-history.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #4 — Consistency and Standards",
+          "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+          "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "giống nhau issue as UXP-002: số tài khoản exposed. nhất quán masking policy needed across all screens.",
+      "heuristic": "Nielsen #4 — Consistency: Masking policy phải apply uniformly. All account numbers masked giống nhau way across app.",
+      "ref_count": 2,
+      "hiện_trạng": "Số TK '90997987123123123' trong số dư card trên SCR-TAV-004 không masked — hiển thị full 17 digits.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Mask: `90997••••••23123`, toggle eye icon trên số dư card",
+        "Mặc định ở masked state khi load — copy button copies full value without revealing on screen"
+      ]
+    },
+    {
+      "id": "UXP-006",
+      "severity": "Major",
+      "screen_tag": "Tài khoản › Danh sách",
+      "problem": "Section headers accordion (~24px height) dưới 44px minimum touch target",
+      "gap_ref": "Check #4, Check #6",
+      "ddl_ref": "—",
+      "solution": "Tăng row height accordion lên ≥ 44px (thêm padding-y: 12px)",
+      "screenshot_path": "ui/account.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Fitts's Law",
+          "url": "https://lawsofux.com/fittss-law/",
+          "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "Small accordion headers → mistouch → frustration. người dùng tapping adjacent row instead of header. Below WCAG minimum.",
+      "heuristic": "WCAG 2.5.8: Interactive elements minimum 44×44px. Fitts's Law: smaller targets = more errors.",
+      "ref_count": 2,
+      "hiện_trạng": "Section headers accordion trên SCR-TAV-001 có height ~24px — dưới 44px minimum touch target. Khó tap để expand/collapse sections.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Tăng row height accordion lên ≥ 44px (thêm padding-y: 12px)",
+        "Audit toàn bộ interactive elements trong màn hình — đảm bảo tất cả ≥ 44×44px",
+        "Test trên thiết bị thực với ngón tay — xác minh không bị mis-tap adjacent elements"
+      ]
+    },
+    {
+      "id": "UXP-007",
+      "severity": "Major",
+      "screen_tag": "Tài khoản › Danh sách",
+      "problem": "Không có empty state khi user chưa có khoản vay",
+      "gap_ref": "Check #3, Check #10",
+      "ddl_ref": "—",
+      "solution": "Thêm COMP:empty-state-1: icon=loan, title=\"Chưa có khoản vay\", CTA=\"Tìm hiểu vay\"",
+      "screenshot_path": "ui/account.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #6 — Recognition Rather Than Recall",
+          "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+          "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "người dùng mở 'Tài khoản vay' → blank/empty screen → confusion: 'App bị lỗi hay tôi không có vay?' trạng thái trống phải clarify + guide.",
+      "heuristic": "Nielsen #6: Empty states cần visible guidance. DDL spec: illustration + 'Bạn chưa có khoản vay' + CTA 'Tìm hiểu gói vay'.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Không có trạng thái trống khi người dùng chưa có khoản vay nào trên SCR-TAV-001. DDL empty-state-1 requires icon + title + CTA nhưng không triển khai.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm COMP:empty-state-1: icon=loan",
+        "title=\"Chưa có khoản vay\"",
+        "CTA=\"Tìm hiểu vay\""
+      ]
+    },
+    {
+      "id": "UXP-008",
+      "severity": "Major",
+      "screen_tag": "Thông tin tài khoản vay › Chi tiết",
+      "problem": "17 label-value rows không có nhóm logic — khó scan",
+      "gap_ref": "Check #3",
+      "ddl_ref": "—",
+      "solution": "Nhóm thành 4 sections: Thông tin định danh / Chi tiết khoản vay / Tình trạng nợ / Lịch trả nợ",
+      "screenshot_path": "ui/account-2.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Miller's Law",
+          "url": "https://lawsofux.com/millers-law/",
+          "quote": "The average person can only keep 7 (plus or minus 2) items in their working memory.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "17 flat rows = cognitive overload. người dùng tìm 'Số tiền còn nợ' phải scan sequential qua 17 rows. Grouping giảm scan time significantly.",
+      "heuristic": "Miller's Law: Chunk 17 items thành 4-5 groups. Gestalt Proximity: related items grouped visually.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "17 label-value rows trên SCR-TAV-002 hiển thị flat list — không nhóm logic (thông tin khoản vay, số tiền, ngày, lãi suất). Scan khó.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Nhóm thành 4 sections: Thông tin định danh / Chi tiết khoản vay / Tình trạng nợ / Lịch trả nợ",
+        "Dùng typography hierarchy: section header bold 16px, content regular 14px",
+        "Sections ít quan trọng collapsed mặc định — giảm scroll length cho majority use case"
+      ]
+    },
+    {
+      "id": "UXP-009",
+      "severity": "Major",
+      "screen_tag": "Thông tin tài khoản vay › Chi tiết",
+      "problem": "Typo: \"Ngày trả nợ lãitiếp theo\" — thiếu space giữa \"lãi\" và \"tiếp\"",
+      "gap_ref": "Check #7",
+      "ddl_ref": "—",
+      "solution": "Sửa thành \"Ngày trả nợ lãi tiếp theo\"",
+      "screenshot_path": "ui/account-2.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #4 — Consistency and Standards",
+          "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+          "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Typo trên financial data screen = thiếu chuyên nghiệp. Erodes trust: 'Nếu app viết sai chính tả, liệu tính toán tài chính có đúng?' QA gap.",
+      "heuristic": "Nielsen #4: Text consistency and correctness. Financial app requires zero-tolerance typographic QA.",
+      "ref_count": 2,
+      "hiện_trạng": "Typo: 'Ngày trả nợ lãitiếp theo' — thiếu space giữa 'lãi' và 'tiếp'. Text concatenation error.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Sửa thành \"Ngày trả nợ lãi tiếp theo\"",
+        "Review toàn bộ text trong màn hình cho các lỗi tương tự",
+        "Thêm vào checklist QA copywriting để ngăn chặn regression"
+      ]
+    },
+    {
+      "id": "UXP-010",
+      "severity": "Major",
+      "screen_tag": "Thông tin tài khoản vay › Chi tiết",
+      "problem": "Ngày đáo hạn (30/12/2021) đã qua nhưng không có visual alert",
+      "gap_ref": "Check #8",
+      "ddl_ref": "—",
+      "solution": "Thêm badge \"Đã đáo hạn\" màu đỏ kế ngày + banner cảnh báo top màn hình",
+      "screenshot_path": "ui/account-2.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on.",
+          "source": "Nielsen Norman Group"
+        },
+        {
+          "name": "Von Restorff Effect",
+          "url": "https://lawsofux.com/von-restorff-effect/",
+          "quote": "The one that differs from the rest is most likely to be remembered.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "Overdue date invisible = người dùng không nhận ra khoản vay quá hạn. ngân hàng: overdue = phí phạt tăng. Phải alert người dùng prominently.",
+      "heuristic": "Nielsen #1: Overdue status = critical system state. Von Restorff: overdue must stand out from normal items.",
+      "ref_count": 3,
+      "hiện_trạng": "Ngày đáo hạn 30/12/2021 đã qua nhưng không có visual alert, không badge, không color change. Overdue loan hiển thị giống nhau style như active loan.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm badge \"Đã đáo hạn\" màu đỏ kế ngày + banner cảnh báo top màn hình",
+        "Color coding nhất quán: đỏ = urgent/overdue, vàng = attention, xanh = info",
+        "Thêm action button: \"Thanh toán ngay\" hoặc \"Liên hệ CSKH\" trong banner"
+      ]
+    },
+    {
+      "id": "UXP-011",
+      "severity": "Major",
+      "screen_tag": "Chi tiết giao dịch › Chi tiết",
+      "problem": "Typo: \"Tra no vay T2\" — thiếu dấu câu, viết tắt không chuẩn",
+      "gap_ref": "Check #5",
+      "ddl_ref": "—",
+      "solution": "Hiển thị đầy đủ \"Trả nợ vay Tháng 2\" hoặc mô tả đủ nghĩa",
+      "screenshot_path": "ui/account-3.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #2 — Match Between System and Real World",
+          "url": "https://www.nngroup.com/articles/match-system-real-world/",
+          "quote": "The design should speak the users' language.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Abbreviation unclear + thiếu diacritics = unreadable for many người dùng. giao dịch descriptions phải full-text chuẩn: 'Trả nợ vay — Tháng 2/2021'.",
+      "heuristic": "Nielsen #2: Use clear language. Abbreviations và thiếu diacritics = fail to match real world language.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words, situations, or actions mean the same thing.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Typo: 'Tra no vay T2' — thiếu dấu tiếng Việt ('Trả nợ'), viết tắt 'T2' không rõ nghĩa (Tháng 2? Thứ 2? Lần 2?).",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Hiển thị đầy đủ \"Trả nợ vay Tháng 2\" hoặc mô tả đủ nghĩa",
+        "Dùng ngôn ngữ và mô hình tâm lý quen thuộc với người dùng ngân hàng",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-012",
+      "severity": "Major",
+      "screen_tag": "Chi tiết giao dịch › Chi tiết",
+      "problem": "Không có CTA download/share biên lai — màn hình đọc-only, ~400px trống",
+      "gap_ref": "Check #7",
+      "ddl_ref": "—",
+      "solution": "Thêm bottom action bar: \"Tải biên lai\" (PDF) + \"Chia sẻ\"",
+      "screenshot_path": "ui/account-3.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+          "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+          "quote": "Shortcuts may speed up the interaction for the expert user.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "người dùng cần biên lai để: (1) lưu trữ, (2) gửi cho bên liên quan, (3) chứng minh đã thanh toán. 0 CTAs = người dùng phải screenshot (poor quality, manual).",
+      "heuristic": "Nielsen #7: Download/share biên lai = essential ngân hàng feature. Phải có: 'Tải biên lai' + 'Chia sẻ'.",
+      "ref_count": 2,
+      "hiện_trạng": "biên lai screen (SCR-TAV-003) read-only — không có CTA download/share biên lai. ~400px blank area at bottom unused.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm bottom action bar: \"Tải biên lai\" (PDF) + \"Chia sẻ\"",
+        "Cung cấp shortcut cho expert người dùng (VD: swipe, long-press)",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-013",
+      "severity": "Major",
+      "screen_tag": "Lịch sử giao dịch › Danh sách",
+      "problem": "Filter chips height ~28px — dưới 44px minimum touch target",
+      "gap_ref": "Check #6, Check #3",
+      "ddl_ref": "—",
+      "solution": "Tăng chip height lên 44px (padding-y: 8px → 16px)",
+      "screenshot_path": "ui/transaction-history.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Fitts's Law",
+          "url": "https://lawsofux.com/fittss-law/",
+          "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "Small filter chips = mistouch between adjacent chips. '30 ngày' vs '60 ngày' chips too close → wrong filter applied.",
+      "heuristic": "WCAG 2.5.8: Minimum 44px. Fitts's Law: adjacent small targets = high error rate.",
+      "ref_count": 2,
+      "hiện_trạng": "Filter chips (30-day/60-day/90-day/Khác) trên SCR-TAV-004 height ~28px — dưới 44px minimum touch target.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Tăng chip height lên 44px (padding-y: 8px → 16px)",
+        "Audit toàn bộ interactive elements trong màn hình — đảm bảo tất cả ≥ 44×44px",
+        "Test trên thiết bị thực với ngón tay — xác minh không bị mis-tap adjacent elements"
+      ]
+    },
+    {
+      "id": "UXP-014",
+      "severity": "Major",
+      "screen_tag": "Lịch sử giao dịch › Danh sách",
+      "problem": "Help text 2 dòng ngay dưới header — cognitive overload, không thể dismiss",
+      "gap_ref": "Check #7",
+      "ddl_ref": "—",
+      "solution": "Collapse thành icon ℹ️ tap-to-expand tooltip, hoặc chỉ show once và dismiss",
+      "screenshot_path": "ui/transaction-history.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+          "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+          "quote": "Shortcuts may speed up the interaction for the expert user.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "2-line static help text eats prime real estate on every visit. Power người dùng don't need it after first visit. Should be dismissible or collapsible.",
+      "heuristic": "Nielsen #7: Progressive disclosure — help text visible for beginners, dismissible for experts.",
+      "ref_count": 2,
+      "hiện_trạng": "Help text 2 dòng ngay dưới header trên SCR-TAV-004 — cannot be dismissed. Persistent help text competing with primary content area.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Collapse thành icon ℹ️ tap-to-expand tooltip",
+        "hoặc chỉ hiển thị once và dismiss"
+      ]
+    },
+    {
+      "id": "UXP-015",
+      "severity": "Major",
+      "screen_tag": "Lịch sử giao dịch › Danh sách",
+      "problem": "Không có empty state cho khoảng thời gian không có giao dịch",
+      "gap_ref": "Check #10",
+      "ddl_ref": "—",
+      "solution": "Thêm COMP:empty-state-1: \"Không có giao dịch trong khoảng thời gian này\"",
+      "screenshot_path": "ui/transaction-history.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #6 — Recognition Rather Than Recall",
+          "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+          "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Blank filtered results = confusion: 'Filter đang active hay không có data?' trạng thái trống needed: 'Không có giao dịch trong 30 ngày qua'.",
+      "heuristic": "Nielsen #6: Filtered trạng thái trống = explicit feedback: 'Không tìm thấy kết quả cho bộ lọc hiện tại'.",
+      "ref_count": 2,
+      "_enriched_ref": {
+        "name": "Nielsen #6 — Recognition Rather Than Recall",
+        "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+        "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+        "source": "Nielsen Norman Group"
+      },
+      "hiện_trạng": "Không có trạng thái trống cho khoảng thời gian không có giao dịch trên SCR-TAV-004. Filter applied → 0 results → blank.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm COMP:empty-state-1: \"Không có giao dịch trong khoảng thời gian này\"",
+        "Thêm illustration + message giải thích và CTA để người dùng bắt đầu",
+        "Differentiate giữa \"chưa có data\" vs \"đang loading\" vs \"lỗi load\""
+      ]
+    },
+    {
+      "id": "UXP-016",
+      "severity": "Minor",
+      "screen_tag": "Tài khoản › Danh sách",
+      "problem": "Refresh icon thiếu aria-label và tooltip",
+      "gap_ref": "Check #9",
+      "ddl_ref": "—",
+      "solution": "Thêm aria-label=\"Làm mới\" + long-press tooltip",
+      "screenshot_path": "ui/account.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "WCAG 1.1.1 — Non-text Content (Level A)",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html",
+          "quote": "All non-text content has a text alternative.",
+          "source": "W3C"
+        }
+      ],
+      "user_impact": "trình đọc màn hình người dùng: 'button' without label. khả năng tiếp cận violation. Low severity but important for WCAG compliance.",
+      "heuristic": "WCAG 1.1.1: Non-text content needs text alternative. aria-label='Làm mới dữ liệu'.",
+      "ref_count": 2,
+      "hiện_trạng": "Refresh icon trên SCR-TAV-001 thiếu aria-label và tooltip. Icon-only without accessible name.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm aria-label=\"Làm mới\" + long-press tooltip",
+        "xác minh implementation trên cả iOS và Android — đảm bảo nhất quán",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-017",
+      "severity": "Minor",
+      "screen_tag": "Tài khoản › Danh sách",
+      "problem": "Không có loading/skeleton state khi fetch data",
+      "gap_ref": "Check #11, Check #12",
+      "ddl_ref": "—",
+      "solution": "Thêm skeleton loading per accordion row",
+      "screenshot_path": "ui/account.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "No trạng thái tải → người dùng perceives lag as error. Skeleton screens reduce perceived load time 40%.",
+      "heuristic": "Nielsen #1: Loading = system status. Skeleton loaders hiển thị layout while data loads.",
+      "ref_count": 2,
+      "hiện_trạng": "Không có loading/skeleton state khi fetch data trên loan screens. Data appears instantly or waits without feedback.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm skeleton loading per accordion row",
+        "Thêm phản hồi trực quan tức thì cho mọi người dùng action trong flow này",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-018",
+      "severity": "Minor",
+      "screen_tag": "Thông tin tài khoản vay › Chi tiết",
+      "problem": "Màn hình 978px không có scroll indicator",
+      "gap_ref": "Check #10",
+      "ddl_ref": "—",
+      "solution": "Thêm scrollbar indicator hoặc fade gradient ở bottom",
+      "screenshot_path": "ui/account-2.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #6 — Recognition Rather Than Recall",
+          "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+          "quote": "Minimize the user's memory load.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Long content without scroll hint → người dùng misses bottom fields (fees, dates, legal info).",
+      "heuristic": "Nielsen #6: Scroll tín hiệu tương tác needed — partial content visible hoặc gradient fade.",
+      "ref_count": 2,
+      "hiện_trạng": "Màn hình SCR-TAV-002 ~978px tall — no scroll indicator. người dùng may not discover content below fold.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm scrollbar indicator hoặc fade gradient ở bottom",
+        "hiển thị context đầy đủ on-screen — giảm memory load cho người dùng",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-019",
+      "severity": "Minor",
+      "screen_tag": "Chi tiết giao dịch › Chi tiết",
+      "problem": "Transaction ID \"4153-87675\" không có copy-to-clipboard",
+      "gap_ref": "Check #6",
+      "ddl_ref": "—",
+      "solution": "Thêm copy icon kế value, tap → copy + toast \"Đã sao chép\"",
+      "screenshot_path": "ui/account-3.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+          "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+          "quote": "Shortcuts may speed up the interaction for the expert user.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "giao dịch ID needed for disputes/complaints. Without copy: người dùng takes screenshot or writes manually — error-prone.",
+      "heuristic": "Nielsen #7: Copy shortcut = essential for reference numbers. One-tap copy saves effort.",
+      "ref_count": 2,
+      "hiện_trạng": "giao dịch ID '4153-87675' trên biên lai SCR-TAV-003 — no copy-to-clipboard function. người dùng phải manually write/remember ID.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm copy icon kế value, tap → copy + toast \"Đã sao chép\"",
+        "Timeout 5-10s — auto-dismiss sau khi hết thời gian undo",
+        "Soft delete: giữ data 30 ngày trước khi permanent delete"
+      ]
+    },
+    {
+      "id": "UXP-020",
+      "severity": "Minor",
+      "screen_tag": "Lịch sử giao dịch › Danh sách",
+      "problem": "Chip \"Khác\" không có calendar icon affordance",
+      "gap_ref": "Check #11",
+      "ddl_ref": "—",
+      "solution": "Thêm calendar icon trong chip: \"📅 Khác\"",
+      "screenshot_path": "ui/transaction-history.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #6 — Recognition Rather Than Recall",
+          "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+          "quote": "Minimize the user's memory load.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "người dùng doesn't know 'Khác' opens calendar → may not discover custom date filtering. Calendar icon = visual hint.",
+      "heuristic": "Nielsen #6: Icon tín hiệu tương tác signals interaction type. Calendar icon on 'Khác' = recognition.",
+      "ref_count": 2,
+      "hiện_trạng": "Chip 'Khác' (custom date range) trên SCR-TAV-004 không có calendar icon — no visual tín hiệu tương tác indicating it opens date picker.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Thêm calendar icon trong chip: \"📅 Khác\"",
+        "hiển thị context đầy đủ on-screen — giảm memory load cho người dùng",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    },
+    {
+      "id": "UXP-021",
+      "severity": "Minor",
+      "screen_tag": "Lịch sử giao dịch › Danh sách",
+      "problem": "Credit/Debit dùng màu xanh dương thay vì xanh lá/đỏ chuẩn",
+      "gap_ref": "Check #9",
+      "ddl_ref": "—",
+      "solution": "Credit: #16A34A (green.600), Debit: #DC2626 (red.600) + TOKEN base.destructive",
+      "screenshot_path": "ui/transaction-history.png",
+      "_img_tier": 4,
+      "references": [
+        {
+          "name": "Jakob's Law",
+          "url": "https://lawsofux.com/jakobs-law/",
+          "quote": "Users prefer your site to work the same way as all the other sites they already know.",
+          "source": "Laws of UX"
+        }
+      ],
+      "user_impact": "Universal ngân hàng color code: green = money in, red = money out. Blue for both = người dùng không thể quick-scan giao dịch type. Jakob's Law: người dùng kỳ vọng ngân hàng conventions.",
+      "heuristic": "Jakob's Law: người dùng kỳ vọng your app to work like other ngân hàng apps. Green/red = universal financial convention.",
+      "ref_count": 2,
+      "hiện_trạng": "Credit/Debit transactions trên SCR-TAV-004 dùng màu xanh dương thay vì xanh lá (credit) / đỏ (debit) — ngân hàng color convention violated.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Credit: #16A34A (green.600)",
+        "Debit: #DC2626 (red.600) + TOKEN base.destructive"
+      ]
+    },
+    {
+      "id": "UXP-022",
+      "severity": "Minor",
+      "screen_tag": "Lịch sử giao dịch › Danh sách",
+      "problem": "Không có lazy load / pull-to-refresh",
+      "gap_ref": "Check #3",
+      "ddl_ref": "—",
+      "solution": "Infinite scroll (20 items/page) + pull-to-refresh gesture",
+      "screenshot_path": "ui/transaction-history.png",
+      "_img_tier": 5,
+      "references": [
+        {
+          "name": "Nielsen #3 — User Control and Freedom",
+          "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+          "quote": "Users need a clearly marked 'emergency exit'.",
+          "source": "Nielsen Norman Group"
+        }
+      ],
+      "user_impact": "Long giao dịch history without pull-to-refresh: người dùng không thể xác minh latest data. Lazy load prevents initial performance hit.",
+      "heuristic": "Nielsen #3: Pull-to-refresh = người dùng control over data freshness.",
+      "ref_count": 2,
+      "hiện_trạng": "giao dịch history SCR-TAV-004 — no lazy load/pull-to-refresh mechanism. Full list loads once or paginates without người dùng control.",
+      "_enriched_by": "llm",
+      "solution_steps": [
+        "Infinite scroll (20 items/page) + pull-to-refresh gesture",
+        "Đảm bảo người dùng có thể undo hoặc thoát ở mọi bước trong flow",
+        "Regression test sau triển khai — đảm bảo không break existing flow"
+      ]
+    }
+  ],
+  "gaps_by_screen": [
+    {
+      "screen_id": "SCR-TAV-001",
+      "screen_name": "Tài khoản Tổng quan (`SCR-TAV-001`)",
+      "screen_type": "list",
+      "gaps": [
+        {
+          "num": 3,
+          "title": "Empty state design for 0 loan accounts",
+          "ref": "COMP:empty-state-1",
+          "severity": "Minor",
+          "user_impact": "No loans → blank screen → người dùng confused.",
+          "heuristic": "Nielsen #6: trạng thái trống needs guidance + CTA.",
+          "evidence": "DDL empty-state-1 requires icon+title+CTA. From ảnh: no empty state visible",
+          "screenshot": "account.png",
+          "screen_id": "SCR-TAV-001",
+          "screen_name": "Tài khoản Tổng quan",
+          "screen_type": "list",
+          "screenshot_path": "ui/account.png",
+          "_img_tier": 5,
+          "description": "trạng thái trống design thiếu cho 0 loan accounts. DDL empty-state-1 requires icon+title+CTA.",
+          "ddl_evidence": "COMP:empty-state-1",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 2,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "trạng thái trống design thiếu cho 0 loan accounts. DDL empty-state-1 requires icon+title+CTA.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 4,
+          "title": "Accordion touch target ≥ 44px",
+          "ref": "fitts",
+          "severity": "Minor",
+          "user_impact": "Small touch target = mistouch.",
+          "heuristic": "Fitts's Law: Minimum 44px for interactive elements.",
+          "evidence": "From ảnh: section header row ~24px height — below 44px minimum",
+          "screenshot": "account.png",
+          "screen_id": "SCR-TAV-001",
+          "screen_name": "Tài khoản Tổng quan",
+          "screen_type": "list",
+          "screenshot_path": "ui/account.png",
+          "_img_tier": 5,
+          "description": "Accordion section header ~24px height — below 44px touch target minimum.",
+          "ddl_evidence": "fitts",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Fitts's Law",
+            "url": "https://lawsofux.com/fittss-law/",
+            "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+            "source": "Laws of UX"
+          },
+          "hiện_trạng": "Accordion section header ~24px height — below 44px touch target minimum.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "Accordion touch target ≥ 44px (guideline)",
+          "ref": "UXG-061",
+          "severity": "Minor",
+          "user_impact": "Repeated touch target violation across multiple sections.",
+          "heuristic": "WCAG 2.5.8: nhất quán minimum target size.",
+          "evidence": "Section header rows below 44px minimum touch area",
+          "screenshot": "account.png",
+          "screen_id": "SCR-TAV-001",
+          "screen_name": "Tài khoản Tổng quan",
+          "screen_type": "list",
+          "screenshot_path": "ui/account.png",
+          "_img_tier": 5,
+          "description": "giống nhau as Gap#4: Section header rows below 44px minimum.",
+          "ddl_evidence": "UXG-061",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "WCAG 2.5.8 — Target Size (Level AA)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html",
+              "quote": "Target size at least 24 by 24 CSS pixels.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "giống nhau as Gap#4: Section header rows below 44px minimum.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 8,
+          "title": "Account number masked by default",
+          "ref": "UXG-189",
+          "severity": "Minor",
+          "user_impact": "PII exposure risk. Must mask by default.",
+          "heuristic": "Nielsen #5: Default masking prevents exposure.",
+          "evidence": "12300123123000 fully visible, no masking",
+          "screenshot": "account.png",
+          "screen_id": "SCR-TAV-001",
+          "screen_name": "Tài khoản Tổng quan",
+          "screen_type": "list",
+          "screenshot_path": "ui/account.png",
+          "_img_tier": 5,
+          "description": "số tài khoản 12300123123000 fully visible — no masking.",
+          "ddl_evidence": "UXG-189",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "The best designs carefully prevent problems from occurring in the first place.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "số tài khoản 12300123123000 fully visible — no masking.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 9,
+          "title": "Refresh icon has accessible label",
+          "ref": "UXG-213",
+          "severity": "Minor",
+          "user_impact": "khả năng tiếp cận gap for assistive technology người dùng.",
+          "heuristic": "WCAG 1.1.1: Non-text content needs text alternative.",
+          "evidence": "No aria-label or tooltip visible on refresh icon",
+          "screenshot": "account.png",
+          "screen_id": "SCR-TAV-001",
+          "screen_name": "Tài khoản Tổng quan",
+          "screen_type": "list",
+          "screenshot_path": "ui/account.png",
+          "_img_tier": 5,
+          "description": "Refresh icon thiếu aria-label and tooltip.",
+          "ddl_evidence": "UXG-213",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "WCAG 1.1.1 — Non-text Content (Level A)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html",
+              "quote": "All non-text content has a text alternative.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Refresh icon thiếu aria-label and tooltip.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 10,
+          "title": "Empty state for 0 data sections",
+          "ref": "UXG-074",
+          "severity": "Minor",
+          "user_impact": "thiếu guidance when no data available.",
+          "heuristic": "Nielsen #6: Empty states guide người dùng.",
+          "evidence": "No empty state design present",
+          "screenshot": "account.png",
+          "screen_id": "SCR-TAV-001",
+          "screen_name": "Tài khoản Tổng quan",
+          "screen_type": "list",
+          "screenshot_path": "ui/account.png",
+          "_img_tier": 5,
+          "description": "No trạng thái trống for 0-data sections on loan list screen.",
+          "ddl_evidence": "UXG-074",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 2,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No trạng thái trống for 0-data sections on loan list screen.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 12,
+          "title": "Loading skeleton state",
+          "ref": "UXG-165",
+          "severity": "Minor",
+          "user_impact": "thiếu loading feedback during data fetch.",
+          "heuristic": "Nielsen #1: Loading status must be visible.",
+          "evidence": "No skeleton loading state found",
+          "screenshot": "account.png",
+          "screen_id": "SCR-TAV-001",
+          "screen_name": "Tài khoản Tổng quan",
+          "screen_type": "list",
+          "screenshot_path": "ui/account.png",
+          "_img_tier": 5,
+          "description": "No skeleton trạng thái tải for loan data fetch.",
+          "ddl_evidence": "UXG-165",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "The design should always keep users informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No skeleton trạng thái tải for loan data fetch.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-TAV-002",
+      "screen_name": "Thong tin tai khoan vay (`SCR-TAV-002`)",
+      "screen_type": "detail",
+      "gaps": [
+        {
+          "num": 2,
+          "title": "Single primary CTA reduces cognitive load",
+          "ref": "hick",
+          "severity": "Minor",
+          "user_impact": "Primary use case thiếu. Single secondary CTA insufficient.",
+          "heuristic": "Nielsen #7: Primary action must be most prominent.",
+          "evidence": "CTA \"Lịch sử giao dịch\" present but critical \"Trả nợ\" action missing",
+          "screenshot": "account-2.png",
+          "screen_id": "SCR-TAV-002",
+          "screen_name": "Thong tin tai khoan vay",
+          "screen_type": "detail",
+          "screenshot_path": "ui/account-2.png",
+          "_img_tier": 5,
+          "description": "Only 'Lịch sử giao dịch' CTA — thiếu critical 'Trả nợ' primary action.",
+          "ddl_evidence": "hick",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Hick's Law",
+              "url": "https://lawsofux.com/hicks-law/",
+              "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+              "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+              "quote": "Shortcuts may speed up interaction.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Hick's Law",
+            "url": "https://lawsofux.com/hicks-law/",
+            "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+            "source": "Laws of UX"
+          },
+          "hiện_trạng": "Only 'Lịch sử giao dịch' CTA — thiếu critical 'Trả nợ' primary action.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 4,
+          "title": "PII masked by default",
+          "ref": "UXG-189",
+          "severity": "Minor",
+          "user_impact": "Identity theft risk. PII must be masked by default.",
+          "heuristic": "Nielsen #5: Default masking.",
+          "evidence": "HA NGUYEN QUANG + 012547288 fully visible",
+          "screenshot": "account-2.png",
+          "screen_id": "SCR-TAV-002",
+          "screen_name": "Thong tin tai khoan vay",
+          "screen_type": "detail",
+          "screenshot_path": "ui/account-2.png",
+          "_img_tier": 5,
+          "description": "PII (name + CMND) fully visible — no masking.",
+          "ddl_evidence": "UXG-189",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Prevent problems from occurring.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "PII (name + CMND) fully visible — no masking.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 5,
+          "title": "Information grouped into logical sections",
+          "ref": "UXG-022",
+          "severity": "Minor",
+          "user_impact": "Information overload. khó tìm specific data points.",
+          "heuristic": "Miller's Law: Chunk into digestible groups.",
+          "evidence": "17 rows as flat list — no grouping visible",
+          "screenshot": "account-2.png",
+          "screen_id": "SCR-TAV-002",
+          "screen_name": "Thong tin tai khoan vay",
+          "screen_type": "detail",
+          "screenshot_path": "ui/account-2.png",
+          "_img_tier": 5,
+          "description": "17 rows flat list — no logical grouping.",
+          "ddl_evidence": "UXG-022",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Miller's Law",
+              "url": "https://lawsofux.com/millers-law/",
+              "quote": "Average person keeps 7±2 items in working memory.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "17 rows flat list — no logical grouping.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 7,
+          "title": "Typo: \"Ngày trả nợ lãitiếp theo\"",
+          "ref": "UXG-035",
+          "severity": "Minor",
+          "user_impact": "Text error on financial screen erodes trust.",
+          "heuristic": "Nielsen #4: Typographic correctness bắt buộc.",
+          "evidence": "Missing space — \"lãitiếp\" should be \"lãi tiếp\"",
+          "screenshot": "account-2.png",
+          "screen_id": "SCR-TAV-002",
+          "screen_name": "Thong tin tai khoan vay",
+          "screen_type": "detail",
+          "screenshot_path": "ui/account-2.png",
+          "_img_tier": 5,
+          "description": "Typo: 'lãitiếp' — thiếu space between words.",
+          "ddl_evidence": "UXG-035",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #4 — Consistency and Standards",
+              "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+              "quote": "Users should not wonder if words mean the same thing.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Typo: 'lãitiếp' — thiếu space between words.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 8,
+          "title": "Overdue date shows visual alert badge",
+          "ref": "UXG-074",
+          "severity": "Minor",
+          "user_impact": "Overdue loan invisible → người dùng unaware of penalty accumulation.",
+          "heuristic": "Nielsen #1 + Von Restorff: Critical status must stand out.",
+          "evidence": "Ngày đáo hạn 30/12/2021 past — no badge or warning",
+          "screenshot": "account-2.png",
+          "screen_id": "SCR-TAV-002",
+          "screen_name": "Thong tin tai khoan vay",
+          "screen_type": "detail",
+          "screenshot_path": "ui/account-2.png",
+          "_img_tier": 5,
+          "description": "Overdue date 30/12/2021 shows no warning badge or visual alert.",
+          "ddl_evidence": "UXG-074",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Von Restorff Effect",
+              "url": "https://lawsofux.com/von-restorff-effect/",
+              "quote": "The one that differs is most likely remembered.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Overdue date 30/12/2021 shows no warning badge or visual alert.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 9,
+          "title": "Primary action \"Trả nợ\" present",
+          "ref": "UXG-061",
+          "severity": "Minor",
+          "user_impact": "người dùng phải navigate elsewhere to make payment. Primary action inaccessible from context.",
+          "heuristic": "Nielsen #7: Primary action directly accessible from relevant screen.",
+          "evidence": "No repayment CTA — critical omission for banking",
+          "screenshot": "account-2.png",
+          "screen_id": "SCR-TAV-002",
+          "screen_name": "Thong tin tai khoan vay",
+          "screen_type": "detail",
+          "screenshot_path": "ui/account-2.png",
+          "_img_tier": 5,
+          "description": "No 'Trả nợ' CTA on loan detail screen — critical ngân hàng action thiếu.",
+          "ddl_evidence": "UXG-061",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+              "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+              "quote": "Shortcuts speed up interaction.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "No 'Trả nợ' CTA on loan detail screen — critical ngân hàng action thiếu.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 10,
+          "title": "Scroll indicator for long content",
+          "ref": "UXG-243",
+          "severity": "Minor",
+          "user_impact": "người dùng may miss content below fold.",
+          "heuristic": "Nielsen #6: Scroll tín hiệu tương tác for long content.",
+          "evidence": "978px screen, no scroll indicator visible",
+          "screenshot": "account-2.png",
+          "screen_id": "SCR-TAV-002",
+          "screen_name": "Thong tin tai khoan vay",
+          "screen_type": "detail",
+          "screenshot_path": "ui/account-2.png",
+          "_img_tier": 5,
+          "description": "978px content, no scroll indicator visible.",
+          "ddl_evidence": "UXG-243",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Minimize memory load.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "978px content, no scroll indicator visible.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 11,
+          "title": "Skeleton loading state",
+          "ref": "UXG-165",
+          "severity": "Minor",
+          "user_impact": "Perceived slow load without skeleton feedback.",
+          "heuristic": "Nielsen #1: Loading visibility.",
+          "evidence": "No skeleton for 17 data rows",
+          "screenshot": "account-2.png",
+          "screen_id": "SCR-TAV-002",
+          "screen_name": "Thong tin tai khoan vay",
+          "screen_type": "detail",
+          "screenshot_path": "ui/account-2.png",
+          "_img_tier": 5,
+          "description": "No skeleton loading for 17 data rows.",
+          "ddl_evidence": "UXG-165",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Keep users informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No skeleton loading for 17 data rows.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-TAV-003",
+      "screen_name": "Chi tiet giao dich (`SCR-TAV-003`)",
+      "screen_type": "detail",
+      "gaps": [
+        {
+          "num": 3,
+          "title": "Share/download receipt action",
+          "ref": "hick",
+          "severity": "Minor",
+          "user_impact": "biên lai without export = dead-end. người dùng cần to save or forward proof of payment.",
+          "heuristic": "Nielsen #7: biên lai actions (download, share) are essential ngân hàng features.",
+          "evidence": "0 primary actions — missing download + share",
+          "screenshot": "account-3.png",
+          "screen_id": "SCR-TAV-003",
+          "screen_name": "Chi tiet giao dich",
+          "screen_type": "detail",
+          "screenshot_path": "ui/account-3.png",
+          "_img_tier": 5,
+          "description": "0 CTAs on biên lai — no share/download actions. ~400px blank space unused.",
+          "ddl_evidence": "hick",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Hick's Law",
+              "url": "https://lawsofux.com/hicks-law/",
+              "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+              "source": "Laws of UX"
+            },
+            {
+              "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+              "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+              "quote": "Shortcuts speed up interaction.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Hick's Law",
+            "url": "https://lawsofux.com/hicks-law/",
+            "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+            "source": "Laws of UX"
+          },
+          "hiện_trạng": "0 CTAs on biên lai — no share/download actions. ~400px blank space unused.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 4,
+          "title": "Transaction status badge",
+          "ref": "UXG-074",
+          "severity": "Minor",
+          "user_impact": "người dùng không thể xác minh giao dịch outcome — critical information thiếu.",
+          "heuristic": "Nielsen #1: giao dịch outcome = primary system status.",
+          "evidence": "No status badge (Thành công/Thất bại) anywhere",
+          "screenshot": "account-3.png",
+          "screen_id": "SCR-TAV-003",
+          "screen_name": "Chi tiet giao dich",
+          "screen_type": "detail",
+          "screenshot_path": "ui/account-3.png",
+          "_img_tier": 5,
+          "description": "No giao dịch status badge (Success/Failed/Pending) on biên lai.",
+          "ddl_evidence": "UXG-074",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #1 — Visibility of System Status",
+              "url": "https://www.nngroup.com/articles/visibility-system-status/",
+              "quote": "Keep users informed.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "No giao dịch status badge (Success/Failed/Pending) on biên lai.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 5,
+          "title": "Typo: \"Tra no vay T2\"",
+          "ref": "UXG-035",
+          "severity": "Minor",
+          "user_impact": "thiếu chuyên nghiệp text on financial biên lai. 'T2' ambiguous.",
+          "heuristic": "Nielsen #2: Clear, người dùng-friendly language bắt buộc.",
+          "evidence": "Missing diacritics + abbreviation — \"Trả nợ vay Tháng 2\" needed",
+          "screenshot": "account-3.png",
+          "screen_id": "SCR-TAV-003",
+          "screen_name": "Chi tiet giao dich",
+          "screen_type": "detail",
+          "screenshot_path": "ui/account-3.png",
+          "_img_tier": 5,
+          "description": "Typo: 'Tra no vay T2' — thiếu diacritics + unclear abbreviation.",
+          "ddl_evidence": "UXG-035",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "Typo: 'Tra no vay T2' — thiếu diacritics + unclear abbreviation.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "Transaction ID copy-to-clipboard",
+          "ref": "UXG-198",
+          "severity": "Minor",
+          "user_impact": "người dùng cần to copy ID for complaints/reference. Manual transcription error-prone.",
+          "heuristic": "Nielsen #7: Copy-to-clipboard for reference numbers.",
+          "evidence": "4153-87675 — no copy icon or interaction",
+          "screenshot": "account-3.png",
+          "screen_id": "SCR-TAV-003",
+          "screen_name": "Chi tiet giao dich",
+          "screen_type": "detail",
+          "screenshot_path": "ui/account-3.png",
+          "_img_tier": 5,
+          "description": "giao dịch ID '4153-87675' — no copy function.",
+          "ddl_evidence": "UXG-198",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+              "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+              "quote": "Shortcuts speed up interaction.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "giao dịch ID '4153-87675' — no copy function.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 7,
+          "title": "Receipt download CTA in blank area",
+          "ref": "UXG-061",
+          "severity": "Minor",
+          "user_impact": "Wasted prime real estate. Should contain download/share/print CTAs.",
+          "heuristic": "Nielsen #8: Every element should serve purpose. Blank = missed opportunity.",
+          "evidence": "~400px blank area — no CTA for download/share",
+          "screenshot": "account-3.png",
+          "screen_id": "SCR-TAV-003",
+          "screen_name": "Chi tiet giao dich",
+          "screen_type": "detail",
+          "screenshot_path": "ui/account-3.png",
+          "_img_tier": 5,
+          "description": "~400px blank area on biên lai — no CTAs utilizing space.",
+          "ddl_evidence": "UXG-061",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+              "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+              "quote": "Should not contain irrelevant information.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "~400px blank area on biên lai — no CTAs utilizing space.",
+          "_enriched_by": "llm"
+        }
+      ]
+    },
+    {
+      "screen_id": "SCR-TAV-004",
+      "screen_name": "Lich su giao dich (`SCR-TAV-004`)",
+      "screen_type": "list",
+      "gaps": [
+        {
+          "num": 2,
+          "title": "Empty state for 0 results",
+          "ref": "COMP:empty-state-1",
+          "severity": "Minor",
+          "user_impact": "Filtered 0 results → blank → confusion.",
+          "heuristic": "Nielsen #6: Filtered trạng thái trống clarifies 'no results for this filter'.",
+          "evidence": "DDL icon+title+CTA required. From ảnh: no empty state design",
+          "screenshot": "transaction-history.png",
+          "screen_id": "SCR-TAV-004",
+          "screen_name": "Lich su giao dich",
+          "screen_type": "list",
+          "screenshot_path": "ui/transaction-history.png",
+          "_img_tier": 5,
+          "description": "No trạng thái trống for 0 filtered results. DDL empty-state-1 bắt buộc.",
+          "ddl_evidence": "COMP:empty-state-1",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 2,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No trạng thái trống for 0 filtered results. DDL empty-state-1 bắt buộc.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 3,
+          "title": "Filter chips ≥ 44px",
+          "ref": "fitts",
+          "severity": "Minor",
+          "user_impact": "Touch target violation for filter interaction.",
+          "heuristic": "Fitts's Law + WCAG 2.5.8.",
+          "evidence": "Chips ~28px from screenshot — below 44px minimum",
+          "screenshot": "transaction-history.png",
+          "screen_id": "SCR-TAV-004",
+          "screen_name": "Lich su giao dich",
+          "screen_type": "list",
+          "screenshot_path": "ui/transaction-history.png",
+          "_img_tier": 5,
+          "description": "Filter chips ~28px — below 44px minimum.",
+          "ddl_evidence": "fitts",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Fitts's Law",
+              "url": "https://lawsofux.com/fittss-law/",
+              "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_enriched_ref": {
+            "name": "Fitts's Law",
+            "url": "https://lawsofux.com/fittss-law/",
+            "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+            "source": "Laws of UX"
+          },
+          "hiện_trạng": "Filter chips ~28px — below 44px minimum.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 5,
+          "title": "Account number masked in balance card",
+          "ref": "UXG-189",
+          "severity": "Minor",
+          "user_impact": "nhất quán masking policy violated.",
+          "heuristic": "Nielsen #5: Mask all account numbers consistently.",
+          "evidence": "90997987123123123 fully visible",
+          "screenshot": "transaction-history.png",
+          "screen_id": "SCR-TAV-004",
+          "screen_name": "Lich su giao dich",
+          "screen_type": "list",
+          "screenshot_path": "ui/transaction-history.png",
+          "_img_tier": 5,
+          "description": "số tài khoản 90997987123123123 fully visible in số dư card.",
+          "ddl_evidence": "UXG-189",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #5 — Error Prevention",
+              "url": "https://www.nngroup.com/articles/slips/",
+              "quote": "Prevent problems.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "số tài khoản 90997987123123123 fully visible in số dư card.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 6,
+          "title": "Chip filter touch target ≥ 44px",
+          "ref": "UXG-061",
+          "severity": "Minor",
+          "user_impact": "Repeated touch target violation.",
+          "heuristic": "WCAG 2.5.8: nhất quán minimum target sizing.",
+          "evidence": "Chips ~28px height — below minimum",
+          "screenshot": "transaction-history.png",
+          "screen_id": "SCR-TAV-004",
+          "screen_name": "Lich su giao dich",
+          "screen_type": "list",
+          "screenshot_path": "ui/transaction-history.png",
+          "_img_tier": 5,
+          "description": "giống nhau filter chip touch target issue as Gap#3.",
+          "ddl_evidence": "UXG-061",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "WCAG 2.5.8 — Target Size (Level AA)",
+              "url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html",
+              "quote": "At least 24×24 CSS pixels.",
+              "source": "W3C"
+            }
+          ],
+          "_ref_tier": 3,
+          "hiện_trạng": "giống nhau filter chip touch target issue as Gap#3.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 7,
+          "title": "Help text dismissible or collapsed",
+          "ref": "UXG-022",
+          "severity": "Minor",
+          "user_impact": "Wastes screen space for returning người dùng. Should be dismissible.",
+          "heuristic": "Nielsen #7: Progressive disclosure — dismissible for experts.",
+          "evidence": "2-line help text cannot be dismissed",
+          "screenshot": "transaction-history.png",
+          "screen_id": "SCR-TAV-004",
+          "screen_name": "Lich su giao dich",
+          "screen_type": "list",
+          "screenshot_path": "ui/transaction-history.png",
+          "_img_tier": 5,
+          "description": "2-line help text cannot be dismissed. Persistent on every visit.",
+          "ddl_evidence": "UXG-022",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+              "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+              "quote": "Shortcuts for expert users.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "2-line help text cannot be dismissed. Persistent on every visit.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 8,
+          "title": "Transaction descriptions meaningful",
+          "ref": "UXG-035",
+          "severity": "Minor",
+          "user_impact": "Placeholder data in design → ambiguity about real data format. Designs should use realistic content.",
+          "heuristic": "Nielsen #2: Realistic content in designs for proper evaluation.",
+          "evidence": "\"TK thang 1/2/3\" are placeholders — real data must be meaningful",
+          "screenshot": "transaction-history.png",
+          "screen_id": "SCR-TAV-004",
+          "screen_name": "Lich su giao dich",
+          "screen_type": "list",
+          "screenshot_path": "ui/transaction-history.png",
+          "_img_tier": 5,
+          "description": "giao dịch descriptions 'TK thang 1/2/3' — placeholder text, not real data.",
+          "ddl_evidence": "UXG-035",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "giao dịch descriptions 'TK thang 1/2/3' — placeholder text, not real data.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 9,
+          "title": "Credit/Debit color coding",
+          "ref": "UXG-022",
+          "severity": "Minor",
+          "user_impact": "Non-standard color coding. người dùng kỳ vọng green=in, red=out from other ngân hàng apps.",
+          "heuristic": "Jakob's Law: Follow ngân hàng color conventions.",
+          "evidence": "Blue used for credit — should be green (#16A34A)",
+          "screenshot": "transaction-history.png",
+          "screen_id": "SCR-TAV-004",
+          "screen_name": "Lich su giao dich",
+          "screen_type": "list",
+          "screenshot_path": "ui/transaction-history.png",
+          "_img_tier": 5,
+          "description": "Blue used for credit transactions — should be green (#16A34A) per ngân hàng convention.",
+          "ddl_evidence": "UXG-022",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Jakob's Law",
+              "url": "https://lawsofux.com/jakobs-law/",
+              "quote": "Users prefer sites to work like ones they already know.",
+              "source": "Laws of UX"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "Blue used for credit transactions — should be green (#16A34A) per ngân hàng convention.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 10,
+          "title": "Empty state for no-results",
+          "ref": "UXG-074",
+          "severity": "Minor",
+          "user_impact": "Blank results = người dùng confusion.",
+          "heuristic": "Nielsen #6: trạng thái trống guidance.",
+          "evidence": "No empty state design",
+          "screenshot": "transaction-history.png",
+          "screen_id": "SCR-TAV-004",
+          "screen_name": "Lich su giao dich",
+          "screen_type": "list",
+          "screenshot_path": "ui/transaction-history.png",
+          "_img_tier": 5,
+          "description": "No trạng thái trống for no-results in giao dịch history.",
+          "ddl_evidence": "UXG-074",
+          "ref_count": 2,
+          "references": [
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 2,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "No trạng thái trống for no-results in giao dịch history.",
+          "_enriched_by": "llm"
+        },
+        {
+          "num": 11,
+          "title": "Custom date chip calendar affordance",
+          "ref": "UXG-243",
+          "severity": "Minor",
+          "user_impact": "người dùng doesn't discover custom date range option.",
+          "heuristic": "Nielsen #6: Visual tín hiệu tương tác for interaction type.",
+          "evidence": "\"Khác\" chip no calendar icon",
+          "screenshot": "transaction-history.png",
+          "screen_id": "SCR-TAV-004",
+          "screen_name": "Lich su giao dich",
+          "screen_type": "list",
+          "screenshot_path": "ui/transaction-history.png",
+          "_img_tier": 5,
+          "description": "'Khác' chip — no calendar icon tín hiệu tương tác indicating date picker.",
+          "ddl_evidence": "UXG-243",
+          "ref_count": 3,
+          "references": [
+            {
+              "name": "Nielsen #2 — Match Between System and Real World",
+              "url": "https://www.nngroup.com/articles/match-system-real-world/",
+              "quote": "The design should speak the users' language. Use words, phrases, and concepts familiar to the user.",
+              "source": "Nielsen Norman Group"
+            },
+            {
+              "name": "Nielsen #6 — Recognition Rather Than Recall",
+              "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+              "quote": "Minimize memory load.",
+              "source": "Nielsen Norman Group"
+            }
+          ],
+          "_ref_tier": 3,
+          "_enriched_ref": {
+            "name": "Nielsen #6 — Recognition Rather Than Recall",
+            "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+            "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+            "source": "Nielsen Norman Group"
+          },
+          "hiện_trạng": "'Khác' chip — no calendar icon tín hiệu tương tác indicating date picker.",
+          "_enriched_by": "llm"
+        }
+      ]
+    }
+  ],
+  "heuristics": [
+    {
+      "key": "flow",
+      "name_vi": "Luồng người dùng",
+      "name_en": "Flow & Navigation",
+      "score": 15,
+      "gap_count": 23
+    },
+    {
+      "key": "component",
+      "name_vi": "Thành phần",
+      "name_en": "Component & DDL",
+      "score": 60,
+      "gap_count": 6
+    },
+    {
+      "key": "visual",
+      "name_vi": "Thiết kế trực quan",
+      "name_en": "Visual Design",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "content",
+      "name_vi": "Nội dung",
+      "name_en": "Content & Copy",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "a11y",
+      "name_vi": "Tiếp cận",
+      "name_en": "Accessibility",
+      "score": 100,
+      "gap_count": 0
+    },
+    {
+      "key": "trust",
+      "name_vi": "Tin cậy & Bảo mật",
+      "name_en": "Trust & Security",
+      "score": 100,
+      "gap_count": 0
+    }
+  ],
+  "_ref_enrichment": {
+    "gap_enriched": 7,
+    "uxp_enriched": 0,
+    "sources": [
+      "enriched-data.json",
+      "official-urls.md"
+    ]
+  }
+}

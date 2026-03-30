@@ -1,0 +1,1769 @@
+{
+  "_generator": "enrich_llm.py",
+  "_version": "1.0",
+  "module": {
+    "name": "Thay đổi thông tin tích luỹ",
+    "domain": "Banking",
+    "product": "Co-opBank Mobile Banking",
+    "dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/tiet-kiem--thay-doi-tich-luy"
+  },
+  "system_prompt": "Bạn là UX Auditor chuyên nghiệp cho Banking app (Co-opBank Mobile Banking).\n\nNhiệm vụ: Enrich các finding từ UX audit report. Mỗi finding cần 4-5 fields:\n\n1. **hiện_trạng**: Mô tả chính xác UI hiện tại\n   - PHẢI có artboard ID (vd: \"Trên artboard 7103\")\n   - PHẢI có overlay type nếu có (vd: \"overlay: OTP bottom-sheet\")\n   - PHẢI liệt kê UI elements thực tế có mặt\n   - KHÔNG suy diễn elements không có trong evidence\n\n2. **tác_động**: Hậu quả cụ thể cho người dùng\n   - PHẢI mô tả consequence cho user (bị chặn, mất khả năng, nhầm lẫn...)\n   - PHẢI có domain context (Banking: giao dịch nhạy cảm, trust, compliance...)\n   - KHÔNG dùng severity label (\"nghiêm trọng\", \"critical\", \"major\")\n   - KHÔNG lặp lại problem title\n\n3. **nguyên_tắc**: Heuristic vi phạm + quote + giải thích\n   - PHẢI cite heuristic bằng tên chính xác (Nielsen #N, WCAG X.Y.Z, Laws of UX)\n   - PHẢI có quote gốc tiếng Anh\n   - PHẢI giải thích TẠI SAO design vi phạm nguyên tắc này\n   - Ưu tiên chọn từ heuristic_candidates đã pre-select\n\n4. **đề_xuất_steps**: (chỉ UXP) Array các bước cải thiện\n   - Ít nhất 2 bước\n   - Mỗi bước actionable, có DDL ref nếu liên quan\n   - Spec cụ thể (timeout=60s, color token, component name)\n\n5. **references**: Array các tham chiếu chính thức\n   - Mỗi ref: {name, url, quote, source}\n   - Dữ liệu từ REFERENCE DATABASE bên dưới\n   - KHÔNG bịa URL — chỉ dùng URL từ database\n\nOUTPUT FORMAT: JSON array of objects, mỗi object có id + các fields trên.\n\nREFERENCE DATABASE:\n  Nielsen #1: Nielsen #1 — Visibility of System Status — \"The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.\"\n  Nielsen #10: Nielsen #10 — Help and Documentation — \"It's best if the system doesn't need any additional explanation. However, it may be necessary to provide documentation.\"\n  Nielsen #2: Nielsen #2 — Match Between System and Real World — \"The design should speak the users' language. Use words, phrases, and concepts familiar to the user.\"\n  Nielsen #3: Nielsen #3 — User Control and Freedom — \"Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.\"\n  Nielsen #4: Nielsen #4 — Consistency and Standards — \"Users should not have to wonder whether different words, situations, or actions mean the same thing.\"\n  Nielsen #5: Nielsen #5 — Error Prevention — \"Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.\"\n  Nielsen #6: Nielsen #6 — Recognition Rather Than Recall — \"Minimize the user's memory load by making elements, actions, and options visible.\"\n  Nielsen #7: Nielsen #7 — Flexibility and Efficiency of Use — \"Shortcuts — hidden from novice users — may speed up the interaction for the expert user.\"\n  Nielsen #8: Nielsen #8 — Aesthetic and Minimalist Design — \"Interfaces should not contain information that is irrelevant or rarely needed.\"\n  Nielsen #9: Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors — \"Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.\"\n  Fitts's Law: \"The time to acquire a target is a function of the distance to and size of the target.\"\n  Hick's Law: \"The time it takes to make a decision increases with the number and complexity of choices.\"\n  Jakob's Law: \"Users spend most of their time on other sites. This means that users prefer your site to work the same way.\"\n  Miller's Law: \"The average person can only keep 7 (plus or minus 2) items in their working memory.\"\n  Peak-End Rule: \"People judge an experience largely based on how they felt at its most intense point and at its end.\"\n  Zeigarnik Effect: \"People remember uncompleted or interrupted tasks better than completed tasks.\"\n  Von Restorff Effect: \"When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.\"\n  Doherty Threshold: \"Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.\"\n  Aesthetic-Usability Effect: \"Users often perceive aesthetically pleasing design as design that's more usable.\"\n  WCAG 1.4.11 — Non-text Contrast (Level AA)\n  WCAG 1.4.3 — Contrast (Minimum) (Level AA)\n  WCAG 2.5.5 — Target Size Enhanced (Level AAA)\n  WCAG 2.5.8 — Target Size Minimum (Level AA)\n  WCAG 3.3.1 — Error Identification (Level A)\n  WCAG 3.3.2 — Labels or Instructions (Level A)\n  WCAG 3.3.3 — Error Suggestion (Level AA)\n  WCAG 3.3.4 — Error Prevention: Legal, Financial, Data (Level AA)",
+  "items": [
+    {
+      "id": "UXP-001",
+      "type": "uxp",
+      "finding": {
+        "severity": "Critical",
+        "screen_tag": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "screen_id": "SCR-TK-001",
+        "problem": "PII Exposure — 3 số tài khoản hiển thị đầy đủ không mask (012547288, 1231231232, 123123123123)",
+        "ddl_ref": "Product Context: \"Security-first. Trust paramount.\"",
+        "solution_draft": "Mask partial: hiển thị dạng ****7288, ****1232, ****3123. Chỉ hiện đầy đủ sau xác thực biometrics/PIN",
+        "gap_ref": "Check #5",
+        "current_user_impact": "Lỗi nghiêm trọng gây gián đoạn luồng Thông tin tài khoản tiết kiệm: PII Exposure.",
+        "current_heuristic": "Product Context: \"Security-first. Trust paramount.\""
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 5,
+          "title": "Account number PII exposure",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: \"012547288\" (Số TK tiền gửi), \"1231231232\" (TK trích tiền), \"123123123123\" (TK nhận gốc lãi) — 3 số hiển thị đầy đủ. \"Security-first\" context yêu cầu partial masking",
+          "ddl_ref": "Product Context",
+          "category": "Skill B+C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-002",
+      "type": "uxp",
+      "finding": {
+        "severity": "Critical",
+        "screen_tag": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+        "screen_id": "SCR-TK-001",
+        "problem": "PII Exposure Form — Số tài khoản tiền gửi 9099798712313123 và TK trích tiền 12312313123133 hiển thị đầy đủ không mask",
+        "ddl_ref": "Product Context: \"Security-first. Trust paramount.\"",
+        "solution_draft": "Mask partial: ****3123, ****3133. Dùng dropdown hiển thị masked + last 4 digits",
+        "gap_ref": "Check #10",
+        "current_user_impact": "Trải nghiệm bị phá vỡ tại Form nhập thông tin: PII Exposure Form, buộc user phải thoát và thử lại.",
+        "current_heuristic": "Product Context: \"Security-first. Trust paramount.\""
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 10,
+          "title": "Scroll position persistence",
+          "verdict": "Unverifiable",
+          "evidence": "User scroll xuống xem fields dưới fold → navigate away → return: scroll position có được duy trì? Không thể verify từ ảnh tĩnh",
+          "ddl_ref": "—",
+          "category": "Skill A",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-003",
+      "type": "uxp",
+      "finding": {
+        "severity": "Critical",
+        "screen_tag": "Xác thực giao dịch › Xác nhận giao dịch",
+        "screen_id": "SCR-TK-001",
+        "problem": "OTP Resend + Error Missing — DDL otp-input-1 spec yêu cầu canResend state + countdown timer + error state (red border, shake). Từ ảnh: chỉ có 6 ô tĩnh + nút Xác nhận, KHÔNG có nút Gửi lại, KHÔNG có artboard cho wrong PIN",
+        "ddl_ref": "COMP:otp-input-1 (canResend, timeLeft, error states)",
+        "solution_draft": "Thêm: (1) Nút \"Gửi lại mã\" với countdown 60s; (2) Error state: 6 ô viền đỏ + shake animation + \"Mã PIN không đúng. Còn {N} lần thử\"; (3) Lock state...",
+        "gap_ref": "Check #6, Check #2, Check #1",
+        "current_user_impact": "Người dùng không thể hoàn thành thao tác nhập mã xác thực OTP do OTP Resend + Error Missing.",
+        "current_heuristic": "COMP:otp-input-1"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 1,
+          "title": "Header back/home affordance",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: Back arrow (←) top-left, Home icon (🏠) top-right, title \"Thông tin tài khoản\" centered. DDL spec: back + title + action — matched",
+          "ddl_ref": "COMP:app-header-1",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 2,
+          "title": "Information hierarchy & grouping",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: 22 fields liệt kê liên tục (Tên chủ TK → Phương thức tất toán) không section divider, không visual grouping, font size đồng nhất. Cognitive load cao",
+          "ddl_ref": "UXG-165, Hick's Law",
+          "category": "Skill A+C",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 6,
+          "title": "Touch target bottom nav",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: Bottom nav ~88px height, icon 24px + label per tab. Touch target ≥ 44px — adequate",
+          "ddl_ref": "COMP:bottom-tab-bar-1, Fitts's Law",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "context_map:missing_error_message",
+          "_ref_id": "nielsen.9"
+        },
+        {
+          "name": "Nielsen #3 — User Control and Freedom",
+          "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+          "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "context_map:missing_undo_back",
+          "_ref_id": "nielsen.3"
+        },
+        {
+          "name": "Zeigarnik Effect",
+          "url": "https://lawsofux.com/zeigarnik-effect/",
+          "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:countdown",
+          "_ref_id": "laws.zeigarnik"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-004",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "screen_id": "SCR-TK-001",
+        "problem": "Information Overload — Từ ảnh: 22 fields liệt kê liên tục không section divider, không visual grouping. Cognitive load cao",
+        "ddl_ref": "UXG-165, Hick's Law",
+        "solution_draft": "Phân nhóm 4 sections với divider: (1) Thông tin cơ bản (Tên, Số TK, Chi nhánh, Loại SP), (2) Kỳ hạn & Lãi suất (Kỳ hạn, Ngày, Lãi suất, Lãi cộng dồ...",
+        "gap_ref": "Check #2",
+        "current_user_impact": "Trải nghiệm bị suy giảm đáng kể: information Overload, ảnh hưởng đến hiệu suất sử dụng.",
+        "current_heuristic": "Hick's Law · UXG-165"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 2,
+          "title": "Information hierarchy & grouping",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: 22 fields liệt kê liên tục (Tên chủ TK → Phương thức tất toán) không section divider, không visual grouping, font size đồng nhất. Cognitive load cao",
+          "ddl_ref": "UXG-165, Hick's Law",
+          "category": "Skill A+C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Hick's Law",
+          "url": "https://lawsofux.com/hicks-law/",
+          "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:hick",
+          "_ref_id": "laws.hick"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-005",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+        "screen_id": "SCR-TK-001",
+        "problem": "Input Validation Missing — Từ ảnh: Input \"Số tiền tích luỹ định kỳ\" chỉ có helper text tĩnh. DDL text-input-1 yêu cầu error state, helperText dynamic, validationState. Thiếu inline validation khi nhập < 1,000,000",
+        "ddl_ref": "COMP:text-input-1 (error, helperText, validationState, focused states)",
+        "solution_draft": "Thêm: (1) Error border đỏ + \"Số tiền tối thiểu 1.000.000 đồng\" khi < 1M; (2) Auto-format VND khi nhập (1000000 → 1.000.000); (3) Focus state: highl...",
+        "gap_ref": "Check #2",
+        "current_user_impact": "Input Validation Missing — gây nhầm lẫn và giảm tin tưởng vào giao diện tại bước Form nhập thông tin.",
+        "current_heuristic": "COMP:text-input-1"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 2,
+          "title": "Information hierarchy & grouping",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: 22 fields liệt kê liên tục (Tên chủ TK → Phương thức tất toán) không section divider, không visual grouping, font size đồng nhất. Cognitive load cao",
+          "ddl_ref": "UXG-165, Hick's Law",
+          "category": "Skill A+C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "context_map:missing_error_message",
+          "_ref_id": "nielsen.9"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-006",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+        "screen_id": "SCR-TK-001",
+        "problem": "Toggle Label Accessibility — Từ ảnh: Toggle ON (xanh filled) vs OFF (xám outlined) có visual OK nhưng KHÔNG có text label \"Đang bật\"/\"Đang tắt\". Screen reader thiếu state info",
+        "ddl_ref": "UXG-165: \"Labels should clearly indicate the current state\"",
+        "solution_draft": "Thêm accessible label bên phải toggle: \"Đang bật\" (xanh) / \"Đã tắt\" (xám). ARIA: aria-checked + aria-label",
+        "gap_ref": "Check #1, Check #7",
+        "current_user_impact": "Toggle Label Accessibility — gây nhầm lẫn và giảm tin tưởng vào giao diện tại bước Form nhập thông tin.",
+        "current_heuristic": "UXG-165"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 1,
+          "title": "Header back/home affordance",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: Back arrow (←) top-left, Home icon (🏠) top-right, title \"Thông tin tài khoản\" centered. DDL spec: back + title + action — matched",
+          "ddl_ref": "COMP:app-header-1",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 7,
+          "title": "Typography contrast",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: Label text dark grey (#333) on white background. Value text black (#000) on white. Est. contrast ≥ 7:1 — PASS WCAG AA (4.5:1)",
+          "ddl_ref": "WCAG AA",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-007",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Xác thực giao dịch › Xác nhận giao dịch",
+        "screen_id": "SCR-TK-001",
+        "problem": "OTP Cell Size Mismatch — DDL otp-input-1 spec: cellSize=48px. Từ ảnh: cells ước lượng ~44px. Thiếu active focus indicator trên cell đang nhập",
+        "ddl_ref": "COMP:otp-input-1 (cellSize=48px, activeIndex state)",
+        "solution_draft": "Tăng cell size lên 48px theo DDL spec. Thêm active border (2px solid primary) cho cell đang focus (activeIndex). Filled cells hiển thị dot mask",
+        "gap_ref": "Check #1, Check #2, Check #6",
+        "current_user_impact": "OTP Cell Size Mismatch — gây nhầm lẫn và giảm tin tưởng vào giao diện tại bước Xác nhận giao dịch.",
+        "current_heuristic": "COMP:otp-input-1"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 1,
+          "title": "Header back/home affordance",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: Back arrow (←) top-left, Home icon (🏠) top-right, title \"Thông tin tài khoản\" centered. DDL spec: back + title + action — matched",
+          "ddl_ref": "COMP:app-header-1",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 2,
+          "title": "Information hierarchy & grouping",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: 22 fields liệt kê liên tục (Tên chủ TK → Phương thức tất toán) không section divider, không visual grouping, font size đồng nhất. Cognitive load cao",
+          "ddl_ref": "UXG-165, Hick's Law",
+          "category": "Skill A+C",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 6,
+          "title": "Touch target bottom nav",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: Bottom nav ~88px height, icon 24px + label per tab. Touch target ≥ 44px — adequate",
+          "ddl_ref": "COMP:bottom-tab-bar-1, Fitts's Law",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-008",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Kết quả thay đổi › Kết quả giao dịch",
+        "screen_id": "SCR-TK-001",
+        "problem": "Transaction Details Missing — Từ ảnh: Success popup chỉ có checkmark + message + \"Đóng\". DDL receipt-preview-1 spec (items, subtotal, paymentMethod) không được sử dụng. Thiếu mã giao dịch, thời gian, before/after values",
+        "ddl_ref": "COMP:receipt-preview-1 (items, subtotal, paymentMethod), UXG-165",
+        "solution_draft": "Hiển thị: mã GD (FT2603xxxxx), thời gian (15:30 23/03/2026), thay đổi: Số tiền tích luỹ 0→5.000.000, Trạng thái tích luỹ Tắt→Bật. Nút \"Lưu biên lai\"",
+        "gap_ref": "Check #2, Check #6",
+        "current_user_impact": "Trải nghiệm bị suy giảm đáng kể: transaction Details Missing, ảnh hưởng đến hiệu suất sử dụng.",
+        "current_heuristic": "UXG-165 · COMP:receipt-preview-1"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 2,
+          "title": "Information hierarchy & grouping",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: 22 fields liệt kê liên tục (Tên chủ TK → Phương thức tất toán) không section divider, không visual grouping, font size đồng nhất. Cognitive load cao",
+          "ddl_ref": "UXG-165, Hick's Law",
+          "category": "Skill A+C",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 6,
+          "title": "Touch target bottom nav",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: Bottom nav ~88px height, icon 24px + label per tab. Touch target ≥ 44px — adequate",
+          "ddl_ref": "COMP:bottom-tab-bar-1, Fitts's Law",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "context_map:missing_error_message",
+          "_ref_id": "nielsen.9"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-009",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "screen_id": "SCR-TK-001",
+        "problem": "Bottom Navigation Active State — Từ ảnh: 4 tab bottom nav (Tất toán tiền gửi trực tuyến, Thay đổi thông tin tích luỹ, Lịch sử giao dịch, Chức năng khác). Không tab nào có active color/indicator nổi bật",
+        "ddl_ref": "COMP:bottom-tab-bar-1 (activeTabIndex), UXG-243",
+        "solution_draft": "Tab \"Thay đổi thông tin tích luỹ\" cần active color (primary blue) + bottom indicator bar 2px",
+        "gap_ref": "Check #4",
+        "current_user_impact": "Bottom Navigation Active State, có thể cải thiện để nâng cao trải nghiệm tổng thể.",
+        "current_heuristic": "UXG-243 · COMP:bottom-tab-bar-1"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 4,
+          "title": "Bottom nav active state",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: 4 tab bottom nav — tất cả cùng style icon+label, không tab nào có active indicator hoặc highlight color. DDL spec yêu cầu activeTabIndex",
+          "ddl_ref": "COMP:bottom-tab-bar-1, UXG-243",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-010",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+        "screen_id": "SCR-TK-001",
+        "problem": "Popup Button Hierarchy — Từ ảnh (TLTG-5): \"Huỷ\" và \"Đồng ý\" cùng style text button, không phân biệt primary/secondary action",
+        "ddl_ref": "UXG-165",
+        "solution_draft": "\"Đồng ý\": filled primary button (background-primary, text-white). \"Huỷ\": text-only hoặc outlined secondary",
+        "gap_ref": "Check #7, Check #1",
+        "current_user_impact": "Popup Button Hierarchy, có thể cải thiện để nâng cao trải nghiệm tổng thể.",
+        "current_heuristic": "UXG-165"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 1,
+          "title": "Header back/home affordance",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: Back arrow (←) top-left, Home icon (🏠) top-right, title \"Thông tin tài khoản\" centered. DDL spec: back + title + action — matched",
+          "ddl_ref": "COMP:app-header-1",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 7,
+          "title": "Typography contrast",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: Label text dark grey (#333) on white background. Value text black (#000) on white. Est. contrast ≥ 7:1 — PASS WCAG AA (4.5:1)",
+          "ddl_ref": "WCAG AA",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-011",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+        "screen_id": "SCR-TK-001",
+        "problem": "Number Formatting Error — Metadata helper text \"23,1000,000\" sai comma grouping. Chuẩn VND: 23.100.000 hoặc 23,100,000",
+        "ddl_ref": "—",
+        "solution_draft": "Chuẩn hoá theo locale vi-VN: dùng dấu chấm phân cách hàng nghìn (23.100.000 VND)",
+        "gap_ref": "Check #9",
+        "current_user_impact": "Chi tiết thiết kế chưa tối ưu tại Form nhập thông tin: number Formatting Error.",
+        "current_heuristic": "—"
+      },
+      "artboard": {
+        "artboard_id": "1000",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 9,
+          "title": "Section icon semantics",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: \"Tài khoản tiết kiệm\" có piggy bank icon (🐷). Icon semantic phù hợp product category",
+          "ddl_ref": "—",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-012",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+        "screen_id": "SCR-TK-001",
+        "problem": "Dropdown Truncation Risk — Từ ảnh: TK trích tiền \"12312313123133\" hiển thị đầy đủ trong dropdown. Trên thiết bị nhỏ (320pt width) có thể bị cắt",
+        "ddl_ref": "—",
+        "solution_draft": "Truncate giữa: \"1231...3133\" hoặc hiển thị masked ****3133. Expandable dropdown cho full number",
+        "gap_ref": "Check #10",
+        "current_user_impact": "Chi tiết thiết kế chưa tối ưu tại Form nhập thông tin: dropdown Truncation Risk.",
+        "current_heuristic": "—"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 10,
+          "title": "Scroll position persistence",
+          "verdict": "Unverifiable",
+          "evidence": "User scroll xuống xem fields dưới fold → navigate away → return: scroll position có được duy trì? Không thể verify từ ảnh tĩnh",
+          "ddl_ref": "—",
+          "category": "Skill A",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-013",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Xác thực giao dịch › Xác nhận giao dịch",
+        "screen_id": "SCR-TK-001",
+        "problem": "Loading State Missing — Không có artboard cho loading khi verify Soft OTP PIN. Doherty Threshold: feedback <400ms",
+        "ddl_ref": "UXG-165, Doherty Threshold",
+        "solution_draft": "Thêm loading indicator trên nút \"Xác nhận\" (spinner replace text) hoặc full-screen loading overlay với \"Đang xác thực...\"",
+        "gap_ref": "Check #7, Check #10",
+        "current_user_impact": "Loading State Missing, có thể cải thiện để nâng cao trải nghiệm tổng thể.",
+        "current_heuristic": "Doherty Threshold · UXG-165"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 7,
+          "title": "Typography contrast",
+          "verdict": "Pass",
+          "evidence": "Từ ảnh: Label text dark grey (#333) on white background. Value text black (#000) on white. Est. contrast ≥ 7:1 — PASS WCAG AA (4.5:1)",
+          "ddl_ref": "WCAG AA",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 10,
+          "title": "Scroll position persistence",
+          "verdict": "Unverifiable",
+          "evidence": "User scroll xuống xem fields dưới fold → navigate away → return: scroll position có được duy trì? Không thể verify từ ảnh tĩnh",
+          "ddl_ref": "—",
+          "category": "Skill A",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #3 — User Control and Freedom",
+          "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+          "quote": "Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "context_map:missing_undo_back",
+          "_ref_id": "nielsen.3"
+        },
+        {
+          "name": "Doherty Threshold",
+          "url": "https://lawsofux.com/doherty-threshold/",
+          "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:doherty",
+          "_ref_id": "laws.doherty"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-014",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Kết quả thay đổi › Kết quả giao dịch",
+        "screen_id": "SCR-TK-001",
+        "problem": "Single Action — Từ ảnh: Chỉ có nút \"Đóng\". Thiếu secondary actions cho next task",
+        "ddl_ref": "—",
+        "solution_draft": "Thêm: \"Xem chi tiết tài khoản\" (link text) hoặc \"Về trang chủ\" (secondary button) bên dưới nút Đóng",
+        "gap_ref": "Check #3",
+        "current_user_impact": "Single Action — Từ ảnh: Chỉ có nút \"Đóng\". Thiếu secondary actions cho next task — không chặn luồng nhưng giảm tính chuyên nghiệp của giao diện.",
+        "current_heuristic": "—"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 3,
+          "title": "Data scrollability",
+          "verdict": "Unverifiable",
+          "evidence": "Screen ~1246px (gấp 1.5x viewport 812px). Không thấy scroll indicator trong ảnh tĩnh. Nhiều fields bị ẩn dưới fold",
+          "ddl_ref": "UXG-165",
+          "category": "Skill C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-015",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "screen_id": "SCR-TK-001",
+        "problem": "Scroll Indicator Missing — Từ ảnh: Screen dài ~1246px (gấp ~1.5x viewport), hiển thị nhiều fields nhưng không có visual scroll indicator hoặc \"xem thêm\"",
+        "ddl_ref": "UXG-165",
+        "solution_draft": "Thêm subtle scroll indicator (gradient fade bottom edge) hoặc sticky header khi scroll",
+        "gap_ref": "Check #2",
+        "current_user_impact": "Chi tiết thiết kế chưa tối ưu tại Chi tiết: scroll Indicator Missing.",
+        "current_heuristic": "UXG-165"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [
+        {
+          "num": 2,
+          "title": "Information hierarchy & grouping",
+          "verdict": "Gap",
+          "evidence": "Từ ảnh: 22 fields liệt kê liên tục (Tên chủ TK → Phương thức tất toán) không section divider, không visual grouping, font size đồng nhất. Cognitive load cao",
+          "ddl_ref": "UXG-165, Hick's Law",
+          "category": "Skill A+C",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "context_map:missing_status_indicator",
+          "_ref_id": "nielsen.1"
+        },
+        {
+          "name": "Zeigarnik Effect",
+          "url": "https://lawsofux.com/zeigarnik-effect/",
+          "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+          "source": "Laws of UX",
+          "_match_source": "context_map:missing_status_indicator",
+          "_ref_id": "laws.zeigarnik"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#2@SCR-TK-001",
+      "type": "gap",
+      "finding": {
+        "num": 2,
+        "title": "Information hierarchy & grouping",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-001",
+        "screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "screen_type": "detail",
+        "evidence": "Từ ảnh: 22 fields liệt kê liên tục (Tên chủ TK → Phương thức tất toán) không section divider, không visual grouping, font size đồng nhất. Cognitive load cao",
+        "ddl_ref": "UXG-165, Hick's Law",
+        "ddl_evidence": "UXG-165, Hick's Law",
+        "current_user_impact": "22 fields liệt kê liên tục (Tên chủ TK → Phương thức tất toán) không section divider, không visual... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Hick's Law",
+          "url": "https://lawsofux.com/hicks-law/",
+          "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:hick",
+          "_ref_id": "laws.hick"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#4@SCR-TK-001",
+      "type": "gap",
+      "finding": {
+        "num": 4,
+        "title": "Bottom nav active state",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-001",
+        "screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "screen_type": "detail",
+        "evidence": "Từ ảnh: 4 tab bottom nav — tất cả cùng style icon+label, không tab nào có active indicator hoặc highlight color. DDL spec yêu cầu activeTabIndex",
+        "ddl_ref": "COMP:bottom-tab-bar-1, UXG-243",
+        "ddl_evidence": "COMP:bottom-tab-bar-1, UXG-243",
+        "current_user_impact": "4 tab bottom nav — tất cả cùng style icon+label, không tab nào có active indicator hoặc highlight... — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#5@SCR-TK-001",
+      "type": "gap",
+      "finding": {
+        "num": 5,
+        "title": "Account number PII exposure",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-001",
+        "screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "screen_type": "detail",
+        "evidence": "Từ ảnh: \"012547288\" (Số TK tiền gửi), \"1231231232\" (TK trích tiền), \"123123123123\" (TK nhận gốc lãi) — 3 số hiển thị đầy đủ. \"Security-first\" context yêu cầu partial masking",
+        "ddl_ref": "Product Context",
+        "ddl_evidence": "Product Context",
+        "current_user_impact": "\"012547288\" (Số TK tiền gửi), \"1231231232\" (TK trích tiền), \"123123123123\" (TK nhận gốc lãi) — 3 số... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-001",
+        "parent_screen_name": "Thông tin tài khoản tiết kiệm › Chi tiết",
+        "boundary_type": "standalone"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#1@SCR-TK-002",
+      "type": "gap",
+      "finding": {
+        "num": 1,
+        "title": "Toggle state visual clarity",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-002",
+        "screen_name": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh TLTG-2: Toggle ON = xanh filled circle. TLTG-3: Toggle OFF = xám outlined. Visual OK nhưng KHÔNG có text label \"Đang bật\"/\"Đã tắt\" bên cạnh. Screen reader thiếu state info",
+        "ddl_ref": "UXG-165",
+        "ddl_evidence": "UXG-165",
+        "current_user_impact": "Từ ảnh TLTG-2: Toggle ON = xanh filled circle. TLTG-3: Toggle OFF = xám outlined. Visual OK nhưng... — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-002",
+        "parent_screen_name": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+        "boundary_type": "multi_variant"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#2@SCR-TK-002",
+      "type": "gap",
+      "finding": {
+        "num": 2,
+        "title": "Input field validation states",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-002",
+        "screen_name": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh TLTG-2: Input \"Số tiền tích luỹ định kỳ\" chỉ hiện helper text tĩnh \"Số tiền tối thiểu 1.000.000 đồng\". DDL spec: error (red border), validationState, focused highlight — tất cả missing",
+        "ddl_ref": "COMP:text-input-1",
+        "ddl_evidence": "COMP:text-input-1",
+        "current_user_impact": "Từ ảnh TLTG-2: Input \"Số tiền tích luỹ định kỳ\" chỉ hiện helper text tĩnh \"Số tiền tối thiểu... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-002",
+        "parent_screen_name": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+        "boundary_type": "multi_variant"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "context_map:missing_error_message",
+          "_ref_id": "nielsen.9"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#7@SCR-TK-002",
+      "type": "gap",
+      "finding": {
+        "num": 7,
+        "title": "Popup button hierarchy",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-002",
+        "screen_name": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh TLTG-5: \"Huỷ\" (left) và \"Đồng ý\" (right) cùng style text button, cùng font weight. Primary action thiếu visual prominence (filled vs outlined)",
+        "ddl_ref": "UXG-165",
+        "ddl_evidence": "UXG-165",
+        "current_user_impact": "Từ ảnh TLTG-5: \"Huỷ\" (left) và \"Đồng ý\" (right) cùng style text button, cùng font weight. Primary... — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-002",
+        "parent_screen_name": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+        "boundary_type": "multi_variant"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#9@SCR-TK-002",
+      "type": "gap",
+      "finding": {
+        "num": 9,
+        "title": "Number formatting consistency",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-002",
+        "screen_name": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh TLTG-2: Helper text \"23,1000,000\" — comma placement sai (should be 23,100,000 hoặc 23.100.000). Inconsistency format gây confusion",
+        "ddl_ref": "—",
+        "ddl_evidence": "—",
+        "current_user_impact": "Từ ảnh TLTG-2: Helper text \"23,1000,000\" — comma placement sai (should be 23,100,000 hoặc... — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": "1000",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-002",
+        "parent_screen_name": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+        "boundary_type": "multi_variant"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#10@SCR-TK-002",
+      "type": "gap",
+      "finding": {
+        "num": 10,
+        "title": "PII account numbers in form",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-002",
+        "screen_name": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+        "screen_type": "form",
+        "evidence": "Từ ảnh TLTG-2: \"9099798712313123\" (TK tiền gửi), \"12312313123133\" (TK trích tiền) hiển thị đầy đủ không mask. Security-first context yêu cầu masking",
+        "ddl_ref": "Product Context",
+        "ddl_evidence": "Product Context",
+        "current_user_impact": "Từ ảnh TLTG-2: \"9099798712313123\" (TK tiền gửi), \"12312313123133\" (TK trích tiền) hiển thị đầy đủ... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-002",
+        "parent_screen_name": "Thay đổi thông tin tích luỹ định kỳ › Form nhập thông tin",
+        "boundary_type": "multi_variant"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#1@SCR-TK-003",
+      "type": "gap",
+      "finding": {
+        "num": 1,
+        "title": "OTP input cell design",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-003",
+        "screen_name": "Xác thực giao dịch › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh TLTG-6: 6 ô outlined square ~44px, empty placeholder. DDL spec: cellSize=48px, activeIndex state (focus border), digit mask (dot). Vision: cells đều thiếu active focus indicator",
+        "ddl_ref": "COMP:otp-input-1",
+        "ddl_evidence": "COMP:otp-input-1",
+        "current_user_impact": "Từ ảnh TLTG-6: 6 ô outlined square ~44px, empty placeholder. DDL spec: cellSize=48px, activeIndex... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-003",
+        "parent_screen_name": "Xác thực giao dịch › Xác nhận giao dịch",
+        "boundary_type": "overlay_on_base"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #6 — Recognition Rather Than Recall",
+          "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+          "quote": "Minimize the user's memory load by making elements, actions, and options visible.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "context_map:empty_state",
+          "_ref_id": "nielsen.6"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#2@SCR-TK-003",
+      "type": "gap",
+      "finding": {
+        "num": 2,
+        "title": "OTP resend mechanism",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-003",
+        "screen_name": "Xác thực giao dịch › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh TLTG-6: Không có nút \"Gửi lại\" hoặc countdown timer anywhere trong bottom sheet. DDL spec yêu cầu canResend + timeLeft + countdown-timer child component",
+        "ddl_ref": "COMP:otp-input-1",
+        "ddl_evidence": "COMP:otp-input-1",
+        "current_user_impact": "Từ ảnh TLTG-6: Không có nút \"Gửi lại\" hoặc countdown timer anywhere trong bottom sheet. DDL spec... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-003",
+        "parent_screen_name": "Xác thực giao dịch › Xác nhận giao dịch",
+        "boundary_type": "overlay_on_base"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Zeigarnik Effect",
+          "url": "https://lawsofux.com/zeigarnik-effect/",
+          "quote": "People remember uncompleted or interrupted tasks better than completed tasks.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:countdown",
+          "_ref_id": "laws.zeigarnik"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-TK-003",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "Error state wrong PIN",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-003",
+        "screen_name": "Xác thực giao dịch › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Không có artboard cho wrong PIN scenario. DDL spec yêu cầu: error=true → red border cells, shake animation, error message \"Mã PIN không đúng\", remaining attempts counter",
+        "ddl_ref": "COMP:otp-input-1",
+        "ddl_evidence": "COMP:otp-input-1",
+        "current_user_impact": "Không có artboard cho wrong PIN scenario. DDL spec yêu cầu: error=true → red border cells, shake... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-003",
+        "parent_screen_name": "Xác thực giao dịch › Xác nhận giao dịch",
+        "boundary_type": "overlay_on_base"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "context_map:missing_error_message",
+          "_ref_id": "nielsen.9"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#7@SCR-TK-003",
+      "type": "gap",
+      "finding": {
+        "num": 7,
+        "title": "Loading state verification",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-003",
+        "screen_name": "Xác thực giao dịch › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Không có artboard cho loading state khi verify OTP. Doherty: system phải phản hồi < 400ms. Cần loading indicator trên nút \"Xác nhận\"",
+        "ddl_ref": "UXG-165, Doherty Threshold",
+        "ddl_evidence": "UXG-165, Doherty Threshold",
+        "current_user_impact": "Không có artboard cho loading state khi verify OTP. Doherty: system phải phản hồi < 400ms. Cần... — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-003",
+        "parent_screen_name": "Xác thực giao dịch › Xác nhận giao dịch",
+        "boundary_type": "overlay_on_base"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Doherty Threshold",
+          "url": "https://lawsofux.com/doherty-threshold/",
+          "quote": "Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:doherty",
+          "_ref_id": "laws.doherty"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#10@SCR-TK-003",
+      "type": "gap",
+      "finding": {
+        "num": 10,
+        "title": "Transaction summary pre-auth",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-003",
+        "screen_name": "Xác thực giao dịch › Xác nhận giao dịch",
+        "screen_type": "confirm",
+        "evidence": "Từ ảnh TLTG-6: Bottom sheet chỉ có \"nhập mã PIN\". Thiếu summary giao dịch (thay đổi gì, từ giá trị nào → giá trị nào) trước khi xác thực. User không biết mình đang xác nhận thay đổi gì",
+        "ddl_ref": "UXG-165",
+        "ddl_evidence": "UXG-165",
+        "current_user_impact": "Từ ảnh TLTG-6: Bottom sheet chỉ có \"nhập mã PIN\". Thiếu summary giao dịch (thay đổi gì, từ giá trị... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-003",
+        "parent_screen_name": "Xác thực giao dịch › Xác nhận giao dịch",
+        "boundary_type": "overlay_on_base"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#2@SCR-TK-004",
+      "type": "gap",
+      "finding": {
+        "num": 2,
+        "title": "Transaction details completeness",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-004",
+        "screen_name": "Kết quả thay đổi › Kết quả giao dịch",
+        "screen_type": "result",
+        "evidence": "Từ ảnh TLTG-7: Popup chỉ có icon + message + \"Đóng\". DDL receipt-preview-1 spec (items, subtotal, paymentMethod) available. Thiếu: mã GD, thời gian, before/after values",
+        "ddl_ref": "COMP:receipt-preview-1, UXG-165",
+        "ddl_evidence": "COMP:receipt-preview-1, UXG-165",
+        "current_user_impact": "Từ ảnh TLTG-7: Popup chỉ có icon + message + \"Đóng\". DDL receipt-preview-1 spec (items, subtotal,... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-004",
+        "parent_screen_name": "Kết quả thay đổi › Kết quả giao dịch",
+        "boundary_type": "overlay_on_base"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#3@SCR-TK-004",
+      "type": "gap",
+      "finding": {
+        "num": 3,
+        "title": "Action after success",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-004",
+        "screen_name": "Kết quả thay đổi › Kết quả giao dịch",
+        "screen_type": "result",
+        "evidence": "Từ ảnh TLTG-7: Chỉ có link \"Đóng\". Thiếu secondary action: \"Xem chi tiết TK\" hoặc \"Về trang chủ\"",
+        "ddl_ref": "—",
+        "ddl_evidence": "—",
+        "current_user_impact": "Từ ảnh TLTG-7: Chỉ có link \"Đóng\". Thiếu secondary action: \"Xem chi tiết TK\" hoặc \"Về trang chủ\" — vi phạm Visual Design",
+        "current_heuristic": "Visual Design (Thiết kế trực quan)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-004",
+        "parent_screen_name": "Kết quả thay đổi › Kết quả giao dịch",
+        "boundary_type": "overlay_on_base"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-TK-004",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "Receipt save option",
+        "severity": "Minor",
+        "screen_id": "SCR-TK-004",
+        "screen_name": "Kết quả thay đổi › Kết quả giao dịch",
+        "screen_type": "result",
+        "evidence": "Không có option lưu/chia sẻ biên lai thay đổi. DDL receipt spec supports save functionality. Banking context: user cần evidence cho thay đổi tài khoản",
+        "ddl_ref": "COMP:receipt-preview-1",
+        "ddl_evidence": "COMP:receipt-preview-1",
+        "current_user_impact": "Không có option lưu/chia sẻ biên lai thay đổi. DDL receipt spec supports save functionality.... — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-TK-004",
+        "parent_screen_name": "Kết quả thay đổi › Kết quả giao dịch",
+        "boundary_type": "overlay_on_base"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Thay đổi thông tin tích luỹ",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    }
+  ],
+  "stats": {
+    "uxp_count": 15,
+    "gap_count": 16,
+    "total_items": 31,
+    "fields_to_generate": 139
+  }
+}

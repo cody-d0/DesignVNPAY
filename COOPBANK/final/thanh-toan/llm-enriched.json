@@ -1,0 +1,726 @@
+[
+  {
+    "id": "UXP-001",
+    "hiện_trạng": "Màn xác nhận thanh toán vé xem phim (1001thanh-toan-ve-xem-phim) hiển thị 5 rows data duplicate từ form nhập — người dùng phải đọc lại toàn bộ info đã nhập. xác nhận screen = mini-form clone, tải nhận thức cao.",
+    "tác_động": "Redundant xác nhận: người dùng đã nhập data → xác nhận screen lặp lại 100% → người dùng skip (xác nhận fatigue). Nếu skip = miss error. 5+ rows = information bão hòa. xác nhận chỉ nên highlight key info: số tiền + người nhận.",
+    "nguyên_tắc": "Nielsen #8 — Minimalist: xác nhận screen nên focus key data only — amount, recipient, date. Full data duplication = noise. WCAG 3.3.4 — Error Prevention (Financial): xác nhận bắt buộc nhưng phải concise.",
+    "đề_xuất_steps": [
+      "xác nhận chỉ hiện: Số tiền (lớn, bold), Người nhận, Nguồn TK",
+      "'Xem chi tiết' expandable cho full data nếu cần",
+      "Highlight differences từ previous step (nếu có auto-correction)"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Interfaces should not contain information that is irrelevant or rarely needed.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "WCAG 3.3.4 — Error Prevention (Legal, Financial, Data)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-prevention-legal-financial-data.html",
+        "quote": "For pages that cause legal or financial commitments, submissions are reversible, checked, or confirmed.",
+        "source": "W3C"
+      }
+    ]
+  },
+  {
+    "id": "UXP-003",
+    "hiện_trạng": "From thanh-toan-ve-tau-2: Artboard thanh toán vé tàu dài 1407px, 20+ rows data trên 1 screen. Extremely long scroll form without section breaks.",
+    "tác_động": "1407px = 3+ viewport heights. người dùng scrolls endlessly → lost context: 'Tôi đang ở đâu trong form?' No stepper, no section headers, no progress indicator. Information overload for payment xác nhận.",
+    "nguyên_tắc": "Miller's Law: 20 rows phải chunked. Nielsen #1: Progress indicator cho multi-section forms. Doherty: perceived form length affects completion rate.",
+    "đề_xuất_steps": [
+      "Group thành sections: 'Thông tin hành trình', 'Chi tiết vé', 'Thanh toán'",
+      "Collapsible sections: verified sections auto-collapse",
+      "Sticky header: section title always visible during scroll",
+      "Progress stepper: Step 1 → 2 → 3"
+    ],
+    "references": [
+      {
+        "name": "Miller's Law",
+        "url": "https://lawsofux.com/millers-law/",
+        "quote": "The average person can only keep 7±2 items in working memory.",
+        "source": "Laws of UX"
+      },
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed about what is going on.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-004",
+    "hiện_trạng": "Banner cảnh báo trên xác nhận screen (1001thanh-toan-ve-xem-phim) ghi 'đặt lịch' nhưng context là thanh toán vé xem phim. Text ≠ context mismatch.",
+    "tác_động": "'Đặt lịch' vs 'Vé xem phim' = người dùng confused: 'Tôi đang đặt lịch hay mua vé?' Template text không customized cho service type.",
+    "nguyên_tắc": "Nielsen #4 — Consistency: Banner text phải match current context/flow. Template reuse without customization = inconsistency.",
+    "đề_xuất_steps": [
+      "Dynamic banner text per service: 'Vé xem phim' → 'Kiểm tra thông tin vé'",
+      "loại bỏ generic template text",
+      "Context-aware banner content"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Users should not have to wonder whether different words mean the same thing.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-005",
+    "hiện_trạng": "Auth dropdown cho OTP chỉ có 1 option (SMS OTP) — dropdown component dùng cho single item. không cần thiết interaction step.",
+    "tác_động": "Single-option dropdown = wasted tap. người dùng taps dropdown → sees only 'SMS OTP' → selects it → no actual choice made. Dropdown implies multiple options exist.",
+    "nguyên_tắc": "Nielsen #8: loại bỏ không cần thiết interaction. Single-option dropdown = noise. Auto-select + label 'Xác thực: SMS OTP'.",
+    "đề_xuất_steps": [
+      "Auto-select single option — hiển thị as label, not dropdown",
+      "If future options planned: keep dropdown but disable interaction when 1 option",
+      "hiển thị: 'Xác thực bằng: SMS OTP' as static text"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "Should not contain irrelevant information.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-006",
+    "hiện_trạng": "Result screen (1003thanh-toan-ve-xem-phim) hiển thị 'tổng đài XXXXX' — placeholder chưa replaced với actual hotline number.",
+    "tác_động": "Placeholder in production = broken help. người dùng cần hotline → sees 'XXXXX' → dead end. Trust violation khi official ngân hàng screen shows placeholder data.",
+    "nguyên_tắc": "Nielsen #9: Error recovery phải cung cấp real contact info. Placeholder = broken recovery path.",
+    "đề_xuất_steps": [
+      "thay thế 'XXXXX' với actual hotline: '1900 xxxx xx'",
+      "Make hotline tappable (tel: link)",
+      "QA: scan all screens for placeholder patterns"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Suggest a solution constructively.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-007",
+    "hiện_trạng": "Result/xác nhận screens hiển thị '[Customer name]', '[Phone number]' — raw placeholder text thay vì actual data hoặc realistic demo data.",
+    "tác_động": "Placeholder in design = 2 issues: (1) dev may ship placeholder to production, (2) design review impossible — can't evaluate layout with fake data. Designs must use realistic data.",
+    "nguyên_tắc": "Nielsen #2: Designs should use realistic content. Placeholder signals incomplete design.",
+    "đề_xuất_steps": [
+      "thay thế all placeholders: '[Customer name]' → 'Nguyễn Văn A'",
+      "Use nhất quán demo data across all screens",
+      "QA checklist: search for '[' and ']' patterns"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Speak the users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-008",
+    "hiện_trạng": "Vé tàu data logic error: tổng 20K < giảm giá 100K = impossible math. 'Chiều về' data copy 'Ga đến: Sài Gòn' = ga đi, not ga đến. Data integrity issues.",
+    "tác_động": "Math impossible: discount > total = negative price? Data logic error = severe trust issue. Station data wrong = người dùng books wrong ticket. Critical data integrity failures.",
+    "nguyên_tắc": "Nielsen #5: Data validation must catch impossible values. Discount ≤ subtotal. Station fields must be correct.",
+    "đề_xuất_steps": [
+      "kiểm tra: discount ≤ subtotal (ngăn chặn negative totals)",
+      "kiểm tra: Ga đi ≠ Ga đến",
+      "Cross-reference chiều đi vs chiều về data",
+      "Flag impossible values before submit"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Carefully prevent problems from occurring.",
+        "source": "Nielsen Norman Group"
+      }
+    ]
+  },
+  {
+    "id": "UXP-009",
+    "hiện_trạng": "Nút 'Lưu ảnh' trên result screen lưu screenshot — không phải PDF biên nhận chính thức. No PDF option available.",
+    "tác_động": "Screenshot ≠ official biên lai. For disputes/tax: PDF biên lai bắt buộc. Screenshot: low quality, no metadata, not legally valid.",
+    "nguyên_tắc": "Nielsen #7: Multiple export formats (PDF, image, share) = flexibility for khác nhau needs.",
+    "references": [
+      {
+        "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+        "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+        "quote": "Shortcuts speed up interaction.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm \"Tải biên nhận PDF\" cạnh \"Lưu ảnh\"",
+      "Cung cấp shortcut cho expert người dùng (VD: swipe, long-press)",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-010",
+    "hiện_trạng": "xác nhận screens chỉ có back arrow ở header — thiếu home icon. người dùng deep trong payment flow chỉ có thể back step-by-step.",
+    "tác_động": "5-step flow: người dùng at step 4 wants to go home → must back 4 times. Home icon = direct escape. Especially important after completing giao dịch.",
+    "nguyên_tắc": "Nielsen #3: Emergency exit from any depth. Home icon in header = universal escape hatch.",
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Users need a clearly marked 'emergency exit'.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm home icon cho xác nhận screens",
+      "Đảm bảo người dùng có thể undo hoặc thoát ở mọi bước trong flow",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-011",
+    "hiện_trạng": "Result screens chỉ có CTA 'Tạo giao dịch mới' (outlined style) — không có 'Về trang chủ' primary CTA. người dùng stuck on result screen.",
+    "tác_động": "After giao dịch complete: most người dùng want to go home, not create another. thiếu primary CTA = multiple taps to navigate away.",
+    "nguyên_tắc": "Nielsen #3: Primary post-task CTA should match most common next action: 'Về trang chủ' (primary) + 'Tạo giao dịch mới' (secondary).",
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Emergency exit needed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "\"Về trang chủ\" (filled) + \"Tạo giao dịch mới\" (outlined)",
+      "Dùng ngôn ngữ và mô hình tâm lý quen thuộc với người dùng ngân hàng",
+      "Regression test sau triển khai — đảm bảo không break existing flow"
+    ]
+  },
+  {
+    "id": "UXP-012",
+    "hiện_trạng": "OTP overlay trên thanh-toan-vietlot: 6 cells, không có countdown timer, không có resend button. người dùng nhập OTP nhưng không biết validity period.",
+    "tác_động": "No timer → OTP expires silently → người dùng types correct OTP → rejected → confusion. No resend → người dùng phải restart entire flow if OTP not received.",
+    "nguyên_tắc": "Nielsen #1: OTP timer = time-critical status. Doherty Threshold: countdown gives pace context.",
+    "đề_xuất_steps": [
+      "Countdown timer: '02:00' visible",
+      "Resend button: appears after 30s cooldown",
+      "Auto-read OTP from SMS (Android)",
+      "Clear error: 'OTP hết hạn. Gửi lại mã.'"
+    ],
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed.",
+        "source": "Nielsen Norman Group"
+      },
+      {
+        "name": "Doherty Threshold",
+        "url": "https://lawsofux.com/doherty-threshold/",
+        "quote": "Productivity soars when neither has to wait on the other.",
+        "source": "Laws of UX"
+      }
+    ]
+  },
+  {
+    "id": "Gap#8@SCR-TT-001",
+    "hiện_trạng": "Chỉ 1 CTA nhưng icon cảnh báo đỏ gây confusion — mixed signal: action button + warning icon.",
+    "tác_động": "Warning icon near CTA → người dùng hesitates: 'Is this safe to tap?'",
+    "nguyên_tắc": "Hick's Law: Clear single action without contradicting signals.",
+    "references": [
+      {
+        "name": "Hick's Law",
+        "url": "https://lawsofux.com/hicks-law/",
+        "quote": "Decision time increases with number and complexity of choices.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-TT-002",
+    "hiện_trạng": "Banner 'đặt lịch' doesn't match Vietlott payment context.",
+    "tác_động": "Template text not customized → context mismatch.",
+    "nguyên_tắc": "Nielsen #4: Context-specific text bắt buộc.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "Words should not cause confusion.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #4 để cải thiện trải nghiệm",
+      "Khắc phục: Template text not customized → context mismatch.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TT-002",
+    "hiện_trạng": "OTP overlay: 6 cells, no timer, no resend button.",
+    "tác_động": "thiếu time feedback + no recovery path if OTP not received.",
+    "nguyên_tắc": "Nielsen #1: OTP timer is critical status feedback.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TT-002",
+    "hiện_trạng": "SMS OTP single-option dropdown — không cần thiết interaction.",
+    "tác_động": "Extra tap for no choice. Should auto-select.",
+    "nguyên_tắc": "Nielsen #8: loại bỏ không cần thiết interactions.",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "No irrelevant information.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Hỗ trợ auto-paste OTP từ SMS và auto-submit khi đủ 6 ký tự",
+      "Loại bỏ dropdown khi chỉ có 1 lựa chọn — hiển thị trực tiếp giá trị mặc định"
+    ]
+  },
+  {
+    "id": "Gap#7@SCR-TT-002",
+    "hiện_trạng": "5 rows duplicate from form on xác nhận screen.",
+    "tác_động": "xác nhận fatigue → người dùng skips review.",
+    "nguyên_tắc": "Nielsen #8: hiển thị only key data on xác nhận.",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "No irrelevant information.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế dialog xác nhận với framing rõ hậu quả và CTA phân biệt rõ primary/destructive",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-TT-003",
+    "hiện_trạng": "Only 'Lưu ảnh' — no PDF biên lai option.",
+    "tác_động": "Screenshot ≠ official biên lai for disputes.",
+    "nguyên_tắc": "Nielsen #7: Multiple export formats needed.",
+    "references": [
+      {
+        "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+        "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+        "quote": "Shortcuts for experts.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TT-003",
+    "hiện_trạng": "Only 'Tạo giao dịch mới' + small home icon — no primary 'Về trang chủ' CTA.",
+    "tác_động": "Most common post-task action (go home) not prominent.",
+    "nguyên_tắc": "Nielsen #3: Primary exit CTA needed.",
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Emergency exit needed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TT-004",
+    "hiện_trạng": "'[Customer name]', '[Phone number]' — raw placeholders in design.",
+    "tác_động": "Placeholder risks shipping to production. Design cannot be properly reviewed.",
+    "nguyên_tắc": "Nielsen #2: Use realistic content in designs.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Speak users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm helper text bên dưới trường nhập: giải thích format mong đợi hoặc ví dụ",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#7@SCR-TT-004",
+    "hiện_trạng": "'email@examplemail.com' placeholder in design.",
+    "tác_động": "Placeholder email → design review impossible for layout validation.",
+    "nguyên_tắc": "Nielsen #2: Realistic data bắt buộc.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Speak users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Thêm helper text bên dưới trường nhập: giải thích format mong đợi hoặc ví dụ",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-TT-005",
+    "hiện_trạng": "Banner 'đặt lịch' ≠ 'vé xem phim' — template mismatch.",
+    "tác_động": "Context confusion on payment screen.",
+    "nguyên_tắc": "Nielsen #4: Context-specific copy.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "No confusion about meaning.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #4 để cải thiện trải nghiệm",
+      "Khắc phục: Context confusion on payment screen.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TT-005",
+    "hiện_trạng": "'[provider name]' placeholder visible in design.",
+    "tác_động": "Placeholder data in production-facing screens.",
+    "nguyên_tắc": "Nielsen #2: Realistic content.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Speak users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm helper text bên dưới trường nhập: giải thích format mong đợi hoặc ví dụ",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TT-005",
+    "hiện_trạng": "OTP overlay on 1002 screen — no timer, no resend.",
+    "tác_động": "giống nhau OTP UX issues repeated across flows.",
+    "nguyên_tắc": "Nielsen #1: Timer + resend bắt buộc for all OTP flows.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TT-005",
+    "hiện_trạng": "Single-option SMS OTP dropdown repeated.",
+    "tác_động": "không cần thiết interaction pattern repeated across payment flows.",
+    "nguyên_tắc": "Nielsen #8: Auto-select single option.",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "No irrelevant information.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Hỗ trợ auto-paste OTP từ SMS và auto-submit khi đủ 6 ký tự",
+      "Loại bỏ dropdown khi chỉ có 1 lựa chọn — hiển thị trực tiếp giá trị mặc định"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TT-006",
+    "hiện_trạng": "'[Customer name]' in result screen — placeholder.",
+    "tác_động": "Placeholder in final result = production risk.",
+    "nguyên_tắc": "Nielsen #2: Realistic data.",
+    "references": [
+      {
+        "name": "Nielsen #2 — Match Between System and Real World",
+        "url": "https://www.nngroup.com/articles/match-system-real-world/",
+        "quote": "Speak users' language.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm helper text bên dưới trường nhập: giải thích format mong đợi hoặc ví dụ",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TT-006",
+    "hiện_trạng": "'tổng đài XXXXX' — hotline placeholder.",
+    "tác_động": "Broken help/support path. Critical for financial error recovery.",
+    "nguyên_tắc": "Nielsen #9: Recovery must have real contact info.",
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Constructively suggest solution.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Thêm helper text bên dưới trường nhập: giải thích format mong đợi hoặc ví dụ",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TT-006",
+    "hiện_trạng": "Only 'Tạo giao dịch mới' outlined CTA on result screen.",
+    "tác_động": "thiếu primary 'Về trang chủ' action.",
+    "nguyên_tắc": "Nielsen #3: Primary exit CTA.",
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Emergency exit.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#3@SCR-TT-007",
+    "hiện_trạng": "Data logic: 20K total < 100K discount = mathematically impossible.",
+    "tác_động": "Data integrity failure in financial calculation. Trust-destroying.",
+    "nguyên_tắc": "Nielsen #5: kiểm tra business logic — discount ≤ subtotal.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent problems.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #5 để cải thiện trải nghiệm",
+      "Khắc phục: Data integrity failure in financial calculation. Trust-destroying.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TT-007",
+    "hiện_trạng": "1407px artboard, 20 rows — extremely long form without sections.",
+    "tác_động": "Cognitive overload. 3+ viewport heights of data.",
+    "nguyên_tắc": "Miller's Law: Chunk long content.",
+    "references": [
+      {
+        "name": "Miller's Law",
+        "url": "https://lawsofux.com/millers-law/",
+        "quote": "7±2 items in working memory.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Miller's Law để cải thiện trải nghiệm",
+      "Khắc phục: Cognitive overload. 3+ viewport heights of data.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TT-007",
+    "hiện_trạng": "'Ga đến: Sài Gòn' = actually ga đi — data copy error for return trip.",
+    "tác_động": "Wrong station assignment = người dùng books wrong ticket. Critical data error.",
+    "nguyên_tắc": "Nielsen #5: Data validation for critical fields.",
+    "references": [
+      {
+        "name": "Nielsen #5 — Error Prevention",
+        "url": "https://www.nngroup.com/articles/slips/",
+        "quote": "Prevent problems.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thiết kế trạng thái lỗi rõ ràng: viền đỏ trường nhập + thông báo lỗi inline bên dưới",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#1@SCR-TT-008",
+    "hiện_trạng": "Banner 'đặt lịch' ≠ 'vé tàu' — template mismatch repeated.",
+    "tác_động": "giống nhau context mismatch pattern across payment types.",
+    "nguyên_tắc": "Nielsen #4: Context-specific text.",
+    "references": [
+      {
+        "name": "Nielsen #4 — Consistency and Standards",
+        "url": "https://www.nngroup.com/articles/consistency-and-standards/",
+        "quote": "No confusion.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Áp dụng nguyên tắc Nielsen #4 để cải thiện trải nghiệm",
+      "Khắc phục: giống nhau context mismatch pattern across payment types.",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TT-008",
+    "hiện_trạng": "OTP on train ticket flow: no timer, no resend.",
+    "tác_động": "Systemic OTP UX gap across all payment flows.",
+    "nguyên_tắc": "Nielsen #1: Timer + resend everywhere.",
+    "references": [
+      {
+        "name": "Nielsen #1 — Visibility of System Status",
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "quote": "Keep users informed.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TT-008",
+    "hiện_trạng": "Single-option SMS OTP dropdown — repeated pattern.",
+    "tác_động": "không cần thiết interaction replicated.",
+    "nguyên_tắc": "Nielsen #8: Auto-select single options.",
+    "references": [
+      {
+        "name": "Nielsen #8 — Aesthetic and Minimalist Design",
+        "url": "https://www.nngroup.com/articles/aesthetic-minimalist-design/",
+        "quote": "No irrelevant info.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Hỗ trợ auto-paste OTP từ SMS và auto-submit khi đủ 6 ký tự",
+      "Loại bỏ dropdown khi chỉ có 1 lựa chọn — hiển thị trực tiếp giá trị mặc định"
+    ]
+  },
+  {
+    "id": "Gap#7@SCR-TT-008",
+    "hiện_trạng": "OTP cells compact, CTA close — tight spacing on train ticket OTP overlay.",
+    "tác_động": "Compact OTP input → mistouch between cells and CTA.",
+    "nguyên_tắc": "Fitts's Law: Adequate spacing between interactive elements.",
+    "references": [
+      {
+        "name": "Fitts's Law",
+        "url": "https://lawsofux.com/fittss-law/",
+        "quote": "Target size and distance affect acquisition.",
+        "source": "Laws of UX"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Triển khai OTP UX chuẩn: highlight ô active, countdown timer, nút 'Gửi lại mã' sau khi hết hạn",
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#4@SCR-TT-009",
+    "hiện_trạng": "'tổng đài XXXXX' — hotline placeholder on result screen.",
+    "tác_động": "Broken support path. giống nhau placeholder issue repeated.",
+    "nguyên_tắc": "Nielsen #9: Real contact info bắt buộc.",
+    "references": [
+      {
+        "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+        "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+        "quote": "Suggest solution.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Thêm helper text bên dưới trường nhập: giải thích format mong đợi hoặc ví dụ",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  },
+  {
+    "id": "Gap#5@SCR-TT-009",
+    "hiện_trạng": "Only 'Tạo giao dịch mới' CTA — thiếu 'Về trang chủ'.",
+    "tác_động": "Repeated thiếu primary exit across result screens.",
+    "nguyên_tắc": "Nielsen #3: Primary exit CTA.",
+    "references": [
+      {
+        "name": "Nielsen #3 — User Control and Freedom",
+        "url": "https://www.nngroup.com/articles/user-control-and-freedom/",
+        "quote": "Emergency exit.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Bổ sung 'Về trang chủ' vào thiết kế màn hình",
+      "Đặt CTA chính ở vị trí sticky bottom — luôn hiển thị bất kể scroll hoặc keyboard",
+      "Cung cấp navigation rõ ràng: nút quay lại + breadcrumb cho deep flow"
+    ]
+  },
+  {
+    "id": "Gap#6@SCR-TT-009",
+    "hiện_trạng": "Only 'Lưu ảnh' — no PDF biên lai option on train ticket result.",
+    "tác_động": "No official biên lai format for travel expense reporting.",
+    "nguyên_tắc": "Nielsen #7: Multiple export formats.",
+    "references": [
+      {
+        "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+        "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+        "quote": "Shortcuts for experts.",
+        "source": "Nielsen Norman Group"
+      }
+    ],
+    "đề_xuất_steps": [
+      "Format dữ liệu nhất quán: số tiền có dấu phân cách + đơn vị VND + chữ viết kèm theo",
+      "Xác minh tính nhất quán với các màn hình khác trong cùng module",
+      "Kiểm tra trên cả iOS và Android với nhiều kịch bản sử dụng thực tế"
+    ]
+  }
+]

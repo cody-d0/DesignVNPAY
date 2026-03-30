@@ -1,0 +1,925 @@
+{
+  "_generator": "enrich_llm.py",
+  "_version": "1.0",
+  "module": {
+    "name": "Co-opBank (Login-Home)",
+    "domain": "Banking",
+    "product": "Co-opBank Mobile Banking",
+    "dir": "/Users/dataism/Documents/UXtool/COOPBANK/final/login-home--tong-quan"
+  },
+  "system_prompt": "Bạn là UX Auditor chuyên nghiệp cho Banking app (Co-opBank Mobile Banking).\n\nNhiệm vụ: Enrich các finding từ UX audit report. Mỗi finding cần 4-5 fields:\n\n1. **hiện_trạng**: Mô tả chính xác UI hiện tại\n   - PHẢI có artboard ID (vd: \"Trên artboard 7103\")\n   - PHẢI có overlay type nếu có (vd: \"overlay: OTP bottom-sheet\")\n   - PHẢI liệt kê UI elements thực tế có mặt\n   - KHÔNG suy diễn elements không có trong evidence\n\n2. **tác_động**: Hậu quả cụ thể cho người dùng\n   - PHẢI mô tả consequence cho user (bị chặn, mất khả năng, nhầm lẫn...)\n   - PHẢI có domain context (Banking: giao dịch nhạy cảm, trust, compliance...)\n   - KHÔNG dùng severity label (\"nghiêm trọng\", \"critical\", \"major\")\n   - KHÔNG lặp lại problem title\n\n3. **nguyên_tắc**: Heuristic vi phạm + quote + giải thích\n   - PHẢI cite heuristic bằng tên chính xác (Nielsen #N, WCAG X.Y.Z, Laws of UX)\n   - PHẢI có quote gốc tiếng Anh\n   - PHẢI giải thích TẠI SAO design vi phạm nguyên tắc này\n   - Ưu tiên chọn từ heuristic_candidates đã pre-select\n\n4. **đề_xuất_steps**: (chỉ UXP) Array các bước cải thiện\n   - Ít nhất 2 bước\n   - Mỗi bước actionable, có DDL ref nếu liên quan\n   - Spec cụ thể (timeout=60s, color token, component name)\n\n5. **references**: Array các tham chiếu chính thức\n   - Mỗi ref: {name, url, quote, source}\n   - Dữ liệu từ REFERENCE DATABASE bên dưới\n   - KHÔNG bịa URL — chỉ dùng URL từ database\n\nOUTPUT FORMAT: JSON array of objects, mỗi object có id + các fields trên.\n\nREFERENCE DATABASE:\n  Nielsen #1: Nielsen #1 — Visibility of System Status — \"The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.\"\n  Nielsen #10: Nielsen #10 — Help and Documentation — \"It's best if the system doesn't need any additional explanation. However, it may be necessary to provide documentation.\"\n  Nielsen #2: Nielsen #2 — Match Between System and Real World — \"The design should speak the users' language. Use words, phrases, and concepts familiar to the user.\"\n  Nielsen #3: Nielsen #3 — User Control and Freedom — \"Users often perform actions by mistake. They need a clearly marked 'emergency exit' to leave the unwanted action.\"\n  Nielsen #4: Nielsen #4 — Consistency and Standards — \"Users should not have to wonder whether different words, situations, or actions mean the same thing.\"\n  Nielsen #5: Nielsen #5 — Error Prevention — \"Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.\"\n  Nielsen #6: Nielsen #6 — Recognition Rather Than Recall — \"Minimize the user's memory load by making elements, actions, and options visible.\"\n  Nielsen #7: Nielsen #7 — Flexibility and Efficiency of Use — \"Shortcuts — hidden from novice users — may speed up the interaction for the expert user.\"\n  Nielsen #8: Nielsen #8 — Aesthetic and Minimalist Design — \"Interfaces should not contain information that is irrelevant or rarely needed.\"\n  Nielsen #9: Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors — \"Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.\"\n  Fitts's Law: \"The time to acquire a target is a function of the distance to and size of the target.\"\n  Hick's Law: \"The time it takes to make a decision increases with the number and complexity of choices.\"\n  Jakob's Law: \"Users spend most of their time on other sites. This means that users prefer your site to work the same way.\"\n  Miller's Law: \"The average person can only keep 7 (plus or minus 2) items in their working memory.\"\n  Peak-End Rule: \"People judge an experience largely based on how they felt at its most intense point and at its end.\"\n  Zeigarnik Effect: \"People remember uncompleted or interrupted tasks better than completed tasks.\"\n  Von Restorff Effect: \"When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.\"\n  Doherty Threshold: \"Productivity soars when a computer and its users interact at a pace (<400ms) that ensures that neither has to wait on the other.\"\n  Aesthetic-Usability Effect: \"Users often perceive aesthetically pleasing design as design that's more usable.\"\n  WCAG 1.4.11 — Non-text Contrast (Level AA)\n  WCAG 1.4.3 — Contrast (Minimum) (Level AA)\n  WCAG 2.5.5 — Target Size Enhanced (Level AAA)\n  WCAG 2.5.8 — Target Size Minimum (Level AA)\n  WCAG 3.3.1 — Error Identification (Level A)\n  WCAG 3.3.2 — Labels or Instructions (Level A)\n  WCAG 3.3.3 — Error Suggestion (Level AA)\n  WCAG 3.3.4 — Error Prevention: Legal, Financial, Data (Level AA)",
+  "items": [
+    {
+      "id": "UXP-001",
+      "type": "uxp",
+      "finding": {
+        "severity": "Critical",
+        "screen_tag": "Đăng nhập › Form đăng nhập",
+        "screen_id": "SCR-LH-001",
+        "problem": "Form đăng nhập (login-with-phone-number",
+        "ddl_ref": "UXG-04 · UXG-78 · Law:Nielsen #9 (Help users recognize, diagnose, and recover from errors)",
+        "solution_draft": "Thêm error state: border đỏ `{base.destructive}` + helper text \"Mật khẩu không đúng. Bạn còn X lần thử.\"; Thêm alert khi tài khoản bị khóa: \"Tài kh...",
+        "gap_ref": "Check #5",
+        "current_user_impact": "Lỗi nghiêm trọng gây gián đoạn luồng Đăng nhập: form đăng nhập (login-with-phone-number.",
+        "current_heuristic": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors · UXG-04 · UXG-78 · Nielsen's Law"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-LH-001",
+        "parent_screen_name": "Đăng nhập › Form đăng nhập",
+        "boundary_type": "login"
+      },
+      "related_checks": [
+        {
+          "num": 5,
+          "title": "Form có error state",
+          "verdict": "Gap",
+          "evidence": "Không có artboard error — thiếu sai mật khẩu, tài khoản bị khóa, network error",
+          "ddl_ref": "UXG-04",
+          "category": "Skill A: signal_inference",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank (Login-Home)",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #9 — Help Users Recognize, Diagnose, and Recover from Errors",
+          "url": "https://www.nngroup.com/articles/error-message-guidelines/",
+          "quote": "Error messages should be expressed in plain language, precisely indicate the problem, and constructively suggest a solution.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "direct",
+          "_ref_id": "nielsen.9"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-002",
+      "type": "uxp",
+      "finding": {
+        "severity": "Critical",
+        "screen_tag": "Đăng nhập › Form đăng nhập",
+        "screen_id": "SCR-LH-001",
+        "problem": "Form login-with-phone-number",
+        "ddl_ref": "UXG-10 · UXG-07 · Law:Fitts's Law",
+        "solution_draft": "Thêm floating label \"Số điện thoại\" trên field, fontSize `{text.sm.font-size}`, fontWeight `{font-weight.medium}`; Thêm floating label \"Mật khẩu\" t...",
+        "gap_ref": "Check #6, Check #10",
+        "current_user_impact": "Trải nghiệm bị phá vỡ tại Form đăng nhập: form login-with-phone-number, buộc user phải thoát và thử lại.",
+        "current_heuristic": "Fitts's Law · UXG-10 · UXG-07 · Fitts's Law"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-LH-001",
+        "parent_screen_name": "Đăng nhập › Form đăng nhập",
+        "boundary_type": "login"
+      },
+      "related_checks": [
+        {
+          "num": 6,
+          "title": "Form fields có label (không chỉ placeholder)",
+          "verdict": "Gap",
+          "evidence": "Chỉ placeholder text, không có floating/fixed label trên field",
+          "ddl_ref": "UXG-10",
+          "category": "Skill C: vision",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 10,
+          "title": "Language consistency (VN/EN)",
+          "verdict": "Gap",
+          "evidence": "\"Touch ID\" (EN) mixed với text VN khác",
+          "ddl_ref": "UXG-07",
+          "category": "Skill C: vision",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank (Login-Home)",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Fitts's Law",
+          "url": "https://lawsofux.com/fittss-law/",
+          "quote": "The time to acquire a target is a function of the distance to and size of the target.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:fitts",
+          "_ref_id": "laws.fitts"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-003",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Trang chủ › Bảng điều khiển",
+        "screen_id": "SCR-LH-001",
+        "problem": "Trang chủ expanded (homepage-expand-2",
+        "ddl_ref": "UXG-45 · UXG-12 · Law:Hick's Law",
+        "solution_draft": "Hiển thị 6 items \"Hay dùng\" mặc định + \"Xem tất cả\" CTA. User tùy chỉnh danh sách; Collapse mặc định, hiện 3 items + \"Xem thêm (5)\". Reduce cogniti...",
+        "gap_ref": "Check #6",
+        "current_user_impact": "Người dùng gặp khó khăn khi thao tác do trang chủ expanded (homepage-expand-2, làm tăng thời gian thao tác.",
+        "current_heuristic": "Hick's Law · UXG-45 · UXG-12 · Hick's Law"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-LH-001",
+        "parent_screen_name": "Đăng nhập › Form đăng nhập",
+        "boundary_type": "login"
+      },
+      "related_checks": [
+        {
+          "num": 6,
+          "title": "Form fields có label (không chỉ placeholder)",
+          "verdict": "Gap",
+          "evidence": "Chỉ placeholder text, không có floating/fixed label trên field",
+          "ddl_ref": "UXG-10",
+          "category": "Skill C: vision",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank (Login-Home)",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Hick's Law",
+          "url": "https://lawsofux.com/hicks-law/",
+          "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:hick",
+          "_ref_id": "laws.hick"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-004",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Thông tin cá nhân › Chi tiết",
+        "screen_id": "SCR-LH-001",
+        "problem": "Màn hình basic-infor",
+        "ddl_ref": "UXG-78 · UXG-55 · Law:Nielsen #7 (Flexibility and efficiency of use)",
+        "solution_draft": "Thêm \"Yêu cầu cập nhật thông tin\" → mở form request online (mô tả thay đổi + upload giấy tờ); Thêm \"Gọi hotline 1900-xxxx\" link trực tiếp; Thêm edi...",
+        "gap_ref": "Check #4, Check #6",
+        "current_user_impact": "Màn hình basic-infor — gây nhầm lẫn và giảm tin tưởng vào giao diện tại bước Chi tiết.",
+        "current_heuristic": "Nielsen #7 — Flexibility and Efficiency of Use · UXG-78 · UXG-55 · Nielsen's Law"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-LH-001",
+        "parent_screen_name": "Đăng nhập › Form đăng nhập",
+        "boundary_type": "login"
+      },
+      "related_checks": [
+        {
+          "num": 4,
+          "title": "Popup Touch ID có nội dung rõ ràng + dismiss",
+          "verdict": "Pass",
+          "evidence": "popup-touch-id.png — title + body text VN + \"Hủy\" button",
+          "ddl_ref": "UXG-36",
+          "category": "Skill B: flow_checks",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 6,
+          "title": "Form fields có label (không chỉ placeholder)",
+          "verdict": "Gap",
+          "evidence": "Chỉ placeholder text, không có floating/fixed label trên field",
+          "ddl_ref": "UXG-10",
+          "category": "Skill C: vision",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank (Login-Home)",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #7 — Flexibility and Efficiency of Use",
+          "url": "https://www.nngroup.com/articles/flexibility-efficiency-heuristic/",
+          "quote": "Shortcuts — hidden from novice users — may speed up the interaction for the expert user.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "direct",
+          "_ref_id": "nielsen.7"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-005",
+      "type": "uxp",
+      "finding": {
+        "severity": "Major",
+        "screen_tag": "Cài đặt › Danh sách",
+        "screen_id": "SCR-LH-001",
+        "problem": "Mục \"Thoát ứng dụng\" trong settings",
+        "ddl_ref": "UXG-04 · UXG-36 · Law:Nielsen #5 (Error prevention)",
+        "solution_draft": "Đổi màu text sang `{base.destructive}` (đỏ), thêm icon logout riêng biệt; Thêm divider trước \"Thoát ứng dụng\" để tách khỏi menu thông thường; Thêm ...",
+        "gap_ref": "Check #6, Check #7",
+        "current_user_impact": "Người dùng gặp khó khăn khi thao tác do mục \"Thoát ứng dụng\" trong settings, làm tăng thời gian thao tác.",
+        "current_heuristic": "Nielsen #5 — Error Prevention · UXG-04 · UXG-36 · Nielsen's Law"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-LH-001",
+        "parent_screen_name": "Đăng nhập › Form đăng nhập",
+        "boundary_type": "login"
+      },
+      "related_checks": [
+        {
+          "num": 6,
+          "title": "Form fields có label (không chỉ placeholder)",
+          "verdict": "Gap",
+          "evidence": "Chỉ placeholder text, không có floating/fixed label trên field",
+          "ddl_ref": "UXG-10",
+          "category": "Skill C: vision",
+          "severity": "",
+          "artboard_ids": []
+        },
+        {
+          "num": 7,
+          "title": "Password field có eye toggle",
+          "verdict": "Pass",
+          "evidence": "Eye icon visible bên phải field Mật khẩu",
+          "ddl_ref": "—",
+          "category": "Skill C: vision",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank (Login-Home)",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "direct",
+          "_ref_id": "nielsen.5"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-006",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Đăng nhập › Form đăng nhập",
+        "screen_id": "SCR-LH-001",
+        "problem": "Popup Touch ID (popup-touch-id",
+        "ddl_ref": "UXG-07 · Law:Jakob's Law",
+        "solution_draft": "Đổi thành \"ATM/Chi nhánh\" đầy đủ hoặc \"Điểm GD\" nếu cần ngắn; Cân nhắc thêm subtitle VN \"Xác thực vân tay\" bên dưới \"Touch ID\" để hỗ trợ user lớn tuổi",
+        "gap_ref": "Check #10",
+        "current_user_impact": "Chi tiết thiết kế chưa tối ưu tại Form đăng nhập: popup Touch ID (popup-touch-id.",
+        "current_heuristic": "Jakob's Law · UXG-07 · Jakob's Law"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-LH-001",
+        "parent_screen_name": "Đăng nhập › Form đăng nhập",
+        "boundary_type": "login"
+      },
+      "related_checks": [
+        {
+          "num": 10,
+          "title": "Language consistency (VN/EN)",
+          "verdict": "Gap",
+          "evidence": "\"Touch ID\" (EN) mixed với text VN khác",
+          "ddl_ref": "UXG-07",
+          "category": "Skill C: vision",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank (Login-Home)",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Jakob's Law",
+          "url": "https://lawsofux.com/jakobs-law/",
+          "quote": "Users spend most of their time on other sites. This means that users prefer your site to work the same way.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:jakob",
+          "_ref_id": "laws.jakob"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "UXP-007",
+      "type": "uxp",
+      "finding": {
+        "severity": "Minor",
+        "screen_tag": "Trang chủ › Bảng điều khiển",
+        "screen_id": "SCR-LH-001",
+        "problem": "Banner quảng cáo (homepage-shorten",
+        "ddl_ref": "UXG-52 · Law:Aesthetic-Usability Effect",
+        "solution_draft": "Thêm auto-scroll animation (3-5s interval) + swipe indicator (arrow hints); Tăng touch target ≥ 44×44px theo iOS HIG",
+        "gap_ref": "Check #10",
+        "current_user_impact": "Chi tiết thiết kế chưa tối ưu tại Bảng điều khiển: banner quảng cáo (homepage-shorten.",
+        "current_heuristic": "Aesthetic-Usability Effect · UXG-52 · Aesthetic's Law"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-LH-001",
+        "parent_screen_name": "Đăng nhập › Form đăng nhập",
+        "boundary_type": "login"
+      },
+      "related_checks": [
+        {
+          "num": 10,
+          "title": "Language consistency (VN/EN)",
+          "verdict": "Gap",
+          "evidence": "\"Touch ID\" (EN) mixed với text VN khác",
+          "ddl_ref": "UXG-07",
+          "category": "Skill C: vision",
+          "severity": "",
+          "artboard_ids": []
+        }
+      ],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank (Login-Home)",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Aesthetic-Usability Effect",
+          "url": "https://lawsofux.com/aesthetic-usability-effect/",
+          "quote": "Users often perceive aesthetically pleasing design as design that's more usable.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:aesthetic",
+          "_ref_id": "laws.aesthetic_usability"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "đề_xuất_steps",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#5@SCR-LH-001",
+      "type": "gap",
+      "finding": {
+        "num": 5,
+        "title": "Form có error state",
+        "severity": "Minor",
+        "screen_id": "SCR-LH-001",
+        "screen_name": "Đăng nhập › Form đăng nhập",
+        "screen_type": "login",
+        "evidence": "Không có artboard error — thiếu sai mật khẩu, tài khoản bị khóa, network error",
+        "ddl_ref": "UXG-04",
+        "ddl_evidence": "UXG-04",
+        "current_user_impact": "Không có artboard error — thiếu sai mật khẩu, tài khoản bị khóa, network error — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-LH-001",
+        "parent_screen_name": "Đăng nhập › Form đăng nhập",
+        "boundary_type": "login"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank (Login-Home)",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-LH-001",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "Form fields có label (không chỉ placeholder)",
+        "severity": "Minor",
+        "screen_id": "SCR-LH-001",
+        "screen_name": "Đăng nhập › Form đăng nhập",
+        "screen_type": "login",
+        "evidence": "Chỉ placeholder text, không có floating/fixed label trên field",
+        "ddl_ref": "UXG-10",
+        "ddl_evidence": "UXG-10",
+        "current_user_impact": "Chỉ placeholder text, không có floating/fixed label trên field — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-LH-001",
+        "parent_screen_name": "Đăng nhập › Form đăng nhập",
+        "boundary_type": "login"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank (Login-Home)",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#10@SCR-LH-001",
+      "type": "gap",
+      "finding": {
+        "num": 10,
+        "title": "Language consistency (VN/EN)",
+        "severity": "Minor",
+        "screen_id": "SCR-LH-001",
+        "screen_name": "Đăng nhập › Form đăng nhập",
+        "screen_type": "login",
+        "evidence": "\"Touch ID\" (EN) mixed với text VN khác",
+        "ddl_ref": "UXG-07",
+        "ddl_evidence": "UXG-07",
+        "current_user_impact": "\"Touch ID\" (EN) mixed với text VN khác — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-LH-001",
+        "parent_screen_name": "Đăng nhập › Form đăng nhập",
+        "boundary_type": "login"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank (Login-Home)",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-LH-002",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "Information hierarchy cho 20+ service items",
+        "severity": "Minor",
+        "screen_id": "SCR-LH-002",
+        "screen_name": "Trang chủ › Bảng điều khiển",
+        "screen_type": "dashboard",
+        "evidence": "Tất cả service items đồng nhất style, không phân biệt priority. Hick's Law violation",
+        "ddl_ref": "UXG-45",
+        "ddl_evidence": "UXG-45",
+        "current_user_impact": "Tất cả service items đồng nhất style, không phân biệt priority. Hick's Law violation — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-LH-002",
+        "parent_screen_name": "Trang chủ › Bảng điều khiển",
+        "boundary_type": "dashboard"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank (Login-Home)",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Hick's Law",
+          "url": "https://lawsofux.com/hicks-law/",
+          "quote": "The time it takes to make a decision increases with the number and complexity of choices.",
+          "source": "Laws of UX",
+          "_match_source": "keyword:hick",
+          "_ref_id": "laws.hick"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#10@SCR-LH-002",
+      "type": "gap",
+      "finding": {
+        "num": 10,
+        "title": "Banner CTA touch target ≥ 44px",
+        "severity": "Minor",
+        "screen_id": "SCR-LH-002",
+        "screen_name": "Trang chủ › Bảng điều khiển",
+        "screen_type": "dashboard",
+        "evidence": "\"Chi tiết\" CTA trên banner nhỏ (~60×30), dưới 44px height",
+        "ddl_ref": "UXG-52",
+        "ddl_evidence": "UXG-52",
+        "current_user_impact": "\"Chi tiết\" CTA trên banner nhỏ (~60×30), dưới 44px height — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-LH-002",
+        "parent_screen_name": "Trang chủ › Bảng điều khiển",
+        "boundary_type": "dashboard"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank (Login-Home)",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-LH-003",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "\"Thoát ứng dụng\" có visual differentiation",
+        "severity": "Minor",
+        "screen_id": "SCR-LH-003",
+        "screen_name": "Cài đặt › Danh sách",
+        "screen_type": "settings",
+        "evidence": "Cùng style với các menu items thông thường, không có warning visual",
+        "ddl_ref": "UXG-36",
+        "ddl_evidence": "UXG-36",
+        "current_user_impact": "Cùng style với các menu items thông thường, không có warning visual — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-LH-003",
+        "parent_screen_name": "Cài đặt › Danh sách",
+        "boundary_type": "settings"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank (Login-Home)",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#7@SCR-LH-003",
+      "type": "gap",
+      "finding": {
+        "num": 7,
+        "title": "\"Thoát ứng dụng\" có confirmation dialog",
+        "severity": "Minor",
+        "screen_id": "SCR-LH-003",
+        "screen_name": "Cài đặt › Danh sách",
+        "screen_type": "settings",
+        "evidence": "Không có artboard confirmation — destructive action thiếu safeguard",
+        "ddl_ref": "UXG-04",
+        "ddl_evidence": "UXG-04",
+        "current_user_impact": "Không có artboard confirmation — destructive action thiếu safeguard — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-LH-003",
+        "parent_screen_name": "Cài đặt › Danh sách",
+        "boundary_type": "settings"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank (Login-Home)",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #5 — Error Prevention",
+          "url": "https://www.nngroup.com/articles/slips/",
+          "quote": "Good error messages are important, but the best designs carefully prevent problems from occurring in the first place.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "context_map:destructive_action",
+          "_ref_id": "nielsen.5"
+        },
+        {
+          "name": "Von Restorff Effect",
+          "url": "https://lawsofux.com/von-restorff-effect/",
+          "quote": "When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.",
+          "source": "Laws of UX",
+          "_match_source": "context_map:destructive_action",
+          "_ref_id": "laws.von_restorff"
+        },
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#4@SCR-LH-004",
+      "type": "gap",
+      "finding": {
+        "num": 4,
+        "title": "PII (CMND, ngày sinh) hiển thị rõ ràng",
+        "severity": "Minor",
+        "screen_id": "SCR-LH-004",
+        "screen_name": "Thông tin cá nhân › Chi tiết",
+        "screen_type": "detail",
+        "evidence": "CMND \"012547288\" và ngày sinh \"12/05/1981\" hiển thị plaintext, không có option ẩn",
+        "ddl_ref": "UXG-55",
+        "ddl_evidence": "UXG-55",
+        "current_user_impact": "CMND \"012547288\" và ngày sinh \"12/05/1981\" hiển thị plaintext, không có option ẩn — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": "1981",
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-LH-004",
+        "parent_screen_name": "Thông tin cá nhân › Chi tiết",
+        "boundary_type": "detail"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank (Login-Home)",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    },
+    {
+      "id": "Gap#6@SCR-LH-004",
+      "type": "gap",
+      "finding": {
+        "num": 6,
+        "title": "CTA để yêu cầu cập nhật thông tin",
+        "severity": "Minor",
+        "screen_id": "SCR-LH-004",
+        "screen_name": "Thông tin cá nhân › Chi tiết",
+        "screen_type": "detail",
+        "evidence": "Chỉ có footnote text, không có button hay link actionable",
+        "ddl_ref": "UXG-78",
+        "ddl_evidence": "UXG-78",
+        "current_user_impact": "Chỉ có footnote text, không có button hay link actionable — vi phạm Flow & Navigation",
+        "current_heuristic": "Flow & Navigation (Luồng người dùng)"
+      },
+      "artboard": {
+        "artboard_id": null,
+        "overlay_type": null,
+        "overlay_label": null,
+        "parent_screen_id": "SCR-LH-004",
+        "parent_screen_name": "Thông tin cá nhân › Chi tiết",
+        "boundary_type": "detail"
+      },
+      "related_checks": [],
+      "domain": {
+        "name": "Banking",
+        "product": "Co-opBank Mobile Banking",
+        "module": "Co-opBank (Login-Home)",
+        "sensitivity": "high"
+      },
+      "heuristic_candidates": [
+        {
+          "name": "Nielsen #1 — Visibility of System Status",
+          "url": "https://www.nngroup.com/articles/visibility-system-status/",
+          "quote": "The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.",
+          "source": "Nielsen Norman Group",
+          "_match_source": "visibility_heuristic",
+          "_ref_id": "nielsen.1"
+        }
+      ],
+      "fields_to_generate": [
+        "hiện_trạng",
+        "tác_động",
+        "nguyên_tắc",
+        "references"
+      ]
+    }
+  ],
+  "stats": {
+    "uxp_count": 7,
+    "gap_count": 9,
+    "total_items": 16,
+    "fields_to_generate": 71
+  }
+}
