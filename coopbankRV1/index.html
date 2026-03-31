@@ -1,0 +1,2969 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Co-opBank KHCN · UX Sitemap Tree v5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════ */
+/* Design Tokens                                   */
+/* ══════════════════════════════════════════════ */
+:root {
+  --bg: #f8f9fc;
+  --bg-card: #ffffff;
+  --bg-hover: #f0f4ff;
+  --bg-header: rgba(255,255,255,0.85);
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+
+  --accent-blue: #3b82f6;
+  --accent-purple: #7c3aed;
+  --accent-cyan: #06b6d4;
+  --accent-green: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-red: #ef4444;
+
+  --cat-core: #3b82f6;
+  --cat-product: #7c3aed;
+  --cat-support: #06b6d4;
+  --cat-onboard: #10b981;
+
+  --border: #e2e8f0;
+  --border-tree: #cbd5e1;
+
+  --radius: 10px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.1);
+
+  --font: 'Inter', -apple-system, system-ui, sans-serif;
+  --transition: 200ms ease;
+}
+
+/* ══════════════════════════════════════════════ */
+/* Reset & Base                                    */
+/* ══════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 14px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* Subtle background pattern */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(59,130,246,0.04) 0%, transparent 40%),
+    radial-gradient(circle at 85% 90%, rgba(124,58,237,0.03) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ══════════════════════════════════════════════ */
+/* Header                                          */
+/* ══════════════════════════════════════════════ */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background: var(--bg-header);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.header-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: white;
+  box-shadow: 0 2px 8px rgba(59,130,246,0.25);
+}
+
+.header h1 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.header h1 .badge {
+  font-weight: 500;
+  font-size: 0.7rem;
+  color: var(--accent-blue);
+  background: rgba(59,130,246,0.08);
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.header-stats {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: rgba(59,130,246,0.06);
+  border: 1px solid rgba(59,130,246,0.1);
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.stat-pill strong {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ══════════════════════════════════════════════ */
+/* Toolbar                                         */
+/* ══════════════════════════════════════════════ */
+.toolbar {
+  position: sticky;
+  top: 67px;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 32px;
+  background: rgba(248,249,252,0.9);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+
+.toolbar .btn {
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: white;
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.toolbar .btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+.toolbar .btn.active {
+  background: rgba(59,130,246,0.08);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+.search-box {
+  position: relative;
+  margin-left: auto;
+  width: 240px;
+}
+
+.search-box svg {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+}
+
+.search-box input {
+  width: 100%;
+  padding: 6px 12px 6px 32px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: white;
+  font-family: var(--font);
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+.search-box input::placeholder { color: var(--text-muted); }
+.search-box input:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.08);
+}
+
+.legend {
+  display: flex;
+  gap: 12px;
+  margin-left: 16px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.legend-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════ */
+/* Canvas                                          */
+/* ══════════════════════════════════════════════ */
+.canvas {
+  position: relative;
+  z-index: 1;
+  padding: 32px 32px 80px;
+  overflow-x: auto;
+}
+
+/* ══════════════════════════════════════════════ */
+/* Tree Structure (CSS-only lines)                 */
+/* ══════════════════════════════════════════════ */
+
+/* Root node */
+.tree-root {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.tree-root > .node-content {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  color: white;
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: 1.05rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 16px rgba(59,130,246,0.25);
+  letter-spacing: -0.01em;
+  cursor: default;
+}
+
+.tree-root > .node-content .node-icon { font-size: 1.2rem; }
+
+/* Shared tree list */
+.tree-children {
+  list-style: none;
+  padding-left: 32px;
+  position: relative;
+}
+
+/* Vertical connector from parent */
+.tree-children::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 20px;
+  width: 1.5px;
+  background: var(--border-tree);
+}
+
+/* Individual tree item */
+.tree-item {
+  position: relative;
+  padding: 6px 0 6px 28px;
+}
+
+/* Horizontal branch connector */
+.tree-item::before {
+  content: '';
+  position: absolute;
+  left: -17px;
+  top: 22px;
+  width: 28px;
+  height: 1.5px;
+  background: var(--border-tree);
+}
+
+/* Branch dot */
+.tree-item::after {
+  content: '';
+  position: absolute;
+  left: -21px;
+  top: 18px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid var(--border-tree);
+  z-index: 2;
+}
+
+/* Last child — clip vertical line */
+.tree-item:last-child > .tree-children::before {
+  display: block; /* keep connector for nested children */
+}
+
+/* ══════════════════════════════════════════════ */
+/* Node Types                                      */
+/* ══════════════════════════════════════════════ */
+
+/* Tab node (Level 1) */
+.node-tab > .node-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: var(--shadow-sm);
+  user-select: none;
+}
+
+.node-tab > .node-content:hover {
+  border-color: var(--accent-blue);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.node-tab > .node-content .node-icon { font-size: 1.1rem; }
+
+.node-tab > .node-content .node-badge {
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(59,130,246,0.06);
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.node-tab > .node-content .chevron {
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+  transition: transform var(--transition);
+  margin-left: 4px;
+}
+
+.node-tab.collapsed > .node-content .chevron {
+  transform: rotate(-90deg);
+}
+
+.node-tab.collapsed > .tree-children {
+  display: none;
+}
+
+/* Module node (Level 2) */
+.node-module > .node-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: var(--shadow-sm);
+  user-select: none;
+  max-width: 360px;
+}
+
+.node-module > .node-content:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.node-module > .node-content .mod-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.node-module > .node-content .mod-icon.cat-core { background: rgba(59,130,246,0.1); }
+.node-module > .node-content .mod-icon.cat-product { background: rgba(124,58,237,0.1); }
+.node-module > .node-content .mod-icon.cat-support { background: rgba(6,182,212,0.1); }
+.node-module > .node-content .mod-icon.cat-onboard { background: rgba(16,185,129,0.1); }
+
+.node-module > .node-content .mod-label {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.node-module > .node-content .mod-name {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.node-module > .node-content .mod-desc {
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
+  opacity: 0.8;
+  line-height: 1.3;
+}
+
+.node-module > .node-content .mod-meta {
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  display: flex;
+  gap: 8px;
+}
+
+.node-module > .node-content .chevron {
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+  transition: transform var(--transition);
+  flex-shrink: 0;
+}
+
+.node-module.collapsed > .node-content .chevron {
+  transform: rotate(-90deg);
+}
+
+.node-module.collapsed > .tree-children {
+  display: none;
+}
+
+/* Category left accent border */
+.node-module.cat-core > .node-content { border-left: 3px solid var(--cat-core); }
+.node-module.cat-product > .node-content { border-left: 3px solid var(--cat-product); }
+.node-module.cat-support > .node-content { border-left: 3px solid var(--cat-support); }
+.node-module.cat-onboard > .node-content { border-left: 3px solid var(--cat-onboard); }
+
+/* Branch dot color per category */
+.node-module.cat-core::after { border-color: var(--cat-core); background: rgba(59,130,246,0.15); }
+.node-module.cat-product::after { border-color: var(--cat-product); background: rgba(124,58,237,0.15); }
+.node-module.cat-support::after { border-color: var(--cat-support); background: rgba(6,182,212,0.15); }
+.node-module.cat-onboard::after { border-color: var(--cat-onboard); background: rgba(16,185,129,0.15); }
+
+/* Sub-function node (Level 3 — leaf) */
+.node-sf {
+  padding: 3px 0 3px 28px;
+}
+
+.node-sf > .node-content {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--transition);
+  max-width: 480px;
+  user-select: none;
+}
+
+.node-sf > .node-content:hover {
+  background: var(--bg-hover);
+}
+
+.node-sf > .node-content .sf-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  opacity: 0.7;
+  margin-top: 7px;
+}
+
+.node-sf > .node-content .sf-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.node-sf > .node-content .sf-name {
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.node-sf > .node-content .sf-desc {
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+  margin-top: 1px;
+}
+
+.node-sf > .node-content .sf-badge {
+  font-size: 0.6rem;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.04);
+  color: var(--text-muted);
+  font-weight: 500;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.node-sf > .node-content .chevron {
+  width: 12px;
+  height: 12px;
+  color: var(--text-muted);
+  transition: transform var(--transition);
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.node-sf.collapsed > .node-content .chevron {
+  transform: rotate(-90deg);
+}
+
+.node-sf.collapsed > .tree-children {
+  display: none;
+}
+
+.node-sf::after {
+  width: 7px;
+  height: 7px;
+  border-width: 1.5px;
+  top: 16px;
+  left: -21px;
+}
+
+/* Screen node (Level 4 — leaf) */
+.node-screen {
+  padding: 2px 0 2px 24px;
+}
+
+.node-screen > .node-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 0.68rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  cursor: default;
+  transition: background var(--transition);
+  max-width: 420px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.node-screen > .node-content:hover {
+  background: rgba(0,0,0,0.03);
+  color: var(--text-secondary);
+}
+
+.node-screen > .node-content .screen-icon {
+  font-size: 0.55rem;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.node-screen > .node-content .screen-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.node-screen > .node-content .screen-depth {
+  font-size: 0.55rem;
+  padding: 0px 5px;
+  border-radius: 6px;
+  background: rgba(0,0,0,0.03);
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-left: auto;
+  opacity: 0.7;
+}
+
+.node-screen > .node-content .screen-mh {
+  font-size: 0.55rem;
+  font-family: 'SF Mono', 'Menlo', monospace;
+  padding: 0px 4px;
+  border-radius: 4px;
+  background: rgba(59,130,246,0.08);
+  color: #3b82f6;
+  flex-shrink: 0;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+.node-screen > .node-content .screen-ref {
+  font-size: 0.52rem;
+  font-family: 'SF Mono', 'Menlo', monospace;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.node-screen::after {
+  width: 5px;
+  height: 5px;
+  border-width: 1px;
+  top: 12px;
+  left: -21px;
+  border-color: var(--border);
+  background: var(--bg);
+}
+
+/* v5: Actual screen (from domain analysis) */
+.node-actual-screen > .node-content {
+  border-left: 2px solid rgba(16,185,129,0.5);
+  padding-left: 10px;
+}
+.node-actual-screen > .node-content:hover {
+  border-left-color: #10b981;
+  background: rgba(16,185,129,0.03);
+}
+.actual-screen-states {
+  font-size: 0.52rem;
+  font-family: 'SF Mono', 'Menlo', monospace;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(245,158,11,0.08);
+  color: #d97706;
+  flex-shrink: 0;
+  font-weight: 600;
+}
+.actual-screen-id {
+  font-size: 0.48rem;
+  font-family: 'SF Mono', 'Menlo', monospace;
+  color: var(--text-muted);
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════ */
+/* Search highlight                                */
+/* ══════════════════════════════════════════════ */
+.highlight {
+  background: rgba(245,158,11,0.2);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+.search-hidden {
+  display: none !important;
+}
+
+/* ══════════════════════════════════════════════ */
+/* Footer                                          */
+/* ══════════════════════════════════════════════ */
+.footer {
+  text-align: center;
+  padding: 24px 32px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  position: relative;
+  z-index: 1;
+}
+
+/* ══════════════════════════════════════════════ */
+/* Print                                           */
+/* ══════════════════════════════════════════════ */
+@media print {
+  .header, .toolbar { position: static; }
+  body::before { display: none; }
+  .node-tab.collapsed > .tree-children { display: block !important; }
+  .node-module.collapsed > .tree-children { display: block !important; }
+  .node-sf.collapsed > .tree-children { display: block !important; }
+}
+
+/* ══════════════════════════════════════════════ */
+/* Responsive                                      */
+/* ══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .header { padding: 10px 16px; gap: 12px; flex-wrap: wrap; }
+  .header-stats { display: none; }
+  .toolbar { padding: 8px 16px; flex-wrap: wrap; gap: 6px; top: 54px; }
+  .legend { display: none; }
+  .search-box { width: 100%; margin-left: 0; }
+  .canvas { padding: 16px; }
+  .tree-children { padding-left: 20px; }
+  .tree-item { padding-left: 20px; }
+}
+
+/* ══════════════════════════════════════════════ */
+/* Lightbox Overlay                                */
+/* ══════════════════════════════════════════════ */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.lightbox-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+.lightbox-panel {
+  background: #fff;
+  border-radius: 12px;
+  width: min(90vw, 780px);
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 48px rgba(0,0,0,0.16);
+  animation: lb-in 0.2s ease;
+}
+@keyframes lb-in {
+  from { transform: translateY(16px) scale(0.97); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+.lightbox-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  gap: 12px;
+}
+.lightbox-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lightbox-header .lb-badges {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.lightbox-header .lb-badge {
+  font-size: 0.6rem;
+  font-family: 'SF Mono', monospace;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(59,130,246,0.1);
+  color: #3b82f6;
+  font-weight: 500;
+}
+.lightbox-header .lb-badge.ref {
+  background: rgba(139,92,246,0.1);
+  color: #7c3aed;
+}
+.lightbox-close {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: rgba(0,0,0,0.05);
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #666;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.lightbox-close:hover { background: rgba(0,0,0,0.1); }
+.lightbox-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+.lightbox-body .lb-loading {
+  text-align: center;
+  padding: 48px;
+  color: #999;
+  font-size: 0.85rem;
+}
+.lightbox-body .lb-error {
+  text-align: center;
+  padding: 32px;
+  color: #dc2626;
+  font-size: 0.85rem;
+}
+.lightbox-body .lb-error a {
+  display: inline-block;
+  margin-top: 12px;
+  color: #3b82f6;
+  text-decoration: underline;
+  font-size: 0.8rem;
+}
+/* Prose styling for rendered markdown */
+.lb-prose { font-size: 0.82rem; line-height: 1.7; color: #333; }
+.lb-prose h1 { font-size: 1.3rem; font-weight: 700; margin: 24px 0 12px; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px; }
+.lb-prose h2 { font-size: 1.05rem; font-weight: 600; margin: 20px 0 8px; color: #1e40af; }
+.lb-prose h3 { font-size: 0.9rem; font-weight: 600; margin: 16px 0 6px; }
+.lb-prose h4 { font-size: 0.85rem; font-weight: 600; margin: 12px 0 4px; }
+.lb-prose h5 { font-size: 0.82rem; font-weight: 600; margin: 10px 0 4px; color: #374151; }
+.lb-prose h6 { font-size: 0.8rem; font-weight: 600; margin: 8px 0 4px; color: #6b7280; }
+.lb-prose p { margin: 8px 0; }
+.lb-prose ul, .lb-prose ol { margin: 8px 0; padding-left: 24px; }
+.lb-prose li { margin: 3px 0; }
+.lb-prose code { background: #f3f4f6; padding: 1px 5px; border-radius: 3px; font-family: 'SF Mono', monospace; font-size: 0.78rem; }
+.lb-prose pre { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; overflow-x: auto; margin: 12px 0; }
+.lb-prose pre code { background: none; padding: 0; }
+.lb-prose table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 0.78rem; }
+.lb-prose th, .lb-prose td { border: 1px solid #e5e7eb; padding: 6px 10px; text-align: left; }
+.lb-prose th { background: #f9fafb; font-weight: 600; }
+.lb-prose blockquote { border-left: 3px solid #3b82f6; margin: 12px 0; padding: 8px 16px; background: #eff6ff; border-radius: 0 6px 6px 0; }
+.lb-prose hr { border: none; border-top: 1px solid #e5e7eb; margin: 16px 0; }
+.lb-prose strong { font-weight: 600; }
+
+.node-screen > .node-content { cursor: pointer; }
+.node-screen > .node-content:hover { background: rgba(59,130,246,0.06); border-radius: 4px; }
+
+/* ══════════════════════════════════════════════ */
+/* Design Checklist                                */
+/* ══════════════════════════════════════════════ */
+.checklist-badge {
+  font-size: 0.5rem;
+  font-family: 'SF Mono', monospace;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(124,58,237,0.06);
+  color: #8b5cf6;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  border: 1px solid rgba(124,58,237,0.12);
+  margin-left: 2px;
+}
+.checklist-badge:hover {
+  background: rgba(124,58,237,0.12);
+  color: #7c3aed;
+  border-color: rgba(124,58,237,0.25);
+  transform: scale(1.05);
+}
+
+/* Module/SubFunc checklist indicators */
+.node-module.has-checklist > .node-content {
+  position: relative;
+  box-shadow: var(--shadow-sm), 0 0 0 1px rgba(124,58,237,0.15);
+}
+.node-module.has-checklist > .node-content::before {
+  content: '';
+  position: absolute;
+  top: -1px; right: -1px; bottom: -1px; left: -1px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(124,58,237,0.06), rgba(59,130,246,0.04));
+  pointer-events: none;
+  z-index: 0;
+}
+.node-module.has-checklist > .node-content > * { position: relative; z-index: 1; }
+
+.mod-checklist-badge {
+  font-size: 0.55rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(124,58,237,0.08);
+  color: #7c3aed;
+  border: 1px solid rgba(124,58,237,0.15);
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-weight: 500;
+  margin-left: auto;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.mod-checklist-badge:hover {
+  background: rgba(124,58,237,0.15);
+  border-color: rgba(124,58,237,0.3);
+  transform: scale(1.05);
+}
+
+.node-sf.has-checklist > .node-content {
+  background: rgba(124,58,237,0.025);
+  border-left: 2px solid rgba(124,58,237,0.2);
+  padding-left: 10px;
+}
+.node-sf.has-checklist > .node-content:hover {
+  background: rgba(124,58,237,0.06);
+}
+
+.sf-checklist-badge {
+  font-size: 0.5rem;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: rgba(124,58,237,0.06);
+  color: #8b5cf6;
+  border: 1px solid rgba(124,58,237,0.12);
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.sf-checklist-badge:hover {
+  background: rgba(124,58,237,0.12);
+  border-color: rgba(124,58,237,0.25);
+  transform: scale(1.05);
+}
+
+[data-theme="dark"] .mod-checklist-badge {
+  background: rgba(139,92,246,0.15);
+  border-color: rgba(139,92,246,0.25);
+}
+[data-theme="dark"] .node-module.has-checklist > .node-content {
+  box-shadow: var(--shadow-sm), 0 0 0 1px rgba(139,92,246,0.2);
+}
+[data-theme="dark"] .node-module.has-checklist > .node-content::before {
+  background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(59,130,246,0.05));
+}
+[data-theme="dark"] .sf-checklist-badge {
+  background: rgba(139,92,246,0.12);
+  border-color: rgba(139,92,246,0.2);
+}
+
+/* Checklist Overlay — MD Viewer */
+.checklist-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1001;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.checklist-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+.checklist-panel {
+  background: #fff;
+  border-radius: 14px;
+  width: min(92vw, 640px);
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 48px rgba(0,0,0,0.18);
+  animation: lb-in 0.2s ease;
+}
+.cl-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.cl-header h3 {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #111;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cl-header .cl-module-tag {
+  font-size: 0.6rem;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(139,92,246,0.08);
+  color: #7c3aed;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.cl-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: #374151;
+}
+.cl-body h1, .cl-body h2, .cl-body h3 { margin: 1.2em 0 0.5em; color: #111; }
+.cl-body h1 { font-size: 1.15rem; }
+.cl-body h2 { font-size: 0.95rem; border-bottom: 1px solid #f3f4f6; padding-bottom: 6px; }
+.cl-body h3 { font-size: 0.85rem; }
+.cl-body ul, .cl-body ol { padding-left: 1.5em; margin: 0.5em 0; }
+.cl-body li { margin: 0.3em 0; }
+.cl-body blockquote { margin: 0.8em 0; padding: 8px 16px; border-left: 3px solid #7c3aed; background: rgba(124,58,237,0.04); border-radius: 0 6px 6px 0; color: #6b7280; font-size: 0.78rem; }
+.cl-body hr { border: none; border-top: 1px solid #e5e7eb; margin: 1.5em 0; }
+.cl-body code { font-family: 'SF Mono', monospace; font-size: 0.68rem; background: rgba(124,58,237,0.08); color: #7c3aed; padding: 1px 6px; border-radius: 4px; font-weight: 500; letter-spacing: 0.02em; }
+.cl-body .cl-loading { text-align: center; padding: 40px; color: var(--text-muted); }
+/* Severity dots */
+.cl-body .sev-critical { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ef4444; margin-right: 4px; vertical-align: middle; box-shadow: 0 0 4px rgba(239,68,68,0.4); }
+.cl-body .sev-major { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; margin-right: 4px; vertical-align: middle; box-shadow: 0 0 4px rgba(245,158,11,0.3); }
+.cl-body .sev-minor { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #eab308; margin-right: 4px; vertical-align: middle; }
+.cl-body .sev-standard { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #d1d5db; margin-right: 4px; vertical-align: middle; }
+/* Source ref badges */
+.cl-body .src-ref { font-size: 0.62rem; background: rgba(124,58,237,0.06); color: #7c3aed; padding: 1px 6px; border-radius: 4px; margin-left: 4px; font-family: 'SF Mono', monospace; letter-spacing: 0.03em; opacity: 0.8; cursor: default; white-space: nowrap; font-weight: 500; }
+.cl-body .cl-error { text-align: center; padding: 30px; color: #ef4444; font-size: 0.78rem; }
+[data-theme="dark"] .checklist-panel { background: var(--bg-card); }
+[data-theme="dark"] .cl-header { border-color: var(--border); }
+[data-theme="dark"] .cl-header h3 { color: var(--text-primary); }
+[data-theme="dark"] .cl-body { color: var(--text-secondary); }
+[data-theme="dark"] .cl-body h1, [data-theme="dark"] .cl-body h2, [data-theme="dark"] .cl-body h3 { color: var(--text-primary); }
+[data-theme="dark"] .cl-body h2 { border-color: var(--border); }
+[data-theme="dark"] .cl-body code { background: rgba(124,58,237,0.15); color: #a78bfa; }
+[data-theme="dark"] .cl-body .src-ref { background: rgba(124,58,237,0.12); color: #a78bfa; }
+
+/* ── Per-Screen Checklist Badges ── */
+.screen-cl-badge { font-size: 0.58rem; padding: 1px 6px; border-radius: 8px; background: rgba(124,58,237,0.08); color: #7c3aed; cursor: pointer; font-weight: 600; letter-spacing: 0.02em; transition: all 0.2s; white-space: nowrap; margin-left: 4px; }
+.screen-cl-badge:hover { background: rgba(124,58,237,0.18); transform: scale(1.08); }
+[data-theme="dark"] .screen-cl-badge { background: rgba(124,58,237,0.15); color: #a78bfa; }
+[data-theme="dark"] .screen-cl-badge:hover { background: rgba(124,58,237,0.28); }
+
+/* Category badges inside checklist panel */
+.cl-cat-badge { display: inline-block; font-size: 0.58rem; padding: 1px 6px; border-radius: 6px; margin-right: 4px; font-weight: 600; letter-spacing: 0.03em; vertical-align: middle; }
+.cl-cat-ui { background: rgba(59,130,246,0.1); color: #2563eb; }
+.cl-cat-ux { background: rgba(16,185,129,0.1); color: #059669; }
+.cl-cat-state { background: rgba(245,158,11,0.1); color: #d97706; }
+.cl-cat-security { background: rgba(239,68,68,0.1); color: #dc2626; }
+[data-theme="dark"] .cl-cat-ui { background: rgba(59,130,246,0.15); color: #60a5fa; }
+[data-theme="dark"] .cl-cat-ux { background: rgba(16,185,129,0.15); color: #34d399; }
+[data-theme="dark"] .cl-cat-state { background: rgba(245,158,11,0.15); color: #fbbf24; }
+[data-theme="dark"] .cl-cat-security { background: rgba(239,68,68,0.15); color: #f87171; }
+.cl-cat-arch { background: rgba(168,85,247,0.1); color: #7c3aed; }
+[data-theme="dark"] .cl-cat-arch { background: rgba(168,85,247,0.15); color: #c084fc; }
+
+/* Screen checklist header info */
+.cl-screen-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid #f3f4f6; }
+.cl-screen-meta .cl-meta-item { font-size: 0.7rem; color: var(--text-muted); }
+.cl-screen-meta .cl-meta-item strong { color: var(--text-primary); }
+.cl-stats-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.cl-stat-pill { font-size: 0.62rem; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+[data-theme="dark"] .cl-screen-meta { border-color: var(--border); }
+
+/* Checklist item row */
+.cl-item-row { display: flex; align-items: flex-start; gap: 6px; padding: 5px 0; border-bottom: 1px solid rgba(0,0,0,0.03); font-size: 0.78rem; line-height: 1.5; }
+.cl-item-row:last-child { border-bottom: none; }
+.cl-item-check { flex-shrink: 0; cursor: pointer; font-size: 0.85rem; margin-top: 1px; }
+.cl-item-text { flex: 1; }
+.cl-item-text.checked { color: #9ca3af; text-decoration: line-through; }
+.cl-item-id { font-size: 0.6rem; font-family: 'SF Mono', monospace; color: #7c3aed; background: rgba(124,58,237,0.06); padding: 0 4px; border-radius: 3px; margin-right: 4px; white-space: nowrap; }
+[data-theme="dark"] .cl-item-row { border-color: rgba(255,255,255,0.04); }
+[data-theme="dark"] .cl-item-id { color: #a78bfa; background: rgba(124,58,237,0.12); }
+
+/* Category group header */
+.cl-cat-header { font-size: 0.72rem; font-weight: 700; margin-top: 14px; margin-bottom: 6px; padding: 4px 10px; border-radius: 6px; display: flex; align-items: center; gap: 6px; }
+
+/* ══════════════════════════════════════════════ */
+/* v5 Enhancements — Domain-enriched data          */
+/* ══════════════════════════════════════════════ */
+
+/* States badge on SF nodes */
+.sf-states {
+  font-size: 0.55rem;
+  padding: 1px 5px;
+  border-radius: 6px;
+  background: rgba(239,68,68,0.08);
+  color: #dc2626;
+  font-weight: 600;
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-family: 'SF Mono', monospace;
+  letter-spacing: 0.02em;
+}
+.sf-states.low { background: rgba(16,185,129,0.08); color: #059669; }
+.sf-states.med { background: rgba(245,158,11,0.08); color: #d97706; }
+.sf-states.high { background: rgba(239,68,68,0.08); color: #dc2626; }
+
+/* Complexity stars on SF */
+.sf-complexity {
+  font-size: 0.55rem;
+  color: #f59e0b;
+  flex-shrink: 0;
+  margin-top: 2px;
+  letter-spacing: -1px;
+}
+
+/* Screen type badge */
+.screen-type {
+  font-size: 0.5rem;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: rgba(6,182,212,0.08);
+  color: #0891b2;
+  flex-shrink: 0;
+  font-weight: 500;
+  text-transform: lowercase;
+}
+
+/* Enriched module indicator */
+.mod-enriched {
+  font-size: 0.5rem;
+  padding: 1px 5px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(59,130,246,0.1));
+  color: #059669;
+  border: 1px solid rgba(16,185,129,0.15);
+  font-weight: 600;
+  flex-shrink: 0;
+  margin-left: 2px;
+  letter-spacing: 0.02em;
+}
+
+/* Module states summary */
+.mod-states-total {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--accent-red);
+  opacity: 0.8;
+}
+
+[data-theme="dark"] .sf-states { opacity: 0.9; }
+[data-theme="dark"] .mod-enriched { background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(59,130,246,0.15)); }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-brand">
+    <div class="header-icon">🏦</div>
+    <h1>Co-opBank KHCN <span class="badge">Sitemap Tree v5</span></h1>
+  </div>
+  <div class="header-stats" id="header-stats"></div>
+</header>
+
+<!-- Toolbar -->
+<div class="toolbar">
+  <button class="btn active" id="btn-expand">Mở tất cả</button>
+  <button class="btn" id="btn-collapse">Thu gọn</button>
+  <button class="btn" id="btn-modules-only">Chỉ Module</button>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cat-core)"></div>Core</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cat-product)"></div>Product</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cat-support)"></div>Support</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cat-onboard)"></div>Onboard</div>
+  </div>
+  <div class="search-box">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd"/>
+    </svg>
+    <input type="text" id="search-input" placeholder="Tìm module, chức năng...">
+  </div>
+</div>
+
+<!-- Canvas -->
+<main class="canvas" id="canvas"></main>
+
+<!-- Footer -->
+<footer class="footer">
+  Co-opBank KHCN · UX Sitemap Tree v5.0 · Domain-driven functional decomposition · <span id="gen-date"></span>
+</footer>
+
+<!-- Lightbox Overlay -->
+<div class="lightbox-overlay" id="lightbox-overlay">
+  <div class="lightbox-panel">
+    <div class="lightbox-header">
+      <h3 id="lb-title">Đang tải...</h3>
+      <div class="lb-badges" id="lb-badges"></div>
+      <button class="lightbox-close" id="lb-close" title="Đóng">✕</button>
+    </div>
+    <div class="lightbox-body" id="lb-body">
+      <div class="lb-loading">⏳ Đang tải tài liệu URD...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Checklist Overlay — MD Viewer -->
+<div class="checklist-overlay" id="checklist-overlay">
+  <div class="checklist-panel">
+    <div class="cl-header">
+      <h3 id="cl-title">📋 Design Checklist</h3>
+      <span class="cl-module-tag" id="cl-module-tag"></span>
+      <button class="lightbox-close" id="cl-close" title="Đóng">✕</button>
+    </div>
+    <div class="cl-body" id="cl-body">
+      <div class="cl-loading">⏳ Đang tải checklist...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// INLINE DATA
+// ══════════════════════════════════════════════
+const DATA = {"version":"5.0","title":"Co-opBank KHCN — UX Sitemap","description":"Domain-driven functional decomposition with state-machine metrics","generated":"2026-03-30","tree":{"name":"Co-opBank KHCN","type":"root","icon":"🏦","children":[{"name":"Pre-Auth","icon":"🔐","type":"tab","id":"PRE_AUTH","children":[{"name":"Đăng ký (eKYC)","type":"module","id":"ONBOARD","icon":"📝","category":"onboard","stats":{"screens":6,"features":1,"flows":2},"children":[{"name":"ONBOARD","type":"sub_function","screen_count":6,"flow_pattern":["Chọn","Nhập TT","Kết quả"],"screens":[{"name":"Chọn loại giấy tờ","depth":2,"mh_id":"MH2","feature_ref":"","urd_file":"onboarding/ekyc-dang-ky.md"},{"name":"+ 3.03: Hướng dẫn NFC + Thực hiện NFC 1","depth":3,"mh_id":"MH3","feature_ref":"","urd_file":"onboarding/ekyc-dang-ky.md"},{"name":"Nhập thông tin đăng ký dịch vụ 1","depth":4,"mh_id":"MH6","feature_ref":"","urd_file":"onboarding/ekyc-dang-ky.md"},{"name":"Nhập thông tin đăng ký dịch vụ 1","depth":4,"mh_id":"MH6","feature_ref":"","urd_file":"onboarding/ekyc-dang-ky.md"},{"name":"Nhập thông tin đăng ký dịch vụ 2","depth":3,"mh_id":"MH6","feature_ref":"","urd_file":"onboarding/ekyc-dang-ky.md"},{"name":"Kết quả đăng ký dịch vụ","depth":4,"mh_id":"MH6","feature_ref":"","urd_file":"onboarding/ekyc-dang-ky.md"}],"description":"Luồng đăng ký eKYC đầy đủ: chụp giấy tờ, nhận diện khuôn mặt, tạo TK"}],"description":"Đăng ký mới qua xác thực eKYC — chụp CCCD, xác minh khuôn mặt, tạo tài khoản"},{"name":"Đăng nhập","type":"module","id":"LOGIN","icon":"🔐","category":"core","stats":{"screens":5,"features":1,"flows":1},"children":[{"name":"LOGIN","type":"sub_function","screen_count":5,"flow_pattern":["Nhập TT"],"screens":[{"name":"Splash","depth":1,"mh_id":"MH1","feature_ref":"13.1","urd_file":"core/dang-nhap.md"},{"name":"Đăng nhập lần đầu","depth":3,"mh_id":"MH2","feature_ref":"13.1","urd_file":"core/dang-nhap.md"},{"name":"Đăng nhập lần sau","depth":3,"mh_id":"MH2","feature_ref":"13.1","urd_file":"core/dang-nhap.md"},{"name":"Đăng nhập lần sau","depth":3,"mh_id":"MH2","feature_ref":"13.1","urd_file":"core/dang-nhap.md"},{"name":"Đăng nhập lần sau","depth":3,"mh_id":"MH2","feature_ref":"13.1","urd_file":"core/dang-nhap.md"}],"description":"Luồng đăng nhập: splash → nhập mật khẩu → xác thực theo loại người dùng"}],"description":"Xác thực đăng nhập — lần đầu, lần sau, hỗ trợ thành viên QTDND"}],"stats":{"screens":11,"modules":2}},{"name":"Trang chủ","icon":"��","type":"tab","id":"TAB_HOME","children":[{"name":"Trang chủ","type":"module","id":"HOME","icon":"🏠","category":"core","stats":{"screens":4,"features":4,"flows":4},"children":[{"name":"SF1 — Dashboard tổng quan","type":"sub_function","screen_count":4,"flow_pattern":["Trang chủ","Trang chủ","Cài đặt","Thông tin cá nhân"],"screens":[{"name":"Trang chủ","depth":1,"mh_id":"","feature_ref":"","urd_file":"core/trang-chu.md"},{"name":"Trang chủ","depth":1,"mh_id":"","feature_ref":"","urd_file":"core/trang-chu.md"},{"name":"Cài đặt","depth":2,"mh_id":"","feature_ref":"","urd_file":"core/trang-chu.md"},{"name":"Thông tin cá nhân","depth":2,"mh_id":"","feature_ref":"","urd_file":"core/trang-chu.md"},{"name":"Thay đổi ảnh đại diện","depth":2,"mh_id":"","feature_ref":"","urd_file":"core/trang-chu.md"},{"name":"Trang chủ","depth":1,"mh_id":"","feature_ref":"","urd_file":"core/trang-chu.md"}],"description":"Dashboard tổng quan: 4 screens thực tế, ~72 states — số dư, shortcut, widget, cài đặt cá nhân","states":72,"complexity":4,"screen_type":"dashboard","actual_screens":[{"id":"HOME-S1","name":"Trang chủ","mh":"MH1 + MH2","type":"dashboard","states":"~50","desc":"Main dashboard — QTDND variant, eye toggle, banners, shortcuts"},{"id":"HOME-S2","name":"Cài đặt","mh":"MH3","type":"tab-panel","states":"~1","desc":"Footer tab — menu cài đặt"},{"id":"HOME-S3","name":"Thông tin cá nhân","mh":"MH4","type":"detail","states":"~1","desc":"Sub-screen from Cài đặt"},{"id":"HOME-S4","name":"Thay đổi ảnh đại diện","mh":"MH5","type":"action-sheet","states":"~20","desc":"Camera/gallery/delete flow"}]}],"description":"Trang chủ hiển thị tổng quan tài khoản, shortcut chức năng, thông báo","enriched":true,"total_states":72},{"name":"Tài khoản","type":"module","id":"ACCOUNT","icon":"💳","category":"core","stats":{"screens":11,"features":4,"flows":4},"children":[{"name":"Màn hình tài khoản","type":"sub_function","screen_count":2,"flow_pattern":["Danh sách tài khoản tiết kiệm- Có tiền gửi tích lũy","Danh sách tài khoản vay"],"screens":[{"name":"Danh sách tài khoản tiết kiệm- Có tiền gửi tích lũy","depth":2,"mh_id":"MH2","feature_ref":"15.1","urd_file":"core/tai-khoan.md"},{"name":"Danh sách tài khoản vay","depth":2,"mh_id":"MH3","feature_ref":"15.1","urd_file":"core/tai-khoan.md"}],"description":"Overview danh sách tài khoản tiết kiệm và khoản vay"},{"name":"Tài khoản thanh toán","type":"sub_function","screen_count":5,"flow_pattern":["Danh sách"],"screens":[{"name":"Danh sách tài khoản thanh toán","depth":2,"mh_id":"MH1","feature_ref":"15.2","urd_file":"core/tai-khoan.md"},{"name":"Thông tin tài khoản - Không có Alias","depth":2,"mh_id":"MH2","feature_ref":"15.2","urd_file":"core/tai-khoan.md"},{"name":"Lịch sử giao dịch","depth":2,"mh_id":"MH4","feature_ref":"15.2","urd_file":"core/tai-khoan.md"},{"name":"Lịch sử giao dịch - Tìm kiếm theo ngày","depth":2,"mh_id":"MH5","feature_ref":"15.2","urd_file":"core/tai-khoan.md"},{"name":"Chi tiết giao dịch","depth":2,"mh_id":"MH6","feature_ref":"15.2","urd_file":"core/tai-khoan.md"}],"description":"Chi tiết TK thanh toán — số dư, alias, lịch sử giao dịch"},{"name":"Tài khoản tiết kiệm","type":"sub_function","screen_count":2,"flow_pattern":["Danh sách tài khoản tiết kiệm","Thông tin tài khoản tiết kiệm ( Tiền gửi thường )"],"screens":[{"name":"Danh sách tài khoản tiết kiệm","depth":2,"mh_id":"MH1","feature_ref":"15.3","urd_file":"core/tai-khoan.md"},{"name":"Thông tin tài khoản tiết kiệm ( Tiền gửi thường )","depth":2,"mh_id":"MH2","feature_ref":"15.3","urd_file":"core/tai-khoan.md"}],"description":"Chi tiết TK tiết kiệm — thông tin sổ, kỳ hạn, lãi suất"},{"name":"Tài khoản vay","type":"sub_function","screen_count":2,"flow_pattern":["Thông tin tài khoản vay","Thông tin giao dịch"],"screens":[{"name":"Thông tin tài khoản vay","depth":2,"mh_id":"MH2","feature_ref":"15.4","urd_file":"core/tai-khoan.md"},{"name":"Thông tin giao dịch","depth":2,"mh_id":"MH5","feature_ref":"15.4","urd_file":"core/tai-khoan.md"}],"description":"Chi tiết khoản vay — dư nợ, lịch trả, lịch sử thanh toán"}],"description":"Quản lý tất cả loại tài khoản — thanh toán, tiết kiệm, vay — với lịch sử giao dịch"},{"name":"Chuyển tiền","type":"module","id":"TRANSFER","icon":"💸","category":"core","stats":{"screens":39,"features":8,"flows":8},"children":[{"name":"Màn hình chuyển tiền","type":"sub_function","screen_count":2,"flow_pattern":["Chuyển tiền","Danh bạ thụ hưởng"],"screens":[{"name":"Chuyển tiền","depth":2,"mh_id":"MH1","feature_ref":"16.1","urd_file":"core/chuyen-tien.md"},{"name":"Danh bạ thụ hưởng","depth":2,"mh_id":"MH2","feature_ref":"16.1","urd_file":"core/chuyen-tien.md"}],"description":"SF1 Entry hub + Danh bạ thụ hưởng","states":25,"complexity":2,"screen_type":"hub","actual_screens":[{"id":"TRS-S1","name":"TransferHub","mh":"MH1","type":"hub","states":"~15","desc":"Navigation hub — gate + permission check"},{"id":"TRS-S2","name":"Danh bạ thụ hưởng","mh":"MH2","type":"list","states":"~10","desc":"Quản lý danh bạ chuyển tiền"}]},{"name":"Chuyển tiền nhanh 24/7 qua thẻ","type":"sub_function","screen_count":4,"flow_pattern":["Khởi tạo","Nhập TT","Kết quả","Danh sách","Xác nhận"],"screens":[{"name":"Khởi tạo","depth":3,"mh_id":"MH1","feature_ref":"16.2","urd_file":"core/chuyen-tien.md"},{"name":"Nhập thông tin số thẻ","depth":3,"mh_id":"MH2","feature_ref":"16.2","urd_file":"core/chuyen-tien.md"},{"name":"Kết quả kiểm tra số thẻ thụ hưởng thành công","depth":4,"mh_id":"MH3","feature_ref":"16.2","urd_file":"core/chuyen-tien.md"},{"name":"Pop danh sách số thẻ đã lưu","depth":2,"mh_id":"MH4","feature_ref":"16.2","urd_file":"core/chuyen-tien.md"},{"name":"Nhập số tiền","depth":3,"mh_id":"MH5","feature_ref":"16.2","urd_file":"core/chuyen-tien.md"},{"name":"Xác nhận giao dịch","depth":3,"mh_id":"MH6","feature_ref":"16.2","urd_file":"core/chuyen-tien.md"},{"name":"Kết quả giao dịch","depth":4,"mh_id":"MH7","feature_ref":"16.2","urd_file":"core/chuyen-tien.md"}],"description":"SF2 CT Napas qua số thẻ — nhập thẻ, kiểm tra, xác nhận, kết quả","states":45,"complexity":3,"screen_type":"wizard","actual_screens":[{"id":"SF2-S1","name":"Khởi tạo GD","mh":"MH1+MH2+MH3+MH5","type":"form","states":"~20","desc":"Progressive form — nhập thẻ, validation"},{"id":"SF2-S2","name":"Danh bạ thụ hưởng","mh":"MH4","type":"popup","states":"~5","desc":"Popup overlay chọn danh bạ"},{"id":"SF2-S3","name":"Xác nhận","mh":"MH6","type":"review","states":"~8","desc":"Review page + PTXT gate"},{"id":"SF2-S4","name":"Kết quả","mh":"MH7","type":"result","states":"~12","desc":"Success/fail/timeout result"}]},{"name":"Chuyển tiền nhanh 24/7 qua tài khoản","type":"sub_function","screen_count":4,"flow_pattern":["Nhập TT","Kết quả","Danh sách","Xác nhận"],"screens":[{"name":"Nhập số tài khoản thụ hưởng","depth":3,"mh_id":"MH2","feature_ref":"16.3","urd_file":"core/chuyen-tien.md"},{"name":"Kết quả kiểm tra thông tin tài khoản thụ hưởng","depth":4,"mh_id":"MH3","feature_ref":"16.3","urd_file":"core/chuyen-tien.md"},{"name":"Popup danh sách số tài khoản thụ hưởng","depth":4,"mh_id":"MH4","feature_ref":"16.3","urd_file":"core/chuyen-tien.md"},{"name":"Xác nhận","depth":3,"mh_id":"MH6","feature_ref":"16.3","urd_file":"core/chuyen-tien.md"},{"name":"Kết quả","depth":4,"mh_id":"MH7","feature_ref":"16.3","urd_file":"core/chuyen-tien.md"},{"name":"Thay đổi bàn phím","depth":2,"mh_id":"MH8","feature_ref":"16.3","urd_file":"core/chuyen-tien.md"}],"description":"SF3 CT Napas qua STK — chọn ngân hàng, nhập TK, xác nhận OTP","states":50,"complexity":3,"screen_type":"wizard","actual_screens":[{"id":"SF3-S1","name":"Khởi tạo GD","mh":"MH1+MH2+MH3+MH5+MH8","type":"form","states":"~25","desc":"Progressive form + bank selector + dual keyboard"},{"id":"SF3-S2","name":"Danh bạ thụ hưởng","mh":"MH4","type":"popup","states":"~5","desc":"Popup overlay chọn danh bạ"},{"id":"SF3-S3","name":"Xác nhận","mh":"MH6","type":"review","states":"~8","desc":"Review page + PTXT gate"},{"id":"SF3-S4","name":"Kết quả","mh":"MH7","type":"result","states":"~12","desc":"Success/fail/timeout result"}]},{"name":"Chuyển tiền qua GTTT - Gói 4","type":"sub_function","screen_count":4,"flow_pattern":["Khởi tạo","Chọn","Nhập TT","Xác thực"],"screens":[{"name":"Khởi tạo - khi truy cập chức năng","depth":3,"mh_id":"MH1","feature_ref":"16.6","urd_file":"core/chuyen-tien.md"},{"name":"Khởi tạo - chọn Loại GTTT là CCCD","depth":3,"mh_id":"MH2","feature_ref":"16.6","urd_file":"core/chuyen-tien.md"},{"name":"Khởi tạo - Lưu danh bạ thụ hưởng","depth":3,"mh_id":"MH3","feature_ref":"16.6","urd_file":"core/chuyen-tien.md"},{"name":"Khởi tạo - Nhập số tiền giao dịch","depth":3,"mh_id":"MH4","feature_ref":"16.6","urd_file":"core/chuyen-tien.md"},{"name":"Xác thực giao dịch","depth":4,"mh_id":"MH6","feature_ref":"16.6","urd_file":"core/chuyen-tien.md"}],"description":"SF4 CT liên ngân hàng qua giấy tờ tùy thân — gói 4","states":40,"complexity":3,"screen_type":"wizard","actual_screens":[{"id":"SF4-S1","name":"Khởi tạo GD","mh":"MH1/2/3/4","type":"form","states":"~20","desc":"Form liên ngân hàng qua GTTT"},{"id":"SF4-S2","name":"Xác nhận GD","mh":"MH5","type":"review","states":"~6","desc":"Review + PTXT"},{"id":"SF4-S3","name":"Kết quả GD","mh":"MH7","type":"result","states":"~8","desc":"Success/fail result"},{"id":"SF4-S4","name":"Danh bạ thụ hưởng","mh":"MH8","type":"popup","states":"~6","desc":"Popup danh bạ"}]},{"name":"CT Nội bộ cùng chủ","type":"sub_function","screen_count":3,"flow_pattern":["Khởi tạo","Nhập số tiền","Xác nhận","Kết quả"],"screens":[{"name":"Khởi tạo - Chọn TK nguồn và TK thụ hưởng","depth":3,"mh_id":"MH-a","feature_ref":"16.5","urd_file":"core/chuyen-tien.md"},{"name":"Nhập số tiền giao dịch","depth":3,"mh_id":"MH-d","feature_ref":"16.5","urd_file":"core/chuyen-tien.md"},{"name":"Xác nhận giao dịch","depth":3,"mh_id":"MH-b","feature_ref":"16.5","urd_file":"core/chuyen-tien.md"},{"name":"Kết quả giao dịch","depth":4,"mh_id":"MH-c","feature_ref":"16.5","urd_file":"core/chuyen-tien.md"}],"description":"SF5 CT cùng chủ — flow đơn giản, không cần danh bạ","states":25,"complexity":2,"screen_type":"wizard","actual_screens":[{"id":"SF5-S1","name":"Khởi tạo GD","mh":"MH-a + MH-d","type":"form","states":"~12","desc":"Form đơn giản — không cần danh bạ"},{"id":"SF5-S2","name":"Xác nhận GD","mh":"MH-b","type":"review","states":"~5","desc":"Review — no PTXT"},{"id":"SF5-S3","name":"Kết quả GD","mh":"MH-c","type":"result","states":"~8","desc":"Success/fail result"}]},{"name":"CT Nội bộ khác chủ","type":"sub_function","screen_count":5,"flow_pattern":["Khởi tạo","Nhập người hưởng","Nhập số tiền","Xác thực","Kết quả"],"screens":[{"name":"Chuyển tiền nội bộ khác chủ đơn lẻ","depth":2,"mh_id":"MH1","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Chuyển tiền nội bộ khác chủ cho nhiều người","depth":2,"mh_id":"MH2","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Chuyển tiền nội bộ khác chủ cho 10 người","depth":2,"mh_id":"MH3","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Nhập Số điện thoại người hưởng gợi ý danh bạ","depth":3,"mh_id":"MH4","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Nhập Số tài khoản người hưởng","depth":3,"mh_id":"MH5","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Lưu danh bạ thụ hưởng","depth":2,"mh_id":"MH6","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Nhập số tiền gợi ý số tiền chuyển","depth":3,"mh_id":"MH7","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Nhập thông tin chuyển tiền hiển thị tổng số tiền","depth":3,"mh_id":"MH8","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Thông báo lỗi người hưởng, thông tin chuyển tiền","depth":4,"mh_id":"MH9","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Hightlight hiển thị người hưởng bị lỗi và thông tin lỗi","depth":2,"mh_id":"MH10","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Tab Danh bạ thụ hưởng - hiển thị switch chọn nhiều người","depth":2,"mh_id":"MH11","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Tab Danh bạ thụ hưởng - ON switch và chọn nhiều người hưởng","depth":2,"mh_id":"MH12","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Tab Danh bạ thụ hưởng - chọn nhiều người hưởng TH MH khởi tạo đã có nhiều người hưởng","depth":3,"mh_id":"MH13","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Phương thức xác thực TH 1 người nhận (giữ nguyên)","depth":4,"mh_id":"MH14","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Phương thức xác thực TH 3 người nhận","depth":4,"mh_id":"MH15","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Phương thức xác thực TH 10 người nhận","depth":4,"mh_id":"MH16","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Xem tất cả - TH thông tin chuyển tiền giống nhau","depth":2,"mh_id":"MH17","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Xem tất cả - TH thông tin chuyển tiền khác nhau","depth":2,"mh_id":"MH18","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Kết quả giao dịch - Chi tiết chuyển tiền thành công","depth":4,"mh_id":"MH21","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Kết quả giao dịch - Chi tiết chuyển tiền không thành công do lỗi","depth":4,"mh_id":"MH22","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Kết quả giao dịch - Chi tiết chuyển tiền nghi vấn do Time Out","depth":4,"mh_id":"MH23","feature_ref":"","urd_file":"core/chuyen-tien.md"}],"description":"SF6 CT khác chủ đơn/nhiều người — batch layer, đa xác thực","states":120,"complexity":5,"screen_type":"wizard+batch","actual_screens":[{"id":"SF6-S1","name":"Khởi tạo GD (single screen)","mh":"MH1-MH10","type":"state-machine","states":"~50","desc":"1 screen, 10 states — MH = state snapshots, không phải screens riêng"},{"id":"SF6-S2","name":"Xác nhận GD","mh":"MH11-MH15","type":"review","states":"~15","desc":"Review + PTXT gate"},{"id":"SF6-S3","name":"Kết quả GD","mh":"MH19-MH21","type":"result","states":"~12","desc":"Success + multi-error states"},{"id":"SF6-S4","name":"Danh bạ thụ hưởng","mh":"MH16-MH18","type":"popup","states":"~8","desc":"Popup danh bạ + nhận diện"},{"id":"SF6-S5","name":"OTP + Lỗi","mh":"shared","type":"auth","states":"~10","desc":"OTP input + error/retry states"}]},{"name":"CT 24/7 qua TK (nhiều người)","type":"sub_function","screen_count":5,"flow_pattern":["Khởi tạo","Nhập TT người hưởng","Nhập số tiền","Xác thực","Kết quả"],"screens":[{"name":"Chuyển tiền nhanh 24/7 qua tài khoản đơn lẻ","depth":2,"mh_id":"MH1","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Chuyển tiền nhanh 24/7 qua tài khoản cho nhiều người (TH 3 người hưởng)","depth":2,"mh_id":"MH2","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Chuyển tiền nhanh 24/7 qua tài khoản cho nhiều người (TH 10 người hưởng)","depth":2,"mh_id":"MH3","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Nhập thông tin người hưởng","depth":3,"mh_id":"MH4","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Nhập thông tin chuyển tiền","depth":3,"mh_id":"MH6","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Tổng số tiền chuyển khoản","depth":2,"mh_id":"MH7","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Highlight hiển thị người hưởng bị lỗi và thông tin lỗi","depth":2,"mh_id":"MH9","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Phương thức xác thực TH 1 người nhận","depth":4,"mh_id":"MH13","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Thông tin chuyển tiền giống nhau","depth":2,"mh_id":"MH16","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Thông tin chuyển tiền khác nhau","depth":2,"mh_id":"MH17","feature_ref":"","urd_file":"core/chuyen-tien.md"}],"description":"SF7 Batch transfer qua TK — clone mode, multi-recipient","states":80,"complexity":4,"screen_type":"batch-wizard","actual_screens":[{"id":"SF7A-S1","name":"SCR-INIT (Batch initiation)","mh":"MH1-MH10","type":"batch-form","states":"~180","desc":"Avatar list + clone switch + per-person form"},{"id":"SF7A-S2","name":"SCR-CONTACTS (Batch danh bạ)","mh":"MH10-MH12","type":"popup","states":"~12","desc":"Multi-select danh bạ + duplicate guard"},{"id":"SF7A-S3","name":"SCR-CONFIRM","mh":"MH13-MH17","type":"review","states":"~15","desc":"Batch review + per-item detail"},{"id":"SF7A-S4","name":"SCR-AUTH","mh":"MH18","type":"auth","states":"~4","desc":"OTP input"},{"id":"SF7A-S5","name":"SCR-RESULT (Batch result)","mh":"MH19-MH22","type":"result","states":"~12","desc":"Mixed states — success+fail+timeout per item"}]},{"name":"CT 24/7 qua Thẻ (nhiều người)","type":"sub_function","screen_count":5,"flow_pattern":["Khởi tạo","Nhập thẻ","Xác thực","Kết quả"],"screens":[{"name":"Chuyển tiền nhanh 24/7 qua thẻ đơn lẻ","depth":2,"mh_id":"MH1","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Chuyển tiền nhanh 24/7 qua thẻ cho nhiều người (TH 3 người hưởng)","depth":2,"mh_id":"MH2","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Chuyển tiền nhanh 24/7 qua thẻ cho nhiều người (TH 10 người hưởng)","depth":2,"mh_id":"MH3","feature_ref":"","urd_file":"core/chuyen-tien.md"},{"name":"Highlight người hưởng bị lỗi","depth":2,"mh_id":"MH9","feature_ref":"","urd_file":"core/chuyen-tien.md"}],"description":"SF7b Batch transfer qua thẻ — nhiều người nhận","states":60,"complexity":3,"screen_type":"batch-wizard","actual_screens":[{"id":"SF7B-S1","name":"SCR-INIT (Batch Thẻ)","mh":"MH1-MH9","type":"batch-form","states":"~100","desc":"Thẻ auto-format 4-4-4-4 + batch layer"},{"id":"SF7B-S2","name":"SCR-CONTACTS","mh":"MH10-MH12","type":"popup","states":"~10","desc":"Multi-select danh bạ thẻ"},{"id":"SF7B-S3","name":"SCR-CONFIRM","mh":"MH13-MH17","type":"review","states":"~12","desc":"Batch confirm + mask thẻ"},{"id":"SF7B-S4","name":"SCR-AUTH","mh":"MH18","type":"auth","states":"~4","desc":"OTP"},{"id":"SF7B-S5","name":"SCR-RESULT","mh":"MH19-MH22","type":"result","states":"~10","desc":"Per-item result"}]},{"name":"CT Đặt lịch / Định kỳ","type":"sub_function","screen_count":7,"flow_pattern":["Chi tiết đặt lịch"],"screens":[{"name":"Chi tiết giao dịch đặt lịch chuyển tiền","depth":2,"mh_id":"MH3","feature_ref":"","urd_file":"core/chuyen-tien.md"}],"description":"SF8 Đặt lịch/định kỳ — frequency config, CRUD recurring","states":60,"complexity":4,"screen_type":"scheduler","actual_screens":[{"id":"SF8-S1","name":"SCR-INIT-CC","mh":"MH1.1-1.3","type":"form+toggle","states":"~18","desc":"Đặt lịch NB cùng chủ — scheduler toggle"},{"id":"SF8-S2","name":"SCR-INIT-KC","mh":"MH1.1-1.5","type":"form+toggle","states":"~18","desc":"Đặt lịch NB khác chủ — mutual exclusion batch"},{"id":"SF8-S3","name":"SCR-CONFIRM","mh":"MH2","type":"review","states":"~6","desc":"Xác nhận — CC no PTXT, KC has PTXT"},{"id":"SF8-S4","name":"SCR-RESULT","mh":"MH3/MH6","type":"result","states":"~4","desc":"Kết quả đặt lịch thành công"},{"id":"SF8-S5","name":"SCR-LIST","mh":"MH2.1-2.3","type":"list+filter","states":"~24","desc":"DS đặt lịch — filter theo status/time"},{"id":"SF8-S6","name":"SCR-DETAIL","mh":"MH3.1-3.2","type":"detail+crud","states":"~20","desc":"Chi tiết lệnh + actions lifecycle"},{"id":"SF8-S7","name":"SCR-ACTION-CONFIRM","mh":"MH5.1-5.3","type":"popup","states":"~6","desc":"Confirm tạm dừng/tiếp tục/hủy + batch guard"}]}],"description":"Chuyển tiền nội bộ & liên ngân hàng — Napas 24/7, nhiều người nhận, đặt lịch","enriched":true,"total_states":505},{"name":"Thanh toán hóa đơn","type":"module","id":"PAYMENT","icon":"🧾","category":"core","stats":{"screens":10,"features":5,"flows":5},"children":[{"name":"Màn hình Quản lý danh bạ trên Cài đặt","type":"sub_function","screen_count":1,"flow_pattern":["MH danh sách chức năng Quản lý danh bạ"],"screens":[{"name":"MH danh sách chức năng Quản lý danh bạ","depth":2,"mh_id":"MH1","feature_ref":"21.1","urd_file":"core/thanh-toan.md"}],"description":"SF1 Quản lý danh bạ NCC dịch vụ đã lưu","states":15,"complexity":2,"screen_type":"settings","actual_screens":[{"id":"PAY-S1","name":"QL Danh bạ NCC","mh":"MH1","type":"settings","states":"~1","desc":"2 options — Chuyển tiền + Hóa đơn"}]},{"name":"Danh bạ hóa đơn","type":"sub_function","screen_count":3,"flow_pattern":["Xác thực","Danh sách"],"screens":[{"name":"Danh sách danh bạ hóa đơn","depth":2,"mh_id":"MH1","feature_ref":"21.2","urd_file":"core/thanh-toan.md"},{"name":"Thêm mới Danh bạ hóa đơn","depth":2,"mh_id":"MH2","feature_ref":"21.2","urd_file":"core/thanh-toan.md"},{"name":"Xem chi tiết danh bạ hóa đơn","depth":2,"mh_id":"MH3","feature_ref":"21.2","urd_file":"core/thanh-toan.md"},{"name":"Luồng Xác thực đăng ký thanh toán hóa đơn tự động","depth":4,"mh_id":"MH5","feature_ref":"21.2","urd_file":"core/thanh-toan.md"}],"description":"SF2 Danh sách hóa đơn đã đăng ký — CRUD, auto-debit toggle","states":25,"complexity":2,"screen_type":"list+crud","actual_screens":[{"id":"SF2P-S1","name":"DS Danh bạ HĐ","mh":"MH1.1+MH1.2+MH4.1","type":"list+crud","states":"~12","desc":"View/delete mode, search, empty state"},{"id":"SF2P-S2","name":"Form Danh bạ","mh":"MH2.1+MH2.2+MH3","type":"form","states":"~10","desc":"Add/view-edit template — NCC picker + fields"},{"id":"SF2P-OV1","name":"Popup Xóa","mh":"MH4.2","type":"popup","states":"~3","desc":"Confirm delete dialog"}]},{"name":"Thanh toán hóa đơn","type":"sub_function","screen_count":5,"flow_pattern":["Danh sách","Khởi tạo","Xác nhận","Xác thực","Nhập TT","Chọn","Kết quả"],"screens":[{"name":"MH Danh sách dịch vụ thanh toán hóa đơn","depth":2,"mh_id":"MH0","feature_ref":"21.3","urd_file":"core/thanh-toan.md"},{"name":"MH Danh sách dịch vụ Thanh toán","depth":2,"mh_id":"MH0","feature_ref":"21.3","urd_file":"core/thanh-toan.md"},{"name":"Khởi tạo (Thanh toán tổng tiền)","depth":3,"mh_id":"MH1","feature_ref":"21.3","urd_file":"core/thanh-toan.md"},{"name":"Khởi tạo","depth":3,"mh_id":"MH1","feature_ref":"21.3","urd_file":"core/thanh-toan.md"},{"name":"Xác nhận giao dịch","depth":3,"mh_id":"MH2","feature_ref":"21.3","urd_file":"core/thanh-toan.md"},{"name":"MH Xác nhận","depth":3,"mh_id":"MH2","feature_ref":"21.3","urd_file":"core/thanh-toan.md"},{"name":"Xác thực giao dịch","depth":4,"mh_id":"MH3","feature_ref":"21.3","urd_file":"core/thanh-toan.md"},{"name":"MH khởi tạo nhập số tiền","depth":3,"mh_id":"MH5","feature_ref":"21.3","urd_file":"core/thanh-toan.md"},{"name":"MH khởi tạo tổng tiền + Nhập số tiền","depth":3,"mh_id":"MH6","feature_ref":"21.3","urd_file":"core/thanh-toan.md"},{"name":"MH Xác nhận tổng tiền + Nhập số tiền (khi chọn Nhập số tiền)","depth":3,"mh_id":"MH8","feature_ref":"21.3","urd_file":"core/thanh-toan.md"},{"name":"MH Xác nhận tổng tiền + Nhập số tiền (khi chọn Tổng tiền)","depth":3,"mh_id":"MH9","feature_ref":"21.3","urd_file":"core/thanh-toan.md"},{"name":"MH Xác nhận (chọn gói cước từ các gói cước trả về sau khi nhập thông tin label Mã khách hàng ở MH khởi tạo) - MobiTV","depth":3,"mh_id":"MH10","feature_ref":"21.3","urd_file":"core/thanh-toan.md"},{"name":"MH kết quả tổng tiền + Nhập số tiền","depth":4,"mh_id":"MH12","feature_ref":"21.3","urd_file":"core/thanh-toan.md"},{"name":"MH kết quả (Thanh toán vé máy bay)","depth":4,"mh_id":"MH14","feature_ref":"21.3","urd_file":"core/thanh-toan.md"},{"name":"MH Chọn danh bạ","depth":2,"mh_id":"MH15","feature_ref":"21.3","urd_file":"core/thanh-toan.md"}],"description":"SF3 Luồng thanh toán — dynamic form theo NCC config, 4 payment types","states":100,"complexity":5,"screen_type":"dynamic-wizard","actual_screens":[{"id":"SF3P-S1","name":"DS Dịch vụ","mh":"MH0","type":"list","states":"~5","desc":"Entry — DS dịch vụ TTHĐ + danh bạ link"},{"id":"SF3P-S2","name":"Khởi tạo (Dynamic Form)","mh":"MH1+MH5+MH6+MH7","type":"dynamic-form","states":"~40","desc":"4 payment types — form adapts per NCC config"},{"id":"SF3P-S3","name":"Xác nhận","mh":"MH2+MH8-MH11","type":"review","states":"~15","desc":"Review — variant theo auto-debit/payment type"},{"id":"SF3P-S4","name":"Kết quả","mh":"MH4+MH12-MH14","type":"result","states":"~15","desc":"Result + save danh bạ prompt"},{"id":"SF3P-OV1","name":"Popup chọn/lưu danh bạ","mh":"MH15+MH4.2","type":"popup","states":"~5","desc":"Overlay danh bạ + save prompt"}]},{"name":"Nhận thông báo cước hóa đơn","type":"sub_function","screen_count":0,"flow_pattern":["Xác nhận"],"screens":[{"name":"Đăng ký nhận thông báo cước","depth":4,"mh_id":"MH1","feature_ref":"21.4","urd_file":"core/thanh-toan.md"},{"name":"Xác nhận hủy đăng ký nhận thông báo cước","depth":4,"mh_id":"MH3","feature_ref":"21.4","urd_file":"core/thanh-toan.md"},{"name":"Thông báo OTT hóa đơn đến hạn","depth":4,"mh_id":"MH4","feature_ref":"21.4","urd_file":"core/thanh-toan.md"}],"description":"SF4 Toggle thông báo cước — parasitic, embedded trong SF2/SF3","states":10,"complexity":1,"screen_type":"toggle","actual_screens":[]},{"name":"Thanh toán chung","type":"sub_function","screen_count":1,"flow_pattern":["Chọn nhà CC","Nhập TT","Xác nhận","Kết quả"],"screens":[{"name":"Chọn hạn mức","depth":2,"mh_id":"MH2","feature_ref":"","urd_file":"core/thanh-toan.md"},{"name":"Xác nhận thông tin","depth":3,"mh_id":"MH3","feature_ref":"","urd_file":"core/thanh-toan.md"},{"name":"Kết quả","depth":4,"mh_id":"MH5","feature_ref":"","urd_file":"core/thanh-toan.md"}],"description":"SF5 Nạp tiền ĐTDĐ — standard transaction wizard với PTXT gate","states":50,"complexity":3,"screen_type":"wizard","actual_screens":[{"id":"SF5P-S1","name":"Limit Wizard","mh":"MH1+MH2+MH3","type":"wizard","states":"~15","desc":"3-step wizard: Init → Picker → Confirm + PTXT gate"}]}],"description":"Thanh toán hóa đơn dịch vụ — điện, nước, viễn thông, danh bạ hóa đơn","enriched":true,"total_states":200},{"name":"Tiết kiệm","type":"module","id":"SAVINGS","icon":"🏦","category":"product","stats":{"screens":31,"features":8,"flows":14},"children":[{"name":"Danh sách tiền gửi","type":"sub_function","screen_count":4,"flow_pattern":["Danh sách","Thông tin TK"],"screens":[{"name":"Chưa có Danh sách tiền gửi","depth":2,"mh_id":"MH0","feature_ref":"30.1","urd_file":"product/tiet-kiem.md"},{"name":"Danh sách tiền gửi","depth":2,"mh_id":"MH1","feature_ref":"30.1","urd_file":"product/tiet-kiem.md"},{"name":"& 1.4: Thông tin tài khoản","depth":2,"mh_id":"MH1","feature_ref":"","urd_file":"product/tiet-kiem.md"},{"name":"Thông tin tài khoản","depth":2,"mh_id":"MH2","feature_ref":"30.1","urd_file":"product/tiet-kiem.md"}],"description":"Tổng quan danh sách sổ tiết kiệm hiện có, filter theo loại/trạng thái"},{"name":"Mở tiền gửi trực tuyến","type":"sub_function","screen_count":5,"flow_pattern":["Chọn TK","Khởi tạo","Xác nhận","Xác thực","Kết quả"],"screens":[{"name":"Tiền gửi trực tuyến","depth":2,"mh_id":"MH0","feature_ref":"30.2","urd_file":"product/tiet-kiem.md"},{"name":"Chức năng Tiền gửi tiết kiệm","depth":2,"mh_id":"MH0","feature_ref":"","urd_file":"product/tiet-kiem.md"},{"name":"+ MH 1.4 + MH 1.5 : Popup","depth":4,"mh_id":"MH1","feature_ref":"30.2","urd_file":"product/tiet-kiem.md"},{"name":"Danh sách Tất toán tiền gửi trực tuyến","depth":2,"mh_id":"MH1","feature_ref":"30.4","urd_file":"product/tiet-kiem.md"},{"name":"Popup xác nhận","depth":4,"mh_id":"MH3","feature_ref":"","urd_file":"product/tiet-kiem.md"}],"description":"Luồng mở sổ mới — chọn kỳ hạn, lãi suất, nguồn tiền, xác nhận"},{"name":"Rút gốc một phần","type":"sub_function","screen_count":1,"flow_pattern":["Thông tin TK","Nhập số tiền","Xác nhận","Xác thực","Kết quả"],"screens":[{"name":"Xác nhận giao dịch","depth":3,"mh_id":"MH3","feature_ref":"","urd_file":"product/tiet-kiem.md"}],"description":"Rút bớt tiền gốc từ sổ tích lũy mà không tất toán"},{"name":"Tất toán tiền gửi","type":"sub_function","screen_count":2,"flow_pattern":["Danh sách","Xác nhận","Xác thực","Kết quả"],"screens":[{"name":"Tiền gửi tiết kiệm","depth":2,"mh_id":"MH0","feature_ref":"30.4","urd_file":"product/tiet-kiem.md"},{"name":"Thay đổi phương thức tất toán/rút gốc","depth":2,"mh_id":"MH2","feature_ref":"","urd_file":"product/tiet-kiem.md"}],"description":"Đóng sổ tiết kiệm — tính lãi, chọn TK nhận, xác nhận"},{"name":"Gửi gốc thêm (Tích lũy)","type":"sub_function","screen_count":3,"flow_pattern":["Danh sách","Khởi tạo","Xác thực","Kết quả"],"screens":[{"name":"Thông tin chi tiết tài khoản","depth":2,"mh_id":"MH1","feature_ref":"","urd_file":"product/tiet-kiem.md"},{"name":"Danh sách tài khoản Gửi gốc thêm","depth":2,"mh_id":"MH2","feature_ref":"","urd_file":"product/tiet-kiem.md"},{"name":"Khởi tạo Gửi gốc thêm","depth":3,"mh_id":"MH3","feature_ref":"","urd_file":"product/tiet-kiem.md"}],"description":"Bổ sung thêm tiền gốc vào sổ tiết kiệm tích lũy"},{"name":"Thay đổi phương thức tất toán","type":"sub_function","screen_count":7,"flow_pattern":["Chọn PT","Popup xác nhận","Xác thực","Kết quả"],"screens":[{"name":"Xác thực facepay thành công","depth":4,"mh_id":"MH4","feature_ref":"","urd_file":"product/tiet-kiem.md"},{"name":"Xác thực bằng SMS OTP","depth":4,"mh_id":"MH4","feature_ref":"","urd_file":"product/tiet-kiem.md"},{"name":"Xác thực facepay lỗi (lỗi oval)","depth":4,"mh_id":"MH5","feature_ref":"","urd_file":"product/tiet-kiem.md"},{"name":"Xác thực facepay lỗi","depth":4,"mh_id":"MH5","feature_ref":"","urd_file":"product/tiet-kiem.md"},{"name":"Xác thực SMS OTP","depth":4,"mh_id":"MH6","feature_ref":"","urd_file":"product/tiet-kiem.md"},{"name":"Xác thực giao dịch bằng Soft OTP","depth":4,"mh_id":"MH6","feature_ref":"","urd_file":"product/tiet-kiem.md"},{"name":"Nhập mã PIN Soft OTP","depth":4,"mh_id":"MH7","feature_ref":"","urd_file":"product/tiet-kiem.md"}],"description":"Cập nhật cách xử lý khi đáo hạn — tự động gia hạn, rút về TK"},{"name":"Thay đổi thông tin tích lũy","type":"sub_function","screen_count":1,"flow_pattern":["Form thay đổi","Xác nhận"],"screens":[{"name":"Thay đổi thông tin tích lũy định kỳ","depth":2,"mh_id":"MH2","feature_ref":"","urd_file":"product/tiet-kiem.md"}],"description":"Sửa thông tin tích lũy định kỳ — số tiền, tần suất, TK nguồn"},{"name":"Khác","type":"sub_function","screen_count":8,"flow_pattern":[],"screens":[{"name":"Khởi tạo","depth":3,"mh_id":"MH2","feature_ref":"","urd_file":"product/tiet-kiem.md"},{"name":"Xác nhận GD","depth":3,"mh_id":"MH3","feature_ref":"","urd_file":"product/tiet-kiem.md"},{"name":"Xác thực GD","depth":4,"mh_id":"MH4","feature_ref":"","urd_file":"product/tiet-kiem.md"},{"name":"Xác thực","depth":4,"mh_id":"MH4","feature_ref":"","urd_file":"product/tiet-kiem.md"},{"name":"Kết quả GD","depth":4,"mh_id":"MH5","feature_ref":"","urd_file":"product/tiet-kiem.md"},{"name":"Kết quả","depth":4,"mh_id":"MH5","feature_ref":"","urd_file":"product/tiet-kiem.md"},{"name":"Xác thực giao dịch","depth":4,"mh_id":"MH5","feature_ref":"","urd_file":"product/tiet-kiem.md"},{"name":"Kết quả giao dịch","depth":4,"mh_id":"MH6","feature_ref":"","urd_file":"product/tiet-kiem.md"}],"description":"Các tính năng tiết kiệm bổ sung khác"}],"description":"Sản phẩm tiền gửi — mở mới, tất toán, gửi thêm gốc, thay đổi phương thức"},{"name":"Dịch vụ thẻ","type":"module","id":"CARD","icon":"💳","category":"product","stats":{"screens":21,"features":6,"flows":14},"children":[{"name":"Danh sách & Thông tin thẻ","type":"sub_function","screen_count":2,"flow_pattern":["Danh sách","Chi tiết thẻ"],"screens":[{"name":"Danh sách thẻ","depth":2,"mh_id":"MH1","feature_ref":"","urd_file":"product/dich-vu-the.md"},{"name":"Thông tin thẻ","depth":2,"mh_id":"MH1","feature_ref":"","urd_file":"product/dich-vu-the.md"}],"description":"Tổng quan thẻ — danh sách, thông tin chi tiết, trạng thái"},{"name":"Kích hoạt thẻ","type":"sub_function","screen_count":4,"flow_pattern":["Nhập số thẻ","Đặt PIN","Kết quả"],"screens":[{"name":"Tên màn hình","depth":2,"mh_id":"MH1","feature_ref":"","urd_file":"product/dich-vu-the.md"},{"name":"Nhập 8 số cuối của thẻ","depth":3,"mh_id":"MH2","feature_ref":"","urd_file":"product/dich-vu-the.md"},{"name":"MH cài đặt mã PIN (default)","depth":3,"mh_id":"MH3","feature_ref":"","urd_file":"product/dich-vu-the.md"},{"name":"Popup cài mã Pin thành công","depth":4,"mh_id":"MH4","feature_ref":"","urd_file":"product/dich-vu-the.md"}],"description":"Kích hoạt thẻ mới nhận — nhập số thẻ, xác minh"},{"name":"Cài đặt PIN thẻ","type":"sub_function","screen_count":7,"flow_pattern":["Xác thực Facepay","Nhập PIN","Kết quả"],"screens":[{"name":"Cài đặt mã PIN","depth":3,"mh_id":"MH2","feature_ref":"","urd_file":"product/dich-vu-the.md"},{"name":"MH tạo mã PIN thẻ","depth":2,"mh_id":"MH3","feature_ref":"","urd_file":"product/dich-vu-the.md"},{"name":"MH xác thực Facepay","depth":4,"mh_id":"MH3","feature_ref":"","urd_file":"product/dich-vu-the.md"},{"name":"Kết quả giao dịch thanh toán thẻ tín dụng","depth":4,"mh_id":"MH4","feature_ref":"","urd_file":"product/dich-vu-the.md"},{"name":"Điều khoản thu thập STH","depth":3,"mh_id":"MH6","feature_ref":"","urd_file":"product/dich-vu-the.md"},{"name":"Vào luồng của SDK thu thập STH","depth":2,"mh_id":"MH7","feature_ref":"","urd_file":"product/dich-vu-the.md"},{"name":"Kết quả","depth":4,"mh_id":"MH8","feature_ref":"","urd_file":"product/dich-vu-the.md"}],"description":"Đặt hoặc đổi mã PIN cho thẻ ghi nợ/tín dụng"},{"name":"Thanh toán dư nợ thẻ tín dụng","type":"sub_function","screen_count":3,"flow_pattern":["Khởi tạo","Xác nhận","Xác thực","Kết quả"],"screens":[{"name":"Khởi tạo giao dịch thanh toán thẻ tín dụng","depth":3,"mh_id":"MH1","feature_ref":"","urd_file":"product/dich-vu-the.md"},{"name":"Xác nhận giao dịch thanh toán thẻ tín dụng","depth":2,"mh_id":"MH2","feature_ref":"","urd_file":"product/dich-vu-the.md"},{"name":"Xác thực giao dịch thanh toán thẻ tín dụng","depth":4,"mh_id":"MH3","feature_ref":"","urd_file":"product/dich-vu-the.md"}],"description":"Trả nợ thẻ tín dụng — thanh toán tối thiểu hoặc toàn bộ"},{"name":"Lịch sử giao dịch Credit","type":"sub_function","screen_count":2,"flow_pattern":["Danh sách GD","Chi tiết GD"],"screens":[{"name":"Lịch sử giao dịch thẻ tín dụng","depth":2,"mh_id":"MH2","feature_ref":"","urd_file":"product/dich-vu-the.md"},{"name":"Chi tiết 01 giao dịch","depth":2,"mh_id":"MH3","feature_ref":"","urd_file":"product/dich-vu-the.md"}],"description":"Xem lịch sử giao dịch thẻ tín dụng theo kỳ sao kê"},{"name":"Sao kê thẻ","type":"sub_function","screen_count":3,"flow_pattern":["Danh sách kỳ","Chi tiết sao kê"],"screens":[{"name":"Sao kê thẻ","depth":2,"mh_id":"MH2","feature_ref":"","urd_file":"product/dich-vu-the.md"},{"name":"Xem sao kê thẻ","depth":2,"mh_id":"MH3","feature_ref":"","urd_file":"product/dich-vu-the.md"},{"name":"Không có kỳ sao kê","depth":2,"mh_id":"MH4","feature_ref":"","urd_file":"product/dich-vu-the.md"}],"description":"Tra cứu sao kê thẻ tín dụng — download, xem chi tiết"}],"description":"Quản lý thẻ ghi nợ/tín dụng — kích hoạt, đổi PIN, sao kê, trả nợ thẻ"},{"name":"Thanh toán vay","type":"module","id":"LOAN","icon":"🏧","category":"product","stats":{"screens":11,"features":4,"flows":4},"children":[{"name":"Trả nợ vay chính chủ","type":"sub_function","screen_count":4,"flow_pattern":["Khởi tạo","Xác nhận","Xác thực","Kết quả"],"screens":[{"name":"Tạo lệnh trả nợ vay chính chủ","depth":3,"mh_id":"MH3","feature_ref":"","urd_file":"product/thanh-toan-vay.md"},{"name":"Xác nhận giao dịch","depth":3,"mh_id":"MH4","feature_ref":"","urd_file":"product/thanh-toan-vay.md"},{"name":"Xác thực giao dịch","depth":4,"mh_id":"MH5","feature_ref":"","urd_file":"product/thanh-toan-vay.md"},{"name":"Kết quả giao dịch","depth":4,"mh_id":"MH6","feature_ref":"","urd_file":"product/thanh-toan-vay.md"}],"description":"Thanh toán khoản vay của chính chủ TK — gốc, lãi, phí"},{"name":"Trả nợ vay theo địa bàn","type":"sub_function","screen_count":2,"flow_pattern":["Khởi tạo","Xác nhận","Xác thực","Kết quả"],"screens":[{"name":"Khởi tạo","depth":3,"mh_id":"MH1","feature_ref":"","urd_file":"product/thanh-toan-vay.md"},{"name":"Tạo lệnh trả nợ vay theo địa bàn","depth":3,"mh_id":"MH3","feature_ref":"","urd_file":"product/thanh-toan-vay.md"}],"description":"Thanh toán khoản vay tại chi nhánh/QTDND cụ thể"},{"name":"Danh sách khoản vay","type":"sub_function","screen_count":3,"flow_pattern":["Danh sách","Chi tiết"],"screens":[{"name":"Khoản vay","depth":2,"mh_id":"MH2","feature_ref":"","urd_file":"product/thanh-toan-vay.md"},{"name":"Danh sách khoản vay chính chủ","depth":2,"mh_id":"MH2","feature_ref":"","urd_file":"product/thanh-toan-vay.md"},{"name":"Danh sách tạo lệnh thanh toán khoản vay","depth":3,"mh_id":"MH2","feature_ref":"","urd_file":"product/thanh-toan-vay.md"}],"description":"Tổng quan tất cả khoản vay đang có — số tiền, kỳ hạn, trạng thái"},{"name":"Navigation","type":"sub_function","screen_count":2,"flow_pattern":["Entry point"],"screens":[{"name":"Trang chủ","depth":1,"mh_id":"MH1","feature_ref":"","urd_file":"product/thanh-toan-vay.md"},{"name":"Tài khoản","depth":2,"mh_id":"MH1","feature_ref":"","urd_file":"product/thanh-toan-vay.md"}],"description":"Điều hướng giữa các màn hình trong module vay"}],"description":"Thanh toán khoản vay — trả nợ chính chủ, theo địa bàn, tra cứu khoản vay"},{"name":"Tiện ích","type":"module","id":"UTILITY","icon":"🔧","category":"product","stats":{"screens":14,"features":2,"flows":2},"children":[{"name":"Nạp tiền điện thoại","type":"sub_function","screen_count":10,"flow_pattern":["Khởi tạo","Xác nhận","Xác thực","Kết quả"],"screens":[{"name":"Khởi tạo","depth":3,"mh_id":"MH1","feature_ref":"23.1","urd_file":"product/tien-ich.md"},{"name":"Báo cáo giao dịch","depth":2,"mh_id":"MH1","feature_ref":"23.1","urd_file":"product/tien-ich.md"},{"name":"Xác nhận giao dịch","depth":3,"mh_id":"MH2","feature_ref":"23.1","urd_file":"product/tien-ich.md"},{"name":"Kết quả tra cứu báo cáo giao dịch","depth":4,"mh_id":"MH2","feature_ref":"23.1","urd_file":"product/tien-ich.md"},{"name":"Xác thực giao dịch","depth":4,"mh_id":"MH3","feature_ref":"23.1","urd_file":"product/tien-ich.md"},{"name":"Chi tiết GD - Chuyển tiền","depth":2,"mh_id":"MH3","feature_ref":"23.1","urd_file":"product/tien-ich.md"},{"name":"Chi tiết GD - Nạp thẻ điện thoại","depth":2,"mh_id":"MH5","feature_ref":"23.1","urd_file":"product/tien-ich.md"},{"name":"Chi tiết GD - Nạp thẻ điện thoại (GD gạch nợ thất bại)","depth":4,"mh_id":"MH5","feature_ref":"23.1","urd_file":"product/tien-ich.md"},{"name":"Chi tiết chuyển tiền - chuyển tiền qua GTTT","depth":2,"mh_id":"MH7","feature_ref":"23.1","urd_file":"product/tien-ich.md"},{"name":"Chi tiết GD - Mở tiền gửi trực tuyến","depth":2,"mh_id":"MH8","feature_ref":"23.1","urd_file":"product/tien-ich.md"}],"description":"Nạp tiền mobile — chọn nhà mạng, nhập số, chọn mệnh giá"},{"name":"UTILITY","type":"sub_function","screen_count":4,"flow_pattern":["Đặt Alias","Chuyển tiền nội bộ - Cùng chủ","Chuyển tiền nội bộ - Khác chủ","Chuyển tiền 24/7 - Qua tài khoản"],"screens":[{"name":"Chuyển tiền nội bộ - Cùng chủ","depth":2,"mh_id":"MH1","feature_ref":"32.2","urd_file":"product/tien-ich.md"},{"name":"Chuyển tiền nội bộ - Khác chủ","depth":2,"mh_id":"MH2","feature_ref":"32.2","urd_file":"product/tien-ich.md"},{"name":"Đặt Alias","depth":2,"mh_id":"MH3","feature_ref":"32.2","urd_file":"product/tien-ich.md"},{"name":"Chuyển tiền 24/7 - Qua tài khoản","depth":2,"mh_id":"MH3","feature_ref":"32.2","urd_file":"product/tien-ich.md"}],"description":"Các tiện ích thanh toán khác ngoài nạp tiền điện thoại"}],"description":"Tiện ích thanh toán nhanh — nạp tiền điện thoại và dịch vụ khác"},{"name":"Tra soát","type":"module","id":"DISPUTE","icon":"📋","category":"support","stats":{"screens":12,"features":3,"flows":3},"children":[{"name":"Tra soát GD qua Mobile Banking","type":"sub_function","screen_count":4,"flow_pattern":["Tìm kiếm","Danh sách GD","Tạo yêu cầu","Kết quả"],"screens":[{"name":"Tìm kiếm giao dịch qua Mobile Banking","depth":2,"mh_id":"MH2","feature_ref":"","urd_file":"ops/tra-soat-event.md"},{"name":"Danh sách giao dịch qua Mobile Banking","depth":2,"mh_id":"MH3","feature_ref":"","urd_file":"ops/tra-soat-event.md"},{"name":"Tạo yêu cầu tra soát giao dịch qua Mobile banking","depth":2,"mh_id":"MH4","feature_ref":"","urd_file":"ops/tra-soat-event.md"},{"name":"Kết quả giao dịch","depth":4,"mh_id":"MH7","feature_ref":"","urd_file":"ops/tra-soat-event.md"}],"description":"Tạo yêu cầu tra soát giao dịch trực tiếp trên app"},{"name":"Tra soát khác","type":"sub_function","screen_count":3,"flow_pattern":["Nhập TT","Xác nhận","Kết quả"],"screens":[{"name":"Tạo yêu cầu tra soát khác","depth":2,"mh_id":"MH8","feature_ref":"","urd_file":"ops/tra-soat-event.md"},{"name":"Xác nhận yêu cầu","depth":3,"mh_id":"MH9","feature_ref":"","urd_file":"ops/tra-soat-event.md"},{"name":"Popup Thông tin giao dịch khác","depth":4,"mh_id":"MH10","feature_ref":"","urd_file":"ops/tra-soat-event.md"}],"description":"Tra soát các loại giao dịch khác — liên ngân hàng, ATM"},{"name":"Quản lý yêu cầu tra soát","type":"sub_function","screen_count":5,"flow_pattern":["Chọn hình thức","Tìm kiếm","Danh sách","Kết quả XL"],"screens":[{"name":"Home","depth":1,"mh_id":"MH0","feature_ref":"","urd_file":"ops/tra-soat-event.md"},{"name":"Chọn hình thức tra soát","depth":2,"mh_id":"MH1","feature_ref":"","urd_file":"ops/tra-soat-event.md"},{"name":"Thông báo kết quả xử lý yêu cầu tra soát","depth":4,"mh_id":"MH1","feature_ref":"37.4","urd_file":"ops/tra-soat-event.md"},{"name":"Tìm kiếm yêu cầu tra soát","depth":2,"mh_id":"MH11","feature_ref":"","urd_file":"ops/tra-soat-event.md"},{"name":"Danh sách yêu cầu tra soát","depth":2,"mh_id":"MH12","feature_ref":"","urd_file":"ops/tra-soat-event.md"}],"description":"Theo dõi trạng thái, lịch sử các yêu cầu tra soát đã gửi"}],"description":"Tra soát giao dịch — khiếu nại qua Mobile Banking, theo dõi trạng thái yêu cầu"},{"name":"SDK Services","type":"module","id":"SDK","icon":"📦","category":"product","stats":{"screens":42,"features":5,"flows":11},"children":[{"name":"Tài liệu tham khảo:","type":"sub_function","screen_count":12,"flow_pattern":["Xác nhận","Khởi tạo","Xác thực","Kết quả"],"screens":[{"name":"MH Xác nhận thanh toán vé máy bay","depth":3,"mh_id":"MH0","feature_ref":"","urd_file":"product/sdk.md"},{"name":"Truy cập chức năng: Thực hiện thanh toán vé máy bay của chức năng Đặt vé máy bay.","depth":2,"mh_id":"MH0","feature_ref":"","urd_file":"product/sdk.md"},{"name":"Thông báo tin OTT","depth":4,"mh_id":"MH0","feature_ref":"","urd_file":"product/sdk.md"},{"name":"Truy cập chức năng: Từ tin OTT trả về điện thoại","depth":2,"mh_id":"MH0","feature_ref":"","urd_file":"product/sdk.md"},{"name":"MH khởi tạo thanh toán vé máy bay","depth":3,"mh_id":"MH1","feature_ref":"","urd_file":"product/sdk.md"},{"name":"MH Khởi tạo thanh toán","depth":3,"mh_id":"MH1","feature_ref":"","urd_file":"product/sdk.md"},{"name":"Xác nhận thanh toán","depth":3,"mh_id":"MH2","feature_ref":"","urd_file":"product/sdk.md"},{"name":"Xác nhận giao dịch","depth":3,"mh_id":"MH2","feature_ref":"","urd_file":"product/sdk.md"},{"name":"MH Xác thực thanh toán","depth":4,"mh_id":"MH3","feature_ref":"","urd_file":"product/sdk.md"},{"name":"Xác thực giao dịch","depth":4,"mh_id":"MH3","feature_ref":"","urd_file":"product/sdk.md"},{"name":"MH kết quả thanh toán","depth":4,"mh_id":"MH4","feature_ref":"","urd_file":"product/sdk.md"},{"name":"Kết quả giao dịch","depth":4,"mh_id":"MH4","feature_ref":"","urd_file":"product/sdk.md"}],"description":"Tài liệu hướng dẫn tích hợp SDK dịch vụ bên thứ 3"},{"name":"MB_COOPBANK_THANH TOÁN VÉ TÀU","type":"sub_function","screen_count":2,"flow_pattern":["MH Thông tin thanh toán vé tàu tại SDK","MH Thông tin thanh toán vé xem phim tại SDK"],"screens":[{"name":"MH Thông tin thanh toán vé tàu tại SDK","depth":2,"mh_id":"MH0","feature_ref":"18.3","urd_file":"product/sdk.md"},{"name":"MH Thông tin thanh toán vé xem phim tại SDK","depth":2,"mh_id":"MH0","feature_ref":"18.3","urd_file":"product/sdk.md"}],"description":"Mua và thanh toán vé tàu qua SDK tích hợp"},{"name":"MB_COOPBANK_THANH TOÁN VÉ XE","type":"sub_function","screen_count":1,"flow_pattern":["MH Thông tin thanh toán vé xe tại SDK"],"screens":[{"name":"MH Thông tin thanh toán vé xe tại SDK","depth":2,"mh_id":"MH0","feature_ref":"18.4","urd_file":"product/sdk.md"}],"description":"Mua và thanh toán vé xe khách qua SDK tích hợp"},{"name":"Thanh toán Vietlott","type":"sub_function","screen_count":2,"flow_pattern":["Chọn loại vé","Nhập TT","Xác nhận","Kết quả"],"screens":[{"name":"Trong SDK Vietlott","depth":2,"mh_id":"MH2","feature_ref":"","urd_file":"product/sdk.md"},{"name":"Xác nhận giao dịch thanh toán Vietlott","depth":3,"mh_id":"MH3","feature_ref":"","urd_file":"product/sdk.md"}],"description":"Mua xổ số Vietlott trực tiếp trên app"},{"name":"Dịch vụ SDK khác","type":"sub_function","screen_count":25,"flow_pattern":["Khởi tạo","Xác nhận","Kết quả"],"screens":[{"name":"Home","depth":1,"mh_id":"MH1","feature_ref":"18.6","urd_file":"product/sdk.md"},{"name":"KH truy cập App Bank - Đặt Taxi","depth":2,"mh_id":"MH1","feature_ref":"4.3","urd_file":"product/sdk.md"},{"name":"Tên màn hình","depth":2,"mh_id":"MH1","feature_ref":"4.3","urd_file":"product/sdk.md"},{"name":"Trang chủ","depth":1,"mh_id":"MH1","feature_ref":"","urd_file":"product/sdk.md"},{"name":"Khởi tạo giao dịch thanh toán taxi","depth":3,"mh_id":"MH2","feature_ref":"","urd_file":"product/sdk.md"},{"name":"Home SDK Taxi - Chọn điểm đến","depth":1,"mh_id":"MH2","feature_ref":"4.3","urd_file":"product/sdk.md"},{"name":"Thanh toán đơn hàng","depth":2,"mh_id":"MH3","feature_ref":"18.6","urd_file":"product/sdk.md"},{"name":"Xác nhận giao dịch thanh toán taxi","depth":3,"mh_id":"MH3","feature_ref":"","urd_file":"product/sdk.md"},{"name":"Xác thực giao dịch","depth":4,"mh_id":"MH3","feature_ref":"","urd_file":"product/sdk.md"},{"name":"Tìm kiếm điểm đến","depth":2,"mh_id":"MH3","feature_ref":"4.3","urd_file":"product/sdk.md"},{"name":"Khởi tạo","depth":3,"mh_id":"MH3","feature_ref":"","urd_file":"product/sdk.md"},{"name":"Khởi tạo giao dịch","depth":3,"mh_id":"MH3","feature_ref":"","urd_file":"product/sdk.md"},{"name":"Xác nhận điểm đón","depth":3,"mh_id":"MH4","feature_ref":"4.3","urd_file":"product/sdk.md"},{"name":"Hiển thị giá dịch vụ","depth":2,"mh_id":"MH5","feature_ref":"4.3","urd_file":"product/sdk.md"},{"name":"KH chọn Phương thức thanh toán - đã liên kết","depth":2,"mh_id":"MH6","feature_ref":"4.3","urd_file":"product/sdk.md"},{"name":"[Bank] Danh sách tài khoản","depth":2,"mh_id":"MH7","feature_ref":"4.3","urd_file":"product/sdk.md"},{"name":"Đặt xe PTTT tự động","depth":2,"mh_id":"MH8","feature_ref":"4.3","urd_file":"product/sdk.md"},{"name":"Lỗi không đủ số dư","depth":2,"mh_id":"MH9","feature_ref":"4.3","urd_file":"product/sdk.md"},{"name":"Tìm tài xế","depth":2,"mh_id":"MH10","feature_ref":"4.3","urd_file":"product/sdk.md"},{"name":"Tài xế nhận chuyến","depth":2,"mh_id":"MH11","feature_ref":"4.3","urd_file":"product/sdk.md"},{"name":"Tài xế đang đến","depth":2,"mh_id":"MH12","feature_ref":"4.3","urd_file":"product/sdk.md"},{"name":"Tài xế đã đến","depth":2,"mh_id":"MH13","feature_ref":"4.3","urd_file":"product/sdk.md"},{"name":"Đang trong hành trình","depth":2,"mh_id":"MH14","feature_ref":"4.3","urd_file":"product/sdk.md"},{"name":"Kết thúc chuyến - thanh toán tự động thành công","depth":4,"mh_id":"MH15","feature_ref":"4.3","urd_file":"product/sdk.md"},{"name":"Kết thúc chuyến - thanh toán tự động thất bại - Luồng thu bù","depth":4,"mh_id":"MH16","feature_ref":"4.3","urd_file":"product/sdk.md"}],"description":"Các dịch vụ SDK tích hợp khác — bảo hiểm, đầu tư, v.v."}],"description":"Dịch vụ tích hợp SDK — thanh toán vé tàu/xe, Vietlott, dịch vụ bên thứ 3"}],"stats":{"screens":234,"modules":10}},{"name":"Dịch vụ QR","icon":"📱","type":"tab","id":"TAB_QR","children":[{"name":"QR Pay","type":"module","id":"QR","icon":"📱","category":"product","stats":{"screens":56,"features":9,"flows":12},"children":[{"name":"Màn hình chức năng quét QR","type":"sub_function","screen_count":3,"flow_pattern":["Màn hình Quét QR","Đơn vị hỗ trợ","Hướng dẫn"],"screens":[{"name":"Màn hình Quét QR","depth":2,"mh_id":"MH1","feature_ref":"17.1","urd_file":"product/qr.md"},{"name":"Đơn vị hỗ trợ","depth":2,"mh_id":"MH2","feature_ref":"17.1","urd_file":"product/qr.md"},{"name":"Hướng dẫn","depth":3,"mh_id":"MH3","feature_ref":"17.1","urd_file":"product/qr.md"}],"description":"Entry point quét QR — mở camera, chọn album, nhập mã"},{"name":"Gen QR thanh toán","type":"sub_function","screen_count":4,"flow_pattern":["Chọn"],"screens":[{"name":"Gen QR thanh toán","depth":2,"mh_id":"MH2","feature_ref":"17.2","urd_file":"product/qr.md"},{"name":"Cập nhật QR thanh toán theo mã giảm giá","depth":2,"mh_id":"MH3","feature_ref":"17.2","urd_file":"product/qr.md"},{"name":"Cập nhật lại bỏ mã giảm","depth":2,"mh_id":"MH4","feature_ref":"17.2","urd_file":"product/qr.md"},{"name":"Popup chọn lại tài khoản nguồn gen QR thanh toán","depth":4,"mh_id":"MH4","feature_ref":"17.2","urd_file":"product/qr.md"}],"description":"Tạo mã QR để nhận thanh toán — QR tĩnh, QR động"},{"name":"Nhận thông tin OTT và thực hiện thanh toán","type":"sub_function","screen_count":12,"flow_pattern":["Xác nhận","Kết quả","Xác thực","Nhập TT"],"screens":[{"name":"Hiển thị thông báo trên màn hình khi khóa thiết bị","depth":4,"mh_id":"MH1","feature_ref":"17.3","urd_file":"product/qr.md"},{"name":"KH thực hiện thanh toán khi nhận tin khi khách hàng không đăng nhập ứng dụng","depth":3,"mh_id":"MH1","feature_ref":"17.3","urd_file":"product/qr.md"},{"name":"Hiển thị tại màn hình quản lý thông báo","depth":4,"mh_id":"MH2","feature_ref":"17.3","urd_file":"product/qr.md"},{"name":"Hiển thị tại màn hình quản lý thông báo Hiển thị mặc định tại mục tin khác/Tất cả","depth":4,"mh_id":"MH2","feature_ref":"17.3","urd_file":"product/qr.md"},{"name":"KH thực hiện thanh toán từ chức năng Thông báo","depth":4,"mh_id":"MH2","feature_ref":"17.3","urd_file":"product/qr.md"},{"name":"Hiển thị tại màn hình đang trong phiên làm việc - nhấn xem tin notify","depth":2,"mh_id":"MH3","feature_ref":"17.3","urd_file":"product/qr.md"},{"name":"Hiển thị tại màn hình đang trong phiên làm việc - Khi KH click vào tin notify","depth":2,"mh_id":"MH3","feature_ref":"17.3","urd_file":"product/qr.md"},{"name":"KH thực hiện thanh toán khi nhận tin khi khách hàng đăng nhập ứng dụng","depth":3,"mh_id":"MH3","feature_ref":"17.3","urd_file":"product/qr.md"},{"name":"Xác nhận giao dịch","depth":3,"mh_id":"MH4","feature_ref":"17.3","urd_file":"product/qr.md"},{"name":"Xác thực giao dịch","depth":4,"mh_id":"MH5","feature_ref":"17.3","urd_file":"product/qr.md"},{"name":"Kết quả","depth":4,"mh_id":"MH6","feature_ref":"17.3","urd_file":"product/qr.md"},{"name":"Kết quả giao dịch","depth":4,"mh_id":"MH6","feature_ref":"17.3","urd_file":"product/qr.md"}],"description":"Nhận deeplink OTT → hiển thị thông tin → xác nhận thanh toán"},{"name":"Lịch sử thanh toán QR","type":"sub_function","screen_count":7,"flow_pattern":["Lịch sử thanh toán QR - Chưa phát sinh giao dịch","Lịch sử thanh toán QR","Chi tiết QR offline","Chi tiết QR billing"],"screens":[{"name":"Lịch sử thanh toán QR - Chưa phát sinh giao dịch","depth":2,"mh_id":"MH1","feature_ref":"17.4","urd_file":"product/qr.md"},{"name":"Lịch sử thanh toán QR","depth":2,"mh_id":"MH2","feature_ref":"17.4","urd_file":"product/qr.md"},{"name":"Chi tiết QR offline","depth":2,"mh_id":"MH3","feature_ref":"17.4","urd_file":"product/qr.md"},{"name":"Chi tiết QR billing","depth":2,"mh_id":"MH4","feature_ref":"17.4","urd_file":"product/qr.md"},{"name":"Chi tiết QR sản phẩm","depth":2,"mh_id":"MH5","feature_ref":"17.4","urd_file":"product/qr.md"},{"name":"CHi tiết QR cổng","depth":2,"mh_id":"MH6","feature_ref":"17.4","urd_file":"product/qr.md"},{"name":"CHi tiết QR thanh toán","depth":2,"mh_id":"MH7","feature_ref":"17.4","urd_file":"product/qr.md"}],"description":"Xem lại các giao dịch thanh toán QR đã thực hiện"},{"name":"Thanh toán QR type 1 offus - Điểm bán (Tĩnh và động)","type":"sub_function","screen_count":3,"flow_pattern":["Xác nhận"],"screens":[{"name":"Thông tin thanh toán","depth":2,"mh_id":"MH2","feature_ref":"17.5","urd_file":"product/qr.md"},{"name":"Xác nhận thông tin","depth":3,"mh_id":"MH3","feature_ref":"17.5","urd_file":"product/qr.md"},{"name":"Xác nhận thông tin","depth":2,"mh_id":"MH3","feature_ref":"17.5","urd_file":"product/qr.md"}],"description":"Quét QR tại điểm bán — QR tĩnh (cố định) và động (có số tiền)"},{"name":"Thanh toán QR type 2 - Hóa đơn","type":"sub_function","screen_count":2,"flow_pattern":["Xác nhận thanh toán","Xác thực thanh toán"],"screens":[{"name":"Xác nhận thanh toán","depth":3,"mh_id":"MH3","feature_ref":"17.6","urd_file":"product/qr.md"},{"name":"Xác thực thanh toán","depth":4,"mh_id":"MH4","feature_ref":"17.6","urd_file":"product/qr.md"}],"description":"Quét QR trên hóa đơn giấy hoặc điện tử để thanh toán"},{"name":"Thanh toán QR type 3 - Sản phẩm","type":"sub_function","screen_count":9,"flow_pattern":["Chọn","Xác nhận"],"screens":[{"name":"Thông tin đơn hàng - 1 sản phẩm","depth":2,"mh_id":"MH2","feature_ref":"17.7","urd_file":"product/qr.md"},{"name":"Thông tin đơn hàng - nhiều hơn 1 sản phẩm","depth":2,"mh_id":"MH3","feature_ref":"17.7","urd_file":"product/qr.md"},{"name":"Chọn hình thức giao hàng","depth":2,"mh_id":"MH4","feature_ref":"17.7","urd_file":"product/qr.md"},{"name":"Chọn hình thức nhận hàng","depth":2,"mh_id":"MH4","feature_ref":"17.7","urd_file":"product/qr.md"},{"name":"Địa chỉ giao hàng","depth":2,"mh_id":"MH5","feature_ref":"17.7","urd_file":"product/qr.md"},{"name":"Thêm mới địa chỉ giao hàng","depth":2,"mh_id":"MH6","feature_ref":"17.7","urd_file":"product/qr.md"},{"name":"Chỉnh sửa địa chỉ giao hàng","depth":2,"mh_id":"MH7","feature_ref":"17.7","urd_file":"product/qr.md"},{"name":"Xác nhận thông tin thanh toán","depth":3,"mh_id":"MH8","feature_ref":"17.7","urd_file":"product/qr.md"},{"name":"Xác nhận thông tin đơn hàng","depth":3,"mh_id":"MH8","feature_ref":"17.7","urd_file":"product/qr.md"}],"description":"Quét QR gắn trên sản phẩm để thanh toán trực tiếp"},{"name":"Quét QR theo hình thức call App","type":"sub_function","screen_count":1,"flow_pattern":["Chọn thanh toán QR tại các website"],"screens":[{"name":"Chọn thanh toán QR tại các website","depth":2,"mh_id":"MH1","feature_ref":"17.9","urd_file":"product/qr.md"}],"description":"Nhận request từ app khác → mở Co-opBank quét QR thanh toán"},{"name":"QR Chung","type":"sub_function","screen_count":15,"flow_pattern":["Quét QR","Nhập TT","Xác nhận","Kết quả"],"screens":[{"name":"Chuyển tiền","depth":2,"mh_id":"MH1","feature_ref":"29.2","urd_file":"product/qr.md"},{"name":"Truy cập chức năng - Màn hình chuyển tiền","depth":2,"mh_id":"MH1","feature_ref":"29.2","urd_file":"product/qr.md"},{"name":"Quét mã QR","depth":2,"mh_id":"MH1","feature_ref":"29.2","urd_file":"product/qr.md"},{"name":"Luồng màn hình chuyển tiền nội bộ cùng chủ","depth":2,"mh_id":"MH2","feature_ref":"29.1","urd_file":"product/qr.md"},{"name":"Luồng màn hình chuyển tiền nội bộ khác chủ","depth":2,"mh_id":"MH3","feature_ref":"29.1","urd_file":"product/qr.md"},{"name":"Tạo mã QR cho số TKTT (Bổ sung Alias- nếu có)","depth":2,"mh_id":"MH3","feature_ref":"29.2","urd_file":"product/qr.md"},{"name":"Tạo mã QR cho số TKTT - nhập thông tin","depth":3,"mh_id":"MH3","feature_ref":"29.2","urd_file":"product/qr.md"},{"name":"Chọn danh sách tài khoản nguồn có Alias","depth":2,"mh_id":"MH3","feature_ref":"29.2","urd_file":"product/qr.md"},{"name":"Tạo mã QR","depth":2,"mh_id":"MH3","feature_ref":"29.2","urd_file":"product/qr.md"},{"name":"Luồng màn hình chuyển tiền nhanh 247 qua tài khoản bằng mã QR","depth":2,"mh_id":"MH4","feature_ref":"29.1","urd_file":"product/qr.md"},{"name":"Màn hình mã QR của tôi theo số TKTT (QR tĩnh)","depth":2,"mh_id":"MH4","feature_ref":"29.2","urd_file":"product/qr.md"},{"name":"Luồng màn hình chuyển tiền nhanh 247 qua thẻ bằng mã QR","depth":2,"mh_id":"MH5","feature_ref":"29.1","urd_file":"product/qr.md"},{"name":"Màn hình mã QR của tôi theo số TKTT (QR động)","depth":2,"mh_id":"MH5","feature_ref":"29.2","urd_file":"product/qr.md"},{"name":"Mã QR của tôi","depth":2,"mh_id":"","feature_ref":"","urd_file":"product/qr.md"},{"name":"Mã QR của tôi","depth":2,"mh_id":"","feature_ref":"","urd_file":"product/qr.md"}],"description":"Xử lý QR không thuộc type cụ thể — fallback chung"}],"description":"Thanh toán QR đa hình thức — quét QR, tạo QR, QR tĩnh/động, call App"}],"stats":{"screens":56,"modules":1}},{"name":"Thông báo","icon":"🔔","type":"tab","id":"TAB_NOTIF","children":[{"name":"Thông báo & OTT","type":"module","id":"NOTIFY","icon":"🔔","category":"support","stats":{"screens":7,"features":2,"flows":3},"children":[{"name":"Đăng ký Voice OTT","type":"sub_function","screen_count":5,"flow_pattern":["Cài đặt","Xác nhận","Kết quả"],"screens":[{"name":"Cài đặt Voice OTT","depth":2,"mh_id":"MH2","feature_ref":"","urd_file":"messaging/ott-voice.md"},{"name":"Đăng ký dịch vụ Voice OTT thành công","depth":4,"mh_id":"MH4","feature_ref":"","urd_file":"messaging/ott-voice.md"},{"name":"Cập nhật cài đặt voice OTT","depth":2,"mh_id":"MH9","feature_ref":"","urd_file":"messaging/ott-voice.md"},{"name":"Chỉnh sửa cài đặt voice OTT","depth":2,"mh_id":"MH9","feature_ref":"","urd_file":"messaging/ott-voice.md"},{"name":"Cập nhật cài đặt voice OTT thành công","depth":4,"mh_id":"MH11","feature_ref":"","urd_file":"messaging/ott-voice.md"}],"description":"Đăng ký nhận cuộc gọi xác thực OTT thay vì SMS"},{"name":"Hủy Voice OTT","type":"sub_function","screen_count":2,"flow_pattern":["Popup xác nhận","Kết quả"],"screens":[{"name":"Popup xác nhận hủy dịch vụ Voice OTT","depth":4,"mh_id":"MH6","feature_ref":"","urd_file":"messaging/ott-voice.md"},{"name":"Hủy dịch vụ Voice OTT thành công","depth":4,"mh_id":"MH8","feature_ref":"","urd_file":"messaging/ott-voice.md"}],"description":"Hủy đăng ký xác thực bằng cuộc gọi OTT"}],"description":"Quản lý thông báo và OTT — đăng ký/hủy Voice OTT"}],"stats":{"screens":7,"modules":1}},{"name":"Cài đặt","icon":"⚙️","type":"tab","id":"TAB_SETTINGS","children":[{"name":"Cài đặt","type":"module","id":"SETTINGS","icon":"⚙️","category":"product","stats":{"screens":39,"features":9,"flows":7},"children":[{"name":"Các chức năng Cài đặt","type":"sub_function","screen_count":1,"flow_pattern":["Thông tin cá nhân"],"screens":[{"name":"Thông tin cá nhân","depth":2,"mh_id":"MH2","feature_ref":"19.1","urd_file":"product/cai-dat.md"}],"description":"Tổng quan trang cài đặt — danh sách tùy chọn, menu chính"},{"name":"Cấu hình Soft OTP (GÓI 2)","type":"sub_function","screen_count":15,"flow_pattern":["Kết quả","Xác thực","Xác nhận","Nhập TT"],"screens":[{"name":"Cài đặt Soft OTP","depth":4,"mh_id":"MH1","feature_ref":"19.2","urd_file":"product/cai-dat.md"},{"name":"Các chức năng cài đặt","depth":2,"mh_id":"MH1","feature_ref":"19.2","urd_file":"product/cai-dat.md"},{"name":"Xác nhận Hủy","depth":3,"mh_id":"MH2","feature_ref":"19.2","urd_file":"product/cai-dat.md"},{"name":"Thông báo xác nhận","depth":4,"mh_id":"MH2","feature_ref":"19.2","urd_file":"product/cai-dat.md"},{"name":"Điều kiện, điều khoản sử dụng Soft OTP","depth":4,"mh_id":"MH3","feature_ref":"19.2","urd_file":"product/cai-dat.md"},{"name":"Nhập PIN","depth":3,"mh_id":"MH3","feature_ref":"19.2","urd_file":"product/cai-dat.md"},{"name":"Nhập PIN Soft OTP","depth":4,"mh_id":"MH3","feature_ref":"19.2","urd_file":"product/cai-dat.md"},{"name":"Nhập mật khẩu ứng dụng để xác nhận Quên PIN","depth":3,"mh_id":"MH3","feature_ref":"19.2","urd_file":"product/cai-dat.md"},{"name":"Xác nhận PIN","depth":3,"mh_id":"MH3","feature_ref":"19.2","urd_file":"product/cai-dat.md"},{"name":"Cài PIN","depth":2,"mh_id":"MH4","feature_ref":"19.2","urd_file":"product/cai-dat.md"},{"name":"Cài mã PIN Soft OTP","depth":4,"mh_id":"MH4","feature_ref":"19.2","urd_file":"product/cai-dat.md"},{"name":"Poup Kết quả","depth":4,"mh_id":"MH4","feature_ref":"19.2","urd_file":"product/cai-dat.md"},{"name":"Xác nhận OTP","depth":4,"mh_id":"MH4","feature_ref":"19.2","urd_file":"product/cai-dat.md"},{"name":"Kết quả","depth":4,"mh_id":"MH5","feature_ref":"19.2","urd_file":"product/cai-dat.md"},{"name":"Xác thực cài đặt Soft OTP bằng SMS OTP","depth":4,"mh_id":"MH5","feature_ref":"19.2","urd_file":"product/cai-dat.md"}],"description":"Thiết lập OTP mềm — kích hoạt, cấu hình bảo mật gói 2"},{"name":"Đổi mật khẩu","type":"sub_function","screen_count":1,"flow_pattern":["MH đổi mật khẩu"],"screens":[{"name":"MH đổi mật khẩu","depth":2,"mh_id":"MH1","feature_ref":"19.4","urd_file":"product/cai-dat.md"}],"description":"Thay đổi mật khẩu đăng nhập — nhập cũ, nhập mới, xác nhận"},{"name":"Hủy đăng nhập/ xác thực Vân tay/ Face ID","type":"sub_function","screen_count":1,"flow_pattern":["Cài đặt vân tay"],"screens":[{"name":"Cài đặt vân tay","depth":2,"mh_id":"MH1","feature_ref":"19.6","urd_file":"product/cai-dat.md"}],"description":"Tắt xác thực sinh trắc học — vân tay hoặc Face ID"},{"name":"Danh bạ thụ hưởng","type":"sub_function","screen_count":1,"flow_pattern":["Thay đổi bàn phím"],"screens":[{"name":"Thay đổi bàn phím","depth":2,"mh_id":"MH5","feature_ref":"19.7","urd_file":"product/cai-dat.md"}],"description":"Quản lý người nhận đã lưu — thêm, sửa, xóa"},{"name":"Câu hỏi thường gặp","type":"sub_function","screen_count":4,"flow_pattern":["Danh sách"],"screens":[{"name":"MH danh sách chức năng Hỗ trợ","depth":2,"mh_id":"MH1","feature_ref":"19.8","urd_file":"product/cai-dat.md"},{"name":"MH Danh sách Câu hỏi thường gặp","depth":2,"mh_id":"MH2","feature_ref":"19.8","urd_file":"product/cai-dat.md"},{"name":"MH Danh sách Câu hỏi thường gặp + MH3: MH Xem chi tiết câu trả lời","depth":2,"mh_id":"MH2","feature_ref":"19.8","urd_file":"product/cai-dat.md"},{"name":"MH Xem chi tiết câu trả lời","depth":2,"mh_id":"MH3","feature_ref":"19.8","urd_file":"product/cai-dat.md"}],"description":"FAQ — tra cứu câu hỏi phổ biến theo chủ đề"},{"name":"Địa điểm ATM/ Chi nhánh","type":"sub_function","screen_count":6,"flow_pattern":["MH địa điểm ATM/ Chi nhánh gần nhất","MH Lọc tìm kiếm theo Tỉnh thành","MH Lọc tìm kiếm theo Phường/Xã","MH địa điểm ATM/Chi nhánh gần nhất"],"screens":[{"name":"MH địa điểm ATM/ Chi nhánh gần nhất","depth":2,"mh_id":"MH1","feature_ref":"19.9","urd_file":"product/cai-dat.md"},{"name":"MH địa điểm ATM/Chi nhánh gần nhất","depth":2,"mh_id":"MH1","feature_ref":"19.9","urd_file":"product/cai-dat.md"},{"name":"MH Lọc tìm kiếm theo Tỉnh thành","depth":2,"mh_id":"MH2","feature_ref":"19.9","urd_file":"product/cai-dat.md"},{"name":"MH Lọc tìm kiếm theo Phường/Xã","depth":2,"mh_id":"MH3","feature_ref":"19.9","urd_file":"product/cai-dat.md"},{"name":"Mh Lọc tìm kiếm theo Phường/ Xã","depth":2,"mh_id":"MH3","feature_ref":"19.9","urd_file":"product/cai-dat.md"},{"name":"MH Lọc tìm kiếm theo Quận huyện","depth":2,"mh_id":"MH3","feature_ref":"19.9","urd_file":"product/cai-dat.md"}],"description":"Bản đồ tìm ATM và chi nhánh gần nhất"},{"name":"Liên hệ","type":"sub_function","screen_count":4,"flow_pattern":["Popup"],"screens":[{"name":"1, 1.2, 3, 3.1: MH Liên hệ (thu gọn - mở rộng)","depth":2,"mh_id":"MH1","feature_ref":"19.10","urd_file":"product/cai-dat.md"},{"name":"1, 1.2: MH Liên hệ","depth":2,"mh_id":"MH1","feature_ref":"19.10","urd_file":"product/cai-dat.md"},{"name":"MH Popup hotline","depth":4,"mh_id":"MH2","feature_ref":"19.10","urd_file":"product/cai-dat.md"},{"name":"MH Liên hệ (thu gon) - Đi từ màn hình login","depth":2,"mh_id":"MH3","feature_ref":"19.10","urd_file":"product/cai-dat.md"}],"description":"Thông tin liên hệ tổng đài, email, mạng xã hội"},{"name":"SETTINGS","type":"sub_function","screen_count":6,"flow_pattern":["Xác nhận"],"screens":[{"name":"Cài đặt","depth":2,"mh_id":"MH1","feature_ref":"","urd_file":"product/cai-dat.md"},{"name":"Xem nhanh mã QR","depth":2,"mh_id":"MH2","feature_ref":"","urd_file":"product/cai-dat.md"},{"name":"Xác nhận ON","depth":3,"mh_id":"MH3","feature_ref":"","urd_file":"product/cai-dat.md"},{"name":"Thông báo ON thành công","depth":4,"mh_id":"MH4","feature_ref":"","urd_file":"product/cai-dat.md"},{"name":"Xác nhận OFF","depth":3,"mh_id":"MH5","feature_ref":"","urd_file":"product/cai-dat.md"},{"name":"Thông báo OFF thành công","depth":4,"mh_id":"MH6","feature_ref":"","urd_file":"product/cai-dat.md"}],"description":"Các cài đặt khác — ngôn ngữ, thông báo, hiển thị"}],"description":"Cài đặt ứng dụng — Soft OTP, đổi mật khẩu, sinh trắc học, danh bạ"},{"name":"Bảo mật","type":"module","id":"SECURITY","icon":"🛡️","category":"support","stats":{"screens":5,"features":2,"flows":3},"children":[{"name":"Thu thập sinh trắc học (STH)","type":"sub_function","screen_count":4,"flow_pattern":["Chọn hình thức","Hướng dẫn NFC","Kết quả"],"screens":[{"name":"Màn hình thu thập STH","depth":2,"mh_id":"MH1","feature_ref":"","urd_file":"security/auth-security.md"},{"name":"Chọn hình thức thu thập","depth":2,"mh_id":"MH2","feature_ref":"","urd_file":"security/auth-security.md"},{"name":"+ 3.03: Hướng dẫn NFC + Thực hiện NFC 1","depth":3,"mh_id":"MH3","feature_ref":"","urd_file":"security/auth-security.md"},{"name":"Màn hình kết quả thu thập STH - xác thực C06 thành công","depth":4,"mh_id":"MH5","feature_ref":"","urd_file":"security/auth-security.md"}],"description":"Thu thập dữ liệu sinh trắc học theo quy định NHNN — khuôn mặt, vân tay"},{"name":"Thông tin khách hàng","type":"sub_function","screen_count":1,"flow_pattern":["Chi tiết KH"],"screens":[{"name":"Thông tin khách hàng","depth":2,"mh_id":"MH7","feature_ref":"","urd_file":"security/auth-security.md"}],"description":"Xem và cập nhật thông tin cá nhân — CCCD, địa chỉ, email"}],"description":"Bảo mật tài khoản — thu thập sinh trắc học, cập nhật thông tin KH"}],"stats":{"screens":44,"modules":2}}]},"stats":{"total_screens":302,"total_features":48,"total_flows":93,"total_modules":16,"total_use_cases":14,"total_states":777,"enriched_modules":3},"cleanup_rules_applied":["R1: Strip MB_/URD_/SOW prefixes","R2: Strip MH references","R3: Strip sequence numbers","R4: Shorten conditions","R5-R6: Collapse variants","R7: Keep first name for merges","R8: Strip consolidation notes"]};
+
+// ══════════════════════════════════════════════
+// SVG ICONS
+// ══════════════════════════════════════════════
+const chevronSVG = `<svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>`;
+
+const CATEGORY_COLORS = {
+  core: 'var(--cat-core)',
+  product: 'var(--cat-product)',
+  support: 'var(--cat-support)',
+  onboard: 'var(--cat-onboard)',
+};
+
+// ══════════════════════════════════════════════
+// PER-SCREEN DESIGN CHECKLIST DATA (inline)
+// Generated from: coopbank_uiux_upgrade_proposals.md
+// ══════════════════════════════════════════════
+/**
+ * Per-screen design checklist data
+ * Generated from: coopbank_uiux_upgrade_proposals.md
+ * Maps 42 UI/UX proposals → individual actual screens
+ * Format: screenId → array of checklist items
+ */
+const SCREEN_CHECKLISTS = {
+
+  // ════════════════════════════════════════════
+  // HOME MODULE
+  // ════════════════════════════════════════════
+
+  "HOME-S1": {
+    screen: "Trang chủ — Dashboard",
+    module: "HOME",
+    sf: "SF1 — Dashboard tổng quan",
+    items: [
+      // UI Proposals
+      { id: "UI-H01", sev: "critical", cat: "UI", text: "Balance-first hero card: gradient Co-opBank Green → Teal, masked default + 👁️ toggle", src: "Design Proposal, Toss", checked: false },
+      { id: "UI-H02", sev: "critical", cat: "UI", text: "Quick action grid 2×3: 6 actions customizable (long-press reorder), icons outline 24px Lucide", src: "AI Review HD-02/HD-03", checked: false },
+      { id: "UI-H03", sev: "major", cat: "UI", text: "Cooperative Identity Card: widget lợi tức thành viên + tổng tài sản HTX + impact cộng đồng", src: "UK Coop banks, O-11", checked: false },
+      { id: "UI-H04", sev: "minor", cat: "UI", text: "Smart suggestion banner: AI-driven carousel (5s auto-rotate, manual swipe)", src: "AI OMNI PDF, O-12", checked: false },
+      { id: "UI-H05", sev: "critical", cat: "UI", text: "Skeleton shimmer loading: BalanceCard + TransactionList (1.5s linear infinite animation)", src: "AI Review HD-01, NUG-SYS-005", checked: false },
+      { id: "UI-H06", sev: "critical", cat: "UI", text: "Tab bar bottom: 5 items (Home, CT, QR, TK, Thêm) — text labels + active filled icon + green underline", src: "AI Review HD-04, O-10, VCB", checked: false },
+      { id: "UI-H07", sev: "major", cat: "UI", text: "Transaction timeline card: recent GD dạng timeline vertical, grouped by day", src: "Toss, VCB", checked: false },
+      // UX Proposals
+      { id: "UX-H01", sev: "critical", cat: "UX", text: "Balance masking by default: ••••• VND + eye toggle, 150ms fade-in reveal + haptic", src: "O-02, NUG-SYS-002", checked: false },
+      { id: "UX-H02", sev: "critical", cat: "UX", text: "Pull-to-refresh → skeleton shimmer (không blank). API failure → error card + retry CTA", src: "I-06, NUG-SYS-005", checked: false },
+      { id: "UX-H03", sev: "major", cat: "UX", text: "Personalized greeting: 'Xin chào [Tên]' + contextual message ('Bạn có 2 HĐ sắp hạn')", src: "AI OMNI A, O-12", checked: false },
+      { id: "UX-H04", sev: "minor", cat: "UX", text: "Onboarding floating tooltip tour: 3 steps (Balance → Quick actions → Transfer). Dismissible", src: "AI OMNI Customer Journey", checked: false },
+      { id: "UX-H05", sev: "critical", cat: "UX", text: "Empty state transaction list: illustration + 'Chưa có giao dịch' + CTA 'Thực hiện GD đầu tiên'", src: "I-05, O-04", checked: false },
+      // State-specific từ SCREEN-MODEL
+      { id: "SM-H01", sev: "major", cat: "State", text: "QTDND variant: logo + tên QTDND + background riêng (D1: customerType)", src: "SCREEN-MODEL HOME", checked: false },
+      { id: "SM-H02", sev: "major", cat: "State", text: "Eye toggle flow: 6 states (idle→loading→success/error/timeout/closed)", src: "SCREEN-MODEL HOME", checked: false },
+      { id: "SM-H03", sev: "standard", cat: "State", text: "Banner carousel: 1-5 items + collapse khi không có banner", src: "SCREEN-MODEL HOME", checked: false },
+      { id: "SM-H04", sev: "standard", cat: "State", text: "Vietlott SMS ON/OFF: hiện/ẩn chức năng trong Zone 4", src: "SCREEN-MODEL HOME", checked: false },
+      { id: "SM-H05", sev: "major", cat: "State", text: "Permission denied popup: khi tap chức năng ngoài gói DV", src: "SCREEN-MODEL HOME", checked: false },
+      { id: "SM-H06", sev: "standard", cat: "State", text: "Background load fail → fallback default", src: "SCREEN-MODEL HOME", checked: false },
+      // Figma Architecture
+      { id: "FA-H01", sev: "critical", cat: "Architecture", text: "HomeScreen Component Set: 6 properties (customerType, balanceDisplay, eyeState, hasBanners, vietlottSMS, permPopup)", src: "SCREEN-MODEL HOME §5", checked: false },
+      { id: "FA-H02", sev: "critical", cat: "Architecture", text: "Zone 1 HeaderInfo: nested Auto Layout — BackgroundImage(server-driven fallback) + Logo + QTDND variant + AvatarButton + AccountInfo/BalanceRow", src: "SCREEN-MODEL HOME §5, Atomic Design", checked: false },
+      { id: "FA-H03", sev: "major", cat: "Architecture", text: "BalanceRow molecule: BalanceText(mask/real/zero) + EyeIcon(toggle with 6-state spinner) — shared atom cross-module", src: "SCREEN-MODEL HOME §5, Toss TDS", checked: false },
+      { id: "FA-H04", sev: "major", cat: "Architecture", text: "Zone 4 FunctionGroups organism: 2 grids (Finance 6-item, Utility 6-item) — conditional vietlottSMS + biometric label adapts", src: "SCREEN-MODEL HOME §5", checked: false },
+      { id: "FA-H05", sev: "major", cat: "Architecture", text: "Zone 3 BannerSlider: conditional (hasBanners bool prop) + BannerCarousel(max 5, swipe, circular) — needs prototype trick", src: "SCREEN-MODEL HOME §5", checked: false },
+      { id: "FA-H06", sev: "standard", cat: "Architecture", text: "Zone 5 FooterTabBar organism: 5 tabs — shared component, active=home variant. Use Instance Swap for icon + Slot for badge", src: "Atomic Design, N26 pattern", checked: false },
+      { id: "FA-H07", sev: "major", cat: "Architecture", text: "Overlay stack: PermissionDeniedPopup + EyeErrorPopup + EyeTimeoutPopup + AccountClosedPopup — shared modal shell with content Slot", src: "SCREEN-MODEL HOME §5, Figma Slots", checked: false }
+    ]
+  },
+
+  "HOME-S2": {
+    screen: "Cài đặt — Tab Panel",
+    module: "HOME",
+    sf: "SF1 — Dashboard tổng quan",
+    items: [
+      { id: "SM-H07", sev: "standard", cat: "State", text: "Panel view: danh sách cài đặt đầy đủ", src: "SCREEN-MODEL HOME", checked: false },
+      { id: "CX-01", sev: "standard", cat: "UX", text: "Navigation: Footer tab active state indicator (Cài đặt tab selected)", src: "O-10", checked: false },
+      // Figma Architecture
+      { id: "FA-H08", sev: "standard", cat: "Architecture", text: "Settings Tab Panel: list layout component — SettingsItem molecule (icon + label + chevron/toggle)", src: "Atomic Design", checked: false }
+    ]
+  },
+
+  "HOME-S3": {
+    screen: "Thông tin cá nhân — Detail",
+    module: "HOME",
+    sf: "SF1 — Dashboard tổng quan",
+    items: [
+      { id: "PII-01", sev: "critical", cat: "Security", text: "PII masking: CMND, ngày sinh masked default + toggle reveal", src: "NUG-DNBL-001, O-02", checked: false },
+      { id: "SM-H08", sev: "standard", cat: "State", text: "Profile view: hiển thị đầy đủ thông tin cá nhân", src: "SCREEN-MODEL HOME", checked: false },
+      // Figma Architecture
+      { id: "FA-H09", sev: "standard", cat: "Architecture", text: "PersonalInfo detail screen: form layout — ProfileField molecule (label + value + edit icon)", src: "Atomic Design", checked: false }
+    ]
+  },
+
+  "HOME-S4": {
+    screen: "Thay đổi ảnh đại diện — Action Sheet",
+    module: "HOME",
+    sf: "SF1 — Dashboard tổng quan",
+    items: [
+      { id: "SM-H09", sev: "major", cat: "State", text: "Camera/Gallery permission popup: 2 variants xin quyền", src: "SCREEN-MODEL HOME", checked: false },
+      { id: "SM-H10", sev: "major", cat: "State", text: "Upload progress state: spinner overlay khi uploading", src: "SCREEN-MODEL HOME", checked: false },
+      { id: "SM-H11", sev: "major", cat: "State", text: "Delete error popup: thông báo 'Xóa không thành công'", src: "SCREEN-MODEL HOME", checked: false },
+      { id: "SM-H12", sev: "standard", cat: "State", text: "Delete success: avatar → trống + feedback", src: "SCREEN-MODEL HOME", checked: false },
+      // Figma Architecture
+      { id: "FA-H10", sev: "major", cat: "Architecture", text: "AvatarActionSheet Component: 3 properties (permissionState, mediaState, resultState) — ActionButtons + PermissionPopup + UploadProgress overlays", src: "SCREEN-MODEL HOME §5", checked: false }
+    ]
+  },
+
+  // ════════════════════════════════════════════
+  // TRANSFER MODULE — SF1 TransferHub
+  // ════════════════════════════════════════════
+
+  "TRS-S1": {
+    screen: "TransferHub — Navigation Hub",
+    module: "TRANSFER",
+    sf: "Màn hình chuyển tiền",
+    items: [
+      { id: "UI-T01", sev: "critical", cat: "UI", text: "Card-based layout thay list: mỗi loại CT = 1 card (icon + title + subtitle), 2-column grid", src: "SF1 SCREEN-MODEL, Toss", checked: false },
+      { id: "SM-T01", sev: "major", cat: "State", text: "Permission check loading overlay: spinner sau tap icon", src: "SCREEN-MODEL SF1", checked: false },
+      { id: "SM-T02", sev: "major", cat: "State", text: "Permission denied popup: 'Gói DV không bao gồm...' + CTA 'Đóng'", src: "SCREEN-MODEL SF1", checked: false },
+      { id: "SM-T03", sev: "major", cat: "State", text: "No account popup: 'Không có TK thanh toán...'", src: "SCREEN-MODEL SF1", checked: false },
+      // Figma Architecture
+      { id: "FA-T01", sev: "critical", cat: "Architecture", text: "TransferHub organism: 2 sections — Danh bạ list (horizontal scroll carousel) + Function grid (6-8 items). Use Slot for danh bạ items", src: "SCREEN-MODEL Transfer §5, Toss TDS", checked: false },
+      { id: "FA-T02", sev: "major", cat: "Architecture", text: "ContactCard molecule: avatar(2-letter) + name + bank + STK — shared with SF6/SF7 address book", src: "Atomic Design, Revolut pattern", checked: false }
+    ]
+  },
+
+  "TRS-S2": {
+    screen: "Danh bạ thụ hưởng — List",
+    module: "TRANSFER",
+    sf: "Màn hình chuyển tiền",
+    items: [
+      { id: "UI-T03", sev: "major", cat: "UI", text: "Beneficiary list + avatars: hình tròn + tên + bank logo. Recent = horizontal scroll row", src: "SF2-SF4, VCB", checked: false },
+      { id: "SM-T04", sev: "major", cat: "State", text: "API loading skeleton: 3-5 rows shimmer", src: "SCREEN-MODEL SF1", checked: false },
+      { id: "SM-T05", sev: "critical", cat: "State", text: "Empty state: 'Chưa có danh bạ thụ hưởng' + CTA 'Thêm mới'", src: "NUG-DBTH-002, SCREEN-MODEL", checked: false },
+      { id: "SM-T06", sev: "major", cat: "State", text: "3 accordion groups: NB, 24/7 TK, 24/7 Thẻ (collapse/expand)", src: "SCREEN-MODEL SF1", checked: false },
+      { id: "SM-T07", sev: "major", cat: "State", text: "Search active: text + 'x' icon + filtered list + no results state", src: "SCREEN-MODEL SF1", checked: false },
+      { id: "UX-P03", sev: "major", cat: "UX", text: "Swipe-to-delete + toast hướng dẫn xóa contact", src: "NUG-DBTH-001", checked: false },
+      // Figma Architecture
+      { id: "FA-T03", sev: "major", cat: "Architecture", text: "AddressBook list screen: ContactItem Component Set (variant: bank/card/GTTT) + SearchBar + EmptyState — shared cross-SF", src: "Atomic Design", checked: false }
+    ]
+  },
+
+  // ════════════════════════════════════════════
+  // TRANSFER — SF2 CT nhanh 24/7 qua Thẻ
+  // ════════════════════════════════════════════
+
+  "SF2-S1": {
+    screen: "SF2 Khởi tạo GD — Form (Thẻ)",
+    module: "TRANSFER",
+    sf: "CT nhanh 24/7 qua thẻ",
+    items: [
+      { id: "UI-T02", sev: "critical", cat: "UI", text: "3-step progress indicator: persistent top (Nhập → Xác nhận → Kết quả)", src: "I-09, Toss 3-step", checked: false },
+      { id: "UI-T04", sev: "critical", cat: "UI", text: "Fee display inline: real-time dưới amount input. Amber warning nếu phí cao", src: "I-03, NUG-TKVAY-001", checked: false },
+      { id: "UX-T01", sev: "critical", cat: "UX", text: "3-Tap Transfer Rule: merge Form + Danh bạ thành 1 screen (search + amount inline)", src: "Toss, O-07", checked: false },
+      { id: "UX-T02", sev: "major", cat: "UX", text: "Smart beneficiary suggestion: top 3 từ lịch sử, horizontal avatar row", src: "Toss, Techcombank", checked: false },
+      { id: "UX-T04", sev: "critical", cat: "UX", text: "Inline field validation: real-time trên mọi input (số thẻ, tiền, nội dung)", src: "I-04, Nubank", checked: false },
+      { id: "UX-T05", sev: "critical", cat: "UX", text: "Fee transparency: breakdown Phí GD + VAT. Total debit highlighted", src: "I-03, NUG-TKVAY-001", checked: false },
+      { id: "UI-T09", sev: "critical", cat: "Security", text: "OTP 6-cell auto-tab: monospace, timer countdown, 'Gửi lại' after 60s, biometric fallback", src: "I-01, NUG-SYS-001", checked: false },
+      { id: "UI-T05", sev: "critical", cat: "Security", text: "Risk warning popup (AI OMNI): countdown 5s + empathic language + 2 CTA", src: "AI OMNI C, PAT", checked: false },
+      // Figma Architecture
+      { id: "FA-S2-01", sev: "critical", cat: "Architecture", text: "TransferCardForm Component Set: 5 properties (initState, cardState, saveContact, amountState, submitState). Slots: AccountSelector + CardNumberInput + AmountInput + ContentInput + SaveContactSwitch", src: "SCREEN-MODEL SF2 §5", checked: false },
+      { id: "FA-S2-02", sev: "major", cat: "Architecture", text: "CardNumberInput atom: numeric-only keyboard, 16-digit mask display, auto-format grouping — unique to SF2", src: "SCREEN-MODEL SF2 §5", checked: false },
+      { id: "FA-S2-03", sev: "major", cat: "Architecture", text: "AccountSelector shared molecule: Combobox TK nguồn — reuse across all Transfer SFs via Instance Swap", src: "SCREEN-MODEL SF2-SF8, Figma Slots", checked: false },
+      { id: "FA-S2-04", sev: "standard", cat: "Architecture", text: "AmountInput shared molecule: currency formatted input + smart suggestion overlay (1-7 digits) — reuse cross-module", src: "Atomic Design, SCREEN-MODEL SF2-SF8", checked: false }
+    ]
+  },
+
+  "SF2-S2": {
+    screen: "SF2 Danh bạ thụ hưởng — Popup",
+    module: "TRANSFER",
+    sf: "CT nhanh 24/7 qua thẻ",
+    items: [
+      { id: "SM-SF2-01", sev: "major", cat: "State", text: "Empty state danh bạ: illustration + CTA 'Thêm mới'", src: "NUG-DBTH-002", checked: false },
+      { id: "SM-SF2-02", sev: "standard", cat: "State", text: "Search + filter danh bạ > 20 entries", src: "NUG-DBTH-003", checked: false },
+      // Figma Architecture
+      { id: "FA-S2-05", sev: "major", cat: "Architecture", text: "AddressBook popup Component Set: property dataState(Loading/Empty/Error/HasData) + searchState. ContactList with Slot for items", src: "SCREEN-MODEL SF2 §5", checked: false }
+    ]
+  },
+
+  "SF2-S3": {
+    screen: "SF2 Xác nhận — Review",
+    module: "TRANSFER",
+    sf: "CT nhanh 24/7 qua thẻ",
+    items: [
+      { id: "CX-T01", sev: "critical", cat: "UX", text: "Data consistency: form → confirm phải khớp 100%", src: "NUG-CTCC-001", checked: false },
+      { id: "CX-T02", sev: "critical", cat: "Security", text: "PII masking: TK nguồn masked •••• XXXX trên confirm", src: "NUG-CTCC-002", checked: false },
+      { id: "CX-T03", sev: "major", cat: "UX", text: "Confirmation title: 'Xác nhận chuyển tiền' (KHÔNG 'Thông báo')", src: "NUG-CTCC-004", checked: false },
+      { id: "UX-T06", sev: "major", cat: "UX", text: "Tap field → quay lại edit (inline edit trên confirm screen)", src: "Nubank, AI Review", checked: false },
+      { id: "CX-T04", sev: "major", cat: "UX", text: "Số tiền bằng chữ: '500,000 → Năm trăm nghìn đồng'", src: "NUG-CTKC-003", checked: false },
+      // Figma Architecture
+      { id: "FA-S2-06", sev: "major", cat: "Architecture", text: "TransferConfirm Component Set: ReviewFields(read-only data grid) + PTXTPicker(shared) + ConfirmButton — shared shell pattern", src: "SCREEN-MODEL SF2 §5, Shell+Content pattern", checked: false }
+    ]
+  },
+
+  "SF2-S4": {
+    screen: "SF2 Kết quả — Result",
+    module: "TRANSFER",
+    sf: "CT nhanh 24/7 qua thẻ",
+    items: [
+      { id: "UI-T08", sev: "major", cat: "UI", text: "Receipt 11-field: timestamp, amount, fee, from, to, ref, status, channel, desc, balance, share", src: "I-13, O-08", checked: false },
+      { id: "UI-T10", sev: "major", cat: "UI", text: "Success animation: ✓ → circle expand → confetti (400ms + haptic). CTA: Tiếp/Home", src: "Design Proposal motion", checked: false },
+      { id: "UX-T09", sev: "major", cat: "Security", text: "Post-transfer risk monitoring: push nếu GD bị flag (score 50-79)", src: "AI OMNI C", checked: false },
+      // Figma Architecture
+      { id: "FA-S2-07", sev: "standard", cat: "Architecture", text: "TransferResult Component Set: StatusIcon + TransactionInfo + ActionButtons(Chia sẻ/Lưu ảnh/Tạo mới/Home) — shared result shell", src: "SCREEN-MODEL SF2 §5", checked: false }
+    ]
+  },
+
+  // ════════════════════════════════════════════
+  // TRANSFER — SF3 CT nhanh 24/7 qua TK
+  // ════════════════════════════════════════════
+
+  "SF3-S1": {
+    screen: "SF3 Khởi tạo GD — Form (TK)",
+    module: "TRANSFER",
+    sf: "CT nhanh 24/7 qua TK",
+    items: [
+      { id: "UI-T02", sev: "critical", cat: "UI", text: "3-step progress indicator: persistent top", src: "I-09, Toss", checked: false },
+      { id: "UI-T04", sev: "critical", cat: "UI", text: "Fee display inline: real-time dưới amount", src: "I-03", checked: false },
+      { id: "UX-T01", sev: "critical", cat: "UX", text: "3-Tap Transfer Rule: giảm 6→3 bước", src: "Toss, O-07", checked: false },
+      { id: "UX-T04", sev: "critical", cat: "UX", text: "Inline validation: STK real-time + helper text", src: "NUG-C24T-001/003", checked: false },
+      { id: "UX-T05", sev: "critical", cat: "UX", text: "Fee transparency trước confirm", src: "NUG-TKVAY-001", checked: false },
+      { id: "UI-T05", sev: "critical", cat: "Security", text: "Risk warning popup (AI OMNI C)", src: "AI OMNI C, PAT", checked: false },
+      { id: "UI-T09", sev: "critical", cat: "Security", text: "OTP 6-cell redesign", src: "NUG-SYS-001", checked: false },
+      // Figma Architecture
+      { id: "FA-S3-01", sev: "critical", cat: "Architecture", text: "TransferAccountForm Component Set: 8 properties (+bankState, keyboardMode, queryState vs SF2). Slots: AccountSelector + BankSelector(listbox+search) + AccountNumberInput(dual keyboard) + AmountInput", src: "SCREEN-MODEL SF3 §5", checked: false },
+      { id: "FA-S3-02", sev: "critical", cat: "Architecture", text: "BankSelector molecule: listbox + fuzzy search — complex sub-component, test standalone. Shared with SF4/SF6", src: "SCREEN-MODEL SF3 §5, Composition pattern", checked: false }
+    ]
+  },
+
+  "SF3-S2": {
+    screen: "SF3 Danh bạ thụ hưởng — Popup",
+    module: "TRANSFER",
+    sf: "CT nhanh 24/7 qua TK",
+    items: [
+      { id: "SM-SF3-01", sev: "major", cat: "State", text: "Empty + search states", src: "NUG-DBTH-002/003", checked: false },
+      // Figma Architecture
+      { id: "FA-S3-03", sev: "major", cat: "Architecture", text: "AddressBook popup: reuse SF2 pattern, variant for TK-type contacts (bank name + STK instead of card number)", src: "SCREEN-MODEL SF3 §5", checked: false }
+    ]
+  },
+
+  "SF3-S3": {
+    screen: "SF3 Xác nhận — Review",
+    module: "TRANSFER",
+    sf: "CT nhanh 24/7 qua TK",
+    items: [
+      { id: "CX-T01", sev: "critical", cat: "UX", text: "Data consistency form → confirm", src: "NUG-CTCC-001", checked: false },
+      { id: "CX-T02", sev: "critical", cat: "Security", text: "PII masking TK nguồn", src: "NUG-CTCC-002", checked: false },
+      { id: "CX-T03", sev: "major", cat: "UX", text: "Confirmation title cụ thể", src: "NUG-CTCC-004", checked: false },
+      { id: "CX-T04", sev: "major", cat: "UX", text: "Số tiền bằng chữ", src: "NUG-CTKC-003", checked: false },
+      // Figma Architecture
+      { id: "FA-S3-04", sev: "major", cat: "Architecture", text: "TransferConfirm: extend SF2 confirm shell — add BankName row, dual highlight (TK đích + amount bôi đỏ)", src: "SCREEN-MODEL SF3 §5", checked: false }
+    ]
+  },
+
+  "SF3-S4": {
+    screen: "SF3 Kết quả — Result",
+    module: "TRANSFER",
+    sf: "CT nhanh 24/7 qua TK",
+    items: [
+      { id: "UI-T08", sev: "major", cat: "UI", text: "Receipt 11-field đầy đủ", src: "I-13, O-08", checked: false },
+      { id: "UI-T10", sev: "major", cat: "UI", text: "Success animation + haptic", src: "Design Proposal", checked: false },
+      // Figma Architecture
+      { id: "FA-S3-05", sev: "standard", cat: "Architecture", text: "TransferResult: reuse SF2 result shell — add bank-specific info rows (Chi nhánh/PGD)", src: "SCREEN-MODEL SF3 §5", checked: false }
+    ]
+  },
+
+  // ════════════════════════════════════════════
+  // TRANSFER — SF4 CT qua GTTT
+  // ════════════════════════════════════════════
+
+  "SF4-S1": {
+    screen: "SF4 Khởi tạo GD — Form (GTTT)",
+    module: "TRANSFER",
+    sf: "CT qua GTTT",
+    items: [
+      { id: "UI-T02", sev: "critical", cat: "UI", text: "3-step progress indicator", src: "I-09", checked: false },
+      { id: "UX-T04", sev: "critical", cat: "UX", text: "Inline validation: CMND/CCCD, SĐT, số tiền", src: "I-04", checked: false },
+      { id: "UI-T04", sev: "critical", cat: "UI", text: "Fee display inline", src: "I-03", checked: false },
+      { id: "PII-02", sev: "critical", cat: "Security", text: "PII GTTT: CMND/CCCD masked, ngày cấp masked", src: "NUG-DNBL-001", checked: false },
+      { id: "UI-T05", sev: "critical", cat: "Security", text: "Risk warning popup (AI OMNI C)", src: "AI OMNI C", checked: false },
+      // Figma Architecture
+      { id: "FA-S4-01", sev: "critical", cat: "Architecture", text: "GTTT-Transfer-Init Component Set: 5 properties (GtttType=CMND/CCCD/HoChieu/CMT_QD, DataSource, SaveContact, FormState, ValidationState). NoiCapField has 4 behaviors per GtttType", src: "SCREEN-MODEL SF4 §5", checked: false },
+      { id: "FA-S4-02", sev: "critical", cat: "Architecture", text: "NoiCapField molecule: dynamic variant (Textbox/Combobox/PreFilled) controlled by GtttType property — complex sub-component needing independent testing", src: "SCREEN-MODEL SF4 §5", checked: false },
+      { id: "FA-S4-03", sev: "major", cat: "Architecture", text: "GtttTypeSelector Combobox: 4 options — MH5 label width varies ('Số CCCD' vs 'Số CMT quân đội') — needs responsive text handling", src: "SCREEN-MODEL SF4 §5, Auto Layout", checked: false }
+    ]
+  },
+
+  "SF4-S2": {
+    screen: "SF4 Xác nhận GD — Review",
+    module: "TRANSFER",
+    sf: "CT qua GTTT",
+    items: [
+      { id: "CX-T01", sev: "critical", cat: "UX", text: "Data consistency", src: "NUG-CTCC-001", checked: false },
+      { id: "CX-T02", sev: "critical", cat: "Security", text: "PII masking TK + CMND", src: "NUG-CTCC-002", checked: false },
+      { id: "CX-T03", sev: "major", cat: "UX", text: "Title cụ thể", src: "NUG-CTCC-004", checked: false },
+      // Figma Architecture
+      { id: "FA-S4-04", sev: "major", cat: "Architecture", text: "GTTT-Transfer-Confirm: 3 properties (GtttType, HasPhone, HasFee). ReviewFields dynamic labels per GtttType — use text override or Variable", src: "SCREEN-MODEL SF4 §5", checked: false }
+    ]
+  },
+
+  "SF4-S3": {
+    screen: "SF4 Kết quả GD — Result",
+    module: "TRANSFER",
+    sf: "CT qua GTTT",
+    items: [
+      { id: "UI-T08", sev: "major", cat: "UI", text: "Receipt 11-field", src: "I-13", checked: false },
+      { id: "UI-T10", sev: "major", cat: "UI", text: "Success animation", src: "Design Proposal", checked: false },
+      // Figma Architecture
+      { id: "FA-S4-05", sev: "major", cat: "Architecture", text: "GTTT-Transfer-Result: 3 variants (Success/Error/Timeout). PickupNotice text is server-configured — placeholder with design note", src: "SCREEN-MODEL SF4 §5", checked: false }
+    ]
+  },
+
+  "SF4-S4": {
+    screen: "SF4 Danh bạ — Popup",
+    module: "TRANSFER",
+    sf: "CT qua GTTT",
+    items: [
+      { id: "SM-SF4-01", sev: "major", cat: "State", text: "Empty + search states", src: "NUG-DBTH-002", checked: false },
+      // Figma Architecture
+      { id: "FA-S4-06", sev: "standard", cat: "Architecture", text: "GTTT-AddressBook: reuse shared AddressBook shell. ContactItem variant for GTTT (CMND/CCCD number display instead of STK)", src: "SCREEN-MODEL SF4 §5", checked: false }
+    ]
+  },
+
+  // ════════════════════════════════════════════
+  // TRANSFER — SF5 NB cùng chủ
+  // ════════════════════════════════════════════
+
+  "SF5-S1": {
+    screen: "SF5 Khởi tạo GD — Form (NB CC)",
+    module: "TRANSFER",
+    sf: "CT NB cùng chủ",
+    items: [
+      { id: "UI-T02", sev: "critical", cat: "UI", text: "3-step progress indicator", src: "I-09", checked: false },
+      { id: "UX-T04", sev: "critical", cat: "UX", text: "Inline validation", src: "I-04", checked: false },
+      { id: "UX-T05", sev: "critical", cat: "UX", text: "Fee transparency", src: "NUG-TKVAY-001", checked: false },
+      // Figma Architecture
+      { id: "FA-S5-01", sev: "critical", cat: "Architecture", text: "SameOwner-Transfer-Init Component: 3 properties (TKDestState, FormState, ValidationState). Simplest init — baseline template for all Transfer SFs", src: "SCREEN-MODEL SF5 §5", checked: false },
+      { id: "FA-S5-02", sev: "major", cat: "Architecture", text: "DestAccountSelector molecule: Combobox TK đích with auto-filter (exclude TK nguồn). State: None/Selected/NoValid — critical interaction", src: "SCREEN-MODEL SF5 §5", checked: false }
+    ]
+  },
+
+  "SF5-S2": {
+    screen: "SF5 Xác nhận GD — Review",
+    module: "TRANSFER",
+    sf: "CT NB cùng chủ",
+    items: [
+      { id: "CX-T01", sev: "critical", cat: "UX", text: "Data consistency", src: "NUG-CTCC-001", checked: false },
+      { id: "CX-T02", sev: "critical", cat: "Security", text: "PII masking", src: "NUG-CTCC-002", checked: false },
+      // Figma Architecture
+      { id: "FA-S5-03", sev: "major", cat: "Architecture", text: "SameOwner-Transfer-Confirm: property HasFee + ProcessState. NO PTXT (direct hạch toán) — design extensible for future OTP config", src: "SCREEN-MODEL SF5 §5", checked: false }
+    ]
+  },
+
+  "SF5-S3": {
+    screen: "SF5 Kết quả GD — Result",
+    module: "TRANSFER",
+    sf: "CT NB cùng chủ",
+    items: [
+      { id: "UI-T08", sev: "major", cat: "UI", text: "Receipt 11-field", src: "I-13", checked: false },
+      { id: "UI-T10", sev: "major", cat: "UI", text: "Success animation", src: "Design Proposal", checked: false },
+      // Figma Architecture
+      { id: "FA-S5-04", sev: "standard", cat: "Architecture", text: "SameOwner-Transfer-Result: reuse shared result shell — add Chi nhánh/PGD + Mã GD. 'Tạo mới' refreshes DS TK", src: "SCREEN-MODEL SF5 §5", checked: false }
+    ]
+  },
+
+  // ════════════════════════════════════════════
+  // TRANSFER — SF6 NB khác chủ (state machine)
+  // ════════════════════════════════════════════
+
+  "SF6-S1": {
+    screen: "SF6 Khởi tạo GD — State Machine (NB KC)",
+    module: "TRANSFER",
+    sf: "CT NB khác chủ",
+    items: [
+      { id: "UI-T02", sev: "critical", cat: "UI", text: "3-step progress indicator", src: "I-09", checked: false },
+      { id: "UI-T04", sev: "critical", cat: "UI", text: "Fee display inline", src: "I-03", checked: false },
+      { id: "UX-T01", sev: "critical", cat: "UX", text: "3-Tap Transfer Rule: giảm 6→3 bước", src: "Toss, O-07", checked: false },
+      { id: "UX-T04", sev: "critical", cat: "UX", text: "Inline validation: STK + SĐT + số tiền real-time", src: "NUG-C24K-001, NUG-C24T-001", checked: false },
+      { id: "UX-T05", sev: "critical", cat: "UX", text: "Fee transparency inline", src: "NUG-TKVAY-001", checked: false },
+      { id: "UI-T05", sev: "critical", cat: "Security", text: "Risk warning popup (AI OMNI C): 4 mức score → 4 UI response", src: "AI OMNI C, PAT", checked: false },
+      { id: "UI-T06", sev: "critical", cat: "Security", text: "App lock overlay: full-screen khi KH bị gắn cờ score=100", src: "AI OMNI C §3.3d", checked: false },
+      { id: "SM-SF6-01", sev: "major", cat: "State", text: "10 MH = 10 states trên 1 screen: recipients list, validation, error highlights", src: "SCREEN-MODEL SF6", checked: false },
+      { id: "SM-SF6-02", sev: "major", cat: "State", text: "Max recipients reached: disable 'Thêm' button", src: "SCREEN-MODEL SF6", checked: false },
+      // Figma Architecture
+      { id: "FA-S6-01", sev: "critical", cat: "Architecture", text: "CT-Noi-Bo-Khac-Chu Component Set: extends SF5 + adds AccountNumberInput + BankSelector(internal) + SaveContactSwitch + ContactPopup — most complex init form", src: "SCREEN-MODEL SF6 §5", checked: false }
+    ]
+  },
+
+  "SF6-S2": {
+    screen: "SF6 Xác nhận GD — Review",
+    module: "TRANSFER",
+    sf: "CT NB khác chủ",
+    items: [
+      { id: "CX-T01", sev: "critical", cat: "UX", text: "Data consistency", src: "NUG-CTCC-001", checked: false },
+      { id: "CX-T02", sev: "critical", cat: "Security", text: "PII masking", src: "NUG-CTCC-002", checked: false },
+      { id: "CX-T03", sev: "major", cat: "UX", text: "Title cụ thể", src: "NUG-CTCC-004", checked: false },
+      // Figma Architecture
+      { id: "FA-S6-02", sev: "major", cat: "Architecture", text: "AddressBook popup: reuse shared pattern — variant for internal bank contacts (same bank, different owner)", src: "SCREEN-MODEL SF6 §5", checked: false }
+    ]
+  },
+
+  "SF6-S3": {
+    screen: "SF6 Kết quả GD — Result",
+    module: "TRANSFER",
+    sf: "CT NB khác chủ",
+    items: [
+      { id: "UI-T08", sev: "major", cat: "UI", text: "Receipt 11-field", src: "I-13", checked: false },
+      { id: "UI-T10", sev: "major", cat: "UI", text: "Success animation", src: "Design Proposal", checked: false },
+      // Figma Architecture
+      { id: "FA-S6-03", sev: "major", cat: "Architecture", text: "Transfer Confirm: extends SF5 confirm + adds PTXTPicker + OTP flow — dual highlight pattern (TK + amount bôi đỏ)", src: "SCREEN-MODEL SF6 §5", checked: false }
+    ]
+  },
+
+  "SF6-S4": {
+    screen: "SF6 Danh bạ — Popup",
+    module: "TRANSFER",
+    sf: "CT NB khác chủ",
+    items: [
+      { id: "SM-SF6-03", sev: "major", cat: "State", text: "Empty + search + 3 accordion groups", src: "SCREEN-MODEL SF6", checked: false },
+      // Figma Architecture
+      { id: "FA-S6-04", sev: "standard", cat: "Architecture", text: "OTP screen: shared Common-OTP component — used across SF2/SF3/SF4/SF6/SF7/SF8 and Payment module", src: "SCREEN-MODEL SF6 §5", checked: false }
+    ]
+  },
+
+  "SF6-S5": {
+    screen: "SF6 OTP + Lỗi — Auth",
+    module: "TRANSFER",
+    sf: "CT NB khác chủ",
+    items: [
+      { id: "UI-T09", sev: "critical", cat: "Security", text: "OTP 6-cell redesign với auto-tab + timer + biometric", src: "NUG-SYS-001", checked: false },
+      { id: "SM-SF6-04", sev: "major", cat: "State", text: "OTP error states: sai mã, hết lượt, timeout", src: "SCREEN-MODEL SF6", checked: false },
+      // Figma Architecture
+      { id: "FA-S6-05", sev: "standard", cat: "Architecture", text: "Transfer Result: reuse shared result shell — SF6-specific fields (Tên TK thụ hưởng + Chi nhánh)", src: "SCREEN-MODEL SF6 §5", checked: false }
+    ]
+  },
+
+  // ════════════════════════════════════════════
+  // TRANSFER — SF7 Batch Transfer
+  // ════════════════════════════════════════════
+
+  "SF7A-S1": {
+    screen: "SF7A Batch Init — TK (nhiều người)",
+    module: "TRANSFER",
+    sf: "CT 24/7 TK nhiều người",
+    items: [
+      { id: "UI-T07", sev: "major", cat: "UI", text: "Batch transfer layer: overlay panel, sliding sheet, list recipients + subtotal fixed bottom", src: "SF7 SCREEN-MODEL", checked: false },
+      { id: "UX-T07", sev: "major", cat: "UX", text: "Multi-recipient mode: Add → Review all → Single OTP. Progress 'Đang xử lý 3/5'. Error per-item", src: "SF7, batch patterns", checked: false },
+      { id: "SM-SF7-01", sev: "major", cat: "State", text: "10 MH states: 0→1→N recipients, max reached, validate per-row, highlight errors", src: "SCREEN-MODEL SF7", checked: false },
+      { id: "UI-T05", sev: "critical", cat: "Security", text: "Risk warning popup (AI OMNI C)", src: "AI OMNI C", checked: false },
+      // Figma Architecture
+      { id: "FA-S7A-01", sev: "critical", cat: "Architecture", text: "BatchTransferInit Component Set: extends SF3 init + adds Clone switch + multi-recipient Slot. Property: cloneMode=off/on controls field inheritance behavior", src: "SCREEN-MODEL SF7 §5", checked: false },
+      { id: "FA-S7A-02", sev: "critical", cat: "Architecture", text: "BatchRecipientList organism: dynamic list of RecipientRow molecules — Add/Remove/Edit each row. Slot-based architecture for N recipients", src: "SCREEN-MODEL SF7 §5, Figma Slots", checked: false }
+    ]
+  },
+
+  "SF7A-S2": { screen: "SF7A Batch Danh bạ — Popup", module: "TRANSFER", sf: "CT 24/7 TK nhiều người", items: [
+    { id: "SM-SF7-02", sev: "major", cat: "State", text: "Multi-select danh bạ: checkbox + 'Đã chọn N' badge", src: "SCREEN-MODEL SF7", checked: false },
+      // Figma Architecture
+      { id: "FA-S7A-03", sev: "major", cat: "Architecture", text: "Batch AddressBook: reuse shared pattern + add multi-select capability (checkbox on each contact)", src: "SCREEN-MODEL SF7 §5", checked: false }
+    ]},
+
+  "SF7A-S3": { screen: "SF7A Batch Confirm — Review", module: "TRANSFER", sf: "CT 24/7 TK nhiều người", items: [
+    { id: "CX-T01", sev: "critical", cat: "UX", text: "Data consistency (N recipients)", src: "NUG-CTCC-001", checked: false },
+    { id: "CX-T02", sev: "critical", cat: "Security", text: "PII masking", src: "NUG-CTCC-002", checked: false },
+    { id: "SM-SF7-03", sev: "major", cat: "State", text: "Tổng hợp N lệnh: expandable/collapsible per-item", src: "SCREEN-MODEL SF7", checked: false },
+      // Figma Architecture
+      { id: "FA-S7A-04", sev: "major", cat: "Architecture", text: "Batch Confirm: BatchReviewTable organism — N rows with inline status. Scrollable list within confirm shell", src: "SCREEN-MODEL SF7 §5", checked: false }
+    ]},
+
+  "SF7A-S4": { screen: "SF7A Batch Auth — OTP", module: "TRANSFER", sf: "CT 24/7 TK nhiều người", items: [
+    { id: "UI-T09", sev: "critical", cat: "Security", text: "OTP 6-cell redesign", src: "NUG-SYS-001", checked: false },
+      // Figma Architecture
+      { id: "FA-S7A-05", sev: "standard", cat: "Architecture", text: "OTP: reuse Common-OTP. Note: OTP authenticates entire batch, not individual transfers", src: "SCREEN-MODEL SF7 §5", checked: false }
+    ]},
+
+  "SF7A-S5": { screen: "SF7A Batch Result", module: "TRANSFER", sf: "CT 24/7 TK nhiều người", items: [
+    { id: "UI-T08", sev: "major", cat: "UI", text: "Batch receipt: tổng + per-item status (✓/✗)", src: "I-13, SF7", checked: false },
+    { id: "SM-SF7-04", sev: "major", cat: "State", text: "Mixed result: partial success + failed items expandable", src: "SCREEN-MODEL SF7", checked: false },
+      // Figma Architecture
+      { id: "FA-S7A-06", sev: "major", cat: "Architecture", text: "Batch Result: BatchResultTable organism — per-row success/fail status. Property: hasPartialFailure=true/false for mixed results", src: "SCREEN-MODEL SF7 §5", checked: false }
+    ]},
+
+  "SF7B-S1": { screen: "SF7B Batch Init — Thẻ", module: "TRANSFER", sf: "CT 24/7 Thẻ nhiều người", items: [
+    { id: "UI-T07", sev: "major", cat: "UI", text: "Batch transfer layer (thẻ variant)", src: "SF7 SCREEN-MODEL", checked: false },
+    { id: "UX-T07", sev: "major", cat: "UX", text: "Multi-recipient batch flow", src: "batch patterns", checked: false },
+      // Figma Architecture
+      { id: "FA-S7B-01", sev: "critical", cat: "Architecture", text: "BatchTransferCard: extends SF2 init + BatchRecipientList. Property: inputType=card (16-digit mask per recipient)", src: "SCREEN-MODEL SF7 §5", checked: false }
+    ]},
+  "SF7B-S2": { screen: "SF7B Batch Contacts", module: "TRANSFER", sf: "CT 24/7 Thẻ nhiều người", items: [
+    { id: "SM-SF7-02", sev: "major", cat: "State", text: "Multi-select danh bạ", src: "SCREEN-MODEL SF7", checked: false },
+      // Figma Architecture
+      { id: "FA-S7B-02", sev: "major", cat: "Architecture", text: "Batch AddressBook (card variant): reuse shared pattern — display card number format instead of STK", src: "SCREEN-MODEL SF7 §5", checked: false }
+    ]},
+  "SF7B-S3": { screen: "SF7B Batch Confirm", module: "TRANSFER", sf: "CT 24/7 Thẻ nhiều người", items: [
+    { id: "CX-T01", sev: "critical", cat: "UX", text: "Data consistency", src: "NUG-CTCC-001", checked: false },
+    { id: "CX-T02", sev: "critical", cat: "Security", text: "PII masking", src: "NUG-CTCC-002", checked: false },
+      // Figma Architecture
+      { id: "FA-S7B-03", sev: "major", cat: "Architecture", text: "Batch Confirm (card variant): reuse BatchReviewTable shell — card-specific field display", src: "SCREEN-MODEL SF7 §5", checked: false }
+    ]},
+  "SF7B-S4": { screen: "SF7B Batch Auth", module: "TRANSFER", sf: "CT 24/7 Thẻ nhiều người", items: [
+    { id: "UI-T09", sev: "critical", cat: "Security", text: "OTP 6-cell redesign", src: "NUG-SYS-001", checked: false },
+      // Figma Architecture
+      { id: "FA-S7B-04", sev: "standard", cat: "Architecture", text: "OTP: reuse Common-OTP (shared)", src: "SCREEN-MODEL SF7 §5", checked: false }
+    ]},
+  "SF7B-S5": { screen: "SF7B Batch Result", module: "TRANSFER", sf: "CT 24/7 Thẻ nhiều người", items: [
+    { id: "UI-T08", sev: "major", cat: "UI", text: "Batch receipt", src: "I-13", checked: false },
+      // Figma Architecture
+      { id: "FA-S7B-05", sev: "major", cat: "Architecture", text: "Batch Result (card variant): reuse BatchResultTable — card-specific transaction details", src: "SCREEN-MODEL SF7 §5", checked: false }
+    ]},
+
+  // ════════════════════════════════════════════
+  // TRANSFER — SF8 Định kỳ
+  // ════════════════════════════════════════════
+
+  "SF8-S1": { screen: "SF8 Init Cùng chủ — Form+Toggle", module: "TRANSFER", sf: "CT Đặt lịch định kỳ", items: [
+    { id: "UI-T11", sev: "minor", cat: "UI", text: "Mini calendar widget: active dates = green dots, tap = detail", src: "SF8 SCREEN-MODEL", checked: false },
+    { id: "UX-T08", sev: "minor", cat: "UX", text: "Toggle đặt lịch: ON → hiện scheduler panel (tần suất, ngày bắt đầu)", src: "SF8 SCREEN-MODEL", checked: false },
+      // Figma Architecture
+      { id: "FA-S8-01", sev: "critical", cat: "Architecture", text: "ScheduleTransferInit Component Set: extends SF3/SF6 init + FrequencyConfig organism. Property: scheduleType=date/recurring controls which config section appears", src: "SCREEN-MODEL SF8 §5", checked: false },
+      { id: "FA-S8-02", sev: "critical", cat: "Architecture", text: "FrequencyConfig organism: DatePicker + FrequencySelector(ngày/tuần/tháng) + RepeatCount — independent sub-component for scheduling logic", src: "SCREEN-MODEL SF8 §5", checked: false }
+    ]},
+  "SF8-S2": { screen: "SF8 Init Khác chủ — Form+Toggle", module: "TRANSFER", sf: "CT Đặt lịch định kỳ", items: [
+    { id: "UI-T11", sev: "minor", cat: "UI", text: "Calendar widget", src: "SF8 SCREEN-MODEL", checked: false },
+    { id: "UX-T08", sev: "minor", cat: "UX", text: "Scheduler toggle + form", src: "SF8 SCREEN-MODEL", checked: false },
+    { id: "UI-T05", sev: "critical", cat: "Security", text: "Risk warning popup (AI OMNI C)", src: "AI OMNI C", checked: false },
+      // Figma Architecture
+      { id: "FA-S8-03", sev: "major", cat: "Architecture", text: "Schedule Confirm: extends confirm shell + schedule-specific rows (Ngày thực hiện, Tần suất, Số lần)", src: "SCREEN-MODEL SF8 §5", checked: false }
+    ]},
+  "SF8-S3": { screen: "SF8 Confirm — Review", module: "TRANSFER", sf: "CT Đặt lịch định kỳ", items: [
+    { id: "CX-T01", sev: "critical", cat: "UX", text: "Data consistency + schedule detail", src: "NUG-CTCC-001", checked: false },
+      // Figma Architecture
+      { id: "FA-S8-04", sev: "standard", cat: "Architecture", text: "OTP: reuse Common-OTP (shared)", src: "SCREEN-MODEL SF8 §5", checked: false }
+    ]},
+  "SF8-S4": { screen: "SF8 Result", module: "TRANSFER", sf: "CT Đặt lịch định kỳ", items: [
+    { id: "UI-T10", sev: "major", cat: "UI", text: "Success animation: 'Đã đặt lịch thành công'", src: "Design Proposal", checked: false },
+      // Figma Architecture
+      { id: "FA-S8-05", sev: "major", cat: "Architecture", text: "Schedule Result: extends result shell + schedule confirmation details (Next execution date, Frequency summary)", src: "SCREEN-MODEL SF8 §5", checked: false }
+    ]},
+  "SF8-S5": { screen: "SF8 DS Đặt lịch — List+Filter", module: "TRANSFER", sf: "CT Đặt lịch định kỳ", items: [
+    { id: "UX-T08", sev: "minor", cat: "UX", text: "List + Calendar view toggle. Filter: status, date range", src: "SF8 SCREEN-MODEL", checked: false },
+    { id: "SM-SF8-01", sev: "major", cat: "State", text: "Empty state: 'Chưa có lịch nào' + CTA 'Đặt lịch mới'", src: "NUG-CTDL-003", checked: false },
+    { id: "SM-SF8-02", sev: "major", cat: "State", text: "Loading state cho history list", src: "NUG-CTDL-002", checked: false },
+      // Figma Architecture
+      { id: "FA-S8-06", sev: "critical", cat: "Architecture", text: "ScheduleList organism: CRUD list of scheduled/recurring transfers. ScheduleItem molecule: status badge(active/paused/completed) + next date + amount", src: "SCREEN-MODEL SF8 §5", checked: false }
+    ]},
+  "SF8-S6": { screen: "SF8 Chi tiết — Detail+CRUD", module: "TRANSFER", sf: "CT Đặt lịch định kỳ", items: [
+    { id: "SM-SF8-03", sev: "major", cat: "State", text: "Edit/Delete/Pause: 3 action buttons + confirmation dialog", src: "SF8 SCREEN-MODEL", checked: false },
+    { id: "SM-SF8-04", sev: "minor", cat: "State", text: "Notification T-1 day reminder setting", src: "SF8 SCREEN-MODEL", checked: false },
+      // Figma Architecture
+      { id: "FA-S8-07", sev: "major", cat: "Architecture", text: "ScheduleDetail screen: extends detail pattern — EditableFields + StatusTimeline organism (execution history)", src: "SCREEN-MODEL SF8 §5", checked: false }
+    ]},
+  "SF8-S7": { screen: "SF8 Action Confirm — Popup", module: "TRANSFER", sf: "CT Đặt lịch định kỳ", items: [
+    { id: "SM-SF8-05", sev: "standard", cat: "State", text: "Confirmation dialog: Xóa/Dừng/Tiếp tục variants", src: "SF8 SCREEN-MODEL", checked: false },
+      // Figma Architecture
+      { id: "FA-S8-08", sev: "standard", cat: "Architecture", text: "Schedule Edit: reuse ScheduleTransferInit form + pre-fill with existing data. Property: mode=create/edit", src: "SCREEN-MODEL SF8 §5", checked: false }
+    ]},
+
+  // ════════════════════════════════════════════
+  // PAYMENT MODULE
+  // ════════════════════════════════════════════
+
+  "PAY-S1": {
+    screen: "QL Danh bạ NCC — Settings",
+    module: "PAYMENT",
+    sf: "QL danh bạ cài đặt",
+    items: [
+      { id: "SM-P01", sev: "standard", cat: "State", text: "Entry page: 2 link (Danh bạ thụ hưởng, Danh bạ hóa đơn)", src: "SCREEN-MODEL SF1P", checked: false },
+      // Figma Architecture
+      { id: "FA-P01", sev: "critical", cat: "Architecture", text: "PaymentSettings Component Set: ProviderList organism — CRUD provider contacts. Shared list+search pattern with Transfer AddressBook", src: "SCREEN-MODEL Payment SF1 §5", checked: false }
+    ]
+  },
+
+  "SF2P-S1": {
+    screen: "DS Danh bạ HĐ — List+CRUD",
+    module: "PAYMENT",
+    sf: "Danh bạ hóa đơn",
+    items: [
+      { id: "SM-P02", sev: "major", cat: "State", text: "Empty state: 'Chưa có danh bạ hóa đơn' + CTA", src: "SCREEN-MODEL SF2P", checked: false },
+      { id: "SM-P03", sev: "major", cat: "State", text: "Search + filter: theo NCC + mã KH", src: "SCREEN-MODEL SF2P", checked: false },
+      { id: "SM-P04", sev: "major", cat: "State", text: "Delete mode: swipe-to-delete + confirmation popup", src: "SCREEN-MODEL SF2P", checked: false },
+      { id: "UX-P03", sev: "major", cat: "UX", text: "Contextual delete confirm: 'Xóa [NCC] khỏi danh bạ?'", src: "I-11, SF2", checked: false },
+      // Figma Architecture
+      { id: "FA-P02", sev: "critical", cat: "Architecture", text: "BillContactList Component Set: 3 properties (data, mode=view/delete, search). Nested: SearchBar + ContactItem(autoDebit variant) + EmptyState + ActionBar", src: "SCREEN-MODEL Payment SF2 §5", checked: false },
+      { id: "FA-P03", sev: "major", cat: "Architecture", text: "ContactItem molecule: Component Set with deleteMode(checkbox visible/hidden) + autoDebit(registered/unregistered) — shared across list", src: "SCREEN-MODEL Payment SF2 §5, Atomic Design", checked: false }
+    ]
+  },
+
+  "SF2P-S2": {
+    screen: "Form Danh bạ HĐ — Form",
+    module: "PAYMENT",
+    sf: "Danh bạ hóa đơn",
+    items: [
+      { id: "SM-P05", sev: "major", cat: "State", text: "Add vs Edit mode: cùng template, switch field state", src: "SCREEN-MODEL SF2P", checked: false },
+      { id: "UX-T04", sev: "critical", cat: "UX", text: "Inline validation: mã KH, tên danh bạ", src: "I-04", checked: false },
+      // Figma Architecture
+      { id: "FA-P04", sev: "major", cat: "Architecture", text: "BillContactForm Component Set: property mode(add/view_edit) + progressive disclosure (DV→NCC→MãKH). Nested: ServicePicker + ProviderPicker + CustomerCodeInput + NoticeToggle(3-state: hidden/off/on)", src: "SCREEN-MODEL Payment SF2 §5", checked: false }
+    ]
+  },
+
+  "SF2P-OV1": {
+    screen: "Popup Xóa — Modal",
+    module: "PAYMENT",
+    sf: "Danh bạ hóa đơn",
+    items: [
+      { id: "SM-P06", sev: "major", cat: "UX", text: "Confirmation copy: 'Xóa [NCC Name]?' (KHÔNG generic 'Thông báo')", src: "NUG-CTCC-004", checked: false },
+    ]
+  },
+
+  "SF3P-S1": {
+    screen: "DS Dịch vụ — Service List",
+    module: "PAYMENT",
+    sf: "Thanh toán hóa đơn",
+    items: [
+      { id: "UI-P01", sev: "critical", cat: "UI", text: "Service provider grid 4-column: color-coded category icons", src: "SF3 SCREEN-MODEL", checked: false },
+      { id: "UI-P02", sev: "critical", cat: "UI", text: "Smart search: autosuggest NCC + mã KH đã lưu. Recent + saved shortcuts", src: "Bill payment study", checked: false },
+      { id: "UI-P03", sev: "major", cat: "UI", text: "Saved bills carousel: horizontal scroll, 1-tap thanh toán", src: "O-07", checked: false },
+      // Figma Architecture
+      { id: "FA-P05", sev: "standard", cat: "Architecture", text: "ServiceGrid (DS Dịch vụ): simple grid organism — icons + labels. Action: 'Danh bạ HĐ' button link to SF2", src: "SCREEN-MODEL Payment SF3 §5", checked: false }
+    ]
+  },
+
+  "SF3P-S2": {
+    screen: "Khởi tạo TT — Dynamic Form",
+    module: "PAYMENT",
+    sf: "Thanh toán hóa đơn",
+    items: [
+      { id: "UI-P04", sev: "critical", cat: "UI", text: "Dynamic form progressive disclosure: fields theo NCC config. Inline validation real-time", src: "I-04, Nubank", checked: false },
+      { id: "UX-T04", sev: "critical", cat: "UX", text: "Real-time validation: mã KH, số tiền", src: "I-04", checked: false },
+      { id: "SM-P07", sev: "major", cat: "State", text: "NCC-specific form: 1 template × N NCC configs = N field combinations", src: "SCREEN-MODEL SF3P", checked: false },
+      { id: "SM-P08", sev: "major", cat: "State", text: "Loading: tra cứu cước hóa đơn + spinner", src: "SCREEN-MODEL SF3P", checked: false },
+      // Figma Architecture
+      { id: "FA-P06", sev: "critical", cat: "Architecture", text: "BillPaymentForm Component Set: 4 properties (paymentType=all/amount/all_amount/package, source=manual/danh_ba/ott, phoneSuggest, htttMode). Most complex form — 7 NCC-dependent field combinations", src: "SCREEN-MODEL Payment SF3 §5", checked: false },
+      { id: "FA-P07", sev: "critical", cat: "Architecture", text: "PackageSelector sub-organism: collapse/expand + radio select + kỳ hạn display — independent complex widget needing standalone testing", src: "SCREEN-MODEL Payment SF3 §5, Composition", checked: false },
+      { id: "FA-P08", sev: "major", cat: "Architecture", text: "PaymentTypeSelector Combobox: HTTT selector — conditional visibility (only when paymentType=all_amount). Controls downstream form sections", src: "SCREEN-MODEL Payment SF3 §5", checked: false }
+    ]
+  },
+
+  "SF3P-S3": {
+    screen: "Xác nhận TT — Review",
+    module: "PAYMENT",
+    sf: "Thanh toán hóa đơn",
+    items: [
+      { id: "CX-T01", sev: "critical", cat: "UX", text: "Data consistency: form → confirm", src: "NUG-CTCC-001", checked: false },
+      { id: "CX-T02", sev: "critical", cat: "Security", text: "PII masking TK nguồn", src: "NUG-CTCC-002", checked: false },
+      { id: "SM-P09", sev: "major", cat: "UX", text: "Title: 'Xác nhận thanh toán [Provider]'", src: "NUG-TTOAN-003", checked: false },
+      { id: "SM-P10", sev: "major", cat: "UX", text: "Chi tiết hóa đơn hiển thị đầy đủ trước xác nhận", src: "NUG-TTOAN-001", checked: false },
+      // Figma Architecture
+      { id: "FA-P09", sev: "major", cat: "Architecture", text: "BillPaymentConfirm Component Set: 3 properties (paymentType, hideAmount, hasFee). ExtendedInfo Slot for flight popup / package detail — conditional", src: "SCREEN-MODEL Payment SF3 §5", checked: false }
+    ]
+  },
+
+  "SF3P-S4": {
+    screen: "Kết quả TT — Result",
+    module: "PAYMENT",
+    sf: "Thanh toán hóa đơn",
+    items: [
+      { id: "UI-T10", sev: "major", cat: "UI", text: "Success animation", src: "Design Proposal", checked: false },
+      { id: "UI-T08", sev: "major", cat: "UI", text: "Receipt đầy đủ + share/download", src: "I-13", checked: false },
+      { id: "UX-P04", sev: "minor", cat: "UX", text: "Payment history grouping: by NCC + trend chart (3 tháng)", src: "Receipt compliance", checked: false },
+      // Figma Architecture
+      { id: "FA-P10", sev: "major", cat: "Architecture", text: "BillPaymentResult Component Set: 3 properties (hasPackage, hasFlight, canSaveContact). SaveContactPopup overlay with NoticeToggle", src: "SCREEN-MODEL Payment SF3 §5", checked: false }
+    ]
+  },
+
+  "SF3P-OV1": {
+    screen: "Popup chọn/lưu danh bạ — Modal",
+    module: "PAYMENT",
+    sf: "Thanh toán hóa đơn",
+    items: [
+      { id: "SM-P11", sev: "standard", cat: "State", text: "2 variants: chọn danh bạ existing / lưu danh bạ mới", src: "SCREEN-MODEL SF3P", checked: false },
+    ]
+  },
+
+  "SF5P-S1": {
+    screen: "Limit Wizard — Cài đặt hạn mức",
+    module: "PAYMENT",
+    sf: "Thanh toán chung",
+    items: [
+      { id: "SM-P12", sev: "major", cat: "State", text: "3-step wizard: Init → Picker → Confirm. OTP + Result", src: "SCREEN-MODEL SF5P", checked: false },
+      { id: "UX-T04", sev: "critical", cat: "UX", text: "Validation: hạn mức trong phạm vi cho phép", src: "I-04", checked: false },
+      // Figma Architecture
+      { id: "FA-P11", sev: "major", cat: "Architecture", text: "GeneralPaymentForm Component Set: dynamic form with server-driven field config — progressive field reveal based on API response. Needs Variable binding for dynamic labels", src: "SCREEN-MODEL Payment SF5 §5", checked: false }
+    ]
+  },
+};
+
+
+// ══════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════
+function init() {
+  renderStats(DATA.stats);
+  renderTree(DATA.tree);
+  document.getElementById('gen-date').textContent = DATA.generated;
+  setupEvents();
+}
+
+function renderStats(s) {
+  const statesPill = s.total_states ? `<div class="stat-pill"><strong>${s.total_states}</strong> states</div>` : '';
+  const enrichedPill = s.enriched_modules ? `<div class="stat-pill" style="background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.15)"><strong>${s.enriched_modules}</strong> audited</div>` : '';
+  
+  // v5: Count actual screens from audited modules
+  let actualScreensTotal = 0;
+  for (const tab of DATA.tree.children) {
+    for (const mod of (tab.children || [])) {
+      for (const sf of (mod.children || [])) {
+        if (sf.actual_screens && sf.actual_screens.length > 0) {
+          actualScreensTotal += sf.actual_screens.length;
+        }
+      }
+    }
+  }
+  const actualScreensPill = actualScreensTotal > 0 ? `<div class="stat-pill" style="background:rgba(16,185,129,0.06);border-color:rgba(16,185,129,0.12)"><strong>${actualScreensTotal}</strong> actual scr</div>` : '';
+  
+  document.getElementById('header-stats').innerHTML = `
+    <div class="stat-pill"><strong>${s.total_modules}</strong> modules</div>
+    <div class="stat-pill"><strong>${s.total_screens}</strong> URD scr</div>
+    ${actualScreensPill}
+    ${statesPill}
+    <div class="stat-pill"><strong>${s.total_flows}</strong> flows</div>
+    ${enrichedPill}
+  `;
+}
+
+function renderTree(tree) {
+  const canvas = document.getElementById('canvas');
+  
+  // Root node
+  const root = document.createElement('div');
+  root.className = 'tree-root';
+  root.innerHTML = `<div class="node-content"><span class="node-icon">${tree.icon || '🏦'}</span>${tree.name}</div>`;
+  
+  // Children (tabs)
+  const ul = document.createElement('ul');
+  ul.className = 'tree-children';
+  
+  for (const tab of tree.children) {
+    ul.appendChild(renderTab(tab));
+  }
+  
+  root.appendChild(ul);
+  canvas.appendChild(root);
+}
+
+function renderTab(tab) {
+  const li = document.createElement('li');
+  li.className = 'tree-item node-tab';
+  li.dataset.name = tab.name.toLowerCase();
+  
+  const stats = tab.stats || {};
+  
+  li.innerHTML = `
+    <div class="node-content">
+      <span class="node-icon">${tab.icon || '📂'}</span>
+      <span>${tab.name}</span>
+      <span class="node-badge">${stats.modules || 0} mod · ${stats.screens || 0} scr</span>
+      ${chevronSVG}
+    </div>
+  `;
+  
+  // Module children
+  if (tab.children && tab.children.length > 0) {
+    const ul = document.createElement('ul');
+    ul.className = 'tree-children';
+    for (const mod of tab.children) {
+      ul.appendChild(renderModule(mod));
+    }
+    li.appendChild(ul);
+  }
+  
+  // Toggle
+  li.querySelector('.node-content').addEventListener('click', (e) => {
+    e.stopPropagation();
+    li.classList.toggle('collapsed');
+  });
+  
+  return li;
+}
+
+function renderModule(mod) {
+  const li = document.createElement('li');
+  const cat = mod.category || 'core';
+  li.className = `tree-item node-module cat-${cat}`;
+  li.dataset.name = mod.name.toLowerCase();
+  li.dataset.id = mod.id || '';
+  
+  const stats = mod.stats || {};
+  const moduleId = mapModuleToChecklistKey(mod.name);
+  const hasChecklist = moduleHasChecklist(moduleId);
+  
+  if (hasChecklist) li.classList.add('has-checklist');
+  
+  // Aggregate checklist badge for this module
+  let modClBadge = '';
+  if (hasChecklist) {
+    modClBadge = `<span class="mod-checklist-badge" data-module-id="${moduleId}" title="Xem Design Checklist">📋 Checklist</span>`;
+  }
+  
+  const desc = mod.description || '';
+  const enriched = mod.enriched ? `<span class="mod-enriched">✓ AUDITED</span>` : '';
+  const statesTotal = mod.total_states ? `<span class="mod-states-total" title="Tổng states">🔴 ~${mod.total_states} states</span>` : '';
+  li.innerHTML = `
+    <div class="node-content">
+      <div class="mod-icon cat-${cat}">${mod.icon || '📦'}</div>
+      <div class="mod-label">
+        <span class="mod-name">${mod.name} ${enriched}</span>
+        ${desc ? `<span class="mod-desc">${desc}</span>` : ''}
+        <span class="mod-meta">
+          <span>📄 ${stats.screens || 0}</span>
+          <span>🔀 ${stats.flows || 0}</span>
+          <span>⚡ ${stats.features || 0}</span>
+          ${statesTotal}
+        </span>
+      </div>
+      ${modClBadge}
+      ${chevronSVG}
+    </div>
+  `;
+  
+  // Sub-function children
+  if (mod.children && mod.children.length > 0) {
+    const ul = document.createElement('ul');
+    ul.className = 'tree-children';
+    for (const sf of mod.children) {
+      ul.appendChild(renderSubFunction(sf, cat, moduleId));
+    }
+    li.appendChild(ul);
+  }
+  
+  // Toggle
+  li.querySelector('.node-content').addEventListener('click', (e) => {
+    e.stopPropagation();
+    li.classList.toggle('collapsed');
+  });
+  
+  return li;
+}
+
+function renderSubFunction(sf, cat, moduleId) {
+  const li = document.createElement('li');
+  li.className = 'tree-item node-sf collapsed';
+  li.dataset.name = sf.name.toLowerCase();
+  
+  const catColor = CATEGORY_COLORS[cat] || CATEGORY_COLORS.core;
+  // v5: prefer actual_screens (from domain analysis) over URD screens
+  const actualScreens = sf.actual_screens || [];
+  const urdScreens = sf.screens || [];
+  const displayScreens = actualScreens.length > 0 ? actualScreens : urdScreens;
+  const hasScreens = displayScreens.length > 0;
+  const isAudited = actualScreens.length > 0;
+  const hasChecklist = moduleHasChecklist(moduleId);
+  
+  if (hasChecklist && hasScreens) li.classList.add('has-checklist');
+  
+  // SubFunc checklist badge
+  let sfClBadge = '';
+  if (hasChecklist && hasScreens) {
+    sfClBadge = `<span class="sf-checklist-badge" data-module-id="${moduleId}" title="Xem Design Checklist">📋</span>`;
+  }
+  
+  const sfDesc = sf.description || '';
+  // v5: states & complexity
+  const stateCount = sf.states || 0;
+  const stateClass = stateCount > 50 ? 'high' : stateCount > 20 ? 'med' : 'low';
+  const statesBadge = stateCount > 0 ? `<span class="sf-states ${stateClass}">${stateCount} st</span>` : '';
+  const complexity = sf.complexity || 0;
+  const complexityStars = complexity > 0 ? `<span class="sf-complexity">${'★'.repeat(Math.min(complexity,5))}</span>` : '';
+  const screenType = sf.screen_type || '';
+  const screenTypeBadge = screenType ? `<span class="screen-type">${screenType}</span>` : '';
+  li.innerHTML = `
+    <div class="node-content">
+      <div class="sf-dot" style="background:${catColor}"></div>
+      <div class="sf-info">
+        <span class="sf-name">${sf.name}</span>
+        ${sfDesc ? `<span class="sf-desc">${sfDesc}</span>` : ''}
+      </div>
+      <span class="sf-badge">${sf.screen_count} scr</span>
+      ${statesBadge}
+      ${complexityStars}
+      ${screenTypeBadge}
+      ${sfClBadge}
+      ${hasScreens ? chevronSVG : ''}
+    </div>
+  `;
+  
+  // Screen children (Level 4)
+  if (hasScreens) {
+    const ul = document.createElement('ul');
+    ul.className = 'tree-children';
+    const seen = new Set();
+    for (const scr of displayScreens) {
+      const key = scr.id || scr.name;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      if (isAudited) {
+        ul.appendChild(renderActualScreen(scr, moduleId));
+      } else {
+        ul.appendChild(renderScreen(scr, moduleId));
+      }
+    }
+    li.appendChild(ul);
+    
+    // Toggle
+    li.querySelector('.node-content').addEventListener('click', (e) => {
+      e.stopPropagation();
+      li.classList.toggle('collapsed');
+    });
+  }
+  
+  return li;
+}
+
+function mapModuleToChecklistKey(name) {
+  const n = (name || '').toLowerCase();
+  if (n.includes('trang ch') || n.includes('home')) return 'HOME';
+  if (n.includes('chuyển tiền') || n.includes('chuyen tien') || n.includes('transfer')) return 'TRANSFER';
+  if (n.includes('thanh toán hóa đơn') || n.includes('thanh toan hoa don') || n.includes('bill payment')) return 'PAYMENT';
+  if (n.includes('tiết kiệm') || n.includes('tiet kiem') || n.includes('saving')) return 'SAVINGS';
+  if (n.includes('thẻ') || n.includes('the') || n.includes('card')) return 'CARD';
+  if (n.includes('qr') || n.includes('quét mã')) return 'QR';
+  if (n.includes('đăng nhập') || n.includes('dang nhap') || n.includes('login') || n.includes('onboard')) return 'LOGIN';
+  return '_default';
+}
+
+
+const DEPTH_MAP = {
+  1: { label: 'Entry',  color: 'rgba(16,185,129,0.12)', text: '#059669' },
+  2: { label: 'Browse', color: 'rgba(59,130,246,0.10)',  text: '#2563eb' },
+  3: { label: 'Action', color: 'rgba(245,158,11,0.12)',  text: '#d97706' },
+  4: { label: 'Result', color: 'rgba(124,58,237,0.10)',  text: '#7c3aed' },
+};
+
+// v5: Screen type → color map for actual screens
+const SCREEN_TYPE_COLORS = {
+  'dashboard': { bg: 'rgba(16,185,129,0.10)', text: '#059669' },
+  'hub':       { bg: 'rgba(16,185,129,0.10)', text: '#059669' },
+  'form':      { bg: 'rgba(59,130,246,0.10)', text: '#2563eb' },
+  'wizard':    { bg: 'rgba(59,130,246,0.10)', text: '#2563eb' },
+  'dynamic-form': { bg: 'rgba(124,58,237,0.10)', text: '#7c3aed' },
+  'review':    { bg: 'rgba(245,158,11,0.10)', text: '#d97706' },
+  'result':    { bg: 'rgba(239,68,68,0.10)',  text: '#dc2626' },
+  'popup':     { bg: 'rgba(168,85,247,0.08)', text: '#9333ea' },
+  'auth':      { bg: 'rgba(239,68,68,0.08)',  text: '#dc2626' },
+  'list':      { bg: 'rgba(6,182,212,0.10)',  text: '#0891b2' },
+  'list+crud': { bg: 'rgba(6,182,212,0.10)',  text: '#0891b2' },
+  'list+filter': { bg: 'rgba(6,182,212,0.10)', text: '#0891b2' },
+  'detail':    { bg: 'rgba(107,114,128,0.10)', text: '#4b5563' },
+  'detail+crud': { bg: 'rgba(107,114,128,0.10)', text: '#4b5563' },
+  'settings':  { bg: 'rgba(107,114,128,0.08)', text: '#6b7280' },
+  'tab-panel': { bg: 'rgba(107,114,128,0.08)', text: '#6b7280' },
+  'action-sheet': { bg: 'rgba(168,85,247,0.08)', text: '#9333ea' },
+  'state-machine': { bg: 'rgba(234,88,12,0.10)', text: '#c2410c' },
+  'batch-form': { bg: 'rgba(234,88,12,0.10)', text: '#c2410c' },
+  'form+toggle': { bg: 'rgba(59,130,246,0.10)', text: '#2563eb' },
+  'toggle':    { bg: 'rgba(107,114,128,0.06)', text: '#9ca3af' },
+  'scheduler': { bg: 'rgba(245,158,11,0.10)', text: '#d97706' },
+};
+
+// v5: Render actual screen (from domain SCREEN-MODEL.md analysis)
+function renderActualScreen(scr, moduleId) {
+  const li = document.createElement('li');
+  li.className = 'tree-item node-screen node-actual-screen';
+  li.dataset.name = scr.name.toLowerCase();
+  
+  const typeColor = SCREEN_TYPE_COLORS[scr.type] || { bg: 'rgba(0,0,0,0.04)', text: 'var(--text-muted)' };
+  const mhBadge = scr.mh ? `<span class="screen-mh">${scr.mh}</span>` : '';
+  const typeBadge = scr.type ? `<span class="screen-depth" style="background:${typeColor.bg};color:${typeColor.text}">${scr.type}</span>` : '';
+  const statesBadge = scr.states ? `<span class="actual-screen-states">${scr.states}</span>` : '';
+  const idBadge = scr.id ? `<span class="actual-screen-id">${scr.id}</span>` : '';
+  
+  // Per-screen checklist (priority) → fallback to module checklist
+  const hasScreenCL = scr.id && screenHasChecklist(scr.id);
+  const hasModuleCL = moduleHasChecklist(moduleId);
+  let clBadge = '';
+  if (hasScreenCL) {
+    const count = getScreenChecklistCount(scr.id);
+    clBadge = `<span class="screen-cl-badge" data-screen-id="${scr.id}" title="${count} checklist items">📋 ${count}</span>`;
+  } else if (hasModuleCL) {
+    clBadge = `<span class="checklist-badge" data-module-id="${moduleId || ''}" title="Design Checklist">📋</span>`;
+  }
+  
+  li.innerHTML = `
+    <div class="node-content" title="${scr.desc || scr.name}">
+      <span class="screen-icon">◻</span>
+      <span class="screen-name">${scr.name}</span>
+      ${mhBadge}
+      ${statesBadge}
+      ${typeBadge}
+      ${clBadge}
+    </div>
+  `;
+  
+  li.querySelector('.node-content').addEventListener('click', (e) => {
+    if (e.target.closest('.screen-cl-badge') || e.target.closest('.checklist-badge')) return;
+    openActualScreenInfo(scr);
+  });
+  
+  // Per-screen checklist click
+  if (hasScreenCL) {
+    const clEl = li.querySelector('.screen-cl-badge');
+    if (clEl) clEl.addEventListener('click', (e) => { e.stopPropagation(); openScreenChecklist(scr.id); });
+  } else if (hasModuleCL) {
+    const clEl = li.querySelector('.checklist-badge');
+    if (clEl) clEl.addEventListener('click', (e) => { e.stopPropagation(); openChecklist(moduleId); });
+  }
+  
+  return li;
+}
+
+// v5: Lightbox for actual screen info
+function openActualScreenInfo(scr) {
+  const overlay = document.getElementById('lightbox-overlay');
+  document.getElementById('lb-title').textContent = scr.name;
+  document.getElementById('lb-body').innerHTML = `
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:13px;line-height:1.6">
+      <span style="color:var(--text-muted)">Screen ID:</span><span><code>${scr.id || '—'}</code></span>
+      <span style="color:var(--text-muted)">URD MH:</span><span><strong>${scr.mh || '—'}</strong></span>
+      <span style="color:var(--text-muted)">Type:</span><span>${scr.type || '—'}</span>
+      <span style="color:var(--text-muted)">States:</span><span>${scr.states || '—'}</span>
+      <span style="color:var(--text-muted)">Mô tả:</span><span>${scr.desc || '—'}</span>
+    </div>
+    <p style="margin-top:16px;padding:10px 14px;background:rgba(59,130,246,0.06);border-radius:8px;font-size:12px;color:var(--text-muted)">
+      📐 Dữ liệu từ Domain SCREEN-MODEL.md — actual screen sau audit (không phải URD MH gốc)
+    </p>
+  `;
+  overlay.classList.add('show');
+}
+
+function renderScreen(scr, moduleId) {
+  const li = document.createElement('li');
+  li.className = 'tree-item node-screen';
+  li.dataset.name = scr.name.toLowerCase();
+  
+  const d = DEPTH_MAP[scr.depth] || { label: `D${scr.depth}`, color: 'rgba(0,0,0,0.04)', text: 'var(--text-muted)' };
+  
+  const mhBadge = scr.mh_id ? `<span class="screen-mh">${scr.mh_id}</span>` : '';
+  const refBadge = scr.feature_ref ? `<span class="screen-ref">§${scr.feature_ref}</span>` : '';
+  
+  // Checklist badge — only for modules with checklist
+  const hasChecklist = moduleHasChecklist(moduleId);
+  const clBadge = hasChecklist ? `<span class="checklist-badge" data-module-id="${moduleId || ''}" title="Design Checklist">📋</span>` : '';
+  
+  li.innerHTML = `
+    <div class="node-content" title="Click để xem tài liệu URD">
+      <span class="screen-icon">◻</span>
+      ${mhBadge}
+      <span class="screen-name">${scr.name}</span>
+      ${refBadge}
+      <span class="screen-depth" style="background:${d.color};color:${d.text}">${d.label}</span>
+      ${clBadge}
+    </div>
+  `;
+  
+  li.querySelector('.node-content').addEventListener('click', (e) => {
+    if (e.target.closest('.checklist-badge')) return;
+    openLightbox(scr);
+  });
+  if (hasChecklist) {
+    li.querySelector('.checklist-badge').addEventListener('click', (e) => {
+      e.stopPropagation();
+      openChecklist(moduleId);
+    });
+  }
+  
+  return li;
+}
+
+// ══════════════════════════════════════════════
+// EVENTS
+// ══════════════════════════════════════════════
+function setupEvents() {
+  // Expand all
+  document.getElementById('btn-expand').addEventListener('click', function() {
+    document.querySelectorAll('.node-tab, .node-module, .node-sf').forEach(n => n.classList.remove('collapsed'));
+    setActiveBtn(this);
+  });
+  
+  // Collapse all
+  document.getElementById('btn-collapse').addEventListener('click', function() {
+    document.querySelectorAll('.node-tab, .node-module, .node-sf').forEach(n => n.classList.add('collapsed'));
+    setActiveBtn(this);
+  });
+  
+  // Modules only (show modules, hide sub-functions)
+  document.getElementById('btn-modules-only').addEventListener('click', function() {
+    document.querySelectorAll('.node-tab').forEach(n => n.classList.remove('collapsed'));
+    document.querySelectorAll('.node-module, .node-sf').forEach(n => n.classList.add('collapsed'));
+    setActiveBtn(this);
+  });
+  
+  // Search
+  const searchInput = document.getElementById('search-input');
+  let debounce;
+  searchInput.addEventListener('input', () => {
+    clearTimeout(debounce);
+    debounce = setTimeout(() => doSearch(searchInput.value.trim()), 150);
+  });
+}
+
+function setActiveBtn(btn) {
+  document.querySelectorAll('.toolbar .btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function doSearch(query) {
+  const q = query.toLowerCase();
+  
+  // Remove previous highlights
+  document.querySelectorAll('.highlight').forEach(el => {
+    el.replaceWith(el.textContent);
+  });
+  
+  if (!q) {
+    document.querySelectorAll('.search-hidden').forEach(el => el.classList.remove('search-hidden'));
+    document.querySelectorAll('.node-tab, .node-module').forEach(n => n.classList.remove('collapsed'));
+    document.querySelectorAll('.node-sf').forEach(n => n.classList.add('collapsed'));
+    return;
+  }
+  
+  // Check each module and sub-function for matches
+  const allModules = document.querySelectorAll('.node-module');
+  const allTabs = document.querySelectorAll('.node-tab');
+  
+  // First: mark all tabs as hidden
+  allTabs.forEach(t => t.classList.add('search-hidden'));
+  
+  allModules.forEach(mod => {
+    const modName = mod.dataset.name || '';
+    const sfs = mod.querySelectorAll('.node-sf');
+    let modMatch = modName.includes(q);
+    let anyChildMatch = false;
+    
+    sfs.forEach(sf => {
+      const sfName = sf.dataset.name || '';
+      if (sfName.includes(q)) {
+        anyChildMatch = true;
+        sf.classList.remove('search-hidden');
+        // Highlight
+        highlightText(sf.querySelector('.node-content span:not(.sf-dot):not(.sf-badge)'), q);
+      } else if (modMatch) {
+        sf.classList.remove('search-hidden');
+      } else {
+        sf.classList.add('search-hidden');
+      }
+    });
+    
+    if (modMatch || anyChildMatch) {
+      mod.classList.remove('search-hidden');
+      mod.classList.remove('collapsed');
+      // Show parent tab
+      const parentTab = mod.closest('.node-tab');
+      if (parentTab) {
+        parentTab.classList.remove('search-hidden');
+        parentTab.classList.remove('collapsed');
+      }
+      if (modMatch) {
+        highlightText(mod.querySelector('.mod-name'), q);
+      }
+    } else {
+      mod.classList.add('search-hidden');
+    }
+  });
+}
+
+function highlightText(el, q) {
+  if (!el) return;
+  const text = el.textContent;
+  const idx = text.toLowerCase().indexOf(q);
+  if (idx === -1) return;
+  
+  const before = text.slice(0, idx);
+  const match = text.slice(idx, idx + q.length);
+  const after = text.slice(idx + q.length);
+  
+  el.innerHTML = `${before}<mark class="highlight">${match}</mark>${after}`;
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', init);
+
+// ══════════════════════════════════════════════
+// LIGHTBOX — URD Markdown Viewer
+// ══════════════════════════════════════════════
+const URD_BASE = './urd/';
+let lbCache = {};
+
+function openLightbox(scr) {
+  const overlay = document.getElementById('lightbox-overlay');
+  const title = document.getElementById('lb-title');
+  const badges = document.getElementById('lb-badges');
+  const body = document.getElementById('lb-body');
+  
+  title.textContent = scr.name;
+  let badgeHTML = '';
+  if (scr.mh_id) badgeHTML += `<span class="lb-badge">${scr.mh_id}</span>`;
+  if (scr.feature_ref) badgeHTML += `<span class="lb-badge ref">§${scr.feature_ref}</span>`;
+  badges.innerHTML = badgeHTML;
+  
+  body.innerHTML = '<div class="lb-loading">⏳ Đang tải tài liệu URD...</div>';
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  
+  if (!scr.urd_file) {
+    body.innerHTML = '<div class="lb-error">Không có tài liệu URD liên kết với màn hình này.</div>';
+    return;
+  }
+  
+  const filePath = URD_BASE + scr.urd_file;
+  
+  if (lbCache[filePath]) {
+    renderMarkdown(body, lbCache[filePath], scr);
+    return;
+  }
+  
+  fetch(filePath)
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(md => {
+      lbCache[filePath] = md;
+      renderMarkdown(body, md, scr);
+    })
+    .catch(() => {
+      body.innerHTML = `<div class="lb-error">
+        Không thể tải file: <code>${scr.urd_file}</code><br>
+        <small>File:// protocol có thể chặn fetch. Thử mở trực tiếp:</small>
+        <a href="${filePath}" target="_blank">Mở ${scr.urd_file} ↗</a>
+      </div>`;
+    });
+}
+
+// ══════════════════════════════════════════════
+// DESIGN CHECKLIST — Per-Screen Inline Viewer
+// ══════════════════════════════════════════════
+// Legacy module-level checklist (kept for backwards compat)
+const CHECKLIST_FILES = {
+  HOME:     'checklist/design-checklist.md',
+  TRANSFER: 'checklist/design-checklist.md',
+  PAYMENT:  'checklist/design-checklist.md',
+};
+
+let clCache = {};
+
+function moduleHasChecklist(moduleId) {
+  return !!CHECKLIST_FILES[moduleId];
+}
+
+// Per-screen checklist: check if screen has inline checklist data
+function screenHasChecklist(screenId) {
+  return typeof SCREEN_CHECKLISTS !== 'undefined' && !!SCREEN_CHECKLISTS[screenId];
+}
+
+function getScreenChecklistCount(screenId) {
+  if (!screenHasChecklist(screenId)) return 0;
+  return SCREEN_CHECKLISTS[screenId].items.length;
+}
+
+// Module → section heading slug mapping for auto-scroll
+const MODULE_SECTION_MAP = {
+  HOME: '-HOME',
+  TRANSFER: '-TRANSFER',
+  PAYMENT: '-PAYMENT',
+};
+
+// Severity config
+const SEV_CONFIG = {
+  critical: { dot: 'sev-critical', label: 'Critical', color: '#ef4444', bg: 'rgba(239,68,68,0.08)' },
+  major:    { dot: 'sev-major',    label: 'Major',    color: '#f59e0b', bg: 'rgba(245,158,11,0.08)' },
+  minor:    { dot: 'sev-minor',    label: 'Minor',    color: '#eab308', bg: 'rgba(234,179,8,0.08)' },
+  standard: { dot: 'sev-standard', label: 'Standard', color: '#9ca3af', bg: 'rgba(156,163,175,0.08)' },
+};
+
+// Category config
+const CAT_CONFIG = {
+  UI:       { cls: 'cl-cat-ui',       icon: '🎨', label: 'UI' },
+  UX:       { cls: 'cl-cat-ux',       icon: '✨', label: 'UX' },
+  State:    { cls: 'cl-cat-state',    icon: '🔄', label: 'State' },
+  Security: { cls: 'cl-cat-security', icon: '🛡️', label: 'Security' },
+  Architecture: { cls: 'cl-cat-arch', icon: '🏗️', label: 'Architecture' },
+};
+
+// ── Per-Screen Checklist Opener ──
+function openScreenChecklist(screenId) {
+  const overlay = document.getElementById('checklist-overlay');
+  const title = document.getElementById('cl-title');
+  const body = document.getElementById('cl-body');
+  const moduleTag = document.getElementById('cl-module-tag');
+  
+  const data = SCREEN_CHECKLISTS[screenId];
+  if (!data) {
+    title.textContent = '📋 Design Checklist';
+    moduleTag.textContent = screenId;
+    body.innerHTML = '<div class="cl-error">Không có checklist cho screen này.</div>';
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    return;
+  }
+  
+  title.textContent = `📋 ${data.screen}`;
+  moduleTag.textContent = screenId;
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  
+  // Calculate stats
+  const stats = { total: data.items.length, critical: 0, major: 0, minor: 0, standard: 0, checked: 0 };
+  const byCat = {};
+  data.items.forEach(item => {
+    stats[item.sev] = (stats[item.sev] || 0) + 1;
+    if (item.checked) stats.checked++;
+    if (!byCat[item.cat]) byCat[item.cat] = [];
+    byCat[item.cat].push(item);
+  });
+  
+  // Build HTML
+  let html = '';
+  
+  // Meta info
+  html += '<div class="cl-screen-meta">';
+  html += `<span class="cl-meta-item">Module: <strong>${data.module}</strong></span>`;
+  html += `<span class="cl-meta-item">SF: <strong>${data.sf}</strong></span>`;
+  html += `<span class="cl-meta-item">Items: <strong>${stats.total}</strong></span>`;
+  html += '</div>';
+  
+  // Stats pills
+  html += '<div class="cl-stats-row">';
+  for (const [sev, cfg] of Object.entries(SEV_CONFIG)) {
+    const count = stats[sev] || 0;
+    if (count > 0) {
+      html += `<span class="cl-stat-pill" style="background:${cfg.bg};color:${cfg.color}"><span class="${cfg.dot}"></span> ${count} ${cfg.label}</span>`;
+    }
+  }
+  html += '</div>';
+  
+  // Items grouped by category
+  const catOrder = ['UI', 'UX', 'State', 'Security'];
+  for (const cat of catOrder) {
+    const items = byCat[cat];
+    if (!items || items.length === 0) continue;
+    const catCfg = CAT_CONFIG[cat] || { cls: '', icon: '📌', label: cat };
+    
+    html += `<div class="cl-cat-header" style="background:${cat === 'UI' ? 'rgba(59,130,246,0.06)' : cat === 'UX' ? 'rgba(16,185,129,0.06)' : cat === 'State' ? 'rgba(245,158,11,0.06)' : 'rgba(239,68,68,0.06)'}">`;
+    html += `<span class="cl-cat-badge ${catCfg.cls}">${catCfg.label}</span>`;
+    html += `<span style="font-size:0.65rem;color:var(--text-muted)">${items.length} items</span>`;
+    html += '</div>';
+    
+    items.forEach(item => {
+      const sevCfg = SEV_CONFIG[item.sev] || SEV_CONFIG.standard;
+      const checkIcon = item.checked
+        ? '<span class="cl-item-check" style="color:#059669">☑</span>'
+        : '<span class="cl-item-check" style="color:#d1d5db">☐</span>';
+      const textCls = item.checked ? ' checked' : '';
+      
+      html += '<div class="cl-item-row">';
+      html += `<span class="${sevCfg.dot}"></span>`;
+      html += checkIcon;
+      html += `<span class="cl-item-text${textCls}"><span class="cl-item-id">${item.id}</span>${item.text}</span>`;
+      html += `<span class="src-ref" title="Source: ${item.src}">${item.src}</span>`;
+      html += '</div>';
+    });
+  }
+  
+  body.innerHTML = html;
+}
+
+// ── Legacy Module-Level Checklist Opener (fallback) ──
+function openChecklist(moduleId) {
+  const overlay = document.getElementById('checklist-overlay');
+  const title = document.getElementById('cl-title');
+  const body = document.getElementById('cl-body');
+  const moduleTag = document.getElementById('cl-module-tag');
+  
+  title.textContent = '📋 Design Checklist';
+  moduleTag.textContent = moduleId || 'General';
+  body.innerHTML = '<div class="cl-loading">⏳ Đang tải checklist...</div>';
+  
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  
+  const filePath = CHECKLIST_FILES[moduleId];
+  if (!filePath) {
+    body.innerHTML = '<div class="cl-error">Không có design checklist cho module này.</div>';
+    return;
+  }
+  
+  function renderAndScroll(md) {
+    body.innerHTML = renderChecklistMd(md, moduleId);
+    const slug = MODULE_SECTION_MAP[moduleId];
+    if (slug) {
+      setTimeout(() => {
+        const target = body.querySelector(`h2[id*="${slug}"]`);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }
+  
+  if (clCache[filePath]) {
+    renderAndScroll(clCache[filePath]);
+    return;
+  }
+  
+  fetch(filePath)
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(md => {
+      clCache[filePath] = md;
+      renderAndScroll(md);
+    })
+    .catch(() => {
+      body.innerHTML = `<div class="cl-error">
+        Không thể tải file: <code>${filePath}</code><br>
+        <small>File:// protocol có thể chặn fetch. Thử mở trực tiếp:</small>
+        <a href="${filePath}" target="_blank">Mở ${filePath} ↗</a>
+      </div>`;
+    });
+}
+
+function renderChecklistMd(md, moduleId) {
+  // Enhanced markdown → HTML converter with severity dots + source refs
+  // Step 1: Process checkbox lines with severity parsing
+  const lines = md.split('\n');
+  const processed = lines.map(line => {
+    // Checked checkbox
+    const checkedMatch = line.match(/^- \[x\] (.*)$/);
+    if (checkedMatch) return styleSeverityLine(checkedMatch[1], true);
+    
+    // Unchecked checkbox
+    const uncheckedMatch = line.match(/^- \[ \] (.*)$/);
+    if (uncheckedMatch) return styleSeverityLine(uncheckedMatch[1], false);
+    
+    return line;
+  });
+  
+  let html = processed.join('\n')
+    .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+    .replace(/^## (.*$)/gm, (m, title) => {
+      const slug = title.trim().replace(/[^a-zA-Z0-9\u00C0-\u024F]/g, '-').replace(/-+/g, '-');
+      return `<h2 id="cl-section-${slug}">${title}</h2>`;
+    })
+    .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+    .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>')
+    .replace(/^---$/gm, '<hr>')
+    .replace(/^- (.*$)/gm, '<li>$1</li>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+    .replace(/<!--.*?-->/g, '')
+    .replace(/\n{2,}/g, '<br><br>')
+    .replace(/\n/g, '\n');
+  
+  // Wrap consecutive li items in ul
+  html = html.replace(/(<li>.*?<\/li>\s*)+/g, (match) => `<ul>${match}</ul>`);
+  // Clean consecutive blockquotes
+  html = html.replace(/<\/blockquote>\s*<blockquote>/g, '<br>');
+  
+  return html;
+}
+
+function styleSeverityLine(content, isChecked) {
+  // Parse severity emoji at start: 🔴 🟠 🟡 ⬜
+  let sevClass = '';
+  let text = content;
+  // Emoji are multi-byte — check first 2 chars then space
+  const SEV_MAP = [
+    ['\uD83D\uDD34', 'sev-critical'], // 🔴
+    ['\uD83D\uDFE0', 'sev-major'],    // 🟠  
+    ['\uD83D\uDFE1', 'sev-minor'],    // 🟡
+    ['\u2B1C', 'sev-standard'],        // ⬜
+  ];
+  for (const [emoji, cls] of SEV_MAP) {
+    if (text.startsWith(emoji + ' ')) {
+      sevClass = cls;
+      text = text.slice(emoji.length + 1).trim();
+      break;
+    }
+  }
+  
+  // Extract source ref: backtick `ID` at end of line
+  let srcRef = '';
+  const srcMatch = text.match(/\s*`([A-Z][A-Z0-9-]+(?:-\d+)?)`\s*$/);
+  if (srcMatch) {
+    srcRef = `<span class="src-ref" title="Source: ${srcMatch[1]}">${srcMatch[1]}</span>`;
+    text = text.slice(0, srcMatch.index).trim();
+  }
+  
+  // Inline code in remaining text
+  text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+  
+  const sevDot = sevClass ? `<span class="${sevClass}"></span>` : '';
+  const checkIcon = isChecked
+    ? '<span style="color:#059669;flex-shrink:0">☑</span>'
+    : '<span style="color:#d1d5db;flex-shrink:0">☐</span>';
+  const textStyle = isChecked ? 'color:#9ca3af;text-decoration:line-through' : '';
+  
+  return `<div style="display:flex;align-items:center;gap:4px;padding:3px 0">${sevDot}${checkIcon}<span style="flex:1;${textStyle}">${text}</span>${srcRef}</div>`;
+}
+
+function closeChecklist() {
+  document.getElementById('checklist-overlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function closeLightbox() {
+  const overlay = document.getElementById('lightbox-overlay');
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function renderMarkdown(container, md, scr) {
+  // Find section relevant to this screen's feature_ref
+  let relevantMd = md;
+  if (scr.feature_ref) {
+    const re = new RegExp(`(#{1,3}\\s*${scr.feature_ref.replace('.', '\\.')}[.\\s].*)`, 'i');
+    const match = md.match(re);
+    if (match) {
+      const startIdx = md.indexOf(match[0]);
+      const headingLevel = match[0].match(/^#+/)[0].length;
+      const endRe = new RegExp(`^#{1,${headingLevel}}\\s`, 'm');
+      const rest = md.slice(startIdx + match[0].length);
+      const endMatch = rest.match(endRe);
+      if (endMatch) {
+        relevantMd = md.slice(startIdx, startIdx + match[0].length + endMatch.index);
+      } else {
+        relevantMd = md.slice(startIdx);
+      }
+    }
+  }
+  
+  // Limit to reasonable size (first 8000 chars of relevant section)
+  if (relevantMd.length > 8000) {
+    relevantMd = relevantMd.slice(0, 8000) + '\n\n---\n*... (nội dung còn lại bị cắt — mở file đầy đủ)*';
+  }
+  
+  const normalized = normalizeConfluenceTables(relevantMd);
+  const html = simpleMarkdown(normalized);
+  container.innerHTML = `<div class="lb-prose">${html}</div>`;
+}
+
+// Normalize Confluence-exported tables: each cell is on its own line, separated by pipes
+function normalizeConfluenceTables(md) {
+  const lines = md.split('\n');
+  const out = [];
+  let i = 0;
+  
+  // Pattern: header line contains multiple known column names
+  const headerRe = /^\s*\|\s*(TT\s*\|)?\s*(?:Hạng mục|Thao tác)\s*\|/;
+  
+  while (i < lines.length) {
+    const trimmed = lines[i].trim();
+    
+    if (headerRe.test(trimmed)) {
+      // === FOUND TABLE HEADER ===
+      // Step 1: Parse header to count columns
+      const headerLine = trimmed.endsWith('|') ? trimmed : trimmed + '|';
+      const headerCells = headerLine.split('|').filter(c => c.trim() !== '');
+      const colCount = headerCells.length;
+      
+      // Step 2: Collect ALL subsequent lines that are part of this table
+      // into one flat string — stop at headings or next header
+      let flatContent = '';
+      i++;
+      while (i < lines.length) {
+        const lt = lines[i].trim();
+        // Stop conditions: heading, separator, or new table header
+        if (lt.startsWith('#') || lt.startsWith('---')) break;
+        if (headerRe.test(lt)) break;
+        // Empty line after non-pipe content signals table end
+        if (lt === '' && flatContent.length > 0 && !flatContent.trimEnd().endsWith('|')) {
+          // Could be cell gap — peek ahead to see if more pipe content follows
+          let hasMoreTableContent = false;
+          for (let peek = i + 1; peek < Math.min(i + 5, lines.length); peek++) {
+            const peekLine = lines[peek].trim();
+            if (peekLine.startsWith('|') || /^\d+\s*\|/.test(peekLine)) { hasMoreTableContent = true; break; }
+            if (peekLine.startsWith('#') || headerRe.test(peekLine)) break;
+          }
+          if (!hasMoreTableContent) break;
+        }
+        if (lt !== '') {
+          flatContent += ' ' + lt;
+        }
+        i++;
+      }
+      
+      // Step 3: Split flat content by pipe delimiter
+      flatContent = flatContent.trim();
+      if (!flatContent) {
+        // Empty table — just output header
+        out.push('| ' + headerCells.join(' | ') + ' |');
+        out.push('|' + ' --- |'.repeat(colCount));
+        continue;
+      }
+      
+      // Split by | and filter empty edges
+      const allCells = flatContent.split('|').map(c => c.trim());
+      // Remove leading/trailing empty entries from split
+      while (allCells.length > 0 && allCells[0] === '') allCells.shift();
+      while (allCells.length > 0 && allCells[allCells.length - 1] === '') allCells.pop();
+      
+      // Step 4: Chunk cells into rows of colCount
+      out.push('| ' + headerCells.join(' | ') + ' |');
+      out.push('|' + ' --- |'.repeat(colCount));
+      
+      for (let r = 0; r < allCells.length; r += colCount) {
+        const rowCells = allCells.slice(r, r + colCount);
+        // Pad if needed
+        while (rowCells.length < colCount) rowCells.push('');
+        // Truncate long cell content for readability
+        const cleaned = rowCells.map(c => c.replace(/\s+/g, ' ').slice(0, 300));
+        out.push('| ' + cleaned.join(' | ') + ' |');
+      }
+      out.push(''); // blank line after table
+    } else {
+      out.push(lines[i]);
+      i++;
+    }
+  }
+  
+  return out.join('\n');
+}
+
+function simpleMarkdown(md) {
+  let html = md
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  
+  // Code blocks (fenced)
+  html = html.replace(/```([\s\S]*?)```/g, (_, code) => {
+    return `<pre><code>${code.trim()}</code></pre>`;
+  });
+  
+  // Inline code
+  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+  
+  // Headers (h6 → h1, process longest prefix first)
+  html = html.replace(/^###### (.+)$/gm, '<h6>$1</h6>');
+  html = html.replace(/^##### (.+)$/gm, '<h5>$1</h5>');
+  html = html.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
+  html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+  
+  // Bold / italic
+  html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  
+  // Blockquote
+  html = html.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
+  
+  // Horizontal rule
+  html = html.replace(/^---+$/gm, '<hr>');
+  
+  // Tables — robust: match header row + separator + body rows
+  html = html.replace(/(\|.+\|\n)(\|[\s:*\-|]+\|\n)(((\|.+\|)\n?)+)/g, (match, headerRow, sepRow, bodyRows) => {
+    const parseRow = (row) => row.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(c => c.trim());
+    const headers = parseRow(headerRow);
+    const rows = bodyRows.trim().split('\n').filter(r => r.trim().startsWith('|')).map(parseRow);
+    let table = '<table><thead><tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>';
+    rows.forEach(r => { table += '<tr>' + r.map(c => `<td>${c}</td>`).join('') + '</tr>'; });
+    table += '</tbody></table>';
+    return table;
+  });
+  
+  // Unordered lists
+  html = html.replace(/^[\-\*] (.+)$/gm, '<li>$1</li>');
+  html = html.replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`);
+  
+  // Ordered lists
+  html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+  
+  // Paragraphs (lines not already wrapped and not pipe-only lines)
+  html = html.replace(/^(?!<[hupboltd]|<\/|\|)(.+)$/gm, (m, p) => {
+    if (p.trim() === '' || p.trim() === '|') return '';
+    return `<p>${p}</p>`;
+  });
+  
+  // Clean up empty lines
+  html = html.replace(/\n{3,}/g, '\n\n');
+  
+  return html;
+}
+
+// Lightbox event listeners
+document.getElementById('lb-close').addEventListener('click', closeLightbox);
+document.getElementById('lightbox-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeLightbox();
+});
+
+// Checklist event listeners
+document.getElementById('cl-close').addEventListener('click', closeChecklist);
+document.getElementById('checklist-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeChecklist();
+});
+
+// Module/SubFunc checklist badge clicks
+document.addEventListener('click', function(e) {
+  const modBadge = e.target.closest('.mod-checklist-badge');
+  if (modBadge) { e.stopPropagation(); openChecklist(modBadge.dataset.moduleId); return; }
+  const sfBadge = e.target.closest('.sf-checklist-badge');
+  if (sfBadge) { e.stopPropagation(); openChecklist(sfBadge.dataset.moduleId); return; }
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { closeLightbox(); closeChecklist(); }
+});
+</script>
+</body>
+</html>
