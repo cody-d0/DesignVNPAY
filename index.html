@@ -2240,7 +2240,7 @@
       width: 100%;
       max-width: 100%;
       margin: 0 auto;
-      overflow-x: hidden;
+      overflow-x: clip;
     }
 
     @media (min-width: 375px) {
@@ -2325,14 +2325,25 @@
       margin: var(--spacing-sm) 0;
     }
 
+    .markdown-body .table-scroll-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: var(--spacing-lg) 0;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+    }
+
     .markdown-body table {
       width: 100%;
       border-collapse: collapse;
-      margin: var(--spacing-lg) 0;
       background-color: var(--color-surface);
-      border: 1px solid var(--color-border);
       border-radius: 8px;
-      overflow: hidden;
+    }
+
+    /* Table inside scroll wrapper — border handled by wrapper */
+    .markdown-body .table-scroll-wrap table {
+      margin: 0;
+      border: none;
     }
 
     .markdown-body table thead {
@@ -3569,6 +3580,9 @@
         // Pre-process: auto-fence bare ASCII diagram blocks
         md = autoFenceAsciiBlocks(md);
         let html = marked.parse(md);
+        // Wrap <table> in scroll container for horizontal scroll on wide tables
+        html = html.replace(/<table([^>]*)>/g, '<div class="table-scroll-wrap"><table$1>');
+        html = html.replace(/<\/table>/g, '</table></div>');
         html = addHeadingIds(html);
         html = html.replace(/<img([^>]*)\ssrc=["']([^"']+)["']([^>]*)>/gi, (m, b, s, a) => '<img' + b + ' src="' + resolveImg(s) + '"' + a + '>');
         html = html.replace(/<img /gi, '<img loading="lazy" onerror="this.style.display=\'none\';var s=document.createElement(\'span\');s.className=\'img-fallback\';s.textContent=this.alt||\'[Ảnh]\';this.parentNode.appendChild(s);" ');
