@@ -1,0 +1,795 @@
+{
+  "meta": {
+    "domain_name": "PAYMENT — Thanh toán hóa đơn",
+    "domain_id": "payment",
+    "version": "v2.0",
+    "date": "2026-04-02",
+    "shell_count": 6,
+    "total_molecules": 31,
+    "described_count": 3,
+    "total_states": 81,
+    "complex_count": 3,
+    "complex_ids": "M-04, M-06, M-27",
+    "cross_domain_count": 3,
+    "cross_domain_ids": "M-27, M-28, M-29"
+  },
+  "molecules": [
+    {
+      "id": "M-01",
+      "name": "AccountPicker",
+      "shell": "InitShell",
+      "slot": "SourceAccount",
+      "category": "🔁 SHARED (SF3)",
+      "phase": 1,
+      "states": 4,
+      "pattern": "Shared combobox",
+      "data_slot": "account-picker",
+      "sub_slots": [
+        "account-picker-trigger",
+        "account-picker-content"
+      ],
+      "mockup": "mockups/M-01-AccountPicker.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-02",
+      "name": "ServiceIconGrid",
+      "shell": "ServiceGridShell",
+      "slot": "ServiceList",
+      "category": "⭐ ĐẶC THÙ (SF3)",
+      "phase": 1,
+      "states": 3,
+      "pattern": "Dynamic grid from API",
+      "data_slot": "service-icon-grid",
+      "sub_slots": [
+        "service-icon-grid-item"
+      ],
+      "mockup": "mockups/M-02-ServiceIconGrid.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-04",
+      "name": "ProgressiveFormSection",
+      "shell": "ContactShell",
+      "slot": "FormContent",
+      "category": "⭐ ĐẶC THÙ (SF2)",
+      "phase": 1,
+      "states": 10,
+      "pattern": "Progressive disclosure",
+      "data_slot": "progressive-form",
+      "sub_slots": [
+        "progressive-form-service",
+        "progressive-form-provider",
+        "progressive-form-code"
+      ],
+      "mockup": "mockups/M-04-ProgressiveFormSection.png",
+      "context": {
+        "problem": "Form thêm danh bạ hóa đơn hiện tại hiển thị tất cả 5 fields cùng lúc — user mới vào thấy form dài, không biết bắt đầu từ đâu. Cognitive overload ngay bước đầu tiên của flow thanh toán.",
+        "trigger": "Systemic issue cognitive load fail rate 68% (19/28 modules).",
+        "problem_space": "User mở form thấy 5 fields, trong đó 3 fields phụ thuộc lẫn nhau (DV → NCC → Mã KH). Nếu chọn DV trước, NCC list thay đổi. Hiện tại không enforce thứ tự → user nhập ngược → phải xóa nhập lại.",
+        "origin": "(1) Cognitive load audit 68% fail rate (EXECUTIVE-SUMMARY §2), (2) Progressive Disclosure pattern standard (Nielsen Norman Group), (3) SF2 flow analysis",
+        "predecessor": "Form flat 5-fields SF2 hiện tại — ProgressiveFormSection thay bằng cascading reveal"
+      },
+      "intent": {
+        "quote": "Molecule này giúp user mới điền form danh bạ hóa đơn đúng thứ tự khi thêm hoặc sửa danh bạ thanh toán.",
+        "primary_goal": "Giảm cognitive load bằng cách chỉ hiện 1 field tại 1 thời điểm — mỗi lựa chọn unlock field tiếp theo",
+        "personas": "Bà Hoa (60+, cần hướng dẫn từng bước) · Chị Mai (30-40, cần nhanh nhưng đúng)",
+        "context_of_use": "Kích hoạt khi tap \"Thêm danh bạ\" hoặc \"Sửa danh bạ\" — form progressive trên ContactShell",
+        "principles": "#3 Clarity Over Features (fewer visible fields = less confusion) + #2 3-Tap Rule",
+        "value_pyramid": "Level 2 (Usability) — pure form efficiency + error prevention"
+      },
+      "insight": {
+        "title": "Dependency-driven disclosure",
+        "description": "Không phải tất cả progressive form đều giống nhau. Ở đây, field thứ 2 (NCC) phụ thuộc vào field 1 (DV) — nếu hiện cả 2 cùng lúc, user có thể chọn NCC trước rồi bối rối khi DV thay đổi NCC list. Cascading không chỉ là UX — nó là data integrity enforcement thông qua UI.",
+        "core_pattern": "Progressive Disclosure (Nielsen Norman Group) + Dependent Cascading Fields",
+        "behavioral": "Chunking theory — chia 5 fields thành từng step giảm working memory load từ 5 items → 1 item per decision",
+        "differentiation": "Thông thường apps hiện tất cả fields + validate sau. Molecule này dùng frontend-enforced dependency — field chỉ xuất hiện khi prerequisite đã filled, ngăn data integrity errors tại source",
+        "state_machine": "5 visibleFields × 2 formMode = 10 combinations. Key states: step1 (1 field), step3 (3 fields), full (5 fields), view_edit (readonly → editable)"
+      },
+      "evidence": [
+        {
+          "type": "📊",
+          "claim": "Cognitive load fail rate = 68% (19/28 modules)",
+          "source": "EXECUTIVE-SUMMARY §2"
+        },
+        {
+          "type": "🌐",
+          "claim": "Progressive Disclosure giảm 50% form abandonment (Nielsen Norman Group)",
+          "source": "NNG Research"
+        },
+        {
+          "type": "🔍",
+          "claim": "SF2 flow: NCC list thay đổi theo DV — 36 NCC types across services",
+          "source": "SF2-danh-ba-hoa-don/ANALYSIS.md"
+        },
+        {
+          "type": "🏦",
+          "claim": "KakaoBank cascading form — +22% first-time completion vs flat form",
+          "source": "Research §KO"
+        }
+      ],
+      "sim_notes": [
+        "5 visibleFields × 2 formMode = 10 state combinations",
+        "DV → NCC dependency = cascading API call (existing endpoint)",
+        "PhoneSuggestIcon (📱) conditional per DV config — hidden by default",
+        "view_edit mode: 3 fields readonly (grey bg) + editable nickname + edit button"
+      ]
+    },
+    {
+      "id": "M-05",
+      "name": "NoticeToggleSection",
+      "shell": "ContactShell",
+      "slot": "NoticeControl",
+      "category": "⭐ ĐẶC THÙ (SF2+SF4)",
+      "phase": 1,
+      "states": 3,
+      "pattern": "Parasitic 4-case logic",
+      "data_slot": "notice-toggle",
+      "sub_slots": [
+        "notice-toggle-trigger",
+        "notice-toggle-indicator"
+      ],
+      "mockup": "mockups/M-05-NoticeToggleSection.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-06",
+      "name": "BillingFormSection",
+      "shell": "InitShell",
+      "slot": "BillingFields",
+      "category": "⭐ ĐẶC THÙ (SF3)",
+      "phase": 1,
+      "states": 4,
+      "pattern": "Conditional field rendering",
+      "data_slot": "billing-form",
+      "sub_slots": [
+        "billing-form-provider",
+        "billing-form-code",
+        "billing-form-suggest"
+      ],
+      "mockup": "mockups/M-06-BillingFormSection.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-07",
+      "name": "LimitPickerSection",
+      "shell": "InitShell",
+      "slot": "BillingFields",
+      "category": "⭐ ĐẶC THÙ (SF5)",
+      "phase": 2,
+      "states": 1,
+      "pattern": "Simple picker",
+      "data_slot": "limit-picker",
+      "sub_slots": [
+        "limit-picker-current",
+        "limit-picker-trigger"
+      ],
+      "mockup": "mockups/M-07-LimitPickerSection.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-08",
+      "name": "AmountInput",
+      "shell": "InitShell",
+      "slot": "PaymentDetails",
+      "category": "🔁 SHARED (SF3)",
+      "phase": 1,
+      "states": 2,
+      "pattern": "Shared amount field",
+      "data_slot": "amount-input",
+      "sub_slots": [
+        "amount-input-field",
+        "amount-input-chips",
+        "amount-input-words"
+      ],
+      "mockup": "mockups/M-08-AmountInput.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-09",
+      "name": "PaymentTypeSelector",
+      "shell": "InitShell",
+      "slot": "PaymentDetails",
+      "category": "⭐ ĐẶC THÙ (SF3)",
+      "phase": 1,
+      "states": 2,
+      "pattern": "Payment type combobox",
+      "data_slot": "payment-type",
+      "sub_slots": [
+        "payment-type-trigger",
+        "payment-type-content"
+      ],
+      "mockup": "mockups/M-09-PaymentTypeSelector.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-10",
+      "name": "PackageSelector",
+      "shell": "InitShell",
+      "slot": "PaymentDetails",
+      "category": "⭐ ĐẶC THÙ (SF3)",
+      "phase": 1,
+      "states": 2,
+      "pattern": "Package radio list",
+      "data_slot": "package-selector",
+      "sub_slots": [
+        "package-selector-trigger",
+        "package-selector-item"
+      ],
+      "mockup": "mockups/M-10-PackageSelector.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-11",
+      "name": "ContactPickerPopup",
+      "shell": "InitShell",
+      "slot": "PaymentDetails",
+      "category": "⭐ ĐẶC THÙ (SF3)",
+      "phase": 1,
+      "states": 2,
+      "pattern": "Popup overlay picker",
+      "data_slot": "contact-picker-popup",
+      "sub_slots": [
+        "contact-picker-popup-content",
+        "contact-picker-popup-item"
+      ],
+      "mockup": "mockups/M-11-ContactPickerPopup.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-12",
+      "name": "BillReviewFieldsStack",
+      "shell": "ConfirmShell",
+      "slot": "TransactionSummary",
+      "category": "🔁 SHARED (SF3)",
+      "phase": 1,
+      "states": 2,
+      "pattern": "Key-value stack review",
+      "data_slot": "bill-review-fields",
+      "sub_slots": [
+        "bill-review-fields-item"
+      ],
+      "mockup": "mockups/M-12-BillReviewFieldsStack.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-13",
+      "name": "LimitReviewFields",
+      "shell": "ConfirmShell",
+      "slot": "TransactionSummary",
+      "category": "⭐ ĐẶC THÙ (SF5)",
+      "phase": 2,
+      "states": 1,
+      "pattern": "Simple 2-row review",
+      "data_slot": "limit-review-fields",
+      "sub_slots": [
+        "limit-review-fields-item"
+      ],
+      "mockup": "mockups/M-13-LimitReviewFields.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-14",
+      "name": "FeeDisplay",
+      "shell": "ConfirmShell",
+      "slot": "FeeSection",
+      "category": "🔁 SHARED (SF3)",
+      "phase": 1,
+      "states": 2,
+      "pattern": "Conditional fee row",
+      "data_slot": "fee-display",
+      "sub_slots": [
+        "fee-display-item"
+      ],
+      "mockup": "mockups/M-14-FeeDisplay.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-15",
+      "name": "FlightInfoPanel",
+      "shell": "ConfirmShell",
+      "slot": "ExtendedInfo",
+      "category": "⭐ ĐẶC THÙ (SF3)",
+      "phase": 2,
+      "states": 1,
+      "pattern": "Conditional flight details",
+      "data_slot": "flight-info",
+      "sub_slots": [
+        "flight-info-content"
+      ],
+      "mockup": "mockups/M-15-FlightInfoPanel.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-16",
+      "name": "PackageInfoPanel",
+      "shell": "ConfirmShell",
+      "slot": "ExtendedInfo",
+      "category": "⭐ ĐẶC THÙ (SF3)",
+      "phase": 2,
+      "states": 1,
+      "pattern": "Conditional package details",
+      "data_slot": "package-info",
+      "sub_slots": [
+        "package-info-content"
+      ],
+      "mockup": "mockups/M-16-PackageInfoPanel.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-17",
+      "name": "OTPMethodSelector",
+      "shell": "ConfirmShell",
+      "slot": "AuthMethod",
+      "category": "🔁 SHARED (SF3, SF5)",
+      "phase": 1,
+      "states": 2,
+      "pattern": "Shared OTP radio",
+      "data_slot": "otp-method",
+      "sub_slots": [
+        "otp-method-item",
+        "otp-method-indicator"
+      ],
+      "mockup": "mockups/M-17-OTPMethodSelector.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-18",
+      "name": "SuccessIcon",
+      "shell": "ResultShell",
+      "slot": "StatusHeader",
+      "category": "🔁 SHARED (SF3, SF5)",
+      "phase": 1,
+      "states": 1,
+      "pattern": "Success feedback",
+      "data_slot": "success-icon",
+      "sub_slots": [],
+      "mockup": "mockups/M-18-SuccessIcon.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-19",
+      "name": "ErrorIcon",
+      "shell": "ResultShell",
+      "slot": "StatusHeader",
+      "category": "🔁 SHARED (SF3, SF5)",
+      "phase": 1,
+      "states": 1,
+      "pattern": "Error feedback",
+      "data_slot": "error-icon",
+      "sub_slots": [],
+      "mockup": "mockups/M-19-ErrorIcon.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-20",
+      "name": "BillTransactionInfoStack",
+      "shell": "ResultShell",
+      "slot": "TransactionDetails",
+      "category": "🔁 SHARED (SF3)",
+      "phase": 1,
+      "states": 2,
+      "pattern": "Transaction result stack",
+      "data_slot": "bill-tx-info",
+      "sub_slots": [
+        "bill-tx-info-item"
+      ],
+      "mockup": "mockups/M-20-BillTransactionInfoStack.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-21",
+      "name": "LimitResultInfo",
+      "shell": "ResultShell",
+      "slot": "TransactionDetails",
+      "category": "⭐ ĐẶC THÙ (SF5)",
+      "phase": 2,
+      "states": 1,
+      "pattern": "Simple 1-field display",
+      "data_slot": "limit-result-info",
+      "sub_slots": [],
+      "mockup": "mockups/M-21-LimitResultInfo.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-22",
+      "name": "SaveContactPopup",
+      "shell": "ResultShell",
+      "slot": "PostActions",
+      "category": "⭐ ĐẶC THÙ (SF3)",
+      "phase": 2,
+      "states": 2,
+      "pattern": "Post-result popup",
+      "data_slot": "save-contact-popup",
+      "sub_slots": [
+        "save-contact-popup-name",
+        "save-contact-popup-toggle"
+      ],
+      "mockup": "mockups/M-22-SaveContactPopup.png",
+      "context": {
+        "problem": "Sau khi thanh toán thành công, user thường phải quay lại danh bạ để lưu NCC vừa thanh toán — 2 taps thừa cho action mà 80%+ user sẽ làm nếu được gợi ý.",
+        "trigger": "SF3 flow analysis — post-result là thời điểm \"high completion intent\" tự nhiên.",
+        "problem_space": "User thanh toán xong → muốn lưu NCC để lần sau nhanh hơn → nhưng phải navigate ngược ContactShell → thêm manual → bất tiện → bỏ qua → lần sau nhập lại từ đầu",
+        "origin": "(1) SF3 flow: post-result = high intent moment, (2) Short-path optimization (3-Tap Rule), (3) NoticeToggle cross-pollination từ SF4",
+        "predecessor": "Không có popup post-result — chỉ có nút \"Giao dịch mới\" và \"Về trang chủ\""
+      },
+      "intent": {
+        "quote": "Molecule này giúp user vừa thanh toán xong lưu luôn NCC vào danh bạ khi giao dịch thành công lần đầu với NCC mới.",
+        "primary_goal": "Convert post-result moment thành danh bạ saved → giảm form filling lần sau từ 5 fields → 1 tap",
+        "personas": "Chị Mai (30-40, thanh toán nhiều hóa đơn, cần shortcut) · Bà Hoa (60+, sẽ quên lưu nếu không nhắc)",
+        "context_of_use": "Popup hiện sau ResultShell success — chỉ khi NCC chưa có trong danh bạ. Có thể Skip.",
+        "principles": "#2 3-Tap Rule (save inline thay vì navigate) + #3 Clarity (2 buttons: Lưu / Bỏ qua)",
+        "value_pyramid": "Level 2 (Usability) — efficiency improvement cho recurring payments"
+      },
+      "insight": {
+        "title": "Config-driven conditional section",
+        "description": "HasNoticeToggle (TB cước) chỉ hiện khi DV hỗ trợ thông báo cước — tức popup có 2 visual variants tùy DV config, không phải user action. Đây là \"server-driven UI\" ở micro-level — popup shape thay đổi dựa trên DV metadata, không cần client logic phức tạp.",
+        "core_pattern": "Post-Action Prompt (modal confirmation after task completion) + Config-Driven UI",
+        "behavioral": "Moment of completion = highest compliance — user vừa hoàn thành task lớn (thanh toán) → sẵn sàng làm task nhỏ (lưu danh bạ). Zeigarnik effect ngược — brain muốn \"hoàn thiện\" nốt.",
+        "differentiation": "Thông thường apps để user tự nhớ lưu danh bạ sau. Molecule này chủ động hỏi tại moment phù hợp nhất — tương tự iOS \"Add to Contacts?\" sau cuộc gọi",
+        "state_machine": "2 variants (with/without notice toggle) × 1 popup state = 2 combinations"
+      },
+      "evidence": [
+        {
+          "type": "📊",
+          "claim": "Post-completion prompts → ~80% acceptance rate (iOS \"Add to Contacts\" pattern)",
+          "source": "Apple HIG Research"
+        },
+        {
+          "type": "🔍",
+          "claim": "SF4 NoticeToggle parasitic design — 4-case logic already defined",
+          "source": "SF4-thong-bao-cuoc/ANALYSIS.md"
+        },
+        {
+          "type": "🏦",
+          "claim": "Vietcombank QR flow — post-result \"Lưu thụ hưởng?\" popup",
+          "source": "Competitive audit"
+        }
+      ],
+      "sim_notes": [
+        "Bottom sheet popup (drag indicator + close button)",
+        "hasNoticeToggle = server DV config boolean, not user action",
+        "NicknameInput pre-filled with NCC name from transaction",
+        "Skip = dismiss without saving → no data persistence"
+      ]
+    },
+    {
+      "id": "M-23",
+      "name": "SearchBar",
+      "shell": "ContactShell",
+      "slot": "ListContent",
+      "category": "🔁 SHARED (SF2)",
+      "phase": 1,
+      "states": 2,
+      "pattern": "Reuse search pattern",
+      "data_slot": "search-bar",
+      "sub_slots": [
+        "search-bar-input",
+        "search-bar-clear"
+      ],
+      "mockup": "mockups/M-23-SearchBar.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-24",
+      "name": "EmptyState",
+      "shell": "ContactShell",
+      "slot": "ListContent",
+      "category": "🔁 SHARED (SF2)",
+      "phase": 1,
+      "states": 1,
+      "pattern": "Legacy alias → M-28",
+      "data_slot": "empty-state-legacy",
+      "sub_slots": [
+        "empty-state-legacy-content",
+        "empty-state-legacy-trigger"
+      ],
+      "mockup": "mockups/M-24-EmptyState.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-25",
+      "name": "DeleteModeOverlay",
+      "shell": "ContactShell",
+      "slot": "ListContent",
+      "category": "⭐ ĐẶC THÙ (SF2)",
+      "phase": 2,
+      "states": 1,
+      "pattern": "Multi-select delete mode",
+      "data_slot": "delete-mode",
+      "sub_slots": [
+        "delete-mode-item",
+        "delete-mode-trigger"
+      ],
+      "mockup": "mockups/M-25-DeleteModeOverlay.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-26",
+      "name": "ContactItemRow",
+      "shell": "ContactShell",
+      "slot": "ListContent",
+      "category": "⭐ ĐẶC THÙ (SF2)",
+      "phase": 1,
+      "states": 3,
+      "pattern": "Contact list item row",
+      "data_slot": "contact-item",
+      "sub_slots": [
+        "contact-item-icon",
+        "contact-item-name",
+        "contact-item-code"
+      ],
+      "mockup": "mockups/M-26-ContactItemRow.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-27",
+      "name": "ErrorStateCard",
+      "shell": "Cross-Domain",
+      "slot": "StateOverlay",
+      "category": "🔁 SHARED (ALL SFs)",
+      "phase": 1,
+      "states": 60,
+      "pattern": "Error recovery",
+      "data_slot": "error-state",
+      "sub_slots": [
+        "error-state-icon",
+        "error-state-title",
+        "error-state-description",
+        "error-state-retry",
+        "error-state-alternative"
+      ],
+      "mockup": "mockups/M-27-ErrorStateCard.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-28",
+      "name": "EmptyStateCard",
+      "shell": "Cross-Domain",
+      "slot": "StateOverlay",
+      "category": "🔁 SHARED (ALL SFs)",
+      "phase": 1,
+      "states": 3,
+      "pattern": "Empty state with CTA",
+      "data_slot": "empty-state",
+      "sub_slots": [
+        "empty-state-illustration",
+        "empty-state-title",
+        "empty-state-description",
+        "empty-state-cta"
+      ],
+      "mockup": "mockups/M-28-EmptyStateCard.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-29",
+      "name": "SkeletonScreen",
+      "shell": "Cross-Domain",
+      "slot": "StateOverlay",
+      "category": "🔁 SHARED (ALL SFs)",
+      "phase": 1,
+      "states": 4,
+      "pattern": "Loading placeholder",
+      "data_slot": "skeleton-screen",
+      "sub_slots": [
+        "skeleton-screen-row",
+        "skeleton-screen-card"
+      ],
+      "mockup": "mockups/M-29-SkeletonScreen.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-30",
+      "name": "BillLookupErrorCard",
+      "shell": "InitShell",
+      "slot": "BillingFields",
+      "category": "🔁 SHARED (SF1, SF3)",
+      "phase": 2,
+      "states": 8,
+      "pattern": "Graceful degradation",
+      "data_slot": "bill-lookup-error",
+      "sub_slots": [
+        "bill-lookup-error-icon",
+        "bill-lookup-error-message",
+        "bill-lookup-error-retry"
+      ],
+      "mockup": "mockups/M-30-BillLookupErrorCard.png",
+      "context": {
+        "problem": "Khi tra cứu hóa đơn qua NCC API thất bại, app hiện tại hiện \"Lỗi hệ thống\" chung chung và không cung cấp alternative path — user bị stuck, không thể tiếp tục thanh toán dù biết chính xác số tiền cần trả.",
+        "trigger": "V2-10 AI Review: \"No offline/network error for bill lookup — what if provider API unavailable?\"",
+        "problem_space": "NCC API không ổn định (timeout, maintenance) — user muốn trả hóa đơn ngay nhưng bị block bởi lookup failure. Đặc biệt nghiêm trọng khi bill gần deadline.",
+        "origin": "(1) AI Review V2-10: missing error recovery, (2) Error state audit 71% modules affected, (3) User review: \"Báo lỗi hệ thống nhưng không biết sai gì\"",
+        "predecessor": "Builds on ErrorStateCard M-27 — BillLookupErrorCard adds bill-specific manual fallback path"
+      },
+      "intent": {
+        "quote": "Molecule này giúp user thanh toán hóa đơn tiếp tục flow dù NCC API fail khi tra cứu hóa đơn thất bại.",
+        "primary_goal": "Biến dead-end thành alternative path — \"Thử lại\" HOẶC \"Nhập số tiền thủ công?\" → user vẫn hoàn tất GD",
+        "personas": "Chị Mai (30-40, kinh doanh, cần trả bill đúng hạn) · Anh Tuấn (35-45, impatient khi gặp lỗi)",
+        "context_of_use": "Inline trong InitShell.BillingFields — thay thế bill amount display khi lookup fail",
+        "principles": "#1 Trust First (explain error) + #4 State Completeness (no dead-ends)",
+        "value_pyramid": "Level 1 (Functional) → Level 2 (Usability) — prevents frustration by offering escape hatch"
+      },
+      "insight": {
+        "title": "Graceful degradation > retry-only",
+        "description": "Hầu hết banking apps chỉ cung cấp \"Thử lại\" khi API fail. Insight: user đã biết số tiền từ bill giấy/email — manual entry là fallback tự nhiên nhưng không bank nào cung cấp. Đây là pattern \"app tôn trọng user knowledge\" — trust user nhập đúng thay vì block hoàn toàn.",
+        "core_pattern": "Graceful Degradation + Manual Fallback Path (progressive enhancement ngược)",
+        "behavioral": "Frustration escalation — mỗi lần \"Thử lại\" fail → frustration tăng gấp đôi. Manual entry thoát khỏi retry loop → reduces abandonment",
+        "differentiation": "Thông thường apps chỉ có Retry. Molecule này thêm \"Nhập thủ công?\" — tin tưởng user biết amount, không bắt phải phụ thuộc API",
+        "state_machine": "4 lookupStates × 2 hasManualFallback = 8 combinations"
+      },
+      "evidence": [
+        {
+          "type": "🔍",
+          "claim": "V2-10 AI Review: \"No offline/network error for bill lookup\"",
+          "source": "ai-review/bill-payment.md"
+        },
+        {
+          "type": "📊",
+          "claim": "Error states chưa thiết kế — 71% modules affected (20/28)",
+          "source": "EXECUTIVE-SUMMARY §2"
+        },
+        {
+          "type": "👤",
+          "claim": "\"Báo lỗi hệ thống nhưng không biết sai gì\"",
+          "source": "EXECUTIVE-SUMMARY §4 (user reviews)"
+        },
+        {
+          "type": "🏦",
+          "claim": "Nubank offline mode — allows cached bill payment when API down",
+          "source": "Research §PT"
+        }
+      ],
+      "sim_notes": [
+        "4 lookupStates: idle → loading → error → success (lifecycle)",
+        "Manual entry fallback = same AmountInput (M-08) component, pre-filled if cached",
+        "BillLastUpdated (M-31) timestamp shows data freshness below amount",
+        "Builds on ErrorStateCard M-27 — adds domain-specific recovery path"
+      ]
+    },
+    {
+      "id": "M-31",
+      "name": "BillLastUpdated",
+      "shell": "ContactShell",
+      "slot": "ListContent",
+      "category": "🔁 SHARED (SF3)",
+      "phase": 2,
+      "states": 2,
+      "pattern": "Data freshness timestamp",
+      "data_slot": "bill-last-updated",
+      "sub_slots": [
+        "bill-last-updated-text"
+      ],
+      "mockup": "mockups/M-31-BillLastUpdated.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    },
+    {
+      "id": "M-32",
+      "name": "QuickPayAmountField",
+      "shell": "InitShell",
+      "slot": "PaymentDetails",
+      "category": "⭐ ĐẶC THÙ (SF3)",
+      "phase": 2,
+      "states": 2,
+      "pattern": "Editable amount display",
+      "data_slot": "quickpay-amount",
+      "sub_slots": [
+        "quickpay-amount-field",
+        "quickpay-amount-edit"
+      ],
+      "mockup": "mockups/M-32-QuickPayAmountField.png",
+      "context": null,
+      "intent": null,
+      "insight": null,
+      "evidence": [],
+      "sim_notes": []
+    }
+  ]
+}
