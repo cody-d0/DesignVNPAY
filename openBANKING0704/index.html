@@ -1,0 +1,2107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Định hướng Phát triển OpenBanking — Giải pháp cho KHDN</title>
+    <meta name="description" content="Chiến lược OpenBanking cho khách hàng doanh nghiệp: Xăng dầu, Bất động sản, Mass — Ngân hàng trở thành hạ tầng tài chính trong hệ sinh thái kinh doanh">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+/* ==========================================
+   OpenBanking Enterprise Strategy — Design System
+   Font: IBM Plex Sans
+   Palette: Navy (#0F172A) + Gold (#CA8A04)
+   Style: Glassmorphism + Corporate Premium
+   ========================================== */
+
+/* === Reset & Base === */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --primary: #0F172A;
+    --primary-light: #1E293B;
+    --secondary: #1E3A8A;
+    --accent: #CA8A04;
+    --accent-light: #EAB308;
+    --bg: #F8FAFC;
+    --bg-dark: #0B1120;
+    --text: #020617;
+    --text-muted: #475569;
+    --text-light: #94A3B8;
+    --surface: rgba(255, 255, 255, 0.85);
+    --surface-border: rgba(255, 255, 255, 0.2);
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --energy-color: #CA8A04;
+    --realestate-color: #3B82F6;
+    --mass-color: #8B5CF6;
+    --success: #22C55E;
+    --danger: #EF4444;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --radius-xs: 6px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
+    --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    --font: 'IBM Plex Sans', -apple-system, sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+}
+
+body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+@media (min-width: 768px) {
+    .container { padding: 0 40px; }
+}
+
+@media (min-width: 1024px) {
+    .container { padding: 0 48px; }
+}
+
+/* === Glass Card === */
+.glass-card {
+    background: var(--surface);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    border-radius: var(--radius);
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.glass-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+/* === Navigation === */
+.nav {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(226, 232, 240, 0.5);
+    border-radius: 14px;
+    transition: background var(--transition), box-shadow var(--transition);
+}
+
+.nav.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
+}
+
+.nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--primary);
+}
+
+.brand-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary);
+    color: var(--accent);
+    border-radius: 10px;
+}
+
+.brand-text {
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+}
+
+.nav-links {
+    display: none;
+    gap: 4px;
+}
+
+@media (min-width: 768px) {
+    .nav-links {
+        display: flex;
+    }
+}
+
+.nav-link {
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: color var(--transition), background var(--transition);
+    cursor: pointer;
+}
+
+.nav-link:hover {
+    color: var(--primary);
+    background: rgba(15, 23, 42, 0.05);
+}
+
+.nav-link.active {
+    color: var(--primary);
+    background: rgba(15, 23, 42, 0.08);
+}
+
+.nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.nav-toggle:hover {
+    background: rgba(15, 23, 42, 0.05);
+}
+
+@media (min-width: 768px) {
+    .nav-toggle { display: none; }
+}
+
+/* Mobile nav */
+.nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: rgba(255,255,255,0.98);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(226,232,240,0.5);
+    border-radius: 0 0 14px 14px;
+    padding: 8px;
+}
+
+/* === Sections === */
+.section {
+    padding: 100px 0;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 56px;
+}
+
+.section-label {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+}
+
+.section-title {
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+}
+
+.section-desc {
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 640px;
+    margin: 0 auto;
+    line-height: 1.7;
+}
+
+/* === Hero Section === */
+.hero-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background: var(--primary);
+    padding-top: 120px;
+    padding-bottom: 80px;
+    overflow: hidden;
+}
+
+.hero-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+}
+
+.hero-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+}
+
+.hero-glow-1 {
+    top: 10%;
+    right: 10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(30, 58, 138, 0.6), transparent 70%);
+}
+
+.hero-glow-2 {
+    bottom: 5%;
+    left: 5%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(202, 138, 4, 0.3), transparent 70%);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    color: #fff;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 32px;
+}
+
+.hero-title {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    color: rgba(255,255,255,0.9);
+}
+
+.hero-highlight {
+    color: var(--accent-light);
+    position: relative;
+}
+
+.hero-subtitle {
+    font-size: clamp(16px, 2vw, 20px);
+    color: rgba(255,255,255,0.6);
+    max-width: 640px;
+    line-height: 1.7;
+    margin-bottom: 48px;
+}
+
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 48px;
+    max-width: 640px;
+}
+
+@media (min-width: 768px) {
+    .hero-stats {
+        grid-template-columns: repeat(4, 1fr);
+        max-width: 800px;
+    }
+}
+
+.stat-card {
+    background: rgba(255,255,255,0.06) !important;
+    border-color: rgba(255,255,255,0.1) !important;
+    padding: 20px 16px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 500;
+}
+
+.hero-cta-group {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    font-family: var(--font);
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 12px;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all var(--transition);
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: var(--primary);
+}
+
+.btn-primary:hover {
+    background: var(--accent-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(202, 138, 4, 0.3);
+}
+
+.btn-outline {
+    background: transparent;
+    color: rgba(255,255,255,0.8);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.btn-outline:hover {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    border-color: rgba(255,255,255,0.3);
+}
+
+/* === Objectives / Pillars === */
+.objectives-section {
+    background: #fff;
+}
+
+.pillars-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+@media (min-width: 768px) {
+    .pillars-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.pillar-card {
+    padding: 32px 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.pillar-featured {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), var(--shadow-md);
+}
+
+.pillar-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--accent);
+    color: var(--primary);
+    border-radius: 6px;
+}
+
+.pillar-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    margin-bottom: 20px;
+}
+
+.pillar-icon-1 { background: rgba(34, 197, 94, 0.1); color: #22C55E; }
+.pillar-icon-2 { background: rgba(30, 58, 138, 0.1); color: var(--secondary); }
+.pillar-icon-3 { background: rgba(202, 138, 4, 0.1); color: var(--accent); }
+
+.pillar-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 12px;
+    line-height: 1.3;
+}
+
+.pillar-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.pillar-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.metric {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.metric-icon {
+    display: flex;
+    flex-shrink: 0;
+}
+
+/* === Industries Section === */
+.industries-section {
+    background: var(--bg);
+}
+
+.industry-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 40px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.8);
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+}
+
+.tab-btn:hover {
+    color: var(--primary);
+    background: #fff;
+    border-color: rgba(15, 23, 42, 0.15);
+}
+
+.tab-btn.active {
+    color: #fff;
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 400ms ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.industry-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+}
+
+@media (min-width: 768px) {
+    .industry-layout {
+        grid-template-columns: 1fr 1.2fr;
+        gap: 40px;
+    }
+}
+
+.industry-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.energy-badge { background: rgba(202,138,4,0.1); color: var(--energy-color); }
+.realestate-badge { background: rgba(59,130,246,0.1); color: var(--realestate-color); }
+.mass-badge { background: rgba(139,92,246,0.1); color: var(--mass-color); }
+
+.industry-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.3;
+    margin-bottom: 24px;
+}
+
+.pain-title, .solutions-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-light);
+    margin-bottom: 16px;
+}
+
+.pain-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pain-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.pain-list li svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.solution-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+@media (min-width: 640px) {
+    .solution-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.solution-card {
+    padding: 20px;
+    cursor: pointer;
+}
+
+.solution-card:hover {
+    transform: translateY(-2px);
+}
+
+.solution-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15,23,42,0.04);
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.solution-card h5 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 4px;
+}
+
+.solution-card p {
+    font-size: 13px;
+    color: var(--text-light);
+}
+
+.benchmark-callout {
+    display: flex;
+    gap: 12px;
+    padding: 16px 20px;
+    background: rgba(15,23,42,0.03) !important;
+    border-color: rgba(15,23,42,0.08) !important;
+}
+
+.benchmark-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.benchmark-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.benchmark-text strong {
+    color: var(--primary);
+}
+
+/* === Roadmap Section === */
+.roadmap-section {
+    background: #fff;
+}
+
+.roadmap-timeline {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.timeline-line {
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), var(--secondary), var(--mass-color));
+    border-radius: 1px;
+}
+
+@media (min-width: 768px) {
+    .timeline-line {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+.timeline-phase {
+    position: relative;
+    padding-left: 56px;
+    margin-bottom: 40px;
+}
+
+@media (min-width: 768px) {
+    .timeline-phase {
+        padding-left: 0;
+        width: 50%;
+    }
+    .timeline-phase:nth-child(even) {
+        margin-left: auto;
+        padding-left: 56px;
+    }
+    .timeline-phase:nth-child(odd) {
+        padding-right: 56px;
+        text-align: right;
+    }
+}
+
+.phase-dot {
+    position: absolute;
+    left: 11px;
+    top: 24px;
+    width: 20px;
+    height: 20px;
+    background: var(--bg);
+    border: 3px solid var(--text-light);
+    border-radius: 50%;
+    z-index: 2;
+    transition: all 400ms ease;
+}
+
+.phase-active .phase-dot,
+.timeline-phase.in-view .phase-dot {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 6px rgba(202,138,4,0.15);
+}
+
+@media (min-width: 768px) {
+    .phase-dot {
+        left: auto;
+        right: -10px;
+    }
+    .timeline-phase:nth-child(even) .phase-dot {
+        left: -10px;
+        right: auto;
+    }
+}
+
+.phase-card {
+    padding: 28px;
+}
+
+.phase-number {
+    font-size: 40px;
+    font-weight: 700;
+    color: rgba(15,23,42,0.06);
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.phase-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 16px;
+}
+
+.phase-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+    .timeline-phase:nth-child(odd) .phase-items {
+        text-align: left;
+    }
+}
+
+.phase-items li {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    padding-left: 18px;
+    position: relative;
+}
+
+.phase-items li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+}
+
+.phase-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    background: rgba(202,138,4,0.08);
+    border-radius: 6px;
+}
+
+/* === Architecture Section === */
+.architecture-section {
+    background: var(--bg-dark);
+    color: #fff;
+}
+
+.architecture-section .section-label {
+    color: var(--accent);
+}
+
+.architecture-section .section-title {
+    color: #fff;
+}
+
+.architecture-section .section-desc {
+    color: rgba(255,255,255,0.5);
+}
+
+.arch-diagram {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+}
+
+.arch-connector {
+    color: rgba(255,255,255,0.2);
+    padding: 4px 0;
+}
+
+.arch-layer {
+    width: 100%;
+    padding: 20px;
+    border-radius: var(--radius);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.layer-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 12px;
+}
+
+.layer-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.arch-node {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    color: rgba(255,255,255,0.7);
+    transition: all var(--transition);
+}
+
+.arch-node:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+.highlight-node {
+    border-color: var(--accent);
+    color: var(--accent-light);
+}
+
+.gateway-node {
+    background: linear-gradient(135deg, rgba(30,58,138,0.3), rgba(202,138,4,0.2));
+    border-color: var(--accent);
+    color: var(--accent-light);
+    font-weight: 600;
+    padding: 12px 32px;
+    font-size: 15px;
+}
+
+.core-node {
+    background: rgba(30,58,138,0.2);
+    border-color: rgba(30,58,138,0.4);
+    color: #93C5FD;
+    font-weight: 600;
+}
+
+.arch-layer-clients { background: rgba(139,92,246,0.05); border-color: rgba(139,92,246,0.15); }
+.arch-layer-channels { background: rgba(202,138,4,0.05); border-color: rgba(202,138,4,0.1); }
+.arch-layer-gateway { background: rgba(202,138,4,0.08); border-color: rgba(202,138,4,0.2); }
+.arch-layer-services { background: rgba(59,130,246,0.05); border-color: rgba(59,130,246,0.1); }
+.arch-layer-core { background: rgba(30,58,138,0.1); border-color: rgba(30,58,138,0.2); }
+
+/* === Market Section === */
+.market-section {
+    background: #fff;
+}
+
+.market-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+}
+
+@media (min-width: 768px) {
+    .market-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.market-card {
+    padding: 28px 20px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.market-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.market-stat {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+}
+
+.market-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.market-source {
+    font-size: 11px;
+    color: var(--text-light);
+}
+
+.regulation-timeline {
+    padding: 32px;
+}
+
+.regulation-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 24px;
+}
+
+.reg-items {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.reg-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.reg-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+}
+
+.reg-dot.active { background: var(--success); box-shadow: 0 0 0 4px rgba(34,197,94,0.15); }
+.reg-dot:not(.active):not(.future) { background: var(--accent); }
+.reg-dot.future { background: var(--text-light); border: 2px solid rgba(148,163,184,0.3); }
+
+.reg-content strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 4px;
+}
+
+.reg-content span {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* === Business Case Section === */
+.business-section {
+    background: var(--bg);
+}
+
+.value-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+@media (min-width: 768px) {
+    .value-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.value-card {
+    padding: 28px 24px;
+}
+
+.value-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.value-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.vi-bank { background: rgba(30,58,138,0.1); color: var(--secondary); }
+.vi-enterprise { background: rgba(202,138,4,0.1); color: var(--accent); }
+.vi-platform { background: rgba(139,92,246,0.1); color: var(--mass-color); }
+
+.value-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.value-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.value-list li {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    padding-left: 20px;
+    position: relative;
+}
+
+.value-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--success);
+}
+
+/* === CTA Section === */
+.cta-section {
+    background: var(--primary);
+    padding: 80px 0;
+}
+
+.cta-card {
+    background: rgba(255,255,255,0.05) !important;
+    border-color: rgba(255,255,255,0.1) !important;
+    padding: 48px 40px;
+    text-align: center;
+}
+
+.cta-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 16px;
+}
+
+.cta-desc {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    max-width: 640px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+}
+
+.cta-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+    .cta-actions {
+        flex-direction: row;
+        max-width: 800px;
+        gap: 20px;
+    }
+}
+
+.cta-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+}
+
+.step-num {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.step-text {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.5;
+    text-align: center;
+}
+
+/* === Footer === */
+.footer {
+    background: var(--primary);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 24px 0;
+}
+
+.footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255,255,255,0.6);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.footer-brand .brand-icon {
+    width: 28px;
+    height: 28px;
+    background: rgba(255,255,255,0.08);
+    color: var(--accent);
+    border-radius: 8px;
+}
+
+.footer-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+}
+
+.footer-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+}
+
+/* === Animations === */
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 600ms ease, transform 600ms ease;
+}
+
+.animate-on-scroll.in-view {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* === Reduced motion === */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+    html { scroll-behavior: auto; }
+}
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="main-nav" class="nav">
+        <div class="nav-inner">
+            <div class="nav-brand">
+                <div class="brand-icon">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                        <rect x="2" y="2" width="24" height="24" rx="6" stroke="currentColor" stroke-width="2"/>
+                        <path d="M8 14h12M14 8v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <span class="brand-text">OpenBanking</span>
+            </div>
+            <div class="nav-links" id="nav-links">
+                <a href="#vision" class="nav-link active" data-section="vision">Tầm nhìn</a>
+                <a href="#industries" class="nav-link" data-section="industries">Ngành</a>
+                <a href="#roadmap" class="nav-link" data-section="roadmap">Lộ trình</a>
+                <a href="#architecture" class="nav-link" data-section="architecture">Kiến trúc</a>
+                <a href="#market" class="nav-link" data-section="market">Thị trường</a>
+                <a href="#business-case" class="nav-link" data-section="business-case">Business Case</a>
+            </div>
+            <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="vision" class="section hero-section">
+        <div class="hero-bg">
+            <div class="hero-grid"></div>
+            <div class="hero-glow hero-glow-1"></div>
+            <div class="hero-glow hero-glow-2"></div>
+        </div>
+        <div class="container hero-content">
+            <div class="hero-badge">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" fill="#CA8A04"/></svg>
+                <span>Enterprise Strategy 2025–2027</span>
+            </div>
+            <h1 class="hero-title">
+                Ngân hàng không còn là<br>
+                <span class="hero-highlight">điểm đến</span>,<br>
+                mà trở thành <span class="hero-highlight">hạ tầng tài chính</span><br>
+                trong hệ sinh thái doanh nghiệp
+            </h1>
+            <p class="hero-subtitle">
+                Định hướng phát triển OpenBanking — Giải pháp tích hợp tài chính cho nhóm ngành doanh nghiệp trọng tâm
+            </p>
+            <div class="hero-stats">
+                <div class="stat-card glass-card">
+                    <div class="stat-value" data-count="3">0</div>
+                    <div class="stat-label">Ngành trọng tâm</div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-value" data-count="3">0</div>
+                    <div class="stat-label">Giai đoạn triển khai</div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-value">$39B</div>
+                    <div class="stat-label">Thị trường toàn cầu 2024</div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-value">28%</div>
+                    <div class="stat-label">CAGR 2025–2034</div>
+                </div>
+            </div>
+            <div class="hero-cta-group">
+                <a href="#industries" class="btn btn-primary">
+                    <span>Khám phá giải pháp</span>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m-4-4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+                <a href="#architecture" class="btn btn-outline">Kiến trúc nền tảng</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Strategic Objectives -->
+    <section id="objectives" class="section objectives-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Mục tiêu chiến lược</span>
+                <h2 class="section-title">Ba trụ cột tăng trưởng</h2>
+                <p class="section-desc">OpenBanking được định hướng là nền tảng mở rộng hệ sinh thái dịch vụ số, cho phép tích hợp trực tiếp dịch vụ tài chính vào hoạt động kinh doanh của doanh nghiệp.</p>
+            </div>
+            <div class="pillars-grid">
+                <div class="pillar-card glass-card" data-pillar="1">
+                    <div class="pillar-icon pillar-icon-1">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 20h20M5 20V8l7-5 7 5v12M9 20v-6h6v6"/></svg>
+                    </div>
+                    <h3 class="pillar-title">Gia tăng CASA<br>Doanh nghiệp</h3>
+                    <p class="pillar-desc">Thu hút dòng tiền vận hành trong hệ sinh thái khách hàng. Tăng tần suất giao dịch và mức độ sử dụng dịch vụ.</p>
+                    <div class="pillar-metrics">
+                        <div class="metric">
+                            <span class="metric-icon">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 14l4-5 3 3 5-7" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                            <span>Embedded Payment</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-icon">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 14l4-5 3 3 5-7" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                            <span>Virtual Account</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pillar-card glass-card pillar-featured" data-pillar="2">
+                    <div class="pillar-badge">Trọng tâm</div>
+                    <div class="pillar-icon pillar-icon-2">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20 15.3 15.3 0 010-20z"/></svg>
+                    </div>
+                    <h3 class="pillar-title">Mở rộng tệp KH<br>qua hệ sinh thái</h3>
+                    <p class="pillar-desc">Tiếp cận khách hàng thông qua nền tảng, phần mềm với đối tác ngành. Gia tăng khả năng phân phối dịch vụ.</p>
+                    <div class="pillar-metrics">
+                        <div class="metric">
+                            <span class="metric-icon">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 14l4-5 3 3 5-7" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                            <span>ERP Connect</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-icon">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 14l4-5 3 3 5-7" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                            <span>Open API</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pillar-card glass-card" data-pillar="3">
+                    <div class="pillar-icon pillar-icon-3">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                    </div>
+                    <h3 class="pillar-title">Gia tăng nguồn<br>thu dịch vụ</h3>
+                    <p class="pillar-desc">Mở rộng doanh thu từ thanh toán, API, thu chi hộ, đối soát. Hình thành mô hình doanh thu từ dịch vụ tài chính.</p>
+                    <div class="pillar-metrics">
+                        <div class="metric">
+                            <span class="metric-icon">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 14l4-5 3 3 5-7" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                            <span>API Monetization</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-icon">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 14l4-5 3 3 5-7" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                            <span>Thu/Chi hộ + Đối soát</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Industries Section -->
+    <section id="industries" class="section industries-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Nhóm ngành trọng tâm</span>
+                <h2 class="section-title">Đóng gói giải pháp theo hệ sinh thái ngành</h2>
+                <p class="section-desc">Tập trung phát triển OpenBanking theo 3 hệ sinh thái có nhu cầu cao nhất về tích hợp tài chính — quản lý dòng tiền vận hành.</p>
+            </div>
+            <div class="industry-tabs">
+                <button class="tab-btn active" data-tab="energy" aria-selected="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    <span>Xăng dầu & Năng lượng</span>
+                </button>
+                <button class="tab-btn" data-tab="realestate" aria-selected="false">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>
+                    <span>Bất động sản</span>
+                </button>
+                <button class="tab-btn" data-tab="mass" aria-selected="false">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    <span>Mass / Platform</span>
+                </button>
+            </div>
+            <!-- Energy Tab Content -->
+            <div class="tab-content active" id="tab-energy">
+                <div class="industry-layout">
+                    <div class="industry-info">
+                        <div class="industry-badge energy-badge">Xăng dầu & Năng lượng</div>
+                        <h3 class="industry-title">Quản lý dòng tiền tập trung toàn hệ thống phân phối</h3>
+                        <div class="pain-points">
+                            <h4 class="pain-title">Nhu cầu trọng tâm</h4>
+                            <ul class="pain-list">
+                                <li>
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="#EF4444" stroke-width="1.5"/><path d="M6 6l6 6M12 6l-6 6" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/></svg>
+                                    <span>Quản lý thu tiền bán hàng theo thời gian thực</span>
+                                </li>
+                                <li>
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="#EF4444" stroke-width="1.5"/><path d="M6 6l6 6M12 6l-6 6" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/></svg>
+                                    <span>Đối soát doanh thu đa phương thức thanh toán</span>
+                                </li>
+                                <li>
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="#EF4444" stroke-width="1.5"/><path d="M6 6l6 6M12 6l-6 6" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/></svg>
+                                    <span>Quản lý hạn mức và công nợ với đại lý</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="industry-solutions">
+                        <h4 class="solutions-title">Định hướng giải pháp</h4>
+                        <div class="solution-cards">
+                            <div class="solution-card glass-card">
+                                <div class="solution-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#CA8A04" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                                </div>
+                                <h5>Tích hợp thanh toán tại điểm bán</h5>
+                                <p>QR / Chuyển khoản / SoftPOS / POS</p>
+                            </div>
+                            <div class="solution-card glass-card">
+                                <div class="solution-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#CA8A04" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 5h6M9 14l2 2 4-4"/></svg>
+                                </div>
+                                <h5>Thu tiền & đối soát tự động</h5>
+                                <p>Ghi nhận giao dịch theo từng điểm bán</p>
+                            </div>
+                            <div class="solution-card glass-card">
+                                <div class="solution-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#CA8A04" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                                </div>
+                                <h5>Quản lý dòng tiền tập trung</h5>
+                                <p>TK chuyên thu, VA, Chi hộ vận hành</p>
+                            </div>
+                            <div class="solution-card glass-card">
+                                <div class="solution-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#CA8A04" stroke-width="1.5"><path d="M16 8v-4a2 2 0 00-2-2h-4a2 2 0 00-2 2v4M2 12h20M12 12v9"/><rect x="2" y="8" width="20" height="4" rx="1"/></svg>
+                                </div>
+                                <h5>PVOil — Thanh toán chuỗi</h5>
+                                <p>Quản lý thu-chi toàn hệ thống phân phối</p>
+                            </div>
+                        </div>
+                        <div class="benchmark-callout glass-card">
+                            <div class="benchmark-icon">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2l2.5 5 5.5.8-4 3.9.9 5.5L10 14.8l-4.9 2.4.9-5.5-4-3.9 5.5-.8z" fill="#CA8A04"/></svg>
+                            </div>
+                            <div class="benchmark-text">
+                                <strong>Benchmark quốc tế:</strong> J.P. Morgan POBO/ROBO cho Energy sector — giảm 80% tài khoản vật lý, automated sweeping cho chuỗi phân phối.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Real Estate Tab Content -->
+            <div class="tab-content" id="tab-realestate">
+                <div class="industry-layout">
+                    <div class="industry-info">
+                        <div class="industry-badge realestate-badge">Bất động sản</div>
+                        <h3 class="industry-title">Quản lý dòng tiền theo dự án, hợp đồng và khách hàng</h3>
+                        <div class="pain-points">
+                            <h4 class="pain-title">Nhu cầu trọng tâm</h4>
+                            <ul class="pain-list">
+                                <li>
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="#EF4444" stroke-width="1.5"/><path d="M6 6l6 6M12 6l-6 6" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/></svg>
+                                    <span>Quản lý dòng tiền theo dự án / hợp đồng / khách hàng</span>
+                                </li>
+                                <li>
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="#EF4444" stroke-width="1.5"/><path d="M6 6l6 6M12 6l-6 6" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/></svg>
+                                    <span>Tự động hóa thu tiền, kiểm soát thanh toán</span>
+                                </li>
+                                <li>
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="#EF4444" stroke-width="1.5"/><path d="M6 6l6 6M12 6l-6 6" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/></svg>
+                                    <span>Kết nối với hệ thống quản trị dự án</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="industry-solutions">
+                        <h4 class="solutions-title">Định hướng giải pháp</h4>
+                        <div class="solution-cards">
+                            <div class="solution-card glass-card">
+                                <div class="solution-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.5"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4M4 7l8 4M4 7v10l8 4m0-10v10"/></svg>
+                                </div>
+                                <h5>VA theo căn hộ / hợp đồng</h5>
+                                <p>Mỗi unit có Virtual Account riêng — auto mapping</p>
+                            </div>
+                            <div class="solution-card glass-card">
+                                <div class="solution-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.5"><path d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6z"/></svg>
+                                </div>
+                                <h5>Kết nối hệ thống bán hàng / ERP</h5>
+                                <p>Tích hợp trực tiếp với PM quản lý dự án</p>
+                            </div>
+                            <div class="solution-card glass-card">
+                                <div class="solution-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.5"><path d="M12 8v4l3 3M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/></svg>
+                                </div>
+                                <h5>Thu tiền & kiểm soát theo tiến độ</h5>
+                                <p>Đối soát dòng tiền theo milestone dự án</p>
+                            </div>
+                        </div>
+                        <div class="benchmark-callout glass-card">
+                            <div class="benchmark-icon">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2l2.5 5 5.5.8-4 3.9.9 5.5L10 14.8l-4.9 2.4.9-5.5-4-3.9 5.5-.8z" fill="#3B82F6"/></svg>
+                            </div>
+                            <div class="benchmark-text">
+                                <strong>Benchmark quốc tế:</strong> Virtual IBAN Property Management (Powens, EU) — mỗi căn hộ 1 vIBAN, auto-reconciliation real-time, giảm 95% manual matching.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Mass Tab Content -->
+            <div class="tab-content" id="tab-mass">
+                <div class="industry-layout">
+                    <div class="industry-info">
+                        <div class="industry-badge mass-badge">Mass / Platform</div>
+                        <h3 class="industry-title">Embedded Banking trên nền tảng vận hành và bán hàng</h3>
+                        <div class="pain-points">
+                            <h4 class="pain-title">Nhu cầu trọng tâm</h4>
+                            <ul class="pain-list">
+                                <li>
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="#EF4444" stroke-width="1.5"/><path d="M6 6l6 6M12 6l-6 6" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/></svg>
+                                    <span>Tích hợp ngân hàng vào phần mềm vận hành</span>
+                                </li>
+                                <li>
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="#EF4444" stroke-width="1.5"/><path d="M6 6l6 6M12 6l-6 6" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/></svg>
+                                    <span>Nhu cầu tài chính dựa trên dòng tiền giao dịch</span>
+                                </li>
+                                <li>
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="#EF4444" stroke-width="1.5"/><path d="M6 6l6 6M12 6l-6 6" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/></svg>
+                                    <span>Tự động hóa đối soát và quản lý doanh thu</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="industry-solutions">
+                        <h4 class="solutions-title">Định hướng giải pháp</h4>
+                        <div class="solution-cards">
+                            <div class="solution-card glass-card">
+                                <div class="solution-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                                </div>
+                                <h5>Embedded Banking trên ERP / Kế toán</h5>
+                                <p>Nhúng dịch vụ ngân hàng vào phần mềm hiện tại</p>
+                            </div>
+                            <div class="solution-card glass-card">
+                                <div class="solution-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                                </div>
+                                <h5>Thu hộ / Chi hộ / Thanh toán chuỗi</h5>
+                                <p>Tự động thu từ cửa hàng, đại lý, logistics</p>
+                            </div>
+                            <div class="solution-card glass-card">
+                                <div class="solution-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                                </div>
+                                <h5>VA + Collection + Chi tự động</h5>
+                                <p>Giải pháp tài chính dựa trên dòng tiền</p>
+                            </div>
+                        </div>
+                        <div class="benchmark-callout glass-card">
+                            <div class="benchmark-icon">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2l2.5 5 5.5.8-4 3.9.9 5.5L10 14.8l-4.9 2.4.9-5.5-4-3.9 5.5-.8z" fill="#8B5CF6"/></svg>
+                            </div>
+                            <div class="benchmark-text">
+                                <strong>Benchmark quốc tế:</strong> Stripe Treasury + Shopify Balance — embedded banking tăng 30% merchant retention, lending dựa trên doanh thu real-time.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap Section -->
+    <section id="roadmap" class="section roadmap-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Lộ trình triển khai</span>
+                <h2 class="section-title">Ba giai đoạn phát triển chiến lược</h2>
+                <p class="section-desc">Từ xây dựng nền tảng đến khai thác giá trị dữ liệu — lộ trình tăng trưởng bền vững qua từng giai đoạn.</p>
+            </div>
+            <div class="roadmap-timeline">
+                <div class="timeline-line"></div>
+                <div class="timeline-phase phase-active" data-phase="1">
+                    <div class="phase-dot"></div>
+                    <div class="phase-card glass-card">
+                        <div class="phase-number">01</div>
+                        <h3 class="phase-title">Xây dựng nền tảng</h3>
+                        <ul class="phase-items">
+                            <li>Chuẩn hóa danh mục Open API / năng lực kết nối mở</li>
+                            <li>Phát triển dịch vụ lõi: TK, VA, Thanh toán, Sao kê</li>
+                            <li>Thí điểm trên các ngành ưu tiên</li>
+                        </ul>
+                        <div class="phase-tag">Foundation</div>
+                    </div>
+                </div>
+                <div class="timeline-phase" data-phase="2">
+                    <div class="phase-dot"></div>
+                    <div class="phase-card glass-card">
+                        <div class="phase-number">02</div>
+                        <h3 class="phase-title">Mở rộng hệ sinh thái</h3>
+                        <ul class="phase-items">
+                            <li>Kết nối với nền tảng, ERP, phần mềm ngành</li>
+                            <li>Chuẩn hóa mô hình tích hợp và hợp tác triển khai</li>
+                            <li>Đóng gói giải pháp theo ngành trọng tâm</li>
+                        </ul>
+                        <div class="phase-tag">Scale</div>
+                    </div>
+                </div>
+                <div class="timeline-phase" data-phase="3">
+                    <div class="phase-dot"></div>
+                    <div class="phase-card glass-card">
+                        <div class="phase-number">03</div>
+                        <h3 class="phase-title">Tối ưu & khai thác giá trị</h3>
+                        <ul class="phase-items">
+                            <li>Triển khai dữ liệu dòng tiền và hành vi giao dịch</li>
+                            <li>Phát triển dịch vụ tài chính mở và bán chéo</li>
+                            <li>Tăng doanh thu từ thanh toán</li>
+                        </ul>
+                        <div class="phase-tag">Monetize</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture" class="section architecture-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Kiến trúc nền tảng</span>
+                <h2 class="section-title">Mô hình tổng quan hệ thống Enterprise Banking</h2>
+                <p class="section-desc">Kiến trúc 5 lớp với API Gateway trung tâm — kết nối T24 Core Banking với hệ sinh thái doanh nghiệp.</p>
+            </div>
+            <div class="arch-diagram">
+                <div class="arch-layer arch-layer-clients">
+                    <div class="layer-label">Khách hàng DN</div>
+                    <div class="layer-items">
+                        <div class="arch-node">ERP / CRM</div>
+                        <div class="arch-node">HIS</div>
+                        <div class="arch-node">E-wallet</div>
+                        <div class="arch-node">PM Hệ thống</div>
+                    </div>
+                </div>
+                <div class="arch-connector">
+                    <svg width="40" height="40" viewBox="0 0 40 40"><path d="M20 5v30M12 27l8 8 8-8" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="arch-layer arch-layer-channels">
+                    <div class="layer-label">Kênh tương tác</div>
+                    <div class="layer-items">
+                        <div class="arch-node highlight-node">PVConnect Biz</div>
+                        <div class="arch-node highlight-node">Merchant Portal</div>
+                        <div class="arch-node">POS / Cloud POS</div>
+                        <div class="arch-node">Cổng TT / QR</div>
+                    </div>
+                </div>
+                <div class="arch-connector">
+                    <svg width="40" height="40" viewBox="0 0 40 40"><path d="M20 5v30M12 27l8 8 8-8" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="arch-layer arch-layer-gateway">
+                    <div class="layer-label">API Gateway</div>
+                    <div class="layer-items">
+                        <div class="arch-node gateway-node">APIC (API Gateway)</div>
+                    </div>
+                </div>
+                <div class="arch-connector">
+                    <svg width="40" height="40" viewBox="0 0 40 40"><path d="M20 5v30M12 27l8 8 8-8" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="arch-layer arch-layer-services">
+                    <div class="layer-label">Năng lực nền tảng</div>
+                    <div class="layer-items">
+                        <div class="arch-node">TK Thanh toán</div>
+                        <div class="arch-node">Tín dụng</div>
+                        <div class="arch-node">GP KHDN</div>
+                        <div class="arch-node">Onboarding</div>
+                        <div class="arch-node">Chuyển khoản</div>
+                        <div class="arch-node">TT Hóa đơn</div>
+                    </div>
+                </div>
+                <div class="arch-connector">
+                    <svg width="40" height="40" viewBox="0 0 40 40"><path d="M20 5v30M12 27l8 8 8-8" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="arch-layer arch-layer-core">
+                    <div class="layer-label">Core & Hệ thống vệ tinh</div>
+                    <div class="layer-items">
+                        <div class="arch-node core-node">T24 CORE</div>
+                        <div class="arch-node">CRM</div>
+                        <div class="arch-node">BI Reports</div>
+                        <div class="arch-node">AML</div>
+                        <div class="arch-node">Đối soát TT</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Market Section -->
+    <section id="market" class="section market-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Bối cảnh thị trường</span>
+                <h2 class="section-title">Open Banking — Thời điểm vàng cho Việt Nam</h2>
+            </div>
+            <div class="market-grid">
+                <div class="market-card glass-card">
+                    <div class="market-stat">$39B</div>
+                    <div class="market-label">Thị trường toàn cầu 2024</div>
+                    <div class="market-source">Nguồn: Market Research Future, GM Insights</div>
+                </div>
+                <div class="market-card glass-card">
+                    <div class="market-stat">$447B</div>
+                    <div class="market-label">Dự kiến 2034 (CAGR 28%)</div>
+                    <div class="market-source">Nguồn: Fortune Business Insights</div>
+                </div>
+                <div class="market-card glass-card">
+                    <div class="market-stat">722B</div>
+                    <div class="market-label">API calls / năm (2029)</div>
+                    <div class="market-source">Nguồn: Market.us</div>
+                </div>
+                <div class="market-card glass-card">
+                    <div class="market-stat">TT64</div>
+                    <div class="market-label">Thông tư Open API (03/2025)</div>
+                    <div class="market-source">Nguồn: NHNN Việt Nam</div>
+                </div>
+            </div>
+            <div class="regulation-timeline glass-card">
+                <h3 class="regulation-title">Khung pháp lý Việt Nam — Sẵn sàng cho OpenBanking</h3>
+                <div class="reg-items">
+                    <div class="reg-item">
+                        <div class="reg-dot active"></div>
+                        <div class="reg-content">
+                            <strong>Thông tư 64/2024/TT-NHNN</strong>
+                            <span>Hiệu lực 01/03/2025 — Khung pháp lý cho Open API trong ngành ngân hàng</span>
+                        </div>
+                    </div>
+                    <div class="reg-item">
+                        <div class="reg-dot"></div>
+                        <div class="reg-content">
+                            <strong>Nghị định 94/2025/NĐ-CP</strong>
+                            <span>Hiệu lực 01/07/2025 — Fintech Regulatory Sandbox dưới giám sát NHNN</span>
+                        </div>
+                    </div>
+                    <div class="reg-item">
+                        <div class="reg-dot future"></div>
+                        <div class="reg-content">
+                            <strong>Giai đoạn 2 — Consent-driven</strong>
+                            <span>Chia sẻ dữ liệu có đồng thuận và tích hợp dịch vụ</span>
+                        </div>
+                    </div>
+                    <div class="reg-item">
+                        <div class="reg-dot future"></div>
+                        <div class="reg-content">
+                            <strong>Giai đoạn 3 — Payment Initiation</strong>
+                            <span>Khởi tạo thanh toán và năng lực giao dịch đầy đủ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Business Case Section -->
+    <section id="business-case" class="section business-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Business Case</span>
+                <h2 class="section-title">Mô hình doanh thu & Giá trị cốt lõi</h2>
+            </div>
+            <div class="value-grid">
+                <div class="value-card glass-card">
+                    <div class="value-header">
+                        <div class="value-icon vi-bank">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 20h20M5 20V8l7-5 7 5v12"/><rect x="9" y="12" width="6" height="8"/></svg>
+                        </div>
+                        <h3>Đối với Ngân hàng</h3>
+                    </div>
+                    <ul class="value-list">
+                        <li>Giảm chi phí acquisition thông qua platform distribution</li>
+                        <li>Tăng CASA từ embedded deposit accounts</li>
+                        <li>Diversify revenue: API fees, thu/chi hộ, đối soát</li>
+                        <li>Data-driven cross-sell và credit scoring</li>
+                    </ul>
+                </div>
+                <div class="value-card glass-card">
+                    <div class="value-header">
+                        <div class="value-icon vi-enterprise">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+                        </div>
+                        <h3>Đối với Doanh nghiệp</h3>
+                    </div>
+                    <ul class="value-list">
+                        <li>Giảm ma sát trong quy trình tài chính</li>
+                        <li>Real-time cash flow visibility</li>
+                        <li>Tự động hóa đối soát — giảm 95% manual work</li>
+                        <li>Tiếp cận tín dụng nhanh dựa trên dữ liệu giao dịch</li>
+                    </ul>
+                </div>
+                <div class="value-card glass-card">
+                    <div class="value-header">
+                        <div class="value-icon vi-platform">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20 15.3 15.3 0 010-20z"/></svg>
+                        </div>
+                        <h3>Đối với Hệ sinh thái</h3>
+                    </div>
+                    <ul class="value-list">
+                        <li>Revenue sharing từ dịch vụ tài chính tích hợp</li>
+                        <li>Tăng customer lifetime value và stickiness</li>
+                        <li>New revenue streams: lending, insurance embedding</li>
+                        <li>Data insights cho business intelligence</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA / Next Steps -->
+    <section class="section cta-section">
+        <div class="container">
+            <div class="cta-card glass-card">
+                <h2 class="cta-title">Bước tiếp theo</h2>
+                <p class="cta-desc">OpenBanking không chỉ là năng lực kết nối kỹ thuật — đây là nền tảng chiến lược giúp ngân hàng tham gia sâu hơn vào hệ sinh thái kinh doanh của KHDN.</p>
+                <div class="cta-actions">
+                    <div class="cta-step">
+                        <div class="step-num">01</div>
+                        <div class="step-text">Phê duyệt định hướng chiến lược & ngành ưu tiên</div>
+                    </div>
+                    <div class="cta-step">
+                        <div class="step-num">02</div>
+                        <div class="step-text">Triển khai thí điểm PVOil & đối tác BĐS</div>
+                    </div>
+                    <div class="cta-step">
+                        <div class="step-num">03</div>
+                        <div class="step-text">Xây dựng API Catalog & Developer Portal</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <div class="brand-icon">
+                    <svg width="24" height="24" viewBox="0 0 28 28" fill="none"><rect x="2" y="2" width="24" height="24" rx="6" stroke="currentColor" stroke-width="2"/><path d="M8 14h12M14 8v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+                <span>OpenBanking Enterprise Strategy</span>
+            </div>
+            <div class="footer-meta">
+                <span>Khối Khách hàng Doanh nghiệp</span>
+                <span class="footer-dot"></span>
+                <span>Q2 2025</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+/* ==========================================
+   OpenBanking Enterprise Strategy — App Logic
+   Navigation, Tabs, Scroll Animations, Counters
+   ========================================== */
+
+document.addEventListener('DOMContentLoaded', () => {
+    // === Navigation scroll effect ===
+    const nav = document.getElementById('main-nav');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('.section');
+    const navToggle = document.getElementById('nav-toggle');
+    const navLinksContainer = document.getElementById('nav-links');
+
+    // Scroll → add .scrolled class to nav
+    const handleNavScroll = () => {
+        if (window.scrollY > 60) {
+            nav.classList.add('scrolled');
+        } else {
+            nav.classList.remove('scrolled');
+        }
+    };
+
+    window.addEventListener('scroll', handleNavScroll, { passive: true });
+
+    // Mobile menu toggle
+    if (navToggle) {
+        navToggle.addEventListener('click', () => {
+            navLinksContainer.classList.toggle('open');
+        });
+    }
+
+    // Close mobile nav on link click
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            navLinksContainer.classList.remove('open');
+        });
+    });
+
+    // === Active nav link on scroll ===
+    const observerNavOptions = {
+        root: null,
+        rootMargin: '-40% 0px -55% 0px',
+        threshold: 0
+    };
+
+    const navObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.id;
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.dataset.section === id);
+                });
+            }
+        });
+    }, observerNavOptions);
+
+    sections.forEach(section => {
+        if (section.id) {
+            navObserver.observe(section);
+        }
+    });
+
+    // === Industry Tabs ===
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetTab = btn.dataset.tab;
+
+            // Update buttons
+            tabBtns.forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-selected', 'false');
+            });
+            btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
+
+            // Update content
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            const target = document.getElementById(`tab-${targetTab}`);
+            if (target) {
+                target.classList.add('active');
+            }
+        });
+    });
+
+    // === Scroll Animations ===
+    const animateElements = () => {
+        const elements = [
+            ...document.querySelectorAll('.pillar-card'),
+            ...document.querySelectorAll('.solution-card'),
+            ...document.querySelectorAll('.market-card'),
+            ...document.querySelectorAll('.value-card'),
+            ...document.querySelectorAll('.timeline-phase'),
+            ...document.querySelectorAll('.arch-layer'),
+            ...document.querySelectorAll('.regulation-timeline'),
+            ...document.querySelectorAll('.benchmark-callout'),
+            ...document.querySelectorAll('.cta-card')
+        ];
+
+        elements.forEach(el => {
+            el.classList.add('animate-on-scroll');
+        });
+
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Add staggered delay based on index in parent
+                    const siblings = entry.target.parentElement?.children;
+                    if (siblings) {
+                        const index = Array.from(siblings).indexOf(entry.target);
+                        entry.target.style.transitionDelay = `${index * 80}ms`;
+                    }
+                    entry.target.classList.add('in-view');
+                    scrollObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '0px 0px -60px 0px',
+            threshold: 0.1
+        });
+
+        elements.forEach(el => scrollObserver.observe(el));
+    };
+
+    animateElements();
+
+    // === Counter Animation ===
+    const animateCounters = () => {
+        const counters = document.querySelectorAll('[data-count]');
+
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const target = parseInt(el.dataset.count, 10);
+                    let current = 0;
+                    const increment = target / 30;
+                    const step = () => {
+                        current += increment;
+                        if (current < target) {
+                            el.textContent = Math.ceil(current);
+                            requestAnimationFrame(step);
+                        } else {
+                            el.textContent = target;
+                        }
+                    };
+                    requestAnimationFrame(step);
+                    counterObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        counters.forEach(counter => counterObserver.observe(counter));
+    };
+
+    animateCounters();
+
+    // === Hero parallax (subtle) ===
+    const heroGlows = document.querySelectorAll('.hero-glow');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!prefersReducedMotion && heroGlows.length > 0) {
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    const scrollY = window.scrollY;
+                    heroGlows.forEach((glow, i) => {
+                        const speed = (i + 1) * 0.15;
+                        glow.style.transform = `translateY(${scrollY * speed}px)`;
+                    });
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }, { passive: true });
+    }
+
+    // === Smooth anchor scroll ===
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', (e) => {
+            const targetId = anchor.getAttribute('href');
+            if (targetId === '#') return;
+            const target = document.querySelector(targetId);
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+});
+    </script>
+</body>
+</html>
