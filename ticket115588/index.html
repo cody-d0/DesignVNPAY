@@ -297,6 +297,7 @@
     .svc-icon.el { background: rgba(250,204,21,0.12); }
     .svc-icon.wa { background: rgba(56,189,248,0.12); }
     .svc-icon.wi { background: rgba(168,85,247,0.12); }
+    .svc-icon.rent { background: rgba(234,88,12,0.12); }
 
     .svc-input {
       width: 72px; padding: 4px 8px; background: var(--bg-input); border: 1px solid var(--border);
@@ -627,6 +628,13 @@
               <td class="svc-price">100.000 ₫</td>
               <td class="svc-sub" id="s-wi">—</td>
             </tr>
+            <tr>
+              <td>4</td>
+              <td><div class="svc-name"><div class="svc-icon rent">🏠</div>Thuê nhà</div></td>
+              <td><input type="number" class="svc-input" id="f-rent" min="0" step="100000" placeholder="0" oninput="calc()"><span class="svc-unit">₫</span></td>
+              <td class="svc-price">—</td>
+              <td class="svc-sub" id="s-rent">—</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -706,6 +714,14 @@
             <span class="tenant-svc-qty" id="t-wi-qty"></span>
           </div>
           <span class="tenant-svc-amt" id="t-wi-amt"></span>
+        </div>
+
+        <div class="tenant-svc-row" id="t-row-rent" style="display:none">
+          <div class="tenant-svc-left">
+            <span class="tenant-svc-icon">🏠</span>
+            <span class="tenant-svc-name">Thuê nhà</span>
+          </div>
+          <span class="tenant-svc-amt" id="t-rent-amt"></span>
         </div>
 
         <div class="tenant-total">
@@ -839,13 +855,15 @@ function calc() {
   const el = parseFloat(document.getElementById('f-el').value) || 0;
   const wa = parseFloat(document.getElementById('f-wa').value) || 0;
   const wi = parseFloat(document.getElementById('f-wi').value) || 0;
+  const rent = parseFloat(document.getElementById('f-rent').value) || 0;
 
   const sEl = el * P.el, sWa = wa * P.wa, sWi = wi * P.wi;
-  const total = sEl + sWa + sWi;
+  const total = sEl + sWa + sWi + rent;
 
   setSub('s-el', sEl, el);
   setSub('s-wa', sWa, wa);
   setSub('s-wi', sWi, wi);
+  setSub('s-rent', rent, rent);
 
   const tv = document.getElementById('total-val');
   tv.textContent = vnd(total);
@@ -938,10 +956,11 @@ function save() {
     el: parseFloat(document.getElementById('f-el').value) || 0,
     wa: parseFloat(document.getElementById('f-wa').value) || 0,
     wi: parseFloat(document.getElementById('f-wi').value) || 0,
+    rent: parseFloat(document.getElementById('f-rent').value) || 0,
     paid: false, paidAt: null,
     ts: new Date().toISOString()
   };
-  r.total = r.el * P.el + r.wa * P.wa + r.wi * P.wi;
+  r.total = r.el * P.el + r.wa * P.wa + r.wi * P.wi + r.rent;
 
   const hist = getHist();
   const idx = hist.findIndex(x => x.id === r.id);
@@ -970,6 +989,7 @@ function load(id) {
   document.getElementById('f-el').value = r.el || '';
   document.getElementById('f-wa').value = r.wa || '';
   document.getElementById('f-wi').value = r.wi || '';
+  document.getElementById('f-rent').value = r.rent || '';
   calc();
   renderHist();
   closeMobile();
@@ -1000,6 +1020,7 @@ function newReceipt() {
   document.getElementById('f-el').value = '';
   document.getElementById('f-wa').value = '';
   document.getElementById('f-wi').value = '';
+  document.getElementById('f-rent').value = '';
   // Default: last month 14th to this month 14th
   const now = new Date();
   const to = new Date(now.getFullYear(), now.getMonth(), 14);
@@ -1042,15 +1063,23 @@ function makeSlug(r) {
 
 function encodeReceipt(r) {
   const from = new Date(r.dateFrom);
-  const yOff = from.getFullYear() - 2024;          // 4 bits (0-15, covers 2024-2039)
-  const fMM  = from.getMonth() + 1;                // 4 bits (1-12)
-  const fDD  = from.getDate();                     // 5 bits (1-31)
-  const el   = Math.round(parseFloat(r.el) || 0);  // 10 bits (0-1023 kWh)
-  const wa   = parseInt(r.wa) || 0;                // 4 bits (0-15)
-  const wi   = parseInt(r.wi) || 0;                // 4 bits (0-15)
+  const yOff = from.getFullYear() - 2024;               // 4 bits (0-15)
+  const fMM  = from.getMonth() + 1;                     // 4 bits (1-12)
+  const fDD  = from.getDate();                          // 5 bits (1-31)
+  const el   = Math.round(parseFloat(r.el) || 0);       // 10 bits (0-1023)
+  const wa   = parseInt(r.wa) || 0;                     // 4 bits (0-15)
+  const wi   = parseInt(r.wi) || 0;                     // 4 bits (0-15)
+  const rent = Math.round((parseFloat(r.rent) || 0) / 10000); // 11 bits (0-2047, unit 10K₫)
 
-  const packed = (yOff << 27) | (fMM << 23) | (fDD << 18) | (el << 8) | (wa << 4) | wi;
-  return (packed >>> 0).toString(36);  // unsigned base36
+  // Multiplication packing (42 bits total, safe within JS 53-bit limit)
+  let n = yOff;
+  n = n * 16 + fMM;     // 4b
+  n = n * 32 + fDD;     // 5b
+  n = n * 1024 + el;    // 10b
+  n = n * 16 + wa;      // 4b
+  n = n * 16 + wi;      // 4b
+  n = n * 2048 + rent;  // 11b
+  return n.toString(36);
 }
 
 function shareReceipt() {
@@ -1171,12 +1200,20 @@ function renderTenant(data) {
   showRow('t-row-wa', 't-wa-qty', 't-wa-amt', data.wa, 'người × 100.000₫', P.wa);
   showRow('t-row-wi', 't-wi-qty', 't-wi-amt', data.wi, 'người × 100.000₫', P.wi);
 
-  const total = data.total || (data.el*P.el + data.wa*P.wa + data.wi*P.wi);
+  // Rent row (no unit price, just flat amount)
+  const rent = parseFloat(data.rent) || 0;
+  if (rent > 0) {
+    document.getElementById('t-row-rent').style.display = '';
+    document.getElementById('t-rent-amt').textContent = vnd(rent);
+  }
+
+  const total = data.total || (data.el*P.el + data.wa*P.wa + data.wi*P.wi + rent);
   document.getElementById('t-total').textContent = vnd(total);
   document.getElementById('t-words').textContent = numWords(total);
 
   // Dynamic VietQR
-  const desc = encodeURIComponent(`Tien dich vu ${fmtPeriodShort(data)} Can ho 4031`);
+  const room = data.room || currentRoom;
+  const desc = encodeURIComponent(`Tien dich vu ${fmtPeriodShort(data)} Can ho ${room}`);
   const qrUrl = `https://img.vietqr.io/image/${BANK.bin}-${BANK.acct}-compact2.png?amount=${total}&addInfo=${desc}&accountName=${encodeURIComponent(BANK.name)}`;
   document.getElementById('t-qr-img').src = qrUrl;
 
