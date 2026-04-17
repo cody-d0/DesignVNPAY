@@ -1024,10 +1024,15 @@ function compactDate(iso) {
   return iso.replace(/^20/, '').replace(/-/g, '');
 }
 
+function stripVi(s) {
+  // Remove Vietnamese diacritics → ASCII (shorter Base64)
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+}
+
 function encodeReceipt(r) {
-  // Compact: YYMMDD|YYMMDD|name|el|wa|wi (no id, no total — derived)
-  const parts = [compactDate(r.dateFrom), compactDate(r.dateTo), r.name||'', r.el||0, r.wa||0, r.wi||0];
-  return btoa(unescape(encodeURIComponent(parts.join('|'))));
+  // Compact ASCII: YYMMDD|YYMMDD|name|el|wa|wi
+  const parts = [compactDate(r.dateFrom), compactDate(r.dateTo), stripVi(r.name||''), r.el||0, r.wa||0, r.wi||0];
+  return btoa(parts.join('|'));
 }
 
 function shareReceipt() {
