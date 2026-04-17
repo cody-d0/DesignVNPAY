@@ -403,20 +403,27 @@ function numWords(n) {
 }
 
 // ── DECODE RECEIPT DATA ──
-function decodeReceipt(hash) {
+function expandDate(compact) {
+  // 260413 → 2026-04-13
+  if (!compact || compact.length !== 6) return '';
+  return `20${compact.slice(0,2)}-${compact.slice(2,4)}-${compact.slice(4,6)}`;
+}
+
+function decodeReceipt(hash, slug) {
   try {
     const raw = decodeURIComponent(escape(atob(hash)));
     const parts = raw.split('|');
-    // Format: id|dateFrom|dateTo|name|el|wa|wi|total
+    // Compact format: YYMMDD|YYMMDD|name|el|wa|wi
+    const el = parseFloat(parts[3]) || 0;
+    const wa = parseFloat(parts[4]) || 0;
+    const wi = parseFloat(parts[5]) || 0;
     return {
-      id: parts[0],
-      dateFrom: parts[1],
-      dateTo: parts[2],
-      name: parts[3] || '',
-      el: parseFloat(parts[4]) || 0,
-      wa: parseFloat(parts[5]) || 0,
-      wi: parseFloat(parts[6]) || 0,
-      total: parseFloat(parts[7]) || 0
+      id: slug || 'receipt',
+      dateFrom: expandDate(parts[0]),
+      dateTo: expandDate(parts[1]),
+      name: parts[2] || '',
+      el, wa, wi,
+      total: el * P.el + wa * P.wa + wi * P.wi
     };
   } catch (e) {
     console.error('Failed to decode receipt data:', e);
@@ -520,11 +527,11 @@ function init() {
   const hash = location.hash.slice(1); // remove #
 
   // Match receipt pattern: /4031-MMDDhhmm
-  const match = path.match(/\/4031-\d{8}\/?$/);
+  const match = path.match(/\/(4031-\d{8})\/?$/);
 
   if (match && hash) {
-    // Decode receipt data from hash
-    const data = decodeReceipt(hash);
+    const slug = match[1];
+    const data = decodeReceipt(hash, slug);
     if (data) {
       document.getElementById('view-tenant').style.display = '';
       renderTenant(data);

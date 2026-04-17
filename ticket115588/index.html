@@ -1018,9 +1018,15 @@ function makeSlug(r) {
   return `4031-${mm}${dd}${hh}${mi}`;
 }
 
+function compactDate(iso) {
+  // 2026-04-13 → 260413
+  if (!iso) return '';
+  return iso.replace(/^20/, '').replace(/-/g, '');
+}
+
 function encodeReceipt(r) {
-  // Pipe-delimited compact format: id|dateFrom|dateTo|name|el|wa|wi|total
-  const parts = [r.id, r.dateFrom, r.dateTo, r.name||'', r.el||0, r.wa||0, r.wi||0, r.total||0];
+  // Compact: YYMMDD|YYMMDD|name|el|wa|wi (no id, no total — derived)
+  const parts = [compactDate(r.dateFrom), compactDate(r.dateTo), r.name||'', r.el||0, r.wa||0, r.wi||0];
   return btoa(unescape(encodeURIComponent(parts.join('|'))));
 }
 
