@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phiếu Thu Dịch Vụ — Căn hộ 4031</title>
+  <meta name="description" content="Quản lý và thanh toán phiếu thu tiền dịch vụ hàng tháng cho căn hộ 4031, tầng 4.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧾</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════════
+       DESIGN SYSTEM — Editorial Receipt Manager
+       Light default · Dark toggle · Dual-mode app
+       ═══════════════════════════════════════════════ */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --font-display: 'Manrope', -apple-system, sans-serif;
+      --font-body: 'Manrope', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --r-sm: 6px; --r-md: 10px; --r-lg: 14px; --r-xl: 20px;
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* ── LIGHT MODE (default) ── */
+    [data-theme="light"] {
+      --ink: #1A1A1A;
+      --ink-muted: #6B7280;
+      --ink-faint: #9CA3AF;
+      --bg-deep: #F5F3EE;
+      --bg-panel: #FFFFFF;
+      --bg-card: #FFFFFF;
+      --bg-card-hover: #FAFAF8;
+      --bg-input: #F9F8F5;
+      --border: rgba(0,0,0,0.08);
+      --border-focus: rgba(180,140,40,0.5);
+      --accent: #B48C28;
+      --accent-dark: #8B6914;
+      --accent-soft: rgba(180,140,40,0.1);
+      --accent-glow: rgba(180,140,40,0.06);
+      --success: #16A34A;
+      --success-soft: rgba(22,163,74,0.08);
+      --success-text: #15803D;
+      --danger: #DC2626;
+      --danger-soft: rgba(220,38,38,0.08);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+      --shadow-lg: 0 8px 30px rgba(0,0,0,0.08);
+      --table-header: #F9F8F5;
+      --qr-bg: #FFFFFF;
+    }
+
+    /* ── DARK MODE ── */
+    [data-theme="dark"] {
+      --ink: #F4F1EB;
+      --ink-muted: #A09A8E;
+      --ink-faint: #6B6560;
+      --bg-deep: #0F0E0C;
+      --bg-panel: #1A1917;
+      --bg-card: #222120;
+      --bg-card-hover: #2A2928;
+      --bg-input: #181716;
+      --border: rgba(244,241,235,0.08);
+      --border-focus: rgba(212,175,55,0.4);
+      --accent: #D4AF37;
+      --accent-dark: #B48C28;
+      --accent-soft: rgba(212,175,55,0.15);
+      --accent-glow: rgba(212,175,55,0.06);
+      --success: #4ADE80;
+      --success-soft: rgba(74,222,128,0.1);
+      --success-text: #4ADE80;
+      --danger: #F87171;
+      --danger-soft: rgba(248,113,113,0.1);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+      --shadow-lg: 0 8px 30px rgba(0,0,0,0.4);
+      --table-header: #1A1917;
+      --qr-bg: #FFFFFF;
+    }
+
+    html { font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+      -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+
+    body { background: var(--bg-deep); color: var(--ink); min-height: 100vh;
+      overflow-x: hidden; transition: background 0.4s ease, color 0.3s ease; }
+
+    /* Subtle texture */
+    [data-theme="dark"] body::after {
+      content: ''; position: fixed; inset: 0; opacity: 0.02; pointer-events: none; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* ═══ LAYOUT ═══ */
+    .app-view { display: none; }
+    .app-view.active { display: block; }
+
+    .admin-app {
+      position: relative; z-index: 1;
+      display: grid; grid-template-columns: 300px 1fr; min-height: 100vh;
+    }
+    @media (max-width: 900px) { .admin-app { grid-template-columns: 1fr; } }
+
+    /* ═══ SIDEBAR ═══ */
+    .sidebar {
+      position: sticky; top: 0; height: 100vh;
+      background: var(--bg-panel); border-right: 1px solid var(--border);
+      padding: 20px; display: flex; flex-direction: column;
+      overflow-y: auto; scrollbar-width: thin;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    @media (max-width: 900px) {
+      .sidebar {
+        position: fixed; top: 0; left: 0; bottom: 0; width: 300px; z-index: 100;
+        transform: translateX(-100%); transition: transform 0.4s var(--ease-out), background 0.3s ease;
+        box-shadow: 20px 0 60px rgba(0,0,0,0.3);
+      }
+      .sidebar.open { transform: translateX(0); }
+    }
+
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .sidebar-logo-icon {
+      width: 34px; height: 34px; background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+    .sidebar-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--ink); }
+    .sidebar-subtitle { font-size: 0.68rem; color: var(--ink-faint); letter-spacing: 0.08em; text-transform: uppercase; }
+
+    .sidebar-divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+    .section-title-sm {
+      font-size: 0.65rem; font-weight: 600; color: var(--ink-faint);
+      text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .section-title-sm::before { content: ''; width: 3px; height: 11px; background: var(--accent); border-radius: 2px; }
+
+    .history-list { flex: 1; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; }
+
+    .history-empty { text-align: center; padding: 32px 12px; color: var(--ink-faint); }
+    .history-empty-icon { font-size: 2rem; margin-bottom: 8px; opacity: 0.3; }
+    .history-empty-text { font-size: 0.78rem; line-height: 1.6; }
+
+    .hi {
+      padding: 10px 12px; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--r-md); cursor: pointer; transition: all 0.2s ease; position: relative;
+    }
+    .hi:hover { background: var(--bg-card-hover); border-color: rgba(180,140,40,0.15); }
+    .hi.active { border-color: var(--accent); background: var(--accent-glow); }
+    .hi-month { font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; color: var(--ink); }
+    .hi-tenant { font-size: 0.7rem; color: var(--ink-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hi-total { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500; color: var(--accent); margin-top: 2px; }
+    .hi-paid {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 0.62rem; font-weight: 600; color: var(--success-text);
+      background: var(--success-soft); padding: 1px 7px; border-radius: 100px; margin-top: 4px;
+    }
+    .hi-actions {
+      position: absolute; top: 6px; right: 6px; display: flex; gap: 3px;
+      opacity: 0; transition: opacity 0.15s ease;
+    }
+    .hi:hover .hi-actions { opacity: 1; }
+    .hi-btn {
+      width: 22px; height: 22px; border-radius: 50%; border: none;
+      font-size: 0.65rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .hi-btn-del { background: var(--danger-soft); color: var(--danger); }
+    .hi-btn-share { background: var(--accent-soft); color: var(--accent); }
+
+    .sidebar-footer { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+    .btn-clear {
+      width: 100%; padding: 6px 12px; background: var(--danger-soft); border: 1px solid rgba(220,38,38,0.1);
+      border-radius: var(--r-sm); color: var(--danger); font-family: var(--font-body); font-size: 0.72rem;
+      font-weight: 500; cursor: pointer; transition: all 0.2s ease;
+    }
+    .btn-clear:hover { background: rgba(220,38,38,0.15); }
+
+    /* ═══ MAIN CONTENT ═══ */
+    .main { padding: 36px 36px 60px; max-width: 740px; margin: 0 auto; width: 100%; }
+    @media (max-width: 900px) { .main { padding: 20px 16px 48px; } }
+
+    /* Mobile toggle */
+    .mobile-btn {
+      display: none; position: fixed; top: 12px; left: 12px; z-index: 101;
+      width: 38px; height: 38px; border-radius: var(--r-md); border: 1px solid var(--border);
+      background: var(--bg-panel); color: var(--ink); font-size: 1rem; cursor: pointer;
+      align-items: center; justify-content: center; backdrop-filter: blur(12px);
+    }
+    @media (max-width: 900px) { .mobile-btn { display: flex; } }
+
+    .mobile-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 99;
+    }
+    .mobile-overlay.open { display: block; }
+
+    /* Theme toggle */
+    .theme-btn {
+      position: fixed; top: 12px; right: 12px; z-index: 50;
+      width: 38px; height: 38px; border-radius: var(--r-md); border: 1px solid var(--border);
+      background: var(--bg-panel); color: var(--ink); font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s ease; backdrop-filter: blur(8px);
+    }
+    .theme-btn:hover { background: var(--bg-card-hover); }
+
+    /* ═══ RECEIPT HEADER ═══ */
+    .receipt-header {
+      text-align: center; margin-bottom: 36px; padding-bottom: 28px;
+      border-bottom: 1px solid var(--border); position: relative;
+      animation: fadeUp 0.5s var(--ease-out) forwards; opacity: 0;
+    }
+    .receipt-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 3px 14px; background: var(--accent-soft); border: 1px solid rgba(180,140,40,0.15);
+      border-radius: 100px; font-size: 0.65rem; font-weight: 600; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px;
+    }
+    .receipt-badge::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.7)} }
+
+    .receipt-main-title {
+      font-family: var(--font-display); font-size: clamp(1.6rem, 3.5vw, 2.3rem);
+      font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; color: var(--ink); margin-bottom: 4px;
+    }
+    .receipt-main-title em { font-style: italic; color: var(--accent); }
+    .receipt-apt { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-faint); letter-spacing: 0.05em; }
+    .receipt-header::after {
+      content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%);
+      width: 50px; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ═══ FORM ═══ */
+    .form-section {
+      margin-bottom: 28px; animation: fadeUp 0.5s var(--ease-out) forwards; opacity: 0;
+    }
+    .form-section:nth-child(2){animation-delay:.08s} .form-section:nth-child(3){animation-delay:.15s}
+    .form-section:nth-child(4){animation-delay:.22s} .form-section:nth-child(5){animation-delay:.28s}
+    .form-section:nth-child(6){animation-delay:.34s}
+
+    .section-label {
+      font-size: 0.65rem; font-weight: 600; color: var(--ink-faint);
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .row-2-wide { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+    @media (max-width: 500px) { .row-2, .row-2-wide { grid-template-columns: 1fr; } }
+
+    .field { display: flex; flex-direction: column; gap: 3px; }
+    .field-label { font-size: 0.72rem; font-weight: 500; color: var(--ink-muted); }
+    .field-input {
+      padding: 10px 14px; background: var(--bg-input); border: 1px solid var(--border);
+      border-radius: var(--r-md); color: var(--ink); font-family: var(--font-body); font-size: 0.88rem;
+      outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .field-input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px var(--accent-glow); background: var(--bg-card); }
+    .field-input::placeholder { color: var(--ink-faint); opacity: 0.5; }
+    .field-input[type="number"] { font-family: var(--font-mono); font-weight: 500; }
+    .field-input[type="number"]::-webkit-outer-spin-button,
+    .field-input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .field-input[type="number"] { -moz-appearance: textfield; }
+
+    /* ═══ SERVICE TABLE ═══ */
+    .svc-table {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden;
+      box-shadow: var(--shadow-sm); transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    .svc-table thead th {
+      padding: 10px 14px; font-size: 0.65rem; font-weight: 600; color: var(--ink-faint);
+      text-transform: uppercase; letter-spacing: 0.08em; text-align: left;
+      background: var(--table-header); border-bottom: 1px solid var(--border);
+    }
+    .svc-table thead th:nth-child(n+3) { text-align: right; }
+    .svc-table tbody tr { transition: background 0.15s ease; }
+    .svc-table tbody tr:hover { background: var(--accent-glow); }
+    .svc-table tbody td {
+      padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 0.85rem; vertical-align: middle;
+    }
+    .svc-table tbody tr:last-child td { border-bottom: none; }
+    .svc-table tbody td:first-child { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-faint); width: 36px; }
+
+    .svc-name { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+    .svc-icon {
+      width: 26px; height: 26px; border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0;
+    }
+    .svc-icon.el { background: rgba(250,204,21,0.12); }
+    .svc-icon.wa { background: rgba(56,189,248,0.12); }
+    .svc-icon.wi { background: rgba(168,85,247,0.12); }
+
+    .svc-input {
+      width: 72px; padding: 4px 8px; background: var(--bg-input); border: 1px solid var(--border);
+      border-radius: var(--r-sm); color: var(--ink); font-family: var(--font-mono); font-size: 0.82rem;
+      font-weight: 500; text-align: center; outline: none; transition: border-color 0.2s ease;
+    }
+    .svc-input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 2px var(--accent-glow); }
+    .svc-input::-webkit-outer-spin-button, .svc-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .svc-input { -moz-appearance: textfield; }
+
+    .svc-unit { font-size: 0.68rem; color: var(--ink-faint); margin-left: 3px; }
+    .svc-price { text-align: right; font-family: var(--font-mono); font-size: 0.82rem; color: var(--ink-muted); white-space: nowrap; }
+    .svc-sub { text-align: right; font-family: var(--font-mono); font-size: 0.82rem; font-weight: 500; color: var(--ink); min-width: 90px; white-space: nowrap; }
+    .svc-sub.has { color: var(--accent); }
+
+    /* ═══ TOTAL ═══ */
+    .total-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg);
+      padding: 20px 24px; margin-top: 20px; box-shadow: var(--shadow-sm);
+      transition: background 0.3s ease;
+    }
+    .total-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+    .total-label { font-size: 0.78rem; font-weight: 500; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .total-value {
+      font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 700; color: var(--accent); letter-spacing: -0.02em;
+    }
+    .total-value.bounce { animation: tbounce 0.35s var(--ease-spring); }
+    @keyframes tbounce { 0%{transform:scale(1)} 40%{transform:scale(1.05)} 100%{transform:scale(1)} }
+    .total-words {
+      font-family: var(--font-display); font-size: 0.9rem; font-style: italic;
+      color: var(--ink-muted); line-height: 1.5; padding-top: 10px; border-top: 1px dashed var(--border);
+    }
+
+    /* ═══ BUTTONS ═══ */
+    .actions { display: flex; gap: 10px; margin-top: 28px; flex-wrap: wrap; }
+    .btn {
+      padding: 10px 20px; border-radius: var(--r-md); font-family: var(--font-body);
+      font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.25s var(--ease-out);
+      display: inline-flex; align-items: center; gap: 6px; border: none; letter-spacing: 0.01em;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      color: #fff; box-shadow: 0 2px 10px rgba(180,140,40,0.2);
+    }
+    [data-theme="light"] .btn-primary { color: #FFFEF5; }
+    .btn-primary:hover { box-shadow: 0 4px 18px rgba(180,140,40,0.35); transform: translateY(-1px); }
+    .btn-secondary { background: var(--bg-card); border: 1px solid var(--border); color: var(--ink); }
+    .btn-secondary:hover { background: var(--bg-card-hover); }
+    .btn-success { background: var(--success-soft); border: 1px solid rgba(22,163,74,0.1); color: var(--success-text); }
+    .btn-success:hover { background: rgba(22,163,74,0.15); }
+    .btn-share {
+      background: linear-gradient(135deg, #2563EB, #1D4ED8); color: #fff;
+      box-shadow: 0 2px 10px rgba(37,99,235,0.2);
+    }
+    .btn-share:hover { box-shadow: 0 4px 18px rgba(37,99,235,0.35); transform: translateY(-1px); }
+
+    /* ═══ TOAST ═══ */
+    .toast {
+      position: fixed; bottom: 20px; right: 20px; padding: 10px 18px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-md);
+      color: var(--ink); font-size: 0.8rem; font-weight: 500;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: var(--shadow-lg); z-index: 200;
+      transform: translateY(120%); opacity: 0; transition: all 0.4s var(--ease-out);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ═══ SHARE MODAL ═══ */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 150;
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--r-xl);
+      padding: 28px; max-width: 480px; width: 100%; box-shadow: var(--shadow-lg);
+      animation: fadeUp 0.3s var(--ease-out);
+    }
+    .modal-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; margin-bottom: 6px; }
+    .modal-sub { font-size: 0.78rem; color: var(--ink-muted); margin-bottom: 16px; }
+    .modal-link {
+      width: 100%; padding: 10px 14px; background: var(--bg-input); border: 1px solid var(--border);
+      border-radius: var(--r-md); font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink);
+      word-break: break-all; margin-bottom: 12px; cursor: text; outline: none;
+    }
+    .modal-actions { display: flex; gap: 8px; }
+    .modal-close { margin-left: auto; }
+
+    /* ═══════════════════════════════════════════
+       TENANT VIEW — Clean invoice for tenants
+       ═══════════════════════════════════════════ */
+    .tenant-wrap {
+      max-width: 520px; margin: 0 auto; padding: 24px 16px 48px; min-height: 100vh;
+    }
+
+    .tenant-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-xl);
+      box-shadow: var(--shadow-md); overflow: hidden; transition: background 0.3s ease;
+    }
+
+    .tenant-head {
+      padding: 24px 24px 20px; text-align: center;
+      border-bottom: 1px solid var(--border); position: relative;
+    }
+    .tenant-head-badge {
+      display: inline-flex; align-items: center; gap: 5px; padding: 2px 12px;
+      background: var(--accent-soft); border-radius: 100px;
+      font-size: 0.62rem; font-weight: 600; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px;
+    }
+    .tenant-head-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--ink); }
+    .tenant-head-title em { color: var(--accent); font-style: italic; }
+    .tenant-head-period { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-faint); margin-top: 4px; }
+    .tenant-head-apt { font-size: 0.72rem; color: var(--ink-muted); margin-top: 2px; }
+
+    .tenant-body { padding: 20px 24px; }
+
+    .tenant-info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--border); }
+    .tenant-info-row:last-child { border-bottom: none; }
+    .tenant-info-label { font-size: 0.78rem; color: var(--ink-muted); }
+    .tenant-info-value { font-size: 0.82rem; font-weight: 500; color: var(--ink); text-align: right; }
+
+    .tenant-detail-title {
+      font-size: 0.65rem; font-weight: 600; color: var(--ink-faint);
+      text-transform: uppercase; letter-spacing: 0.1em; margin: 16px 0 8px;
+    }
+
+    .tenant-svc-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 12px; background: var(--bg-input); border-radius: var(--r-sm); margin-bottom: 4px;
+    }
+    .tenant-svc-left { display: flex; align-items: center; gap: 8px; }
+    .tenant-svc-icon { font-size: 0.85rem; }
+    .tenant-svc-name { font-size: 0.82rem; font-weight: 500; }
+    .tenant-svc-qty { font-size: 0.7rem; color: var(--ink-muted); margin-left: 4px; }
+    .tenant-svc-amt { font-family: var(--font-mono); font-size: 0.82rem; font-weight: 600; color: var(--ink); }
+
+    .tenant-total {
+      margin-top: 16px; padding: 16px; background: var(--accent-soft);
+      border: 1px solid rgba(180,140,40,0.15); border-radius: var(--r-lg); text-align: center;
+    }
+    .tenant-total-label { font-size: 0.72rem; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .tenant-total-value {
+      font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; color: var(--accent); margin: 4px 0;
+    }
+    .tenant-total-words { font-family: var(--font-display); font-size: 0.82rem; font-style: italic; color: var(--ink-muted); }
+
+    /* QR Section */
+    .tenant-qr-section {
+      padding: 24px; border-top: 1px solid var(--border); text-align: center;
+    }
+    .tenant-qr-title {
+      font-size: 0.68rem; font-weight: 600; color: var(--ink-faint);
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;
+    }
+    .tenant-qr-img {
+      width: 220px; height: 220px; margin: 0 auto 12px; border-radius: var(--r-lg);
+      background: var(--qr-bg); padding: 8px; box-shadow: var(--shadow-sm); border: 1px solid var(--border);
+    }
+    .tenant-qr-img img { width: 100%; height: 100%; object-fit: contain; border-radius: var(--r-md); }
+
+    .tenant-bank-info { margin-top: 8px; }
+    .tenant-bank-name { font-weight: 600; font-size: 0.88rem; color: var(--ink); }
+    .tenant-bank-acct { font-family: var(--font-mono); font-size: 0.95rem; font-weight: 600; color: var(--accent); margin: 2px 0; letter-spacing: 0.05em; }
+    .tenant-bank-branch { font-size: 0.72rem; color: var(--ink-muted); }
+
+    /* Copy button for account number */
+    .copy-acct {
+      display: inline-flex; align-items: center; gap: 4px; margin-top: 6px;
+      padding: 3px 10px; background: var(--accent-soft); border: 1px solid rgba(180,140,40,0.12);
+      border-radius: 100px; font-family: var(--font-body); font-size: 0.68rem; font-weight: 500;
+      color: var(--accent); cursor: pointer; transition: all 0.2s ease;
+    }
+    .copy-acct:hover { background: rgba(180,140,40,0.18); }
+
+    /* Confirm payment button */
+    .tenant-actions { padding: 0 24px 24px; }
+    .btn-confirm-pay {
+      width: 100%; padding: 14px; border-radius: var(--r-lg); border: none;
+      font-family: var(--font-body); font-size: 0.9rem; font-weight: 600; cursor: pointer;
+      transition: all 0.3s var(--ease-out);
+      background: linear-gradient(135deg, var(--success), #15803D); color: #fff;
+      box-shadow: 0 3px 12px rgba(22,163,74,0.25);
+    }
+    .btn-confirm-pay:hover { box-shadow: 0 5px 20px rgba(22,163,74,0.4); transform: translateY(-1px); }
+    .btn-confirm-pay:disabled {
+      background: var(--success-soft); color: var(--success-text);
+      box-shadow: none; cursor: default; transform: none;
+    }
+
+    .tenant-paid-stamp {
+      text-align: center; padding: 16px; margin: 0 24px 24px;
+      background: var(--success-soft); border: 2px dashed rgba(22,163,74,0.3);
+      border-radius: var(--r-lg);
+    }
+    .tenant-paid-stamp-icon { font-size: 2rem; margin-bottom: 4px; }
+    .tenant-paid-stamp-text { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--success-text); }
+    .tenant-paid-stamp-time { font-size: 0.7rem; color: var(--ink-muted); margin-top: 2px; }
+
+    .tenant-footer {
+      padding: 16px 24px; border-top: 1px solid var(--border); text-align: center;
+    }
+    .tenant-footer-text { font-size: 0.68rem; color: var(--ink-faint); }
+
+    /* ═══ PRINT ═══ */
+    @media print {
+      body { background: #fff !important; color: #1a1a1a !important; }
+      body::after, .sidebar, .mobile-btn, .mobile-overlay, .actions, .toast,
+      .theme-btn, .modal-overlay, .receipt-badge, .btn-confirm-pay,
+      .tenant-actions, .copy-acct, .sidebar-footer { display: none !important; }
+      .admin-app, .tenant-wrap { display: block !important; }
+      .admin-app { grid-template-columns: 1fr !important; }
+      .main { max-width: 100% !important; padding: 0 !important; }
+      .form-section, .receipt-header { animation: none !important; opacity: 1 !important; }
+      .field-input, .svc-input { border: none !important; background: transparent !important; padding: 0 !important; box-shadow: none !important; font-weight: 600 !important; }
+      .svc-table { border: 1px solid #ddd !important; background: transparent !important; }
+      .svc-table thead th { background: #f5f5f5 !important; color: #666 !important; border-bottom: 1px solid #ddd !important; }
+      .svc-table tbody td { border-bottom: 1px solid #eee !important; color: #1a1a1a !important; }
+      .total-card { border: 1px solid #d4af37 !important; }
+      .total-value, .tenant-total-value { color: #8B6914 !important; }
+      .print-sig { display: grid !important; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 40px; text-align: center; }
+      .print-sig-title { font-weight: 600; margin-bottom: 50px; }
+      .print-sig-line { margin-top: 60px; border-top: 1px dotted #999; padding-top: 4px; font-size: 0.75rem; color: #888; }
+    }
+    .print-sig { display: none; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::selection { background: var(--accent-soft); color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<!-- Theme toggle -->
+<button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Đổi giao diện sáng/tối">🌙</button>
+
+<!-- ════════════════════════════════════════════
+     ADMIN VIEW — Receipt Manager
+     ════════════════════════════════════════════ -->
+<div class="app-view active" id="view-admin">
+  <button class="mobile-btn" id="mob-btn" aria-label="Menu">☰</button>
+  <div class="mobile-overlay" id="mob-overlay"></div>
+
+  <div class="admin-app">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">🧾</div>
+        <div>
+          <div class="sidebar-title">Phiếu Thu</div>
+          <div class="sidebar-subtitle">Căn hộ 4031 · Tầng 4</div>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="section-title-sm">Lịch sử phiếu thu</div>
+      <div class="history-list" id="hist-list"></div>
+      <div class="sidebar-footer" id="sb-footer" style="display:none">
+        <button class="btn-clear" onclick="clearAll()">🗑 Xóa tất cả</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="receipt-header">
+        <div class="receipt-badge">Dịch vụ hàng tháng</div>
+        <h1 class="receipt-main-title">Phiếu Thu <em>Tiền Dịch Vụ</em></h1>
+        <div class="receipt-apt">APARTMENT 4031 — FLOOR 4</div>
+      </div>
+
+      <!-- Period -->
+      <div class="form-section">
+        <div class="section-label">📅 Kỳ thanh toán</div>
+        <div class="row-2">
+          <div class="field">
+            <label class="field-label" for="f-from">Từ ngày</label>
+            <input type="date" class="field-input" id="f-from">
+          </div>
+          <div class="field">
+            <label class="field-label" for="f-to">Đến ngày</label>
+            <input type="date" class="field-input" id="f-to">
+          </div>
+        </div>
+      </div>
+
+      <!-- Tenant -->
+      <div class="form-section">
+        <div class="section-label">👤 Thông tin người thuê</div>
+        <div class="row-2-wide">
+          <div class="field">
+            <label class="field-label" for="f-name">Họ và tên</label>
+            <input type="text" class="field-input" id="f-name" placeholder="Nhập họ tên…">
+          </div>
+          <div class="field">
+            <label class="field-label" for="f-phone">Số điện thoại</label>
+            <input type="tel" class="field-input" id="f-phone" placeholder="0xxx xxx xxx">
+          </div>
+        </div>
+      </div>
+
+      <!-- Services -->
+      <div class="form-section">
+        <div class="section-label">📊 Chi tiết thanh toán</div>
+        <table class="svc-table">
+          <thead><tr><th>STT</th><th>Hạng mục</th><th>Chỉ số / SL</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td><div class="svc-name"><div class="svc-icon el">⚡</div>Điện</div></td>
+              <td><input type="number" class="svc-input" id="f-el" min="0" placeholder="0" oninput="calc()"><span class="svc-unit">kWh</span></td>
+              <td class="svc-price">3.800 ₫</td>
+              <td class="svc-sub" id="s-el">—</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><div class="svc-name"><div class="svc-icon wa">💧</div>Nước</div></td>
+              <td><input type="number" class="svc-input" id="f-wa" min="0" placeholder="0" oninput="calc()"><span class="svc-unit">người</span></td>
+              <td class="svc-price">100.000 ₫</td>
+              <td class="svc-sub" id="s-wa">—</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td><div class="svc-name"><div class="svc-icon wi">📶</div>Wifi</div></td>
+              <td><input type="number" class="svc-input" id="f-wi" min="0" placeholder="0" oninput="calc()"><span class="svc-unit">người</span></td>
+              <td class="svc-price">100.000 ₫</td>
+              <td class="svc-sub" id="s-wi">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Total -->
+      <div class="form-section">
+        <div class="total-card">
+          <div class="total-row">
+            <span class="total-label">Tổng tiền</span>
+            <span class="total-value" id="total-val">0 ₫</span>
+          </div>
+          <div class="total-words" id="total-words"><em>(Bằng chữ: Không đồng)</em></div>
+        </div>
+      </div>
+
+
+
+      <!-- Actions -->
+      <div class="actions">
+        <button class="btn btn-primary" onclick="save()">💾 Lưu phiếu</button>
+        <button class="btn btn-share" onclick="shareReceipt()">🔗 Gửi cho người thuê</button>
+        <button class="btn btn-secondary" onclick="window.print()">🖨 In phiếu</button>
+        <button class="btn btn-success" onclick="newReceipt()">✨ Phiếu mới</button>
+      </div>
+
+      <div class="print-sig">
+        <div><div class="print-sig-title">Người thuê</div><div class="print-sig-line">(Ký, họ tên)</div></div>
+        <div><div class="print-sig-title">Chủ nhà</div><div class="print-sig-line">(Ký, họ tên)</div></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     TENANT VIEW — Invoice for tenants
+     ════════════════════════════════════════════ -->
+<div class="app-view" id="view-tenant">
+  <div class="tenant-wrap">
+    <div class="tenant-card">
+      <!-- Head -->
+      <div class="tenant-head">
+        <div class="tenant-head-badge">Phiếu thu dịch vụ</div>
+        <div class="tenant-head-title">Phiếu Thu <em>Hàng Tháng</em></div>
+        <div class="tenant-head-period" id="t-period">—</div>
+        <div class="tenant-head-apt">Căn hộ 4031 — Tầng 4</div>
+      </div>
+
+      <!-- Body -->
+      <div class="tenant-body">
+        <div class="tenant-info-row">
+          <span class="tenant-info-label">Người thuê</span>
+          <span class="tenant-info-value" id="t-name">—</span>
+        </div>
+
+        <div class="tenant-detail-title">Chi tiết dịch vụ</div>
+
+        <div class="tenant-svc-row" id="t-row-el" style="display:none">
+          <div class="tenant-svc-left">
+            <span class="tenant-svc-icon">⚡</span>
+            <span class="tenant-svc-name">Điện</span>
+            <span class="tenant-svc-qty" id="t-el-qty"></span>
+          </div>
+          <span class="tenant-svc-amt" id="t-el-amt"></span>
+        </div>
+        <div class="tenant-svc-row" id="t-row-wa" style="display:none">
+          <div class="tenant-svc-left">
+            <span class="tenant-svc-icon">💧</span>
+            <span class="tenant-svc-name">Nước</span>
+            <span class="tenant-svc-qty" id="t-wa-qty"></span>
+          </div>
+          <span class="tenant-svc-amt" id="t-wa-amt"></span>
+        </div>
+        <div class="tenant-svc-row" id="t-row-wi" style="display:none">
+          <div class="tenant-svc-left">
+            <span class="tenant-svc-icon">📶</span>
+            <span class="tenant-svc-name">Wifi</span>
+            <span class="tenant-svc-qty" id="t-wi-qty"></span>
+          </div>
+          <span class="tenant-svc-amt" id="t-wi-amt"></span>
+        </div>
+
+        <div class="tenant-total">
+          <div class="tenant-total-label">Tổng thanh toán</div>
+          <div class="tenant-total-value" id="t-total">0 ₫</div>
+          <div class="tenant-total-words" id="t-words"></div>
+        </div>
+      </div>
+
+      <!-- QR -->
+      <div class="tenant-qr-section">
+        <div class="tenant-qr-title">Quét mã để thanh toán</div>
+        <div class="tenant-qr-img">
+          <img id="t-qr-img" src="" alt="VietQR thanh toán" loading="lazy">
+        </div>
+        <div class="tenant-bank-info">
+          <div class="tenant-bank-name">DO DUY TRUONG</div>
+          <div class="tenant-bank-acct">8829114888</div>
+          <div class="tenant-bank-branch">BIDV — PGD Grand Plaza</div>
+          <button class="copy-acct" onclick="copyAcct()">📋 Sao chép STK</button>
+        </div>
+      </div>
+
+      <!-- Confirm / Paid Stamp -->
+      <div id="t-confirm-area" class="tenant-actions">
+        <button class="btn-confirm-pay" id="t-confirm-btn" onclick="confirmPay()">
+          ✅ Xác nhận đã thanh toán
+        </button>
+      </div>
+
+      <div id="t-paid-area" style="display:none">
+        <div class="tenant-paid-stamp">
+          <div class="tenant-paid-stamp-icon">✅</div>
+          <div class="tenant-paid-stamp-text">Đã Thanh Toán</div>
+          <div class="tenant-paid-stamp-time" id="t-paid-time"></div>
+        </div>
+      </div>
+
+      <div class="tenant-footer">
+        <div class="tenant-footer-text">Phiếu thu tự động — Căn hộ 4031, Tầng 4</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Share Modal -->
+<div class="modal-overlay" id="share-modal">
+  <div class="modal">
+    <div class="modal-title">🔗 Gửi phiếu cho người thuê</div>
+    <div class="modal-sub">Sao chép link bên dưới và gửi qua Zalo, SMS hoặc tin nhắn.</div>
+    <textarea class="modal-link" id="share-link" rows="3" readonly></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="copyShareLink()">📋 Sao chép link</button>
+      <button class="btn btn-secondary" id="share-native-btn" onclick="nativeShare()" style="display:none">📤 Chia sẻ</button>
+      <button class="btn btn-secondary modal-close" onclick="closeModal()">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><span id="toast-icon">✅</span> <span id="toast-txt">OK</span></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// SMART RECEIPT MANAGER — Complete Logic
+// Static-site compatible (GitHub Pages / viewer.io.vn)
+// ═══════════════════════════════════════════════
+
+const STORE = 'receipt-4031';
+const P = { el: 3800, wa: 100000, wi: 100000 };
+const BANK = { name: 'DO DUY TRUONG', acct: '8829114888', bin: '970418', bank: 'BIDV' };
+
+let editId = null;
+
+// ── ROUTER ──
+function route() {
+  const h = location.hash;
+
+  // Payment confirmation: #paid=ID&t=TIMESTAMP
+  if (h.startsWith('#paid=')) {
+    const params = new URLSearchParams(h.slice(1));
+    const id = params.get('paid');
+    const ts = params.get('t');
+    if (id) markPaid(id, ts);
+    location.hash = '';
+  }
+
+  // Admin view always
+  showView('admin');
+}
+
+function showView(name) {
+  document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+  document.getElementById(`view-${name}`).classList.add('active');
+  // Hide/show theme toggle and mobile button depending on view
+  document.getElementById('theme-btn').style.display = '';
+}
+
+// ── THEME ──
+function toggleTheme() {
+  const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('receipt-theme', t);
+  document.getElementById('theme-btn').textContent = t === 'dark' ? '☀️' : '🌙';
+}
+
+function initTheme() {
+  const saved = localStorage.getItem('receipt-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  document.getElementById('theme-btn').textContent = saved === 'dark' ? '☀️' : '🌙';
+}
+
+// ── CALCULATION ──
+function calc() {
+  const el = parseFloat(document.getElementById('f-el').value) || 0;
+  const wa = parseFloat(document.getElementById('f-wa').value) || 0;
+  const wi = parseFloat(document.getElementById('f-wi').value) || 0;
+
+  const sEl = el * P.el, sWa = wa * P.wa, sWi = wi * P.wi;
+  const total = sEl + sWa + sWi;
+
+  setSub('s-el', sEl, el);
+  setSub('s-wa', sWa, wa);
+  setSub('s-wi', sWi, wi);
+
+  const tv = document.getElementById('total-val');
+  tv.textContent = vnd(total);
+  tv.classList.remove('bounce'); void tv.offsetWidth; tv.classList.add('bounce');
+
+  document.getElementById('total-words').innerHTML = `<em>(Bằng chữ: ${numWords(total)})</em>`;
+}
+
+function setSub(id, val, qty) {
+  const el = document.getElementById(id);
+  if (qty > 0) { el.textContent = vnd(val); el.classList.add('has'); }
+  else { el.textContent = '—'; el.classList.remove('has'); }
+}
+
+function vnd(n) { return n === 0 ? '0 ₫' : n.toLocaleString('vi-VN') + ' ₫'; }
+
+// ── PERIOD FORMATTING ──
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const [y, m, d] = iso.split('-');
+  return `${parseInt(d)}/${parseInt(m)}/${y}`;
+}
+
+function fmtPeriodShort(r) {
+  // Backward compat: old data uses m/y
+  if (r.m && r.y) return `T${r.m}/${r.y}`;
+  if (r.dateFrom && r.dateTo) return `${fmtDate(r.dateFrom)} — ${fmtDate(r.dateTo)}`;
+  return '—';
+}
+
+function fmtPeriodFull(r) {
+  if (r.m && r.y) return `Tháng ${r.m} / ${r.y}`;
+  if (r.dateFrom && r.dateTo) return `${fmtDate(r.dateFrom)}  →  ${fmtDate(r.dateTo)}`;
+  return '—';
+}
+
+// ── VIETNAMESE NUMBER-TO-WORDS ──
+function numWords(n) {
+  if (n === 0) return 'Không đồng';
+  const u = ['','một','hai','ba','bốn','năm','sáu','bảy','tám','chín'];
+  const g = ['','nghìn','triệu','tỷ'];
+
+  function r3(num, showZ) {
+    const h = Math.floor(num/100), t = Math.floor((num%100)/10), o = num%10;
+    let s = '';
+    if (h > 0) { s += u[h] + ' trăm'; if (t===0 && o>0) s += ' lẻ'; }
+    else if (showZ && (t>0||o>0)) s += 'không trăm';
+
+    if (t > 1) { s += ' ' + u[t] + ' mươi';
+      if (o===1) s += ' mốt'; else if (o===4) s += ' tư'; else if (o===5) s += ' lăm'; else if (o>0) s += ' ' + u[o];
+    } else if (t === 1) { s += ' mười';
+      if (o===1) s += ' một'; else if (o===5) s += ' lăm'; else if (o>0) s += ' ' + u[o];
+    } else if (o > 0) { s += ' ' + u[o]; }
+    return s.trim();
+  }
+
+  // Build groups from low to high, then fix showZ for non-leading groups
+  let groups = [], gi = 0, rem = Math.floor(n);
+  while (rem > 0) {
+    groups.push({ d: rem % 1000, gi });
+    rem = Math.floor(rem / 1000); gi++;
+  }
+  // Reverse so highest group is first
+  groups.reverse();
+  let parts = [];
+  for (let i = 0; i < groups.length; i++) {
+    const { d, gi: gIdx } = groups[i];
+    if (d > 0) {
+      // showZ = true only for non-leading groups (i > 0) that have hundreds = 0
+      const showZ = i > 0;
+      parts.push(r3(d, showZ) + (g[gIdx] ? ' ' + g[gIdx] : ''));
+    }
+  }
+  let res = parts.join(' ');
+  return res.charAt(0).toUpperCase() + res.slice(1) + ' đồng';
+}
+
+// ── SAVE ──
+function save() {
+  const df = document.getElementById('f-from').value;
+  const dt = document.getElementById('f-to').value;
+  if (!df || !dt) { toast('⚠️', 'Chọn kỳ thanh toán (từ ngày — đến ngày)!'); return; }
+
+  const r = {
+    id: editId || Date.now().toString(),
+    dateFrom: document.getElementById('f-from').value || '',
+    dateTo: document.getElementById('f-to').value || '',
+    name: document.getElementById('f-name').value || '',
+    phone: document.getElementById('f-phone').value || '',
+    el: parseFloat(document.getElementById('f-el').value) || 0,
+    wa: parseFloat(document.getElementById('f-wa').value) || 0,
+    wi: parseFloat(document.getElementById('f-wi').value) || 0,
+    paid: false, paidAt: null,
+    ts: new Date().toISOString()
+  };
+  r.total = r.el * P.el + r.wa * P.wa + r.wi * P.wi;
+
+  const hist = getHist();
+  const idx = hist.findIndex(x => x.id === r.id);
+  if (idx >= 0) { r.paid = hist[idx].paid; r.paidAt = hist[idx].paidAt; hist[idx] = r; }
+  else hist.unshift(r);
+
+  localStorage.setItem(STORE, JSON.stringify(hist));
+  editId = r.id;
+  renderHist();
+  toast('✅', 'Đã lưu phiếu thu!');
+}
+
+// ── LOAD ──
+function load(id) {
+  const r = getHist().find(x => x.id === id);
+  if (!r) return;
+  editId = r.id;
+  document.getElementById('f-from').value = r.dateFrom || '';
+  document.getElementById('f-to').value = r.dateTo || '';
+  document.getElementById('f-name').value = r.name;
+  document.getElementById('f-phone').value = r.phone || '';
+  document.getElementById('f-el').value = r.el || '';
+  document.getElementById('f-wa').value = r.wa || '';
+  document.getElementById('f-wi').value = r.wi || '';
+  calc();
+  renderHist();
+  closeMobile();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── DELETE ──
+function del(id, e) {
+  e.stopPropagation();
+  if (!confirm('Xóa phiếu thu này?')) return;
+  const h = getHist().filter(x => x.id !== id);
+  localStorage.setItem(STORE, JSON.stringify(h));
+  if (editId === id) { editId = null; newReceipt(); }
+  renderHist();
+  toast('🗑', 'Đã xóa');
+}
+
+function clearAll() {
+  if (!confirm('Xóa TẤT CẢ lịch sử?')) return;
+  localStorage.removeItem(STORE);
+  editId = null; newReceipt(); renderHist();
+  toast('🗑', 'Đã xóa tất cả');
+}
+
+function newReceipt() {
+  editId = null;
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-phone').value = '';
+  document.getElementById('f-el').value = '';
+  document.getElementById('f-wa').value = '';
+  document.getElementById('f-wi').value = '';
+  // Default: last month 14th to this month 14th
+  const now = new Date();
+  const to = new Date(now.getFullYear(), now.getMonth(), 14);
+  const from = new Date(to); from.setMonth(from.getMonth() - 1);
+  document.getElementById('f-from').value = from.toISOString().split('T')[0];
+  document.getElementById('f-to').value = to.toISOString().split('T')[0];
+  calc(); renderHist();
+}
+
+// ── MARK PAID ──
+function markPaid(id, ts) {
+  const hist = getHist();
+  const r = hist.find(x => x.id === id);
+  if (r) { r.paid = true; r.paidAt = ts || new Date().toISOString(); }
+  localStorage.setItem(STORE, JSON.stringify(hist));
+  renderHist();
+  toast('✅', 'Phiếu thu đã được xác nhận thanh toán!');
+}
+
+function togglePaid(id, e) {
+  e.stopPropagation();
+  const hist = getHist();
+  const r = hist.find(x => x.id === id);
+  if (r) { r.paid = !r.paid; r.paidAt = r.paid ? new Date().toISOString() : null; }
+  localStorage.setItem(STORE, JSON.stringify(hist));
+  renderHist();
+}
+
+// ── SHARE (Clean URL) ──
+function makeSlug(r) {
+  // Format: 4031-MMDDhhmm
+  // MMDD from dateTo, hhmm from creation timestamp
+  const to = new Date(r.dateTo);
+  const created = new Date(parseInt(r.id) || Date.now());
+  const mm = String(to.getMonth() + 1).padStart(2, '0');
+  const dd = String(to.getDate()).padStart(2, '0');
+  const hh = String(created.getHours()).padStart(2, '0');
+  const mi = String(created.getMinutes()).padStart(2, '0');
+  return `4031-${mm}${dd}${hh}${mi}`;
+}
+
+function encodeReceipt(r) {
+  // Pipe-delimited compact format: id|dateFrom|dateTo|name|el|wa|wi|total
+  const parts = [r.id, r.dateFrom, r.dateTo, r.name||'', r.el||0, r.wa||0, r.wi||0, r.total||0];
+  return btoa(unescape(encodeURIComponent(parts.join('|'))));
+}
+
+function shareReceipt() {
+  const df = document.getElementById('f-from').value;
+  const dt = document.getElementById('f-to').value;
+  if (!df || !dt) { toast('⚠️', 'Lưu phiếu trước khi gửi!'); return; }
+
+  // Auto-save first
+  save();
+
+  const r = getHist().find(x => x.id === editId);
+  if (!r) return;
+
+  const slug = makeSlug(r);
+  const data = encodeReceipt(r);
+
+  // Determine base URL
+  const isLocal = location.hostname === 'localhost' || location.protocol === 'file:';
+  const url = isLocal
+    ? location.href.split('#')[0].split('?')[0] + `#v=${encodeURIComponent(btoa(JSON.stringify({id:r.id,dateFrom:r.dateFrom,dateTo:r.dateTo,name:r.name,el:r.el,wa:r.wa,wi:r.wi,total:r.total})))}`
+    : `https://viewer.io.vn/${slug}#${data}`;
+
+  document.getElementById('share-link').value = url;
+  document.getElementById('share-modal').classList.add('open');
+
+  // Show native share if available
+  if (navigator.share) document.getElementById('share-native-btn').style.display = '';
+}
+
+function copyShareLink() {
+  const link = document.getElementById('share-link').value;
+  navigator.clipboard.writeText(link).then(() => toast('📋', 'Đã sao chép link!'));
+}
+
+function nativeShare() {
+  const link = document.getElementById('share-link').value;
+  const r = getHist().find(x => x.id === editId);
+  navigator.share({
+    title: `Phiếu thu ${fmtPeriodShort(r)} — Căn hộ 4031`,
+    text: `Phiếu thu dịch vụ ${fmtPeriodShort(r)}: ${vnd(r.total)}`,
+    url: link
+  }).catch(() => {});
+}
+
+function closeModal() { document.getElementById('share-modal').classList.remove('open'); }
+
+// ── RENDER HISTORY ──
+function renderHist() {
+  const hist = getHist();
+  const list = document.getElementById('hist-list');
+  const footer = document.getElementById('sb-footer');
+
+  if (hist.length === 0) {
+    list.innerHTML = `<div class="history-empty"><div class="history-empty-icon">📋</div><div class="history-empty-text">Chưa có phiếu thu nào.<br>Tạo phiếu đầu tiên!</div></div>`;
+    footer.style.display = 'none';
+    return;
+  }
+
+  footer.style.display = '';
+  list.innerHTML = hist.map((r, i) => `
+    <div class="hi${editId===r.id?' active':''}" onclick="load('${r.id}')" style="animation:fadeUp .3s var(--ease-out) ${i*0.04}s backwards">
+      <div class="hi-month">${fmtPeriodShort(r)}</div>
+      <div class="hi-tenant">${r.name || '(Chưa nhập tên)'}</div>
+      <div class="hi-total">${vnd(r.total||0)}</div>
+      ${r.paid ? '<div class="hi-paid">✓ Đã thanh toán</div>' : ''}
+      <div class="hi-actions">
+        <button class="hi-btn hi-btn-share" onclick="event.stopPropagation();editId='${r.id}';load('${r.id}');shareReceipt()" title="Gửi">🔗</button>
+        <button class="hi-btn" style="background:${r.paid?'var(--success-soft)':'var(--accent-soft)'};color:${r.paid?'var(--success-text)':'var(--accent)'}" onclick="togglePaid('${r.id}',event)" title="${r.paid?'Bỏ đánh dấu':'Đánh dấu đã TT'}">💰</button>
+        <button class="hi-btn hi-btn-del" onclick="del('${r.id}',event)" title="Xóa">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── TENANT VIEW ──
+function renderTenant(data) {
+  document.getElementById('t-period').textContent = fmtPeriodFull(data);
+  document.getElementById('t-name').textContent = data.name || '—';
+
+  const showRow = (rowId, qtyId, amtId, qty, unit, price) => {
+    if (qty > 0) {
+      document.getElementById(rowId).style.display = '';
+      document.getElementById(qtyId).textContent = `${qty} ${unit}`;
+      document.getElementById(amtId).textContent = vnd(qty * price);
+    }
+  };
+
+  showRow('t-row-el', 't-el-qty', 't-el-amt', data.el, 'kWh × 3.800₫', P.el);
+  showRow('t-row-wa', 't-wa-qty', 't-wa-amt', data.wa, 'người × 100.000₫', P.wa);
+  showRow('t-row-wi', 't-wi-qty', 't-wi-amt', data.wi, 'người × 100.000₫', P.wi);
+
+  const total = data.total || (data.el*P.el + data.wa*P.wa + data.wi*P.wi);
+  document.getElementById('t-total').textContent = vnd(total);
+  document.getElementById('t-words').textContent = numWords(total);
+
+  // Dynamic VietQR
+  const desc = encodeURIComponent(`Tien dich vu ${fmtPeriodShort(data)} Can ho 4031`);
+  const qrUrl = `https://img.vietqr.io/image/${BANK.bin}-${BANK.acct}-compact2.png?amount=${total}&addInfo=${desc}&accountName=${encodeURIComponent(BANK.name)}`;
+  document.getElementById('t-qr-img').src = qrUrl;
+
+  // Check if already confirmed (localStorage on tenant device)
+  const paidKey = `paid-${data.id}`;
+  if (localStorage.getItem(paidKey)) {
+    showPaidStamp(localStorage.getItem(paidKey));
+  }
+
+  // Store current data for confirm action
+  window._tenantData = data;
+}
+
+function confirmPay() {
+  if (!confirm('Xác nhận bạn đã chuyển khoản thanh toán?')) return;
+
+  const data = window._tenantData;
+  const now = new Date();
+  const ts = now.toISOString();
+  const timeStr = now.toLocaleString('vi-VN');
+
+  // Save on tenant device
+  localStorage.setItem(`paid-${data.id}`, timeStr);
+
+  showPaidStamp(timeStr);
+
+  // Generate confirmation link for landlord
+  const base = location.hostname === 'localhost' || location.protocol === 'file:'
+    ? location.href.split('#')[0].split('?')[0]
+    : 'https://viewer.io.vn/ticket115588/';
+
+  const confirmUrl = `${base}#paid=${data.id}&t=${encodeURIComponent(ts)}`;
+
+  // Try native share
+  if (navigator.share) {
+    navigator.share({
+      title: 'Xác nhận thanh toán',
+      text: `Đã thanh toán phiếu thu ${fmtPeriodShort(data)} — Căn hộ 4031: ${vnd(data.total)}`,
+      url: confirmUrl
+    }).catch(() => {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(confirmUrl).then(() => toast('📋', 'Link xác nhận đã được sao chép!'));
+    });
+  } else {
+    navigator.clipboard.writeText(
+      `Đã thanh toán phiếu thu ${fmtPeriodShort(data)} — Căn hộ 4031: ${vnd(data.total)}\n${confirmUrl}`
+    ).then(() => toast('📋', 'Nội dung xác nhận đã sao chép — gửi cho chủ nhà!'));
+  }
+}
+
+function showPaidStamp(timeStr) {
+  document.getElementById('t-confirm-area').style.display = 'none';
+  document.getElementById('t-paid-area').style.display = '';
+  document.getElementById('t-paid-time').textContent = timeStr;
+}
+
+function copyAcct() {
+  navigator.clipboard.writeText(BANK.acct).then(() => toast('📋', 'Đã sao chép số tài khoản!'));
+}
+
+// ── UTILITIES ──
+function getHist() { try { return JSON.parse(localStorage.getItem(STORE)||'[]'); } catch { return []; } }
+
+function toast(icon, txt) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-icon').textContent = icon;
+  document.getElementById('toast-txt').textContent = txt;
+  t.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function closeMobile() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('mob-overlay').classList.remove('open');
+}
+
+// ── KEYBOARD ──
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey||e.metaKey) && e.key==='s') { e.preventDefault(); save(); }
+  if ((e.ctrlKey||e.metaKey) && e.key==='p') { e.preventDefault(); window.print(); }
+  if ((e.ctrlKey||e.metaKey) && e.key==='n') { e.preventDefault(); newReceipt(); }
+  if (e.key==='Escape') { closeMobile(); closeModal(); }
+});
+
+// ── INIT ──
+function init() {
+  initTheme();
+
+  // Mobile sidebar
+  document.getElementById('mob-btn').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('mob-overlay').classList.toggle('open');
+  });
+  document.getElementById('mob-overlay').addEventListener('click', closeMobile);
+
+  // Close share modal on overlay click
+  document.getElementById('share-modal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+
+  // Set defaults: last month 14th to this month 14th
+  const now = new Date();
+  const defTo = new Date(now.getFullYear(), now.getMonth(), 14);
+  const defFrom = new Date(defTo); defFrom.setMonth(defFrom.getMonth() - 1);
+  document.getElementById('f-from').value = defFrom.toISOString().split('T')[0];
+  document.getElementById('f-to').value = defTo.toISOString().split('T')[0];
+
+  // Route
+  route();
+
+  // Only init admin UI if on admin view
+  if (!location.hash.startsWith('#v=')) {
+    renderHist();
+    calc();
+  }
+}
+
+// Listen for hash changes
+window.addEventListener('hashchange', route);
+
+init();
+</script>
+</body>
+</html>

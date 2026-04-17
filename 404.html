@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phiếu Thu Dịch Vụ — Căn hộ 4031</title>
+  <meta name="description" content="Phiếu thu tiền dịch vụ hàng tháng — Căn hộ 4031, Tầng 4.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧾</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --font-body: 'Manrope', system-ui, -apple-system, sans-serif;
+      --font-display: 'Manrope', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Light theme */
+    [data-theme="light"] {
+      --bg: #F5F0E8; --surface: #FFFDF8; --border: #E8E0D4;
+      --ink: #2C2416; --ink-muted: #8A7D6B; --ink-faint: #B5A997;
+      --accent: #8B6914; --accent-soft: rgba(180,140,40,0.08);
+      --success: #16A34A; --success-soft: rgba(22,163,74,0.08); --success-text: #15803D;
+      --shadow-sm: 0 1px 3px rgba(44,36,22,0.06);
+      --shadow-md: 0 4px 12px rgba(44,36,22,0.08);
+      --shadow-lg: 0 8px 30px rgba(44,36,22,0.10);
+      --qr-bg: #FFFEF5;
+      --r-md: 10px; --r-lg: 14px; --r-xl: 18px;
+    }
+
+    /* Dark theme */
+    [data-theme="dark"] {
+      --bg: #1A1714; --surface: #242018; --border: #3A342A;
+      --ink: #F0E8D8; --ink-muted: #A89880; --ink-faint: #6B5F4F;
+      --accent: #D4A528; --accent-soft: rgba(212,165,40,0.10);
+      --success: #22C55E; --success-soft: rgba(34,197,94,0.10); --success-text: #22C55E;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.20);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.30);
+      --shadow-lg: 0 8px 30px rgba(0,0,0,0.40);
+      --qr-bg: #2A2520;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg); color: var(--ink);
+      min-height: 100vh; line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+
+    /* Theme toggle */
+    .theme-btn {
+      position: fixed; top: 16px; right: 16px; z-index: 100;
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--border); background: var(--surface);
+      font-size: 1rem; cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      box-shadow: var(--shadow-sm); transition: all 0.3s var(--ease-out);
+    }
+    .theme-btn:hover { box-shadow: var(--shadow-md); transform: scale(1.08); }
+
+    /* 404 message (shown when URL doesn't match receipt pattern) */
+    .not-found {
+      text-align: center; max-width: 420px;
+    }
+    .not-found-icon { font-size: 3rem; margin-bottom: 12px; }
+    .not-found-title { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; }
+    .not-found-text { font-size: 0.88rem; color: var(--ink-muted); line-height: 1.6; }
+    .not-found-link {
+      display: inline-block; margin-top: 16px; padding: 10px 24px;
+      background: var(--accent); color: #fff; text-decoration: none;
+      border-radius: 100px; font-weight: 600; font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+    .not-found-link:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+    /* Tenant Card */
+    .tenant-wrap {
+      width: 100%; max-width: 440px;
+      animation: fadeUp 0.5s var(--ease-out) backwards;
+    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } }
+
+    .tenant-card {
+      background: var(--surface); border-radius: var(--r-xl);
+      box-shadow: var(--shadow-lg); border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    /* Head */
+    .tenant-head {
+      text-align: center; padding: 28px 24px 20px;
+      background: linear-gradient(135deg, rgba(139,105,20,0.04), rgba(139,105,20,0.01));
+      border-bottom: 1px solid var(--border);
+    }
+    .tenant-head-badge {
+      display: inline-block; font-size: 0.6rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.12em; color: var(--accent); background: var(--accent-soft);
+      padding: 3px 12px; border-radius: 100px; margin-bottom: 10px;
+    }
+    .tenant-head-title {
+      font-family: var(--font-display); font-size: 1.35rem; font-weight: 700;
+      color: var(--ink); margin-bottom: 4px;
+    }
+    .tenant-head-title em { font-style: normal; color: var(--accent); }
+    .tenant-head-period {
+      font-family: var(--font-display); font-size: 0.88rem;
+      font-weight: 600; color: var(--ink-muted); margin-bottom: 2px;
+    }
+    .tenant-head-apt {
+      font-size: 0.65rem; font-weight: 500; text-transform: uppercase;
+      letter-spacing: 0.15em; color: var(--ink-faint);
+    }
+
+    /* Body */
+    .tenant-body { padding: 20px 24px; }
+    .tenant-info-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0; border-bottom: 1px dashed var(--border);
+    }
+    .tenant-info-label { font-size: 0.78rem; color: var(--ink-muted); }
+    .tenant-info-value { font-size: 0.85rem; font-weight: 600; }
+
+    .tenant-detail-title {
+      font-size: 0.68rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--ink-faint); margin: 16px 0 8px;
+    }
+
+    .tenant-svc-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+    .tenant-svc-left { display: flex; align-items: center; gap: 8px; }
+    .tenant-svc-icon { font-size: 1rem; }
+    .tenant-svc-name { font-size: 0.85rem; font-weight: 500; }
+    .tenant-svc-qty { font-size: 0.72rem; color: var(--ink-muted); }
+    .tenant-svc-amt { font-family: var(--font-mono); font-size: 0.82rem; font-weight: 500; color: var(--accent); }
+
+    .tenant-total {
+      text-align: center; margin-top: 16px; padding: 16px;
+      background: linear-gradient(135deg, var(--accent-soft), rgba(139,105,20,0.03));
+      border-radius: var(--r-lg); border: 1px dashed rgba(139,105,20,0.2);
+    }
+    .tenant-total-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-muted); }
+    .tenant-total-value {
+      font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; color: var(--accent); margin: 4px 0;
+    }
+    .tenant-total-words { font-family: var(--font-display); font-size: 0.82rem; font-style: italic; color: var(--ink-muted); }
+
+    /* QR Section */
+    .tenant-qr-section {
+      padding: 24px; border-top: 1px solid var(--border); text-align: center;
+    }
+    .tenant-qr-title {
+      font-size: 0.68rem; font-weight: 600; color: var(--ink-faint);
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;
+    }
+    .tenant-qr-img {
+      width: 220px; height: 220px; margin: 0 auto 12px; border-radius: var(--r-lg);
+      background: var(--qr-bg); padding: 8px; box-shadow: var(--shadow-sm); border: 1px solid var(--border);
+    }
+    .tenant-qr-img img { width: 100%; height: 100%; object-fit: contain; border-radius: var(--r-md); }
+
+    .tenant-bank-info { margin-top: 8px; }
+    .tenant-bank-name { font-weight: 600; font-size: 0.88rem; color: var(--ink); }
+    .tenant-bank-acct { font-family: var(--font-mono); font-size: 0.95rem; font-weight: 600; color: var(--accent); margin: 2px 0; letter-spacing: 0.05em; }
+    .tenant-bank-branch { font-size: 0.72rem; color: var(--ink-muted); }
+
+    .copy-acct {
+      display: inline-flex; align-items: center; gap: 4px; margin-top: 6px;
+      padding: 3px 10px; background: var(--accent-soft); border: 1px solid rgba(180,140,40,0.12);
+      border-radius: 100px; font-family: var(--font-body); font-size: 0.68rem; font-weight: 500;
+      color: var(--accent); cursor: pointer; transition: all 0.2s ease;
+    }
+    .copy-acct:hover { background: rgba(180,140,40,0.18); }
+
+    /* Confirm payment button */
+    .tenant-actions { padding: 0 24px 24px; }
+    .btn-confirm-pay {
+      width: 100%; padding: 14px; border-radius: var(--r-lg); border: none;
+      font-family: var(--font-body); font-size: 0.9rem; font-weight: 600; cursor: pointer;
+      transition: all 0.3s var(--ease-out);
+      background: linear-gradient(135deg, var(--success), #15803D); color: #fff;
+      box-shadow: 0 3px 12px rgba(22,163,74,0.25);
+    }
+    .btn-confirm-pay:hover { box-shadow: 0 5px 20px rgba(22,163,74,0.4); transform: translateY(-1px); }
+
+    .tenant-paid-stamp {
+      text-align: center; padding: 16px; margin: 0 24px 24px;
+      background: var(--success-soft); border: 2px dashed rgba(22,163,74,0.3);
+      border-radius: var(--r-lg);
+    }
+    .tenant-paid-stamp-icon { font-size: 2rem; margin-bottom: 4px; }
+    .tenant-paid-stamp-text { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--success-text); }
+    .tenant-paid-stamp-time { font-size: 0.7rem; color: var(--ink-muted); margin-top: 2px; }
+
+    .tenant-footer {
+      padding: 16px 24px; border-top: 1px solid var(--border); text-align: center;
+    }
+    .tenant-footer-text { font-size: 0.68rem; color: var(--ink-faint); }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: var(--surface); border: 1px solid var(--border); color: var(--ink);
+      padding: 10px 20px; border-radius: 100px; font-size: 0.82rem; font-weight: 500;
+      box-shadow: var(--shadow-lg); z-index: 999;
+      opacity: 0; transition: all 0.35s var(--ease-out); pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    ::selection { background: var(--accent-soft); color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Đổi giao diện sáng/tối">🌙</button>
+
+<!-- 404 Not Found (hidden by default when receipt loads) -->
+<div class="not-found" id="view-404" style="display:none">
+  <div class="not-found-icon">🔍</div>
+  <div class="not-found-title">Không tìm thấy trang</div>
+  <div class="not-found-text">
+    Trang bạn tìm kiếm không tồn tại hoặc link đã hết hạn.<br>
+    Vui lòng kiểm tra lại đường dẫn.
+  </div>
+  <a href="https://viewer.io.vn" class="not-found-link">← Về trang chính</a>
+</div>
+
+<!-- Tenant Receipt View -->
+<div class="tenant-wrap" id="view-tenant" style="display:none">
+  <div class="tenant-card">
+    <!-- Head -->
+    <div class="tenant-head">
+      <div class="tenant-head-badge">Phiếu thu dịch vụ</div>
+      <div class="tenant-head-title">Phiếu Thu <em>Hàng Tháng</em></div>
+      <div class="tenant-head-period" id="t-period">—</div>
+      <div class="tenant-head-apt">Căn hộ 4031 — Tầng 4</div>
+    </div>
+
+    <!-- Body -->
+    <div class="tenant-body">
+      <div class="tenant-info-row">
+        <span class="tenant-info-label">Người thuê</span>
+        <span class="tenant-info-value" id="t-name">—</span>
+      </div>
+
+      <div class="tenant-detail-title">Chi tiết dịch vụ</div>
+
+      <div class="tenant-svc-row" id="t-row-el" style="display:none">
+        <div class="tenant-svc-left">
+          <span class="tenant-svc-icon">⚡</span>
+          <span class="tenant-svc-name">Điện</span>
+          <span class="tenant-svc-qty" id="t-el-qty"></span>
+        </div>
+        <span class="tenant-svc-amt" id="t-el-amt"></span>
+      </div>
+      <div class="tenant-svc-row" id="t-row-wa" style="display:none">
+        <div class="tenant-svc-left">
+          <span class="tenant-svc-icon">💧</span>
+          <span class="tenant-svc-name">Nước</span>
+          <span class="tenant-svc-qty" id="t-wa-qty"></span>
+        </div>
+        <span class="tenant-svc-amt" id="t-wa-amt"></span>
+      </div>
+      <div class="tenant-svc-row" id="t-row-wi" style="display:none">
+        <div class="tenant-svc-left">
+          <span class="tenant-svc-icon">📶</span>
+          <span class="tenant-svc-name">Wifi</span>
+          <span class="tenant-svc-qty" id="t-wi-qty"></span>
+        </div>
+        <span class="tenant-svc-amt" id="t-wi-amt"></span>
+      </div>
+
+      <div class="tenant-total">
+        <div class="tenant-total-label">Tổng thanh toán</div>
+        <div class="tenant-total-value" id="t-total">0 ₫</div>
+        <div class="tenant-total-words" id="t-words"></div>
+      </div>
+    </div>
+
+    <!-- QR -->
+    <div class="tenant-qr-section">
+      <div class="tenant-qr-title">Quét mã để thanh toán</div>
+      <div class="tenant-qr-img">
+        <img id="t-qr-img" src="" alt="VietQR thanh toán" loading="lazy">
+      </div>
+      <div class="tenant-bank-info">
+        <div class="tenant-bank-name">DO DUY TRUONG</div>
+        <div class="tenant-bank-acct">8829114888</div>
+        <div class="tenant-bank-branch">BIDV — PGD Grand Plaza</div>
+        <button class="copy-acct" onclick="copyAcct()">📋 Sao chép STK</button>
+      </div>
+    </div>
+
+    <!-- Confirm / Paid Stamp -->
+    <div id="t-confirm-area" class="tenant-actions">
+      <button class="btn-confirm-pay" id="t-confirm-btn" onclick="confirmPay()">
+        ✅ Xác nhận đã thanh toán
+      </button>
+    </div>
+
+    <div id="t-paid-area" style="display:none">
+      <div class="tenant-paid-stamp">
+        <div class="tenant-paid-stamp-icon">✅</div>
+        <div class="tenant-paid-stamp-text">Đã Thanh Toán</div>
+        <div class="tenant-paid-stamp-time" id="t-paid-time"></div>
+      </div>
+    </div>
+
+    <div class="tenant-footer">
+      <div class="tenant-footer-text">Phiếu thu tự động — Căn hộ 4031, Tầng 4</div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><span id="toast-icon">✅</span> <span id="toast-txt">OK</span></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// TENANT RECEIPT VIEWER — 404.html catch-all
+// Parses clean URLs: /4031-MMDDhhmm#PIPE_DELIMITED_BASE64
+// ═══════════════════════════════════════════════
+
+const P = { el: 3800, wa: 100000, wi: 100000 };
+const BANK = { name: 'DO DUY TRUONG', acct: '8829114888', bin: '970418', bank: 'BIDV' };
+
+// ── THEME ──
+function toggleTheme() {
+  const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('receipt-theme', t);
+  document.getElementById('theme-btn').textContent = t === 'dark' ? '☀️' : '🌙';
+}
+
+function initTheme() {
+  const saved = localStorage.getItem('receipt-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  document.getElementById('theme-btn').textContent = saved === 'dark' ? '☀️' : '🌙';
+}
+
+// ── FORMATTERS ──
+function vnd(n) { return n === 0 ? '0 ₫' : n.toLocaleString('vi-VN') + ' ₫'; }
+
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const [y, m, d] = iso.split('-');
+  return `${parseInt(d)}/${parseInt(m)}/${y}`;
+}
+
+function fmtPeriodShort(r) {
+  if (r.dateFrom && r.dateTo) return `${fmtDate(r.dateFrom)} — ${fmtDate(r.dateTo)}`;
+  return '—';
+}
+
+function fmtPeriodFull(r) {
+  if (r.dateFrom && r.dateTo) return `${fmtDate(r.dateFrom)}  →  ${fmtDate(r.dateTo)}`;
+  return '—';
+}
+
+// ── VIETNAMESE NUMBER-TO-WORDS ──
+function numWords(n) {
+  if (n === 0) return 'Không đồng';
+  const u = ['','một','hai','ba','bốn','năm','sáu','bảy','tám','chín'];
+  const g = ['','nghìn','triệu','tỷ'];
+
+  function r3(num, showZ) {
+    const h = Math.floor(num/100), t = Math.floor((num%100)/10), o = num%10;
+    let s = '';
+    if (h > 0) { s += u[h] + ' trăm'; if (t===0 && o>0) s += ' lẻ'; }
+    else if (showZ && (t>0||o>0)) s += 'không trăm';
+
+    if (t > 1) { s += ' ' + u[t] + ' mươi';
+      if (o===1) s += ' mốt'; else if (o===4) s += ' tư'; else if (o===5) s += ' lăm'; else if (o>0) s += ' ' + u[o];
+    } else if (t === 1) { s += ' mười';
+      if (o===1) s += ' một'; else if (o===5) s += ' lăm'; else if (o>0) s += ' ' + u[o];
+    } else if (o > 0) { s += ' ' + u[o]; }
+    return s.trim();
+  }
+
+  let groups = [], gi = 0, rem = Math.floor(n);
+  while (rem > 0) {
+    groups.push({ d: rem % 1000, gi });
+    rem = Math.floor(rem / 1000); gi++;
+  }
+  groups.reverse();
+  let parts = [];
+  for (let i = 0; i < groups.length; i++) {
+    const { d, gi: gIdx } = groups[i];
+    if (d > 0) {
+      const showZ = i > 0;
+      parts.push(r3(d, showZ) + (g[gIdx] ? ' ' + g[gIdx] : ''));
+    }
+  }
+  let res = parts.join(' ');
+  return res.charAt(0).toUpperCase() + res.slice(1) + ' đồng';
+}
+
+// ── DECODE RECEIPT DATA ──
+function decodeReceipt(hash) {
+  try {
+    const raw = decodeURIComponent(escape(atob(hash)));
+    const parts = raw.split('|');
+    // Format: id|dateFrom|dateTo|name|el|wa|wi|total
+    return {
+      id: parts[0],
+      dateFrom: parts[1],
+      dateTo: parts[2],
+      name: parts[3] || '',
+      el: parseFloat(parts[4]) || 0,
+      wa: parseFloat(parts[5]) || 0,
+      wi: parseFloat(parts[6]) || 0,
+      total: parseFloat(parts[7]) || 0
+    };
+  } catch (e) {
+    console.error('Failed to decode receipt data:', e);
+    return null;
+  }
+}
+
+// ── RENDER TENANT VIEW ──
+function renderTenant(data) {
+  document.getElementById('t-period').textContent = fmtPeriodFull(data);
+  document.getElementById('t-name').textContent = data.name || '—';
+
+  const showRow = (rowId, qtyId, amtId, qty, unit, price) => {
+    if (qty > 0) {
+      document.getElementById(rowId).style.display = '';
+      document.getElementById(qtyId).textContent = `${qty} ${unit}`;
+      document.getElementById(amtId).textContent = vnd(qty * price);
+    }
+  };
+
+  showRow('t-row-el', 't-el-qty', 't-el-amt', data.el, 'kWh × 3.800₫', P.el);
+  showRow('t-row-wa', 't-wa-qty', 't-wa-amt', data.wa, 'người × 100.000₫', P.wa);
+  showRow('t-row-wi', 't-wi-qty', 't-wi-amt', data.wi, 'người × 100.000₫', P.wi);
+
+  const total = data.total || (data.el*P.el + data.wa*P.wa + data.wi*P.wi);
+  document.getElementById('t-total').textContent = vnd(total);
+  document.getElementById('t-words').textContent = numWords(total);
+
+  // Dynamic VietQR
+  const desc = encodeURIComponent(`Tien dich vu ${fmtPeriodShort(data)} Can ho 4031`);
+  const qrUrl = `https://img.vietqr.io/image/${BANK.bin}-${BANK.acct}-compact2.png?amount=${total}&addInfo=${desc}&accountName=${encodeURIComponent(BANK.name)}`;
+  document.getElementById('t-qr-img').src = qrUrl;
+
+  // Check if already confirmed
+  const paidKey = `paid-${data.id}`;
+  if (localStorage.getItem(paidKey)) {
+    showPaidStamp(localStorage.getItem(paidKey));
+  }
+
+  // Store for confirm action
+  window._tenantData = data;
+}
+
+// ── CONFIRM PAYMENT ──
+function confirmPay() {
+  if (!confirm('Xác nhận bạn đã chuyển khoản thanh toán?')) return;
+
+  const data = window._tenantData;
+  const now = new Date();
+  const ts = now.toISOString();
+  const timeStr = now.toLocaleString('vi-VN');
+
+  // Save on tenant device
+  localStorage.setItem(`paid-${data.id}`, timeStr);
+  showPaidStamp(timeStr);
+
+  // Generate confirmation link for landlord
+  const confirmUrl = `https://viewer.io.vn/ticket115588/#paid=${data.id}&t=${encodeURIComponent(ts)}`;
+
+  // Share or copy
+  if (navigator.share) {
+    navigator.share({
+      title: 'Xác nhận thanh toán',
+      text: `Đã thanh toán phiếu thu ${fmtPeriodShort(data)} — Căn hộ 4031: ${vnd(data.total)}`,
+      url: confirmUrl
+    }).catch(() => {
+      navigator.clipboard.writeText(confirmUrl).then(() => toast('📋', 'Link xác nhận đã được sao chép!'));
+    });
+  } else {
+    navigator.clipboard.writeText(
+      `Đã thanh toán phiếu thu ${fmtPeriodShort(data)} — Căn hộ 4031: ${vnd(data.total)}\n${confirmUrl}`
+    ).then(() => toast('📋', 'Nội dung xác nhận đã sao chép — gửi cho chủ nhà!'));
+  }
+}
+
+function showPaidStamp(timeStr) {
+  document.getElementById('t-confirm-area').style.display = 'none';
+  document.getElementById('t-paid-area').style.display = '';
+  document.getElementById('t-paid-time').textContent = timeStr;
+}
+
+function copyAcct() {
+  navigator.clipboard.writeText(BANK.acct).then(() => toast('📋', 'Đã sao chép số tài khoản!'));
+}
+
+// ── TOAST ──
+function toast(icon, txt) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-icon').textContent = icon;
+  document.getElementById('toast-txt').textContent = txt;
+  t.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── ROUTER ──
+function init() {
+  initTheme();
+
+  const path = location.pathname;
+  const hash = location.hash.slice(1); // remove #
+
+  // Match receipt pattern: /4031-MMDDhhmm
+  const match = path.match(/\/4031-\d{8}\/?$/);
+
+  if (match && hash) {
+    // Decode receipt data from hash
+    const data = decodeReceipt(hash);
+    if (data) {
+      document.getElementById('view-tenant').style.display = '';
+      renderTenant(data);
+      document.title = `Phiếu thu ${fmtPeriodShort(data)} — Căn hộ 4031`;
+      return;
+    }
+  }
+
+  // No valid receipt — show 404
+  document.getElementById('view-404').style.display = '';
+}
+
+init();
+</script>
+</body>
+</html>
