@@ -1076,8 +1076,26 @@ function shareReceipt() {
 }
 
 function copyShareLink() {
-  const link = document.getElementById('share-link').value;
-  navigator.clipboard.writeText(link).then(() => toast('📋', 'Đã sao chép link!'));
+  const ta = document.getElementById('share-link');
+  const link = ta.value;
+
+  // Fallback: select + execCommand
+  function fallbackCopy() {
+    ta.select();
+    ta.setSelectionRange(0, 99999);
+    try {
+      document.execCommand('copy');
+      toast('📋', 'Đã sao chép link!');
+    } catch { toast('⚠️', 'Không sao chép được — hãy chọn và copy thủ công'); }
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(link)
+      .then(() => toast('📋', 'Đã sao chép link!'))
+      .catch(fallbackCopy);
+  } else {
+    fallbackCopy();
+  }
 }
 
 function nativeShare() {
