@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -411,7 +412,8 @@ function expandDate(compact) {
 
 function decodeReceipt(hash, slug) {
   try {
-    const raw = atob(hash);
+    const raw = LZString.decompressFromEncodedURIComponent(hash);
+    if (!raw) return null;
     const parts = raw.split('|');
     // Compact format: YYMMDD|YYMMDD|name|el|wa|wi
     const el = parseFloat(parts[3]) || 0;

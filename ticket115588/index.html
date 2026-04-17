@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
   <style>
     /* ═══════════════════════════════════════════════
        DESIGN SYSTEM — Editorial Receipt Manager
@@ -1030,9 +1031,9 @@ function stripVi(s) {
 }
 
 function encodeReceipt(r) {
-  // Compact ASCII: YYMMDD|YYMMDD|name|el|wa|wi
+  // Compact ASCII: YYMMDD|YYMMDD|name|el|wa|wi → LZString compressed
   const parts = [compactDate(r.dateFrom), compactDate(r.dateTo), stripVi(r.name||''), r.el||0, r.wa||0, r.wi||0];
-  return btoa(parts.join('|'));
+  return LZString.compressToEncodedURIComponent(parts.join('|'));
 }
 
 function shareReceipt() {
