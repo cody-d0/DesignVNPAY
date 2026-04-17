@@ -756,7 +756,7 @@
   <div class="modal">
     <div class="modal-title">🔗 Gửi phiếu cho người thuê</div>
     <div class="modal-sub">Sao chép link bên dưới và gửi qua Zalo, SMS hoặc tin nhắn.</div>
-    <textarea class="modal-link" id="share-link" rows="3" readonly></textarea>
+    <textarea class="modal-link" id="share-link" rows="2" readonly onclick="this.select()"></textarea>
     <div class="modal-actions">
       <button class="btn btn-primary" onclick="copyShareLink()">📋 Sao chép link</button>
       <button class="btn btn-secondary" id="share-native-btn" onclick="nativeShare()" style="display:none">📤 Chia sẻ</button>
@@ -1079,23 +1079,39 @@ function copyShareLink() {
   const ta = document.getElementById('share-link');
   const link = ta.value;
 
-  // Fallback: select + execCommand
-  function fallbackCopy() {
-    ta.select();
-    ta.setSelectionRange(0, 99999);
-    try {
-      document.execCommand('copy');
-      toast('📋', 'Đã sao chép link!');
-    } catch { toast('⚠️', 'Không sao chép được — hãy chọn và copy thủ công'); }
-  }
-
-  if (navigator.clipboard && navigator.clipboard.writeText) {
+  // Method 1: Modern Clipboard API
+  if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard.writeText(link)
       .then(() => toast('📋', 'Đã sao chép link!'))
-      .catch(fallbackCopy);
-  } else {
-    fallbackCopy();
+      .catch(() => execCopy(ta));
+    return;
   }
+  // Method 2: execCommand fallback
+  execCopy(ta);
+}
+
+function execCopy(ta) {
+  // iOS Safari requires: not readonly, contentEditable, range selection
+  const wasReadonly = ta.readOnly;
+  ta.readOnly = false;
+  ta.contentEditable = 'true';
+  ta.select();
+
+  // iOS-specific range
+  if (navigator.userAgent.match(/ipad|iphone/i)) {
+    const range = document.createRange();
+    range.selectNodeContents(ta);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+  ta.setSelectionRange(0, 99999);
+
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch {}
+  ta.readOnly = wasReadonly;
+  ta.contentEditable = 'false';
+  toast(ok ? '📋' : '⚠️', ok ? 'Đã sao chép link!' : 'Hãy nhấn giữ để chọn và copy thủ công');
 }
 
 function nativeShare() {
