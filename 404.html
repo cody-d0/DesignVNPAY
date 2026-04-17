@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -241,7 +241,7 @@
       <div class="tenant-head-badge">Phiếu thu dịch vụ</div>
       <div class="tenant-head-title">Phiếu Thu <em>Hàng Tháng</em></div>
       <div class="tenant-head-period" id="t-period">—</div>
-      <div class="tenant-head-apt">Căn hộ 4031 — Tầng 4</div>
+      <div class="tenant-head-apt" id="t-apt">Căn hộ — Tầng 4</div>
     </div>
 
     <!-- Body -->
@@ -315,7 +315,7 @@
     </div>
 
     <div class="tenant-footer">
-      <div class="tenant-footer-text">Phiếu thu tự động — Căn hộ 4031, Tầng 4</div>
+      <div class="tenant-footer-text" id="t-footer">Phiếu thu tự động — Tầng 4</div>
     </div>
   </div>
 </div>
@@ -326,9 +326,13 @@
 <script>
 // ═══════════════════════════════════════════════
 // TENANT RECEIPT VIEWER — 404.html catch-all
-// Parses clean URLs: /4031-MMDDhhmm#PIPE_DELIMITED_BASE64
+// Parses clean URLs: /ROOM-MMDD#BASE36_PACKED
 // ═══════════════════════════════════════════════
 
+const ROOMS = {
+  '4031': { name: 'Lê Hồng Phong', floor: 4 },
+  '4032': { name: 'Dương Quốc Đạt', floor: 4 }
+};
 const P = { el: 3800, wa: 100000, wi: 100000 };
 const BANK = { name: 'DO DUY TRUONG', acct: '8829114888', bin: '970418', bank: 'BIDV' };
 
@@ -403,27 +407,40 @@ function numWords(n) {
   return res.charAt(0).toUpperCase() + res.slice(1) + ' đồng';
 }
 
-// ── DECODE RECEIPT DATA ──
-function expandDate(compact) {
-  // 260413 → 2026-04-13
-  if (!compact || compact.length !== 6) return '';
-  return `20${compact.slice(0,2)}-${compact.slice(2,4)}-${compact.slice(4,6)}`;
-}
-
+// ── DECODE RECEIPT DATA (bit-unpacking from base36) ──
 function decodeReceipt(hash, slug) {
   try {
-    const raw = LZString.decompressFromEncodedURIComponent(hash);
-    if (!raw) return null;
-    const parts = raw.split('|');
-    // Compact format: YYMMDD|YYMMDD|name|el|wa|wi
-    const el = parseFloat(parts[3]) || 0;
-    const wa = parseFloat(parts[4]) || 0;
-    const wi = parseFloat(parts[5]) || 0;
+    // Extract room from slug: "4031-0413" → room=4031, toMMDD
+    const [room, toMMDD] = slug.split('-');
+    const roomData = ROOMS[room];
+    if (!roomData) return null;
+
+    // Unpack base36 → 31-bit integer
+    const packed = parseInt(hash, 36);
+    if (isNaN(packed)) return null;
+
+    const wi   = packed & 0xF;            // 4 bits
+    const wa   = (packed >> 4) & 0xF;     // 4 bits
+    const el   = (packed >> 8) & 0x3FF;   // 10 bits
+    const fDD  = (packed >> 18) & 0x1F;   // 5 bits
+    const fMM  = (packed >> 23) & 0xF;    // 4 bits
+    const yOff = (packed >> 27) & 0xF;    // 4 bits
+    const year = 2024 + yOff;
+
+    // Reconstruct dateTo from slug MMDD + inferred year
+    const toMM = parseInt(toMMDD.slice(0, 2));
+    const toDD = parseInt(toMMDD.slice(2, 4));
+    const toYear = toMM < fMM ? year + 1 : year; // handle Dec→Jan crossing
+
+    const dateFrom = `${year}-${String(fMM).padStart(2,'0')}-${String(fDD).padStart(2,'0')}`;
+    const dateTo = `${toYear}-${String(toMM).padStart(2,'0')}-${String(toDD).padStart(2,'0')}`;
+
     return {
-      id: slug || 'receipt',
-      dateFrom: expandDate(parts[0]),
-      dateTo: expandDate(parts[1]),
-      name: parts[2] || '',
+      id: slug,
+      room,
+      dateFrom,
+      dateTo,
+      name: roomData.name,
       el, wa, wi,
       total: el * P.el + wa * P.wa + wi * P.wi
     };
@@ -435,8 +452,12 @@ function decodeReceipt(hash, slug) {
 
 // ── RENDER TENANT VIEW ──
 function renderTenant(data) {
+  const room = data.room || '4031';
+  const roomData = ROOMS[room] || { floor: 4 };
   document.getElementById('t-period').textContent = fmtPeriodFull(data);
   document.getElementById('t-name').textContent = data.name || '—';
+  document.getElementById('t-apt').textContent = `Căn hộ ${room} — Tầng ${roomData.floor}`;
+  document.getElementById('t-footer').textContent = `Phiếu thu tự động — Căn hộ ${room}, Tầng ${roomData.floor}`;
 
   const showRow = (rowId, qtyId, amtId, qty, unit, price) => {
     if (qty > 0) {
@@ -455,7 +476,7 @@ function renderTenant(data) {
   document.getElementById('t-words').textContent = numWords(total);
 
   // Dynamic VietQR
-  const desc = encodeURIComponent(`Tien dich vu ${fmtPeriodShort(data)} Can ho 4031`);
+  const desc = encodeURIComponent(`Tien dich vu ${fmtPeriodShort(data)} Can ho ${room}`);
   const qrUrl = `https://img.vietqr.io/image/${BANK.bin}-${BANK.acct}-compact2.png?amount=${total}&addInfo=${desc}&accountName=${encodeURIComponent(BANK.name)}`;
   document.getElementById('t-qr-img').src = qrUrl;
 
@@ -489,14 +510,14 @@ function confirmPay() {
   if (navigator.share) {
     navigator.share({
       title: 'Xác nhận thanh toán',
-      text: `Đã thanh toán phiếu thu ${fmtPeriodShort(data)} — Căn hộ 4031: ${vnd(data.total)}`,
+      text: `Đã thanh toán phiếu thu ${fmtPeriodShort(data)} — Căn hộ ${data.room}: ${vnd(data.total)}`,
       url: confirmUrl
     }).catch(() => {
       navigator.clipboard.writeText(confirmUrl).then(() => toast('📋', 'Link xác nhận đã được sao chép!'));
     });
   } else {
     navigator.clipboard.writeText(
-      `Đã thanh toán phiếu thu ${fmtPeriodShort(data)} — Căn hộ 4031: ${vnd(data.total)}\n${confirmUrl}`
+      `Đã thanh toán phiếu thu ${fmtPeriodShort(data)} — Căn hộ ${data.room}: ${vnd(data.total)}\n${confirmUrl}`
     ).then(() => toast('📋', 'Nội dung xác nhận đã sao chép — gửi cho chủ nhà!'));
   }
 }
@@ -528,16 +549,17 @@ function init() {
   const path = location.pathname;
   const hash = location.hash.slice(1); // remove #
 
-  // Match receipt pattern: /4031-MMDDhhmm
-  const match = path.match(/\/(4031-\d{8})\/?$/);
+  // Match receipt pattern: /ROOM-MMDD (room = 4031 or 4032)
+  const match = path.match(/\/((?:4031|4032)-\d{4})\/?$/);
 
   if (match && hash) {
     const slug = match[1];
     const data = decodeReceipt(hash, slug);
     if (data) {
+      const room = data.room || '4031';
       document.getElementById('view-tenant').style.display = '';
       renderTenant(data);
-      document.title = `Phiếu thu ${fmtPeriodShort(data)} — Căn hộ 4031`;
+      document.title = `Phiếu thu ${fmtPeriodShort(data)} — Căn hộ ${room}`;
       return;
     }
   }

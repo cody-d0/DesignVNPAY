@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+
   <style>
     /* ═══════════════════════════════════════════════
        DESIGN SYSTEM — Editorial Receipt Manager
@@ -549,7 +549,7 @@
         <div class="sidebar-logo-icon">🧾</div>
         <div>
           <div class="sidebar-title">Phiếu Thu</div>
-          <div class="sidebar-subtitle">Căn hộ 4031 · Tầng 4</div>
+          <div class="sidebar-subtitle" id="sidebar-sub">Căn hộ 4031 · Tầng 4</div>
         </div>
       </div>
       <div class="sidebar-divider"></div>
@@ -564,7 +564,7 @@
       <div class="receipt-header">
         <div class="receipt-badge">Dịch vụ hàng tháng</div>
         <h1 class="receipt-main-title">Phiếu Thu <em>Tiền Dịch Vụ</em></h1>
-        <div class="receipt-apt">APARTMENT 4031 — FLOOR 4</div>
+        <div class="receipt-apt" id="receipt-apt">APARTMENT 4031 — FLOOR 4</div>
       </div>
 
       <!-- Period -->
@@ -582,17 +582,20 @@
         </div>
       </div>
 
-      <!-- Tenant -->
+      <!-- Room + Tenant -->
       <div class="form-section">
         <div class="section-label">👤 Thông tin người thuê</div>
-        <div class="row-2-wide">
+        <div class="row-2">
           <div class="field">
-            <label class="field-label" for="f-name">Họ và tên</label>
-            <input type="text" class="field-input" id="f-name" placeholder="Nhập họ tên…">
+            <label class="field-label" for="f-room">Căn hộ</label>
+            <select class="field-input" id="f-room" onchange="onRoomChange()">
+              <option value="4031">4031 — Tầng 4</option>
+              <option value="4032">4032 — Tầng 4</option>
+            </select>
           </div>
           <div class="field">
-            <label class="field-label" for="f-phone">Số điện thoại</label>
-            <input type="tel" class="field-input" id="f-phone" placeholder="0xxx xxx xxx">
+            <label class="field-label">Người thuê</label>
+            <input type="text" class="field-input" id="f-name" readonly style="background:var(--accent-soft);font-weight:600">
           </div>
         </div>
       </div>
@@ -668,7 +671,7 @@
         <div class="tenant-head-badge">Phiếu thu dịch vụ</div>
         <div class="tenant-head-title">Phiếu Thu <em>Hàng Tháng</em></div>
         <div class="tenant-head-period" id="t-period">—</div>
-        <div class="tenant-head-apt">Căn hộ 4031 — Tầng 4</div>
+        <div class="tenant-head-apt" id="t-apt-preview">Căn hộ 4031 — Tầng 4</div>
       </div>
 
       <!-- Body -->
@@ -742,7 +745,7 @@
       </div>
 
       <div class="tenant-footer">
-        <div class="tenant-footer-text">Phiếu thu tự động — Căn hộ 4031, Tầng 4</div>
+        <div class="tenant-footer-text" id="t-footer-preview">Phiếu thu tự động — Căn hộ 4031, Tầng 4</div>
       </div>
     </div>
   </div>
@@ -771,11 +774,27 @@
 // Static-site compatible (GitHub Pages / viewer.io.vn)
 // ═══════════════════════════════════════════════
 
-const STORE = 'receipt-4031';
+const ROOMS = {
+  '4031': { name: 'Lê Hồng Phong', floor: 4 },
+  '4032': { name: 'Dương Quốc Đạt', floor: 4 }
+};
 const P = { el: 3800, wa: 100000, wi: 100000 };
 const BANK = { name: 'DO DUY TRUONG', acct: '8829114888', bin: '970418', bank: 'BIDV' };
 
 let editId = null;
+let currentRoom = '4031';
+
+function getStore() { return `receipt-${currentRoom}`; }
+function onRoomChange() {
+  currentRoom = document.getElementById('f-room').value;
+  const rd = ROOMS[currentRoom];
+  document.getElementById('f-name').value = rd.name;
+  document.getElementById('sidebar-sub').textContent = `Căn hộ ${currentRoom} · Tầng ${rd.floor}`;
+  document.getElementById('receipt-apt').textContent = `APARTMENT ${currentRoom} — FLOOR ${rd.floor}`;
+  document.getElementById('t-apt-preview').textContent = `Căn hộ ${currentRoom} — Tầng ${rd.floor}`;
+  document.getElementById('t-footer-preview').textContent = `Phiếu thu tự động — Căn hộ ${currentRoom}, Tầng ${rd.floor}`;
+  renderHist();
+}
 
 // ── ROUTER ──
 function route() {
@@ -912,10 +931,10 @@ function save() {
 
   const r = {
     id: editId || Date.now().toString(),
+    room: currentRoom,
     dateFrom: document.getElementById('f-from').value || '',
     dateTo: document.getElementById('f-to').value || '',
-    name: document.getElementById('f-name').value || '',
-    phone: document.getElementById('f-phone').value || '',
+    name: ROOMS[currentRoom].name,
     el: parseFloat(document.getElementById('f-el').value) || 0,
     wa: parseFloat(document.getElementById('f-wa').value) || 0,
     wi: parseFloat(document.getElementById('f-wi').value) || 0,
@@ -929,7 +948,7 @@ function save() {
   if (idx >= 0) { r.paid = hist[idx].paid; r.paidAt = hist[idx].paidAt; hist[idx] = r; }
   else hist.unshift(r);
 
-  localStorage.setItem(STORE, JSON.stringify(hist));
+  localStorage.setItem(getStore(), JSON.stringify(hist));
   editId = r.id;
   renderHist();
   toast('✅', 'Đã lưu phiếu thu!');
@@ -940,10 +959,14 @@ function load(id) {
   const r = getHist().find(x => x.id === id);
   if (!r) return;
   editId = r.id;
+  if (r.room && ROOMS[r.room]) {
+    currentRoom = r.room;
+    document.getElementById('f-room').value = r.room;
+    onRoomChange();
+  }
   document.getElementById('f-from').value = r.dateFrom || '';
   document.getElementById('f-to').value = r.dateTo || '';
-  document.getElementById('f-name').value = r.name;
-  document.getElementById('f-phone').value = r.phone || '';
+  document.getElementById('f-name').value = r.name || ROOMS[currentRoom].name;
   document.getElementById('f-el').value = r.el || '';
   document.getElementById('f-wa').value = r.wa || '';
   document.getElementById('f-wi').value = r.wi || '';
@@ -958,7 +981,7 @@ function del(id, e) {
   e.stopPropagation();
   if (!confirm('Xóa phiếu thu này?')) return;
   const h = getHist().filter(x => x.id !== id);
-  localStorage.setItem(STORE, JSON.stringify(h));
+  localStorage.setItem(getStore(), JSON.stringify(h));
   if (editId === id) { editId = null; newReceipt(); }
   renderHist();
   toast('🗑', 'Đã xóa');
@@ -966,15 +989,14 @@ function del(id, e) {
 
 function clearAll() {
   if (!confirm('Xóa TẤT CẢ lịch sử?')) return;
-  localStorage.removeItem(STORE);
+  localStorage.removeItem(getStore());
   editId = null; newReceipt(); renderHist();
   toast('🗑', 'Đã xóa tất cả');
 }
 
 function newReceipt() {
   editId = null;
-  document.getElementById('f-name').value = '';
-  document.getElementById('f-phone').value = '';
+  document.getElementById('f-name').value = ROOMS[currentRoom].name;
   document.getElementById('f-el').value = '';
   document.getElementById('f-wa').value = '';
   document.getElementById('f-wi').value = '';
@@ -992,7 +1014,7 @@ function markPaid(id, ts) {
   const hist = getHist();
   const r = hist.find(x => x.id === id);
   if (r) { r.paid = true; r.paidAt = ts || new Date().toISOString(); }
-  localStorage.setItem(STORE, JSON.stringify(hist));
+  localStorage.setItem(getStore(), JSON.stringify(hist));
   renderHist();
   toast('✅', 'Phiếu thu đã được xác nhận thanh toán!');
 }
@@ -1002,38 +1024,33 @@ function togglePaid(id, e) {
   const hist = getHist();
   const r = hist.find(x => x.id === id);
   if (r) { r.paid = !r.paid; r.paidAt = r.paid ? new Date().toISOString() : null; }
-  localStorage.setItem(STORE, JSON.stringify(hist));
+  localStorage.setItem(getStore(), JSON.stringify(hist));
   renderHist();
 }
 
 // ── SHARE (Clean URL) ──
+// Slug: ROOM-MMDD (dateTo)
+// Hash: base36 bit-packed integer (~6 chars)
+// Bits: yearOffset(4) + fromMM(4) + fromDD(5) + el(10) + wa(4) + wi(4) = 31 bits
+
 function makeSlug(r) {
-  // Format: 4031-MMDDhhmm
-  // MMDD from dateTo, hhmm from creation timestamp
   const to = new Date(r.dateTo);
-  const created = new Date(parseInt(r.id) || Date.now());
   const mm = String(to.getMonth() + 1).padStart(2, '0');
   const dd = String(to.getDate()).padStart(2, '0');
-  const hh = String(created.getHours()).padStart(2, '0');
-  const mi = String(created.getMinutes()).padStart(2, '0');
-  return `4031-${mm}${dd}${hh}${mi}`;
-}
-
-function compactDate(iso) {
-  // 2026-04-13 → 260413
-  if (!iso) return '';
-  return iso.replace(/^20/, '').replace(/-/g, '');
-}
-
-function stripVi(s) {
-  // Remove Vietnamese diacritics → ASCII (shorter Base64)
-  return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+  return `${r.room || currentRoom}-${mm}${dd}`;
 }
 
 function encodeReceipt(r) {
-  // Compact ASCII: YYMMDD|YYMMDD|name|el|wa|wi → LZString compressed
-  const parts = [compactDate(r.dateFrom), compactDate(r.dateTo), stripVi(r.name||''), r.el||0, r.wa||0, r.wi||0];
-  return LZString.compressToEncodedURIComponent(parts.join('|'));
+  const from = new Date(r.dateFrom);
+  const yOff = from.getFullYear() - 2024;          // 4 bits (0-15, covers 2024-2039)
+  const fMM  = from.getMonth() + 1;                // 4 bits (1-12)
+  const fDD  = from.getDate();                     // 5 bits (1-31)
+  const el   = Math.round(parseFloat(r.el) || 0);  // 10 bits (0-1023 kWh)
+  const wa   = parseInt(r.wa) || 0;                // 4 bits (0-15)
+  const wi   = parseInt(r.wi) || 0;                // 4 bits (0-15)
+
+  const packed = (yOff << 27) | (fMM << 23) | (fDD << 18) | (el << 8) | (wa << 4) | wi;
+  return (packed >>> 0).toString(36);  // unsigned base36
 }
 
 function shareReceipt() {
@@ -1041,7 +1058,6 @@ function shareReceipt() {
   const dt = document.getElementById('f-to').value;
   if (!df || !dt) { toast('⚠️', 'Lưu phiếu trước khi gửi!'); return; }
 
-  // Auto-save first
   save();
 
   const r = getHist().find(x => x.id === editId);
@@ -1050,11 +1066,7 @@ function shareReceipt() {
   const slug = makeSlug(r);
   const data = encodeReceipt(r);
 
-  // Determine base URL
-  const isLocal = location.hostname === 'localhost' || location.protocol === 'file:';
-  const url = isLocal
-    ? location.href.split('#')[0].split('?')[0] + `#v=${encodeURIComponent(btoa(JSON.stringify({id:r.id,dateFrom:r.dateFrom,dateTo:r.dateTo,name:r.name,el:r.el,wa:r.wa,wi:r.wi,total:r.total})))}`
-    : `https://viewer.io.vn/${slug}#${data}`;
+  const url = `https://viewer.io.vn/${slug}#${data}`;
 
   document.getElementById('share-link').value = url;
   document.getElementById('share-modal').classList.add('open');
@@ -1072,7 +1084,7 @@ function nativeShare() {
   const link = document.getElementById('share-link').value;
   const r = getHist().find(x => x.id === editId);
   navigator.share({
-    title: `Phiếu thu ${fmtPeriodShort(r)} — Căn hộ 4031`,
+    title: `Phiếu thu ${fmtPeriodShort(r)} — Căn hộ ${currentRoom}`,
     text: `Phiếu thu dịch vụ ${fmtPeriodShort(r)}: ${vnd(r.total)}`,
     url: link
   }).catch(() => {});
@@ -1168,7 +1180,7 @@ function confirmPay() {
   if (navigator.share) {
     navigator.share({
       title: 'Xác nhận thanh toán',
-      text: `Đã thanh toán phiếu thu ${fmtPeriodShort(data)} — Căn hộ 4031: ${vnd(data.total)}`,
+      text: `Đã thanh toán phiếu thu ${fmtPeriodShort(data)} — Căn hộ ${currentRoom}: ${vnd(data.total)}`,
       url: confirmUrl
     }).catch(() => {
       // Fallback: copy to clipboard
@@ -1176,7 +1188,7 @@ function confirmPay() {
     });
   } else {
     navigator.clipboard.writeText(
-      `Đã thanh toán phiếu thu ${fmtPeriodShort(data)} — Căn hộ 4031: ${vnd(data.total)}\n${confirmUrl}`
+      `Đã thanh toán phiếu thu ${fmtPeriodShort(data)} — Căn hộ ${currentRoom}: ${vnd(data.total)}\n${confirmUrl}`
     ).then(() => toast('📋', 'Nội dung xác nhận đã sao chép — gửi cho chủ nhà!'));
   }
 }
@@ -1192,7 +1204,7 @@ function copyAcct() {
 }
 
 // ── UTILITIES ──
-function getHist() { try { return JSON.parse(localStorage.getItem(STORE)||'[]'); } catch { return []; } }
+function getHist() { try { return JSON.parse(localStorage.getItem(getStore())||'[]'); } catch { return []; } }
 
 function toast(icon, txt) {
   const t = document.getElementById('toast');
@@ -1238,6 +1250,7 @@ function init() {
   const defFrom = new Date(defTo); defFrom.setMonth(defFrom.getMonth() - 1);
   document.getElementById('f-from').value = defFrom.toISOString().split('T')[0];
   document.getElementById('f-to').value = defTo.toISOString().split('T')[0];
+  document.getElementById('f-name').value = ROOMS[currentRoom].name;
 
   // Route
   route();
