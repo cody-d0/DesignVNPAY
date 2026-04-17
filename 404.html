@@ -282,6 +282,7 @@
         <div class="tenant-svc-left">
           <span class="tenant-svc-icon">🏠</span>
           <span class="tenant-svc-name">Thuê nhà</span>
+          <span class="tenant-svc-qty" id="t-rent-qty"></span>
         </div>
         <span class="tenant-svc-amt" id="t-rent-amt"></span>
       </div>
@@ -338,8 +339,8 @@
 // ═══════════════════════════════════════════════
 
 const ROOMS = {
-  '4031': { name: 'Lê Hồng Phong', floor: 4 },
-  '4032': { name: 'Dương Quốc Đạt', floor: 4 }
+  '4031': { name: 'Lê Hồng Phong', floor: 4, rentRate: 7500000 },
+  '4032': { name: 'Dương Quốc Đạt', floor: 4, rentRate: 7000000 }
 };
 const P = { el: 3800, wa: 100000, wi: 100000 };
 const BANK = { name: 'DO DUY TRUONG', acct: '8829114888', bin: '970418', bank: 'BIDV' };
@@ -423,11 +424,11 @@ function decodeReceipt(hash, slug) {
     const roomData = ROOMS[room];
     if (!roomData) return null;
 
-    // Unpack base36 → 42-bit integer via division
+    // Unpack base36 → 35-bit integer via division
     let n = parseInt(hash, 36);
     if (isNaN(n)) return null;
 
-    const rent = n % 2048; n = Math.floor(n / 2048);  // 11 bits (unit 10K₫)
+    const rm   = n % 16;   n = Math.floor(n / 16);    // 4 bits (rent months)
     const wi   = n % 16;   n = Math.floor(n / 16);    // 4 bits
     const wa   = n % 16;   n = Math.floor(n / 16);    // 4 bits
     const el   = n % 1024; n = Math.floor(n / 1024);   // 10 bits
@@ -435,7 +436,7 @@ function decodeReceipt(hash, slug) {
     const fMM  = n % 16;   n = Math.floor(n / 16);    // 4 bits
     const yOff = n;                                     // 4 bits
     const year = 2024 + yOff;
-    const rentVND = rent * 10000;
+    const rentVND = rm * roomData.rentRate;
 
     // Reconstruct dateTo from slug MMDD + inferred year
     const toMM = parseInt(toMMDD.slice(0, 2));
@@ -452,6 +453,7 @@ function decodeReceipt(hash, slug) {
       dateTo,
       name: roomData.name,
       el, wa, wi,
+      rentMonths: rm,
       rent: rentVND,
       total: el * P.el + wa * P.wa + wi * P.wi + rentVND
     };
@@ -482,10 +484,13 @@ function renderTenant(data) {
   showRow('t-row-wa', 't-wa-qty', 't-wa-amt', data.wa, 'người × 100.000₫', P.wa);
   showRow('t-row-wi', 't-wi-qty', 't-wi-amt', data.wi, 'người × 100.000₫', P.wi);
 
-  // Rent row (flat amount, no unit price)
-  const rent = parseFloat(data.rent) || 0;
+  // Rent row (months × room rate)
+  const rentMonths = data.rentMonths || 0;
+  const rentRate = ROOMS[data.room].rentRate;
+  const rent = rentMonths * rentRate;
   if (rent > 0) {
     document.getElementById('t-row-rent').style.display = '';
+    document.getElementById('t-rent-qty').textContent = `${rentMonths} tháng × ${vnd(rentRate)}`;
     document.getElementById('t-rent-amt').textContent = vnd(rent);
   }
 
