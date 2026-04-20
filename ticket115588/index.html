@@ -986,6 +986,14 @@ async function sheetAPI(params) {
   return json;
 }
 
+function fixDate(d) {
+  if (!d) return '';
+  const dt = new Date(d);
+  if (isNaN(dt)) return String(d).split('T')[0];
+  const y = dt.getFullYear(), m = String(dt.getMonth()+1).padStart(2,'0'), day = String(dt.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+
 async function sheetLoad() {
   try {
     const json = await sheetAPI({});
@@ -993,8 +1001,8 @@ async function sheetLoad() {
       ...r,
       id: String(r.id),
       room: String(r.room),
-      dateFrom: String(r.dateFrom || '').split('T')[0],
-      dateTo: String(r.dateTo || '').split('T')[0]
+      dateFrom: fixDate(r.dateFrom),
+      dateTo: fixDate(r.dateTo)
     }));
     renderHist();
     syncStatus('✓ ' + _data.length + ' phiếu', 'ok');
