@@ -72,8 +72,16 @@ function doGet(e) {
       for (var c = 0; c < headers.length; c++) {
         var val = rows[i][c];
         var key = headers[c];
+        // Convert Date objects to YYYY-MM-DD (prevent UTC shift)
+        if (val instanceof Date) {
+          var yy = val.getFullYear();
+          var mm = ('0'+(val.getMonth()+1)).slice(-2);
+          var dd = ('0'+val.getDate()).slice(-2);
+          val = yy + '-' + mm + '-' + dd;
+        }
         if (key==='el'||key==='wa'||key==='wi'||key==='rentMonths'||key==='rent'||key==='total') val = Number(val)||0;
-        if (key==='paid') val = (val===true||val==='true'||val===true);
+        if (key==='paid') val = (val===true||val==='true');
+        if (key==='id'||key==='room') val = String(val);
         obj[key] = val;
       }
       result.push(obj);
