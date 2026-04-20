@@ -100,26 +100,92 @@
 
     .admin-app {
       position: relative; z-index: 1;
-      display: grid; grid-template-columns: 300px 1fr; min-height: 100vh;
+      display: flex; flex-direction: column; min-height: 100vh;
     }
-    @media (max-width: 900px) { .admin-app { grid-template-columns: 1fr; } }
 
-    /* ═══ SIDEBAR ═══ */
-    .sidebar {
-      position: sticky; top: 0; height: 100vh;
-      background: var(--bg-panel); border-right: 1px solid var(--border);
-      padding: 20px; display: flex; flex-direction: column;
-      overflow-y: auto; scrollbar-width: thin;
-      transition: background 0.3s ease, border-color 0.3s ease;
+    /* ═══ DASHBOARD TOOLBAR ═══ */
+    .dash-toolbar {
+      position: sticky; top: 0; z-index: 50;
+      background: var(--bg-panel); border-bottom: 1px solid var(--border);
+      padding: 12px 28px; display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; backdrop-filter: blur(12px);
+      transition: background 0.3s ease;
     }
-    @media (max-width: 900px) {
-      .sidebar {
-        position: fixed; top: 0; left: 0; bottom: 0; width: 300px; z-index: 100;
-        transform: translateX(-100%); transition: transform 0.4s var(--ease-out), background 0.3s ease;
-        box-shadow: 20px 0 60px rgba(0,0,0,0.3);
-      }
-      .sidebar.open { transform: translateX(0); }
+    .dash-brand { display: flex; align-items: center; gap: 10px; }
+    .dash-brand-icon {
+      width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; font-size: 17px;
     }
+    .dash-brand-title { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; color: var(--ink); }
+    .dash-brand-sub { font-size: 0.65rem; color: var(--ink-faint); letter-spacing: 0.06em; text-transform: uppercase; }
+    .dash-controls { display: flex; align-items: center; gap: 10px; }
+    .dash-room-select {
+      padding: 7px 14px; background: var(--bg-input); border: 1px solid var(--border);
+      border-radius: var(--r-md); font-family: var(--font-mono); font-size: 0.78rem;
+      color: var(--ink); cursor: pointer; font-weight: 600;
+    }
+    .btn-new-receipt {
+      padding: 8px 18px; background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      border: none; border-radius: var(--r-md); color: #fff; font-family: var(--font-body);
+      font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center;
+      gap: 6px; transition: all 0.25s var(--ease-out);
+      box-shadow: 0 2px 10px rgba(180,140,40,0.25);
+    }
+    [data-theme="light"] .btn-new-receipt { color: #FFFEF5; }
+    .btn-new-receipt:hover { box-shadow: 0 4px 20px rgba(180,140,40,0.4); transform: translateY(-1px); }
+    @media (max-width: 700px) {
+      .dash-toolbar { padding: 10px 14px; flex-wrap: wrap; }
+      .dash-brand-title { font-size: 1rem; }
+    }
+
+    /* ═══ DASHBOARD CONTENT ═══ */
+    .dash-content { padding: 24px 28px; max-width: 1200px; margin: 0 auto; width: 100%; }
+    @media (max-width: 700px) { .dash-content { padding: 16px 12px; } }
+
+    /* ═══ HISTORY GRID (below tracker) ═══ */
+    .dash-history { margin-top: 32px; }
+    .dash-history-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .dash-history-title {
+      font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--ink);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .dash-history-title::before { content: ''; width: 3px; height: 16px; background: var(--accent); border-radius: 2px; }
+    .history-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 700px) { .history-grid { grid-template-columns: 1fr; } }
+
+    /* ═══ RECEIPT FORM MODAL (Layer 2) ═══ */
+    .receipt-modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(6px);
+      align-items: flex-start; justify-content: center;
+      padding: 32px 16px; overflow-y: auto;
+      animation: fadeIn 0.2s ease;
+    }
+    .receipt-modal-overlay.open { display: flex; }
+    .receipt-modal-panel {
+      background: var(--bg-panel); border: 1px solid var(--border);
+      border-radius: var(--r-xl); max-width: 720px; width: 100%;
+      padding: 32px; box-shadow: 0 24px 80px rgba(0,0,0,0.3);
+      position: relative; animation: fadeUp 0.3s var(--ease-out);
+    }
+    .receipt-modal-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--border); background: var(--bg-card);
+      color: var(--ink-muted); cursor: pointer; font-size: 1.1rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s ease; z-index: 5;
+    }
+    .receipt-modal-close:hover { background: var(--danger-soft); color: var(--danger); }
+
+    /* ═══ SIDEBAR — hidden in new layout ═══ */
+    .sidebar { display: none; }
 
     .sidebar-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
     .sidebar-logo-icon {
@@ -258,20 +324,12 @@
     .cal-summary-item { display: flex; align-items: center; gap: 4px; }
     .cal-summary-dot { width: 6px; height: 6px; border-radius: 50%; }
 
-    /* ═══ MONTHLY TRACKER ═══ */
-    .tracker-overlay {
-      position: fixed; inset: 0; z-index: 2000;
-      background: rgba(0,0,0,0.7); backdrop-filter: blur(12px);
-      display: none; align-items: center; justify-content: center;
-      animation: fadeIn 0.25s ease;
-    }
-    .tracker-overlay.open { display: flex; }
-    .tracker-panel {
+    /* ═══ MONTHLY TRACKER (inline dashboard) ═══ */
+    .tracker-overlay { display: none; } /* legacy — no longer needed */
+    .tracker-inline {
       background: #111318; border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px; width: 94vw; max-width: 920px;
-      max-height: 90vh; overflow-y: auto; padding: 32px;
-      box-shadow: 0 32px 96px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03) inset;
-      color: #e8e6e1;
+      border-radius: 16px; padding: 28px; color: #e8e6e1;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     }
     .tracker-header {
       display: flex; align-items: center; justify-content: space-between;
@@ -759,148 +817,174 @@
 <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Đổi giao diện sáng/tối">🌙</button>
 
 <!-- ════════════════════════════════════════════
-     ADMIN VIEW — Receipt Manager
+     ADMIN VIEW — Dashboard-First Layout
+     Layer 1: Tracker + History  |  Layer 2: Receipt Form Modal
      ════════════════════════════════════════════ -->
 <div class="app-view active" id="view-admin">
-  <button class="mobile-btn" id="mob-btn" aria-label="Menu">☰</button>
-  <div class="mobile-overlay" id="mob-overlay"></div>
-
   <div class="admin-app">
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-logo">
-        <div class="sidebar-logo-icon">🧾</div>
+
+    <!-- ═══ DASHBOARD TOOLBAR ═══ -->
+    <div class="dash-toolbar">
+      <div class="dash-brand">
+        <div class="dash-brand-icon">🧾</div>
         <div>
-          <div class="sidebar-title">Phiếu Thu</div>
-          <div class="sidebar-subtitle" id="sidebar-sub">Căn hộ 4031 · Tầng 4</div>
+          <div class="dash-brand-title">Phiếu Thu</div>
+          <div class="dash-brand-sub" id="sidebar-sub">Quản lý thu tiền</div>
         </div>
       </div>
-      <div class="sidebar-divider"></div>
-      <div class="section-title-sm">Lịch sử phiếu thu</div>
-      <div class="cal-toggle">
-        <button class="cal-toggle-btn active" onclick="setView('list')" id="btn-view-list">📋 Danh sách</button>
-        <button class="cal-toggle-btn" onclick="setView('cal')" id="btn-view-cal">📅 Lịch</button>
+      <div class="dash-controls">
+        <select class="dash-room-select" id="f-room-dash" onchange="onRoomChangeDash()">
+          <option value="all">🏢 Tất cả phòng</option>
+          <option value="4031">4031 — Tầng 4</option>
+          <option value="4032">4032 — Tầng 4</option>
+        </select>
+        <button class="btn-new-receipt" onclick="openReceiptForm()">✚ Tạo phiếu thu</button>
       </div>
-      <div id="cal-view" style="display:none">
-        <div class="cal-nav">
-          <button class="cal-nav-btn" onclick="calNav(-1)">‹</button>
-          <div class="cal-month-label" id="cal-month-label"></div>
-          <button class="cal-nav-btn" onclick="calNav(1)">›</button>
+    </div>
+
+    <!-- ═══ DASHBOARD CONTENT ═══ -->
+    <div class="dash-content">
+
+      <!-- Monthly Tracker (inline, Layer 1 default view) -->
+      <div class="tracker-inline" id="tracker-inline">
+        <div class="tracker-header">
+          <div class="tracker-title">📊 Tổng quan thu tiền</div>
+          <div style="display:flex;gap:12px;align-items:center">
+            <div class="tracker-year-nav">
+              <button class="tracker-year-btn" onclick="trackerNav(-1)">‹</button>
+              <div class="tracker-year" id="tracker-year"></div>
+              <button class="tracker-year-btn" onclick="trackerNav(1)">›</button>
+            </div>
+          </div>
         </div>
-        <div class="cal-grid" id="cal-grid"></div>
-        <div class="cal-summary" id="cal-summary"></div>
-      </div>
-      <div class="history-list" id="hist-list"></div>
-      <div class="sidebar-footer" id="sb-footer" style="display:none">
-        <button class="btn-tracker" onclick="openTracker()">📊 Tổng quan thu tiền</button>
-        <button class="btn-clear" onclick="clearAll()">🗑 Xóa tất cả</button>
-      </div>
-      <div class="sync-indicator" id="sync-indicator"></div>
-    </aside>
-
-    <main class="main">
-      <div class="receipt-header">
-        <div class="receipt-badge">Dịch vụ hàng tháng</div>
-        <h1 class="receipt-main-title">Phiếu Thu <em>Tiền Dịch Vụ</em></h1>
-        <div class="receipt-apt" id="receipt-apt">APARTMENT 4031 — FLOOR 4</div>
-      </div>
-
-      <!-- Period -->
-      <div class="form-section">
-        <div class="section-label">📅 Kỳ thanh toán</div>
-        <div class="row-2">
-          <div class="field">
-            <label class="field-label" for="f-from">Từ ngày</label>
-            <input type="date" class="field-input" id="f-from">
-          </div>
-          <div class="field">
-            <label class="field-label" for="f-to">Đến ngày</label>
-            <input type="date" class="field-input" id="f-to">
-          </div>
+        <div class="tracker-months" id="tracker-months"></div>
+        <div id="tracker-rooms"></div>
+        <div class="tracker-legend">
+          <div class="tracker-legend-item"><div class="tracker-legend-dot" style="background:#34d399"></div>Đã thu</div>
+          <div class="tracker-legend-item"><div class="tracker-legend-dot" style="background:#fb923c"></div>Chưa thu</div>
+          <div class="tracker-legend-item"><div class="tracker-legend-dot" style="background:var(--ink-faint);opacity:0.3"></div>Chưa đến kỳ</div>
         </div>
       </div>
 
-      <!-- Room + Tenant -->
-      <div class="form-section">
-        <div class="section-label">👤 Thông tin người thuê</div>
-        <div class="row-2">
-          <div class="field">
-            <label class="field-label" for="f-room">Căn hộ</label>
-            <select class="field-input" id="f-room" onchange="onRoomChange()">
-              <option value="4031">4031 — Tầng 4</option>
-              <option value="4032">4032 — Tầng 4</option>
-            </select>
-          </div>
-          <div class="field">
-            <label class="field-label">Người thuê</label>
-            <input type="text" class="field-input" id="f-name" readonly style="background:var(--accent-soft);font-weight:600">
-          </div>
+      <!-- History List (below tracker) -->
+      <div class="dash-history" id="dash-history">
+        <div class="dash-history-header">
+          <div class="dash-history-title">Lịch sử phiếu thu</div>
+          <div class="sync-indicator" id="sync-indicator"></div>
+        </div>
+        <div class="history-grid" id="hist-list"></div>
+      </div>
+
+    </div><!-- /dash-content -->
+
+  </div><!-- /admin-app -->
+</div>
+
+<!-- ═══ RECEIPT FORM MODAL (Layer 2) ═══ -->
+<div class="receipt-modal-overlay" id="receipt-modal">
+  <div class="receipt-modal-panel">
+    <button class="receipt-modal-close" onclick="closeReceiptForm()">✕</button>
+
+    <div class="receipt-header">
+      <div class="receipt-badge">Dịch vụ hàng tháng</div>
+      <h1 class="receipt-main-title">Phiếu Thu <em>Tiền Dịch Vụ</em></h1>
+      <div class="receipt-apt" id="receipt-apt">APARTMENT 4031 — FLOOR 4</div>
+    </div>
+
+    <!-- Period -->
+    <div class="form-section">
+      <div class="section-label">📅 Kỳ thanh toán</div>
+      <div class="row-2">
+        <div class="field">
+          <label class="field-label" for="f-from">Từ ngày</label>
+          <input type="date" class="field-input" id="f-from">
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-to">Đến ngày</label>
+          <input type="date" class="field-input" id="f-to">
         </div>
       </div>
+    </div>
 
-      <!-- Services -->
-      <div class="form-section">
-        <div class="section-label">📊 Chi tiết thanh toán</div>
-        <table class="svc-table">
-          <thead><tr><th>STT</th><th>Hạng mục</th><th>Chỉ số / SL</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td><div class="svc-name"><div class="svc-icon el">⚡</div>Điện</div></td>
-              <td><input type="number" class="svc-input" id="f-el" min="0" placeholder="0" oninput="calc()"><span class="svc-unit">kWh</span></td>
-              <td class="svc-price">3.800 ₫</td>
-              <td class="svc-sub" id="s-el">—</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td><div class="svc-name"><div class="svc-icon wa">💧</div>Nước</div></td>
-              <td><input type="number" class="svc-input" id="f-wa" min="0" placeholder="0" oninput="calc()"><span class="svc-unit">người</span></td>
-              <td class="svc-price">100.000 ₫</td>
-              <td class="svc-sub" id="s-wa">—</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td><div class="svc-name"><div class="svc-icon wi">📶</div>Wifi</div></td>
-              <td><input type="number" class="svc-input" id="f-wi" min="0" placeholder="0" oninput="calc()"><span class="svc-unit">người</span></td>
-              <td class="svc-price">100.000 ₫</td>
-              <td class="svc-sub" id="s-wi">—</td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td><div class="svc-name"><div class="svc-icon rent">🏠</div>Thuê nhà</div></td>
-              <td><input type="number" class="svc-input" id="f-rent" min="0" max="15" step="1" value="1" placeholder="1" oninput="calc()"><span class="svc-unit">tháng</span></td>
-              <td class="svc-price" id="rent-rate">7.500.000 ₫</td>
-              <td class="svc-sub" id="s-rent">—</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Total -->
-      <div class="form-section">
-        <div class="total-card">
-          <div class="total-row">
-            <span class="total-label">Tổng tiền</span>
-            <span class="total-value" id="total-val">0 ₫</span>
-          </div>
-          <div class="total-words" id="total-words"><em>(Bằng chữ: Không đồng)</em></div>
+    <!-- Room + Tenant -->
+    <div class="form-section">
+      <div class="section-label">👤 Thông tin người thuê</div>
+      <div class="row-2">
+        <div class="field">
+          <label class="field-label" for="f-room">Căn hộ</label>
+          <select class="field-input" id="f-room" onchange="onRoomChange()">
+            <option value="4031">4031 — Tầng 4</option>
+            <option value="4032">4032 — Tầng 4</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label">Người thuê</label>
+          <input type="text" class="field-input" id="f-name" readonly style="background:var(--accent-soft);font-weight:600">
         </div>
       </div>
+    </div>
 
+    <!-- Services -->
+    <div class="form-section">
+      <div class="section-label">📊 Chi tiết thanh toán</div>
+      <table class="svc-table">
+        <thead><tr><th>STT</th><th>Hạng mục</th><th>Chỉ số / SL</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><div class="svc-name"><div class="svc-icon el">⚡</div>Điện</div></td>
+            <td><input type="number" class="svc-input" id="f-el" min="0" placeholder="0" oninput="calc()"><span class="svc-unit">kWh</span></td>
+            <td class="svc-price">3.800 ₫</td>
+            <td class="svc-sub" id="s-el">—</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><div class="svc-name"><div class="svc-icon wa">💧</div>Nước</div></td>
+            <td><input type="number" class="svc-input" id="f-wa" min="0" placeholder="0" oninput="calc()"><span class="svc-unit">người</span></td>
+            <td class="svc-price">100.000 ₫</td>
+            <td class="svc-sub" id="s-wa">—</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><div class="svc-name"><div class="svc-icon wi">📶</div>Wifi</div></td>
+            <td><input type="number" class="svc-input" id="f-wi" min="0" placeholder="0" oninput="calc()"><span class="svc-unit">người</span></td>
+            <td class="svc-price">100.000 ₫</td>
+            <td class="svc-sub" id="s-wi">—</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><div class="svc-name"><div class="svc-icon rent">🏠</div>Thuê nhà</div></td>
+            <td><input type="number" class="svc-input" id="f-rent" min="0" max="15" step="1" value="1" placeholder="1" oninput="calc()"><span class="svc-unit">tháng</span></td>
+            <td class="svc-price" id="rent-rate">7.500.000 ₫</td>
+            <td class="svc-sub" id="s-rent">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-
-      <!-- Actions -->
-      <div class="actions">
-        <button class="btn btn-primary" onclick="save()">💾 Lưu phiếu</button>
-        <button class="btn btn-share" onclick="shareReceipt()">🔗 Gửi cho người thuê</button>
-        <button class="btn btn-secondary" onclick="window.print()">🖨 In phiếu</button>
-        <button class="btn btn-success" onclick="newReceipt()">✨ Phiếu mới</button>
+    <!-- Total -->
+    <div class="form-section">
+      <div class="total-card">
+        <div class="total-row">
+          <span class="total-label">Tổng tiền</span>
+          <span class="total-value" id="total-val">0 ₫</span>
+        </div>
+        <div class="total-words" id="total-words"><em>(Bằng chữ: Không đồng)</em></div>
       </div>
+    </div>
 
-      <div class="print-sig">
-        <div><div class="print-sig-title">Người thuê</div><div class="print-sig-line">(Ký, họ tên)</div></div>
-        <div><div class="print-sig-title">Chủ nhà</div><div class="print-sig-line">(Ký, họ tên)</div></div>
-      </div>
-    </main>
+    <!-- Actions -->
+    <div class="actions">
+      <button class="btn btn-primary" onclick="save()">💾 Lưu phiếu</button>
+      <button class="btn btn-share" onclick="shareReceipt()">🔗 Gửi cho người thuê</button>
+      <button class="btn btn-secondary" onclick="window.print()">🖨 In phiếu</button>
+      <button class="btn btn-success" onclick="newReceipt()">✨ Phiếu mới</button>
+    </div>
+
+    <div class="print-sig">
+      <div><div class="print-sig-title">Người thuê</div><div class="print-sig-line">(Ký, họ tên)</div></div>
+      <div><div class="print-sig-title">Chủ nhà</div><div class="print-sig-line">(Ký, họ tên)</div></div>
+    </div>
   </div>
 </div>
 
@@ -1018,29 +1102,7 @@
   </div>
 </div>
 
-<!-- Tracker Overlay -->
-<div class="tracker-overlay" id="tracker-overlay">
-  <div class="tracker-panel">
-    <div class="tracker-header">
-      <div class="tracker-title">📊 Tổng quan thu tiền</div>
-      <div style="display:flex;gap:12px;align-items:center">
-        <div class="tracker-year-nav">
-          <button class="tracker-year-btn" onclick="trackerNav(-1)">‹</button>
-          <div class="tracker-year" id="tracker-year"></div>
-          <button class="tracker-year-btn" onclick="trackerNav(1)">›</button>
-        </div>
-        <button class="tracker-close" onclick="closeTracker()">✕</button>
-      </div>
-    </div>
-    <div class="tracker-months" id="tracker-months"></div>
-    <div id="tracker-rooms"></div>
-    <div class="tracker-legend">
-      <div class="tracker-legend-item"><div class="tracker-legend-dot" style="background:#34d399"></div>Đã thu</div>
-      <div class="tracker-legend-item"><div class="tracker-legend-dot" style="background:#fb923c"></div>Chưa thu</div>
-      <div class="tracker-legend-item"><div class="tracker-legend-dot" style="background:var(--ink-faint);opacity:0.3"></div>Chưa đến kỳ</div>
-    </div>
-  </div>
-</div>
+<!-- Legacy tracker overlay removed — tracker is now inline in dashboard -->
 <div class="toast" id="toast"><span id="toast-icon">✅</span> <span id="toast-txt">OK</span></div>
 
 <script>
@@ -1237,6 +1299,7 @@ async function sheetLoad() {
       dateTo: fixDate(r.dateTo)
     }));
     renderHist();
+    renderTracker();
     syncStatus('✓ ' + _data.length + ' phiếu', 'ok');
   } catch (err) {
     console.error('Sheet load failed:', err);
@@ -1275,6 +1338,8 @@ async function save() {
     editId = r.id;
     toast('✅', 'Đã lưu phiếu thu!');
     await sheetLoad();
+    renderTracker();
+    closeReceiptForm();
   } catch (err) {
     toast('❌', 'Lỗi lưu: ' + err.message);
   }
@@ -1305,7 +1370,7 @@ function load(id, room) {
   document.getElementById('f-rent').value = r.rentMonths || r.rent || '';
   calc();
   renderHist();
-  closeMobile();
+  openReceiptForm();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -1614,15 +1679,36 @@ const SVC_DEFS = [
 ];
 
 function openTracker() {
+  // Legacy compat — tracker is now always visible inline
   trackerYear = new Date().getFullYear();
   renderTracker();
-  document.getElementById('tracker-overlay').classList.add('open');
 }
 function closeTracker() {
-  document.getElementById('tracker-overlay').classList.remove('open');
+  // No-op — tracker is always visible in dashboard
 }
 function trackerNav(dir) {
   trackerYear += dir;
+  renderTracker();
+}
+
+// ── RECEIPT FORM MODAL (Layer 2) ──
+function openReceiptForm(roomId) {
+  if (roomId) {
+    currentRoom = roomId;
+    document.getElementById('f-room').value = roomId;
+    onRoomChange();
+  }
+  document.getElementById('receipt-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeReceiptForm() {
+  document.getElementById('receipt-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── DASHBOARD ROOM FILTER ──
+function onRoomChangeDash() {
+  renderHist();
   renderTracker();
 }
 
@@ -1715,24 +1801,20 @@ document.addEventListener('click', e => {
 function renderHist() {
   let hist = _data;
 
-  // Calendar view filtering
-  if (calView === 'cal') {
-    if (calSelectedDay !== null) {
-      hist = getReceiptsForDate(calYear, calMonth, calSelectedDay);
-    } else {
-      hist = getReceiptsForMonth(calYear, calMonth);
-    }
+  // Dashboard room filter
+  const dashRoom = document.getElementById('f-room-dash');
+  const filterRoom = dashRoom ? dashRoom.value : 'all';
+  if (filterRoom !== 'all') {
+    hist = hist.filter(r => (r.room || '4031') === filterRoom);
   }
+
   const list = document.getElementById('hist-list');
-  const footer = document.getElementById('sb-footer');
 
   if (hist.length === 0) {
-    list.innerHTML = `<div class="history-empty"><div class="history-empty-icon">📋</div><div class="history-empty-text">Chưa có phiếu thu nào.<br>Tạo phiếu đầu tiên!</div></div>`;
-    footer.style.display = 'none';
+    list.innerHTML = `<div class="history-empty" style="grid-column:1/-1"><div class="history-empty-icon">📋</div><div class="history-empty-text">Chưa có phiếu thu nào.<br>Bấm <strong>✚ Tạo phiếu thu</strong> để bắt đầu!</div></div>`;
     return;
   }
 
-  footer.style.display = '';
   list.innerHTML = hist.map((r, i) => `
     <div class="hi${editId===r.id?' active':''}" onclick="load('${r.id}','${r.room||currentRoom}')" style="animation:fadeUp .3s var(--ease-out) ${i*0.04}s backwards">
       <div class="hi-top"><span class="hi-room">${r.room||currentRoom}</span><span class="hi-month">${fmtPeriodShort(r)}</span></div>
@@ -1870,23 +1952,21 @@ document.addEventListener('keydown', e => {
   if ((e.ctrlKey||e.metaKey) && e.key==='s') { e.preventDefault(); save(); }
   if ((e.ctrlKey||e.metaKey) && e.key==='p') { e.preventDefault(); window.print(); }
   if ((e.ctrlKey||e.metaKey) && e.key==='n') { e.preventDefault(); newReceipt(); }
-  if (e.key==='Escape') { closeMobile(); closeModal(); }
+  if (e.key==='Escape') { closeModal(); closeReceiptForm(); }
 });
 
 // ── INIT ──
 function init() {
   initTheme();
 
-  // Mobile sidebar
-  document.getElementById('mob-btn').addEventListener('click', () => {
-    document.getElementById('sidebar').classList.toggle('open');
-    document.getElementById('mob-overlay').classList.toggle('open');
-  });
-  document.getElementById('mob-overlay').addEventListener('click', closeMobile);
-
   // Close share modal on overlay click
   document.getElementById('share-modal').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeModal();
+  });
+
+  // Close receipt modal on overlay click
+  document.getElementById('receipt-modal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeReceiptForm();
   });
 
   // Set defaults: last month 14th to this month 14th
@@ -1899,6 +1979,10 @@ function init() {
 
   // Route
   route();
+
+  // Auto-render tracker (default view)
+  trackerYear = new Date().getFullYear();
+  renderTracker();
 
   // Load data from Sheet (single source of truth)
   if (!location.hash.startsWith('#v=')) {
