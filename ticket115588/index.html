@@ -199,6 +199,65 @@
       padding: 4px 8px; margin-top: 4px; border-radius: var(--r-sm); min-height: 18px;
       transition: all 0.3s ease;
     }
+
+    /* ═══ CALENDAR VIEW ═══ */
+    .cal-toggle { display: flex; gap: 4px; margin-bottom: 10px; }
+    .cal-toggle-btn {
+      flex: 1; padding: 5px 8px; font-size: 0.65rem; font-weight: 600;
+      font-family: var(--font-body); border: 1px solid var(--border);
+      background: var(--bg-card); color: var(--ink-muted); border-radius: var(--r-sm);
+      cursor: pointer; transition: all 0.2s ease; text-align: center;
+    }
+    .cal-toggle-btn.active {
+      background: var(--accent-soft); color: var(--accent);
+      border-color: rgba(180,140,40,0.3);
+    }
+    .cal-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .cal-nav-btn {
+      width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border);
+      background: var(--bg-card); color: var(--ink-muted); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; transition: all 0.2s ease;
+    }
+    .cal-nav-btn:hover { background: var(--bg-card-hover); color: var(--ink); }
+    .cal-month-label {
+      font-family: var(--font-display); font-size: 0.85rem; font-weight: 600; color: var(--ink);
+    }
+    .cal-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 12px;
+    }
+    .cal-weekday {
+      text-align: center; font-size: 0.55rem; font-weight: 600; color: var(--ink-faint);
+      text-transform: uppercase; padding: 4px 0; letter-spacing: 0.05em;
+    }
+    .cal-day {
+      aspect-ratio: 1; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; font-size: 0.7rem; font-family: var(--font-mono);
+      color: var(--ink-muted); border-radius: var(--r-sm); cursor: default;
+      position: relative; transition: all 0.15s ease; gap: 2px;
+    }
+    .cal-day.has-receipt { cursor: pointer; font-weight: 600; color: var(--ink); }
+    .cal-day.has-receipt:hover { background: var(--bg-card-hover); }
+    .cal-day.today { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+    .cal-day.selected { background: var(--accent); color: #fff; border-radius: var(--r-sm); }
+    .cal-day.other-month { opacity: 0.25; }
+    .cal-dots { display: flex; gap: 2px; height: 5px; }
+    .cal-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+    }
+    .cal-dot.paid { background: var(--success-text); }
+    .cal-dot.unpaid { background: #fb923c; }
+    .cal-summary {
+      display: flex; gap: 8px; justify-content: center; font-size: 0.62rem;
+      color: var(--ink-muted); padding: 6px 0; margin-bottom: 6px;
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .cal-summary-item { display: flex; align-items: center; gap: 4px; }
+    .cal-summary-dot { width: 6px; height: 6px; border-radius: 50%; }
+
     .sync-indicator.syncing { color: var(--accent); background: var(--accent-soft); }
     .sync-indicator.ok { color: var(--success-text); background: var(--success-soft); }
     .sync-indicator.error { color: var(--danger); background: var(--danger-soft); }
@@ -580,6 +639,19 @@
       </div>
       <div class="sidebar-divider"></div>
       <div class="section-title-sm">Lịch sử phiếu thu</div>
+      <div class="cal-toggle">
+        <button class="cal-toggle-btn active" onclick="setView('list')" id="btn-view-list">📋 Danh sách</button>
+        <button class="cal-toggle-btn" onclick="setView('cal')" id="btn-view-cal">📅 Lịch</button>
+      </div>
+      <div id="cal-view" style="display:none">
+        <div class="cal-nav">
+          <button class="cal-nav-btn" onclick="calNav(-1)">‹</button>
+          <div class="cal-month-label" id="cal-month-label"></div>
+          <button class="cal-nav-btn" onclick="calNav(1)">›</button>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-summary" id="cal-summary"></div>
+      </div>
       <div class="history-list" id="hist-list"></div>
       <div class="sidebar-footer" id="sb-footer" style="display:none">
         <button class="btn-clear" onclick="clearAll()">🗑 Xóa tất cả</button>
@@ -1260,9 +1332,130 @@ function nativeShare() {
 
 function closeModal() { document.getElementById('share-modal').classList.remove('open'); }
 
+// ── CALENDAR VIEW ──
+let calView = 'list';
+let calMonth = new Date().getMonth();
+let calYear = new Date().getFullYear();
+let calSelectedDay = null;
+
+const MONTH_NAMES = ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+const WEEKDAYS = ['T2','T3','T4','T5','T6','T7','CN'];
+
+function setView(v) {
+  calView = v;
+  calSelectedDay = null;
+  document.getElementById('btn-view-list').classList.toggle('active', v==='list');
+  document.getElementById('btn-view-cal').classList.toggle('active', v==='cal');
+  document.getElementById('cal-view').style.display = v==='cal' ? '' : 'none';
+  if (v==='cal') renderCal();
+  renderHist();
+}
+
+function calNav(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  calSelectedDay = null;
+  renderCal();
+  renderHist();
+}
+
+function getReceiptsForDate(y, m, d) {
+  const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  return _data.filter(r => {
+    const ts = (r.ts || '').split('T')[0];
+    return ts === ds;
+  });
+}
+
+function getReceiptsForMonth(y, m) {
+  const prefix = `${y}-${String(m+1).padStart(2,'0')}`;
+  return _data.filter(r => {
+    const ts = (r.ts || '').split('T')[0];
+    return ts.startsWith(prefix);
+  });
+}
+
+function renderCal() {
+  const label = document.getElementById('cal-month-label');
+  const grid = document.getElementById('cal-grid');
+  const summary = document.getElementById('cal-summary');
+
+  label.textContent = `${MONTH_NAMES[calMonth]}, ${calYear}`;
+
+  const firstDay = new Date(calYear, calMonth, 1);
+  const lastDay = new Date(calYear, calMonth + 1, 0);
+  const startDow = (firstDay.getDay() + 6) % 7; // Monday=0
+  const daysInMonth = lastDay.getDate();
+  const today = new Date();
+
+  let html = WEEKDAYS.map(d => `<div class="cal-weekday">${d}</div>`).join('');
+
+  // Previous month padding
+  const prevLast = new Date(calYear, calMonth, 0).getDate();
+  for (let i = startDow - 1; i >= 0; i--) {
+    html += `<div class="cal-day other-month">${prevLast - i}</div>`;
+  }
+
+  // Current month days
+  const monthReceipts = getReceiptsForMonth(calYear, calMonth);
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dayReceipts = getReceiptsForDate(calYear, calMonth, d);
+    const isToday = today.getFullYear()===calYear && today.getMonth()===calMonth && today.getDate()===d;
+    const isSelected = calSelectedDay === d;
+    const classes = ['cal-day'];
+    if (dayReceipts.length) classes.push('has-receipt');
+    if (isToday) classes.push('today');
+    if (isSelected) classes.push('selected');
+
+    let dots = '';
+    if (dayReceipts.length) {
+      dots = '<div class="cal-dots">' + dayReceipts.slice(0,4).map(r =>
+        `<div class="cal-dot ${r.paid?'paid':'unpaid'}"></div>`
+      ).join('') + '</div>';
+    }
+
+    html += `<div class="${classes.join(' ')}" onclick="${dayReceipts.length ? `calSelectDay(${d})` : ''}">${d}${dots}</div>`;
+  }
+
+  // Next month padding
+  const totalCells = startDow + daysInMonth;
+  const remaining = (7 - totalCells % 7) % 7;
+  for (let i = 1; i <= remaining; i++) {
+    html += `<div class="cal-day other-month">${i}</div>`;
+  }
+
+  grid.innerHTML = html;
+
+  // Summary
+  const paid = monthReceipts.filter(r => r.paid).length;
+  const unpaid = monthReceipts.length - paid;
+  const total = monthReceipts.reduce((s,r) => s + (r.total||0), 0);
+  summary.innerHTML = `
+    <div class="cal-summary-item"><div class="cal-summary-dot" style="background:var(--accent)"></div>${monthReceipts.length} phiếu</div>
+    <div class="cal-summary-item"><div class="cal-summary-dot paid"></div>${paid} đã TT</div>
+    <div class="cal-summary-item"><div class="cal-summary-dot unpaid"></div>${unpaid} chưa</div>
+  `;
+}
+
+function calSelectDay(d) {
+  calSelectedDay = calSelectedDay === d ? null : d;
+  renderCal();
+  renderHist();
+}
+
 // ── RENDER HISTORY (all rooms) ──
 function renderHist() {
-  const hist = _data;
+  let hist = _data;
+
+  // Calendar view filtering
+  if (calView === 'cal') {
+    if (calSelectedDay !== null) {
+      hist = getReceiptsForDate(calYear, calMonth, calSelectedDay);
+    } else {
+      hist = getReceiptsForMonth(calYear, calMonth);
+    }
+  }
   const list = document.getElementById('hist-list');
   const footer = document.getElementById('sb-footer');
 
