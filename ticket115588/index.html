@@ -178,6 +178,25 @@
     }
     .btn-clear:hover { background: rgba(220,38,38,0.15); }
 
+    .cloud-actions { display: flex; gap: 6px; margin-bottom: 6px; }
+    .btn-cloud {
+      flex: 1; padding: 6px 8px; background: var(--accent-soft); border: 1px solid rgba(99,102,241,0.1);
+      border-radius: var(--r-sm); color: var(--accent); font-family: var(--font-body); font-size: 0.7rem;
+      font-weight: 500; cursor: pointer; transition: all 0.2s ease; white-space: nowrap;
+    }
+    .btn-cloud:hover { background: rgba(99,102,241,0.15); }
+    .btn-cloud-push { background: var(--success-soft); color: var(--success-text); border-color: rgba(16,185,129,0.1); }
+    .btn-cloud-push:hover { background: rgba(16,185,129,0.15); }
+
+    .sync-indicator {
+      font-size: 0.65rem; font-family: var(--font-body); text-align: center;
+      padding: 4px 8px; margin-top: 4px; border-radius: var(--r-sm); min-height: 18px;
+      transition: all 0.3s ease;
+    }
+    .sync-indicator.syncing { color: var(--accent); background: var(--accent-soft); }
+    .sync-indicator.ok { color: var(--success-text); background: var(--success-soft); }
+    .sync-indicator.error { color: var(--danger); background: var(--danger-soft); }
+
     /* ═══ MAIN CONTENT ═══ */
     .main { padding: 36px 36px 60px; max-width: 740px; margin: 0 auto; width: 100%; }
     @media (max-width: 900px) { .main { padding: 20px 16px 48px; } }
@@ -557,8 +576,13 @@
       <div class="section-title-sm">Lịch sử phiếu thu</div>
       <div class="history-list" id="hist-list"></div>
       <div class="sidebar-footer" id="sb-footer" style="display:none">
+        <div class="cloud-actions">
+          <button class="btn-cloud" onclick="cloudPull()" title="Kéo dữ liệu từ Google Sheet">☁️ Kéo từ Cloud</button>
+          <button class="btn-cloud btn-cloud-push" onclick="cloudPushAll()" title="Đẩy tất cả lên Google Sheet">⬆️ Đẩy lên Cloud</button>
+        </div>
         <button class="btn-clear" onclick="clearAll()">🗑 Xóa tất cả</button>
       </div>
+      <div class="sync-indicator" id="sync-indicator"></div>
     </aside>
 
     <main class="main">
@@ -798,6 +822,10 @@ const ROOMS = {
 const P = { el: 3800, wa: 100000, wi: 100000 };
 const BANK = { name: 'DO DUY TRUONG', acct: '8829114888', bin: '970418', bank: 'BIDV' };
 
+// ── GOOGLE SHEETS SYNC ──
+// Paste your Apps Script deployed URL here:
+const SHEET_URL = '';
+
 let editId = null;
 let currentRoom = '4031';
 
@@ -977,6 +1005,7 @@ function save() {
   editId = r.id;
   renderHist();
   toast('✅', 'Đã lưu phiếu thu!');
+  cloudSave(r);
 }
 
 // ── LOAD ──
@@ -1011,6 +1040,7 @@ function del(id, e) {
   if (editId === id) { editId = null; newReceipt(); }
   renderHist();
   toast('🗑', 'Đã xóa');
+  cloudDelete(id, currentRoom);
 }
 
 function clearAll() {
@@ -1053,6 +1083,7 @@ function togglePaid(id, e) {
   if (r) { r.paid = !r.paid; r.paidAt = r.paid ? new Date().toISOString() : null; }
   localStorage.setItem(getStore(), JSON.stringify(hist));
   renderHist();
+  if (r) cloudSave(r);
 }
 
 // ── SHARE (Clean URL) ──
@@ -1286,6 +1317,93 @@ function copyAcct() {
 // ── UTILITIES ──
 function getHist() { try { return JSON.parse(localStorage.getItem(getStore())||'[]'); } catch { return []; } }
 
+// ── CLOUD SYNC (Google Sheets) ──
+function syncStatus(msg, type) {
+  const el = document.getElementById('sync-indicator');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'sync-indicator ' + (type || '');
+  if (type === 'ok') setTimeout(() => { el.textContent = ''; el.className = 'sync-indicator'; }, 3000);
+}
+
+async function cloudSave(receipt) {
+  if (!SHEET_URL) return;
+  try {
+    syncStatus('☁️ Đang đồng bộ...', 'syncing');
+    const res = await fetch(SHEET_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'save', receipt: { ...receipt, room: receipt.room || currentRoom } })
+    });
+    syncStatus('✓ Đã lưu cloud', 'ok');
+  } catch (err) {
+    console.warn('Cloud save failed:', err);
+    syncStatus('⚠ Lỗi cloud', 'error');
+  }
+}
+
+async function cloudDelete(id, room) {
+  if (!SHEET_URL) return;
+  try {
+    await fetch(SHEET_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'delete', id, room })
+    });
+  } catch (err) { console.warn('Cloud delete failed:', err); }
+}
+
+async function cloudPushAll() {
+  if (!SHEET_URL) { toast('⚠️', 'Chưa cấu hình SHEET_URL'); return; }
+  const hist = getHist();
+  if (hist.length === 0) { toast('📋', 'Không có dữ liệu để đẩy'); return; }
+  try {
+    syncStatus('⬆️ Đẩy ' + hist.length + ' phiếu...', 'syncing');
+    await fetch(SHEET_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'saveAll', receipts: hist })
+    });
+    syncStatus('✓ Đã đẩy ' + hist.length + ' phiếu', 'ok');
+    toast('✅', `Đã đẩy ${hist.length} phiếu lên Cloud!`);
+  } catch (err) {
+    console.error('Cloud push failed:', err);
+    syncStatus('⚠ Lỗi push', 'error');
+    toast('❌', 'Lỗi đẩy dữ liệu lên Cloud');
+  }
+}
+
+async function cloudPull() {
+  if (!SHEET_URL) { toast('⚠️', 'Chưa cấu hình SHEET_URL'); return; }
+  try {
+    syncStatus('☁️ Đang kéo dữ liệu...', 'syncing');
+    const res = await fetch(SHEET_URL + '?room=' + currentRoom);
+    const json = await res.json();
+    if (!json.success || !json.data) throw new Error(json.error || 'Invalid response');
+
+    const cloudData = json.data;
+    const local = getHist();
+
+    // Merge: cloud wins for same ID, keep local-only items
+    const merged = [...cloudData];
+    local.forEach(lr => {
+      if (!merged.find(cr => cr.id === lr.id)) merged.push(lr);
+    });
+
+    // Sort newest first
+    merged.sort((a, b) => (b.ts || '').localeCompare(a.ts || ''));
+
+    localStorage.setItem(getStore(), JSON.stringify(merged));
+    renderHist();
+    syncStatus('✓ Đã kéo ' + cloudData.length + ' phiếu', 'ok');
+    toast('☁️', `Đã kéo ${cloudData.length} phiếu từ Cloud (tổng: ${merged.length})`);
+  } catch (err) {
+    console.error('Cloud pull failed:', err);
+    syncStatus('⚠ Lỗi pull', 'error');
+    toast('❌', 'Lỗi kéo dữ liệu từ Cloud');
+  }
+}
+
 function toast(icon, txt) {
   const t = document.getElementById('toast');
   document.getElementById('toast-icon').textContent = icon;
@@ -1339,6 +1457,10 @@ function init() {
   if (!location.hash.startsWith('#v=')) {
     renderHist();
     calc();
+    // Auto-pull from cloud on init if configured
+    if (SHEET_URL) {
+      cloudPull().catch(() => {});
+    }
   }
 }
 
