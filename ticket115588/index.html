@@ -1632,13 +1632,19 @@ function renderTracker() {
       const isFuture = trackerYear > nowYear || (trackerYear === nowYear && m > nowMonth);
       const isNow = trackerYear === nowYear && m === nowMonth;
 
-      // Find receipts for this room+month by dateFrom
+      // Find receipts covering this room+month (dateFrom→dateTo range)
+      const monthStart = new Date(trackerYear, m, 1);
+      const monthEnd = new Date(trackerYear, m + 1, 0); // last day of month
       const monthReceipts = _data.filter(r => {
         if (String(r.room || currentRoom) !== String(room)) return false;
         const df = r.dateFrom || '';
-        const parts = df.split('-');
-        if (parts.length < 2) return false;
-        return parseInt(parts[0]) === trackerYear && parseInt(parts[1]) === (m + 1);
+        const dt = r.dateTo || df;
+        if (!df) return false;
+        const from = new Date(df + 'T00:00:00');
+        const to = new Date(dt + 'T00:00:00');
+        if (isNaN(from.getTime())) return false;
+        // Receipt overlaps this month if: from <= monthEnd AND to >= monthStart
+        return from <= monthEnd && to >= monthStart;
       });
 
       html += `<div class="tracker-cell${isNow?' now-col':''}">`;
