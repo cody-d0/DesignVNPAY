@@ -258,6 +258,118 @@
     .cal-summary-item { display: flex; align-items: center; gap: 4px; }
     .cal-summary-dot { width: 6px; height: 6px; border-radius: 50%; }
 
+    /* ═══ MONTHLY TRACKER ═══ */
+    .tracker-overlay {
+      position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+      display: none; align-items: center; justify-content: center;
+      animation: fadeIn 0.2s ease;
+    }
+    .tracker-overlay.open { display: flex; }
+    .tracker-panel {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--r-lg); width: 94vw; max-width: 900px;
+      max-height: 90vh; overflow-y: auto; padding: 28px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+    }
+    .tracker-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .tracker-title {
+      font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--ink);
+    }
+    .tracker-year-nav { display: flex; align-items: center; gap: 8px; }
+    .tracker-year-btn {
+      width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border);
+      background: var(--bg-card); color: var(--ink-muted); cursor: pointer;
+      font-size: 0.9rem; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .tracker-year-btn:hover { background: var(--bg-card-hover); color: var(--ink); }
+    .tracker-year {
+      font-family: var(--font-mono); font-size: 1rem; font-weight: 700;
+      color: var(--accent); min-width: 50px; text-align: center;
+    }
+    .tracker-close {
+      width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border);
+      background: var(--bg-card); color: var(--ink-muted); cursor: pointer;
+      font-size: 1rem; display: flex; align-items: center; justify-content: center;
+    }
+    .tracker-close:hover { background: var(--danger-soft); color: var(--danger); }
+
+    .tracker-months {
+      display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px;
+      margin-bottom: 16px; position: sticky; top: 0; background: var(--bg);
+      z-index: 1; padding-bottom: 8px;
+    }
+    .tracker-month-hdr {
+      text-align: center; font-size: 0.65rem; font-weight: 700;
+      font-family: var(--font-mono); color: var(--ink-faint);
+      padding: 6px 0; border-radius: var(--r-sm);
+    }
+    .tracker-month-hdr.now {
+      background: var(--accent-soft); color: var(--accent);
+    }
+
+    .tracker-room { margin-bottom: 16px; }
+    .tracker-room-header {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+    }
+    .tracker-room-badge {
+      font-size: 0.65rem; font-weight: 700; font-family: var(--font-mono);
+      background: var(--accent-soft); color: var(--accent);
+      padding: 2px 10px; border-radius: 100px;
+    }
+    .tracker-room-name {
+      font-size: 0.78rem; font-weight: 500; color: var(--ink-muted);
+    }
+
+    .tracker-grid {
+      display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px;
+    }
+    .tracker-cell {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--r-sm); padding: 6px 4px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3px;
+      min-height: 48px; transition: all 0.2s ease;
+    }
+    .tracker-cell.now-col { border-color: rgba(180,140,40,0.3); }
+    .tracker-svc {
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem; border-radius: 3px; padding: 2px;
+      gap: 1px; flex-direction: column; line-height: 1;
+    }
+    .tracker-svc-icon { font-size: 0.7rem; }
+    .tracker-svc-status { font-size: 0.5rem; font-weight: 700; }
+    .tracker-svc.collected { background: rgba(52,211,153,0.15); color: #34d399; }
+    .tracker-svc.pending { background: rgba(251,146,60,0.15); color: #fb923c; }
+    .tracker-svc.notdue { background: var(--bg-card); color: var(--ink-faint); opacity: 0.3; }
+
+    .tracker-legend {
+      display: flex; gap: 16px; justify-content: center;
+      padding: 12px 0; border-top: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    .tracker-legend-item {
+      display: flex; align-items: center; gap: 5px; font-size: 0.65rem; color: var(--ink-muted);
+    }
+    .tracker-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    .btn-tracker {
+      width: 100%; padding: 7px 12px; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--r-sm); color: var(--ink); font-family: var(--font-body); font-size: 0.72rem;
+      font-weight: 500; cursor: pointer; transition: all 0.2s ease; margin-bottom: 6px;
+    }
+    .btn-tracker:hover { background: var(--accent-soft); color: var(--accent); border-color: rgba(180,140,40,0.2); }
+
+    @media (max-width: 700px) {
+      .tracker-panel { padding: 16px; width: 98vw; }
+      .tracker-months { grid-template-columns: repeat(12, 1fr); gap: 1px; }
+      .tracker-month-hdr { font-size: 0.5rem; padding: 4px 0; }
+      .tracker-grid { grid-template-columns: repeat(6, 1fr); gap: 3px; }
+      .tracker-cell { min-height: 70px; }
+    }
     .sync-indicator.syncing { color: var(--accent); background: var(--accent-soft); }
     .sync-indicator.ok { color: var(--success-text); background: var(--success-soft); }
     .sync-indicator.error { color: var(--danger); background: var(--danger-soft); }
@@ -654,6 +766,7 @@
       </div>
       <div class="history-list" id="hist-list"></div>
       <div class="sidebar-footer" id="sb-footer" style="display:none">
+        <button class="btn-tracker" onclick="openTracker()">📊 Tổng quan thu tiền</button>
         <button class="btn-clear" onclick="clearAll()">🗑 Xóa tất cả</button>
       </div>
       <div class="sync-indicator" id="sync-indicator"></div>
@@ -880,7 +993,29 @@
   </div>
 </div>
 
-<!-- Toast -->
+<!-- Tracker Overlay -->
+<div class="tracker-overlay" id="tracker-overlay">
+  <div class="tracker-panel">
+    <div class="tracker-header">
+      <div class="tracker-title">📊 Tổng quan thu tiền</div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <div class="tracker-year-nav">
+          <button class="tracker-year-btn" onclick="trackerNav(-1)">‹</button>
+          <div class="tracker-year" id="tracker-year"></div>
+          <button class="tracker-year-btn" onclick="trackerNav(1)">›</button>
+        </div>
+        <button class="tracker-close" onclick="closeTracker()">✕</button>
+      </div>
+    </div>
+    <div class="tracker-months" id="tracker-months"></div>
+    <div id="tracker-rooms"></div>
+    <div class="tracker-legend">
+      <div class="tracker-legend-item"><div class="tracker-legend-dot" style="background:#34d399"></div>Đã thu</div>
+      <div class="tracker-legend-item"><div class="tracker-legend-dot" style="background:#fb923c"></div>Chưa thu</div>
+      <div class="tracker-legend-item"><div class="tracker-legend-dot" style="background:var(--ink-faint);opacity:0.3"></div>Chưa đến kỳ</div>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"><span id="toast-icon">✅</span> <span id="toast-txt">OK</span></div>
 
 <script>
@@ -1443,6 +1578,109 @@ function calSelectDay(d) {
   renderCal();
   renderHist();
 }
+
+// ── MONTHLY TRACKER ──
+let trackerYear = new Date().getFullYear();
+const SVC_DEFS = [
+  { key: 'el', icon: '⚡', label: 'Điện' },
+  { key: 'wa', icon: '💧', label: 'Nước' },
+  { key: 'wi', icon: '📶', label: 'Wifi' },
+  { key: 'rent', icon: '🏠', label: 'Nhà' }
+];
+
+function openTracker() {
+  trackerYear = new Date().getFullYear();
+  renderTracker();
+  document.getElementById('tracker-overlay').classList.add('open');
+}
+function closeTracker() {
+  document.getElementById('tracker-overlay').classList.remove('open');
+}
+function trackerNav(dir) {
+  trackerYear += dir;
+  renderTracker();
+}
+
+function renderTracker() {
+  const now = new Date();
+  const nowMonth = now.getMonth(); // 0-based
+  const nowYear = now.getFullYear();
+
+  document.getElementById('tracker-year').textContent = trackerYear;
+
+  // Month headers
+  const monthsEl = document.getElementById('tracker-months');
+  monthsEl.innerHTML = Array.from({length:12}, (_,i) =>
+    `<div class="tracker-month-hdr${trackerYear===nowYear && i===nowMonth?' now':''}">T${i+1}</div>`
+  ).join('');
+
+  // Group receipts by room
+  const rooms = Object.keys(ROOMS);
+  const roomsEl = document.getElementById('tracker-rooms');
+  let html = '';
+
+  for (const room of rooms) {
+    const rd = ROOMS[room];
+    html += `<div class="tracker-room">
+      <div class="tracker-room-header">
+        <span class="tracker-room-badge">${room}</span>
+        <span class="tracker-room-name">${rd.name}</span>
+      </div>
+      <div class="tracker-grid">`;
+
+    for (let m = 0; m < 12; m++) {
+      const isFuture = trackerYear > nowYear || (trackerYear === nowYear && m > nowMonth);
+      const isNow = trackerYear === nowYear && m === nowMonth;
+
+      // Find receipts for this room+month by dateFrom
+      const monthReceipts = _data.filter(r => {
+        if (String(r.room || currentRoom) !== String(room)) return false;
+        const df = r.dateFrom || '';
+        const parts = df.split('-');
+        if (parts.length < 2) return false;
+        return parseInt(parts[0]) === trackerYear && parseInt(parts[1]) === (m + 1);
+      });
+
+      html += `<div class="tracker-cell${isNow?' now-col':''}">`;
+
+      for (const svc of SVC_DEFS) {
+        let status = 'notdue';
+        if (!isFuture) {
+          // Check if any receipt for this month has this service
+          const hasService = monthReceipts.some(r => {
+            if (svc.key === 'rent') return (r.rentMonths || 0) > 0 || (r.rent || 0) > 0;
+            return (r[svc.key] || 0) > 0;
+          });
+          if (hasService) {
+            const isPaid = monthReceipts.some(r => {
+              if (svc.key === 'rent') return ((r.rentMonths || 0) > 0 || (r.rent || 0) > 0) && r.paid;
+              return (r[svc.key] || 0) > 0 && r.paid;
+            });
+            status = isPaid ? 'collected' : 'pending';
+          } else {
+            status = 'pending';
+          }
+        }
+        html += `<div class="tracker-svc ${status}" title="${svc.label}">
+          <span class="tracker-svc-icon">${svc.icon}</span>
+          <span class="tracker-svc-status">${status==='collected'?'✓':status==='pending'?'✗':'-'}</span>
+        </div>`;
+      }
+
+      html += `</div>`;
+    }
+
+    html += `</div></div>`;
+  }
+
+  roomsEl.innerHTML = html;
+}
+
+// Close tracker on overlay click
+document.addEventListener('click', e => {
+  const overlay = document.getElementById('tracker-overlay');
+  if (e.target === overlay) closeTracker();
+});
 
 // ── RENDER HISTORY (all rooms) ──
 function renderHist() {
