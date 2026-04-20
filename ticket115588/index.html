@@ -830,8 +830,8 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycby8yVnti2QgM9z0DH8p8S
 
 let editId = null;
 let currentRoom = '4031';
+let _data = []; // In-memory cache, always from Sheet
 
-function getStore() { return `receipt-${currentRoom}`; }
 function onRoomChange() {
   currentRoom = document.getElementById('f-room').value;
   const rd = ROOMS[currentRoom];
@@ -843,8 +843,6 @@ function onRoomChange() {
   document.getElementById('rent-rate').textContent = vnd(rd.rentRate);
   renderHist();
   calc();
-  // Auto-pull cloud data for this room
-  if (SHEET_URL) cloudPull().catch(() => {});
 }
 
 // ── ROUTER ──
@@ -978,38 +976,62 @@ function numWords(n) {
   return res.charAt(0).toUpperCase() + res.slice(1) + ' đồng';
 }
 
+// ── SHEET API (single source of truth) ──
+async function sheetAPI(params) {
+  const url = SHEET_URL + '?' + new URLSearchParams(params).toString();
+  syncStatus('☁️ Đang xử lý...', 'syncing');
+  const res = await fetch(url);
+  const json = await res.json();
+  if (!json.success) throw new Error(json.error || 'Sheet error');
+  return json;
+}
+
+async function sheetLoad() {
+  try {
+    const json = await sheetAPI({});
+    _data = json.data || [];
+    renderHist();
+    syncStatus('✓ ' + _data.length + ' phiếu', 'ok');
+  } catch (err) {
+    console.error('Sheet load failed:', err);
+    syncStatus('⚠ Lỗi tải dữ liệu', 'error');
+  }
+}
+
 // ── SAVE ──
-function save() {
+async function save() {
   const df = document.getElementById('f-from').value;
   const dt = document.getElementById('f-to').value;
   if (!df || !dt) { toast('⚠️', 'Chọn kỳ thanh toán (từ ngày — đến ngày)!'); return; }
 
+  // Preserve paid status if editing
+  const existing = _data.find(x => x.id === editId);
+
   const r = {
     id: editId || Date.now().toString(),
     room: currentRoom,
-    dateFrom: document.getElementById('f-from').value || '',
-    dateTo: document.getElementById('f-to').value || '',
+    dateFrom: df,
+    dateTo: dt,
     name: ROOMS[currentRoom].name,
     el: parseFloat(document.getElementById('f-el').value) || 0,
     wa: parseFloat(document.getElementById('f-wa').value) || 0,
     wi: parseFloat(document.getElementById('f-wi').value) || 0,
     rentMonths: parseInt(document.getElementById('f-rent').value) || 0,
-    paid: false, paidAt: null,
+    paid: existing ? existing.paid : false,
+    paidAt: existing ? existing.paidAt : '',
     ts: new Date().toISOString()
   };
   r.rent = r.rentMonths * ROOMS[currentRoom].rentRate;
   r.total = r.el * P.el + r.wa * P.wa + r.wi * P.wi + r.rent;
 
-  const hist = getHist();
-  const idx = hist.findIndex(x => x.id === r.id);
-  if (idx >= 0) { r.paid = hist[idx].paid; r.paidAt = hist[idx].paidAt; hist[idx] = r; }
-  else hist.unshift(r);
-
-  localStorage.setItem(getStore(), JSON.stringify(hist));
-  editId = r.id;
-  renderHist();
-  toast('✅', 'Đã lưu phiếu thu!');
-  cloudSave(r);
+  try {
+    await sheetAPI({ action: 'save', ...r });
+    editId = r.id;
+    toast('✅', 'Đã lưu phiếu thu!');
+    await sheetLoad();
+  } catch (err) {
+    toast('❌', 'Lỗi lưu: ' + err.message);
+  }
 }
 
 // ── LOAD ──
@@ -1017,7 +1039,6 @@ function load(id, room) {
   if (room && room !== currentRoom && ROOMS[room]) {
     currentRoom = room;
     document.getElementById('f-room').value = room;
-    // Update UI without re-pulling cloud (we already have data)
     const rd = ROOMS[room];
     document.getElementById('f-name').value = rd.name;
     document.getElementById('sidebar-sub').textContent = `Căn hộ ${room} · Tầng ${rd.floor}`;
@@ -1026,7 +1047,7 @@ function load(id, room) {
     document.getElementById('t-footer-preview').textContent = `Phiếu thu tự động — Căn hộ ${room}, Tầng ${rd.floor}`;
     document.getElementById('rent-rate').textContent = vnd(rd.rentRate);
   }
-  const r = getHist().find(x => x.id === id);
+  const r = _data.find(x => x.id === id);
   if (!r) return;
   editId = r.id;
   document.getElementById('f-from').value = r.dateFrom || '';
@@ -1050,26 +1071,29 @@ function loadAndShare(id, room) {
 }
 
 // ── DELETE ──
-function del(id, room, e) {
+async function del(id, room, e) {
   e.stopPropagation();
   if (!confirm('Xóa phiếu thu này?')) return;
-  const storeKey = `receipt-${room || currentRoom}`;
-  const h = (JSON.parse(localStorage.getItem(storeKey)||'[]')).filter(x => x.id !== id);
-  localStorage.setItem(storeKey, JSON.stringify(h));
-  if (editId === id) { editId = null; newReceipt(); }
-  renderHist();
-  toast('🗑', 'Đã xóa');
-  cloudDelete(id, room || currentRoom);
+  try {
+    await sheetAPI({ action: 'delete', id, room: room || currentRoom });
+    if (editId === id) { editId = null; newReceipt(); }
+    toast('🗑', 'Đã xóa');
+    await sheetLoad();
+  } catch (err) {
+    toast('❌', 'Lỗi xóa: ' + err.message);
+  }
 }
 
-function clearAll() {
-  if (!confirm('Xóa TẤT CẢ lịch sử phiếu thu?')) return;
-  // Clear all rooms from localStorage
-  Object.keys(ROOMS).forEach(room => localStorage.removeItem(`receipt-${room}`));
-  editId = null; newReceipt(); renderHist();
-  toast('🗑', 'Đã xóa tất cả');
-  // Also clear from Sheet
-  cloudDeleteAll();
+async function clearAll() {
+  if (!confirm('Xóa TẤT CẢ phiếu thu?')) return;
+  try {
+    await sheetAPI({ action: 'deleteAll' });
+    _data = [];
+    editId = null; newReceipt(); renderHist();
+    toast('🗑', 'Đã xóa tất cả');
+  } catch (err) {
+    toast('❌', 'Lỗi xóa: ' + err.message);
+  }
 }
 
 function newReceipt() {
@@ -1079,7 +1103,6 @@ function newReceipt() {
   document.getElementById('f-wa').value = '';
   document.getElementById('f-wi').value = '';
   document.getElementById('f-rent').value = '1';
-  // Default: last month 14th to this month 14th
   const now = new Date();
   const to = new Date(now.getFullYear(), now.getMonth(), 14);
   const from = new Date(to); from.setMonth(from.getMonth() - 1);
@@ -1089,24 +1112,32 @@ function newReceipt() {
 }
 
 // ── MARK PAID ──
-function markPaid(id, ts) {
-  const hist = getHist();
-  const r = hist.find(x => x.id === id);
-  if (r) { r.paid = true; r.paidAt = ts || new Date().toISOString(); }
-  localStorage.setItem(getStore(), JSON.stringify(hist));
-  renderHist();
-  toast('✅', 'Phiếu thu đã được xác nhận thanh toán!');
+async function markPaid(id, ts) {
+  const r = _data.find(x => x.id === id);
+  if (!r) return;
+  r.paid = true;
+  r.paidAt = ts || new Date().toISOString();
+  try {
+    await sheetAPI({ action: 'save', ...r });
+    toast('✅', 'Đã xác nhận thanh toán!');
+    await sheetLoad();
+  } catch (err) {
+    toast('❌', 'Lỗi: ' + err.message);
+  }
 }
 
-function togglePaid(id, room, e) {
+async function togglePaid(id, room, e) {
   e.stopPropagation();
-  const storeKey = `receipt-${room || currentRoom}`;
-  const hist = JSON.parse(localStorage.getItem(storeKey)||'[]');
-  const r = hist.find(x => x.id === id);
-  if (r) { r.paid = !r.paid; r.paidAt = r.paid ? new Date().toISOString() : null; }
-  localStorage.setItem(storeKey, JSON.stringify(hist));
-  renderHist();
-  if (r) cloudSave({...r, room: room || currentRoom});
+  const r = _data.find(x => x.id === id);
+  if (!r) return;
+  r.paid = !r.paid;
+  r.paidAt = r.paid ? new Date().toISOString() : '';
+  try {
+    await sheetAPI({ action: 'save', ...r });
+    await sheetLoad();
+  } catch (err) {
+    toast('❌', 'Lỗi: ' + err.message);
+  }
 }
 
 // ── SHARE (Clean URL) ──
@@ -1149,7 +1180,7 @@ function shareReceipt() {
 
   save();
 
-  const r = getHist().find(x => x.id === editId);
+  const r = _data.find(x => x.id === editId);
   if (!r) return;
 
   const slug = makeSlug(r);
@@ -1205,7 +1236,7 @@ function execCopy(ta) {
 
 function nativeShare() {
   const link = document.getElementById('share-link').value;
-  const r = getHist().find(x => x.id === editId);
+  const r = _data.find(x => x.id === editId);
   navigator.share({
     title: `Phiếu thu ${fmtPeriodShort(r)} — Căn hộ ${currentRoom}`,
     text: `Phiếu thu dịch vụ ${fmtPeriodShort(r)}: ${vnd(r.total)}`,
@@ -1217,7 +1248,7 @@ function closeModal() { document.getElementById('share-modal').classList.remove(
 
 // ── RENDER HISTORY (all rooms) ──
 function renderHist() {
-  const hist = getAllHist();
+  const hist = _data;
   const list = document.getElementById('hist-list');
   const footer = document.getElementById('sb-footer');
 
@@ -1337,119 +1368,13 @@ function copyAcct() {
   navigator.clipboard.writeText(BANK.acct).then(() => toast('📋', 'Đã sao chép số tài khoản!'));
 }
 
-// ── UTILITIES ──
-function getHist() { try { return JSON.parse(localStorage.getItem(getStore())||'[]'); } catch { return []; } }
-
-function getAllHist() {
-  const all = [];
-  Object.keys(ROOMS).forEach(room => {
-    try {
-      const items = JSON.parse(localStorage.getItem(`receipt-${room}`) || '[]');
-      items.forEach(r => { r.room = r.room || room; all.push(r); });
-    } catch {}
-  });
-  all.sort((a, b) => (b.ts || '').localeCompare(a.ts || ''));
-  return all;
-}
-
-// ── CLOUD SYNC (Google Sheets) ──
+// ── SYNC STATUS ──
 function syncStatus(msg, type) {
   const el = document.getElementById('sync-indicator');
   if (!el) return;
   el.textContent = msg;
   el.className = 'sync-indicator ' + (type || '');
   if (type === 'ok') setTimeout(() => { el.textContent = ''; el.className = 'sync-indicator'; }, 3000);
-}
-
-async function cloudSave(receipt) {
-  if (!SHEET_URL) return;
-  try {
-    syncStatus('☁️ Đang đồng bộ...', 'syncing');
-    const res = await fetch(SHEET_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'save', receipt: { ...receipt, room: receipt.room || currentRoom } })
-    });
-    syncStatus('✓ Đã lưu cloud', 'ok');
-  } catch (err) {
-    console.warn('Cloud save failed:', err);
-    syncStatus('⚠ Lỗi cloud', 'error');
-  }
-}
-
-async function cloudDelete(id, room) {
-  if (!SHEET_URL) return;
-  try {
-    await fetch(SHEET_URL + '?action=delete&id=' + encodeURIComponent(id) + '&room=' + encodeURIComponent(room));
-  } catch (err) { console.warn('Cloud delete failed:', err); }
-}
-
-async function cloudPushAll() {
-  if (!SHEET_URL) { toast('⚠️', 'Chưa cấu hình SHEET_URL'); return; }
-  const hist = getAllHist();
-  if (hist.length === 0) { toast('📋', 'Không có dữ liệu để đẩy'); return; }
-  try {
-    syncStatus('⬆️ Đẩy ' + hist.length + ' phiếu...', 'syncing');
-    await fetch(SHEET_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'saveAll', receipts: hist })
-    });
-    syncStatus('✓ Đã đẩy ' + hist.length + ' phiếu', 'ok');
-    toast('✅', `Đã đẩy ${hist.length} phiếu lên Cloud!`);
-  } catch (err) {
-    console.error('Cloud push failed:', err);
-    syncStatus('⚠ Lỗi push', 'error');
-    toast('❌', 'Lỗi đẩy dữ liệu lên Cloud');
-  }
-}
-
-async function cloudDeleteAll() {
-  if (!SHEET_URL) return;
-  try {
-    syncStatus('🗑 Đang xóa cloud...', 'syncing');
-    const res = await fetch(SHEET_URL + '?action=deleteAll');
-    const json = await res.json();
-    syncStatus('✓ Đã xóa cloud (' + (json.deleted||0) + ')', 'ok');
-  } catch (err) {
-    console.warn('Cloud deleteAll failed:', err);
-    syncStatus('⚠ Lỗi xóa cloud', 'error');
-  }
-}
-
-async function cloudPull() {
-  if (!SHEET_URL) return;
-  try {
-    syncStatus('☁️ Đang đồng bộ...', 'syncing');
-    const res = await fetch(SHEET_URL);
-    const json = await res.json();
-    if (!json.success || !json.data) throw new Error(json.error || 'Invalid response');
-
-    const cloudData = json.data;
-
-    // Sheet = source of truth → REPLACE localStorage entirely
-    // Clear all rooms first
-    Object.keys(ROOMS).forEach(room => localStorage.removeItem(`receipt-${room}`));
-
-    // Group cloud data by room and write to localStorage
-    const byRoom = {};
-    cloudData.forEach(r => {
-      const rm = r.room || currentRoom;
-      if (!byRoom[rm]) byRoom[rm] = [];
-      byRoom[rm].push(r);
-    });
-
-    Object.keys(byRoom).forEach(room => {
-      byRoom[room].sort((a, b) => (b.ts || '').localeCompare(a.ts || ''));
-      localStorage.setItem(`receipt-${room}`, JSON.stringify(byRoom[room]));
-    });
-
-    renderHist();
-    syncStatus('✓ ' + cloudData.length + ' phiếu', 'ok');
-  } catch (err) {
-    console.error('Cloud pull failed:', err);
-    syncStatus('⚠ Lỗi sync', 'error');
-  }
 }
 
 function toast(icon, txt) {
@@ -1501,13 +1426,13 @@ function init() {
   // Route
   route();
 
-  // Only init admin UI if on admin view
+  // Load data from Sheet (single source of truth)
   if (!location.hash.startsWith('#v=')) {
-    renderHist();
     calc();
-    // Auto-pull from cloud on init if configured
     if (SHEET_URL) {
-      cloudPull().catch(() => {});
+      sheetLoad().catch(() => {});
+    } else {
+      renderHist();
     }
   }
 }
