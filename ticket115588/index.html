@@ -576,10 +576,6 @@
       <div class="section-title-sm">Lịch sử phiếu thu</div>
       <div class="history-list" id="hist-list"></div>
       <div class="sidebar-footer" id="sb-footer" style="display:none">
-        <div class="cloud-actions">
-          <button class="btn-cloud" onclick="cloudPull()" title="Kéo dữ liệu từ Google Sheet">☁️ Kéo từ Cloud</button>
-          <button class="btn-cloud btn-cloud-push" onclick="cloudPushAll()" title="Đẩy tất cả lên Google Sheet">⬆️ Đẩy lên Cloud</button>
-        </div>
         <button class="btn-clear" onclick="clearAll()">🗑 Xóa tất cả</button>
       </div>
       <div class="sync-indicator" id="sync-indicator"></div>
@@ -841,6 +837,8 @@ function onRoomChange() {
   document.getElementById('rent-rate').textContent = vnd(rd.rentRate);
   renderHist();
   calc();
+  // Auto-pull cloud data for this room
+  if (SHEET_URL) cloudPull().catch(() => {});
 }
 
 // ── ROUTER ──
