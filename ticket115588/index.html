@@ -1412,13 +1412,13 @@ async function cloudDeleteAll() {
   if (!SHEET_URL) return;
   try {
     syncStatus('🗑 Đang xóa cloud...', 'syncing');
-    await fetch(SHEET_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'deleteAll' })
-    });
-    syncStatus('✓ Đã xóa cloud', 'ok');
-  } catch (err) { console.warn('Cloud deleteAll failed:', err); }
+    const res = await fetch(SHEET_URL + '?action=deleteAll');
+    const json = await res.json();
+    syncStatus('✓ Đã xóa cloud (' + (json.deleted||0) + ')', 'ok');
+  } catch (err) {
+    console.warn('Cloud deleteAll failed:', err);
+    syncStatus('⚠ Lỗi xóa cloud', 'error');
+  }
 }
 
 async function cloudPull() {
