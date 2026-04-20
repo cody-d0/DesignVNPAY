@@ -989,7 +989,13 @@ async function sheetAPI(params) {
 async function sheetLoad() {
   try {
     const json = await sheetAPI({});
-    _data = json.data || [];
+    _data = (json.data || []).map(r => ({
+      ...r,
+      id: String(r.id),
+      room: String(r.room),
+      dateFrom: String(r.dateFrom || '').split('T')[0],
+      dateTo: String(r.dateTo || '').split('T')[0]
+    }));
     renderHist();
     syncStatus('✓ ' + _data.length + ' phiếu', 'ok');
   } catch (err) {
