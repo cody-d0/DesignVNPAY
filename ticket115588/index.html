@@ -1063,10 +1063,13 @@ function del(id, room, e) {
 }
 
 function clearAll() {
-  if (!confirm('Xóa TẤT CẢ lịch sử?')) return;
-  localStorage.removeItem(getStore());
+  if (!confirm('Xóa TẤT CẢ lịch sử phiếu thu?')) return;
+  // Clear all rooms from localStorage
+  Object.keys(ROOMS).forEach(room => localStorage.removeItem(`receipt-${room}`));
   editId = null; newReceipt(); renderHist();
   toast('🗑', 'Đã xóa tất cả');
+  // Also clear from Sheet
+  cloudDeleteAll();
 }
 
 function newReceipt() {
@@ -1405,17 +1408,34 @@ async function cloudPushAll() {
   }
 }
 
+async function cloudDeleteAll() {
+  if (!SHEET_URL) return;
+  try {
+    syncStatus('🗑 Đang xóa cloud...', 'syncing');
+    await fetch(SHEET_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'deleteAll' })
+    });
+    syncStatus('✓ Đã xóa cloud', 'ok');
+  } catch (err) { console.warn('Cloud deleteAll failed:', err); }
+}
+
 async function cloudPull() {
   if (!SHEET_URL) return;
   try {
-    syncStatus('☁️ Đang kéo dữ liệu...', 'syncing');
+    syncStatus('☁️ Đang đồng bộ...', 'syncing');
     const res = await fetch(SHEET_URL);
     const json = await res.json();
     if (!json.success || !json.data) throw new Error(json.error || 'Invalid response');
 
     const cloudData = json.data;
 
-    // Group by room and merge into localStorage
+    // Sheet = source of truth → REPLACE localStorage entirely
+    // Clear all rooms first
+    Object.keys(ROOMS).forEach(room => localStorage.removeItem(`receipt-${room}`));
+
+    // Group cloud data by room and write to localStorage
     const byRoom = {};
     cloudData.forEach(r => {
       const rm = r.room || currentRoom;
@@ -1424,21 +1444,15 @@ async function cloudPull() {
     });
 
     Object.keys(byRoom).forEach(room => {
-      const storeKey = `receipt-${room}`;
-      const local = JSON.parse(localStorage.getItem(storeKey) || '[]');
-      const merged = [...byRoom[room]];
-      local.forEach(lr => {
-        if (!merged.find(cr => cr.id === lr.id)) merged.push(lr);
-      });
-      merged.sort((a, b) => (b.ts || '').localeCompare(a.ts || ''));
-      localStorage.setItem(storeKey, JSON.stringify(merged));
+      byRoom[room].sort((a, b) => (b.ts || '').localeCompare(a.ts || ''));
+      localStorage.setItem(`receipt-${room}`, JSON.stringify(byRoom[room]));
     });
 
     renderHist();
-    syncStatus('✓ Đã đồng bộ ' + cloudData.length + ' phiếu', 'ok');
+    syncStatus('✓ ' + cloudData.length + ' phiếu', 'ok');
   } catch (err) {
     console.error('Cloud pull failed:', err);
-    syncStatus('⚠ Lỗi pull', 'error');
+    syncStatus('⚠ Lỗi sync', 'error');
   }
 }
 

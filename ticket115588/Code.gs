@@ -1,5 +1,6 @@
 // ═══════════════════════════════════════════════
 // Google Apps Script — Phiếu Thu Backend
+// Sheet = Single Source of Truth
 // Copy toàn bộ file này vào Apps Script editor
 // ═══════════════════════════════════════════════
 
@@ -72,7 +73,7 @@ function doPost(e) {
       return jsonOut({ success: true, action: 'saveAll', saved: saved });
     }
     
-    // ── ACTION: delete ──
+    // ── ACTION: delete (single receipt) ──
     if (body.action === 'delete') {
       const existingRow = findRow(sheet, body.id, body.room);
       if (existingRow > 0) {
@@ -80,6 +81,24 @@ function doPost(e) {
         return jsonOut({ success: true, action: 'deleted' });
       }
       return jsonOut({ success: false, error: 'Not found' });
+    }
+    
+    // ── ACTION: deleteAll (clear by room or everything) ──
+    if (body.action === 'deleteAll') {
+      const room = body.room;
+      const data = sheet.getDataRange().getValues();
+      const roomCol = 1; // 'room' column index
+      
+      // Delete matching rows from bottom to top (to preserve row indices)
+      let deleted = 0;
+      for (let i = data.length - 1; i >= 1; i--) {
+        if (!room || String(data[i][roomCol]) === String(room)) {
+          sheet.deleteRow(i + 1);
+          deleted++;
+        }
+      }
+      
+      return jsonOut({ success: true, action: 'deleteAll', deleted: deleted });
     }
     
     return jsonOut({ success: false, error: 'Unknown action: ' + body.action });
@@ -91,7 +110,7 @@ function doPost(e) {
   }
 }
 
-// ── GET Handler (list receipts) ──
+// ── GET Handler (list receipts — Sheet is source of truth) ──
 function doGet(e) {
   try {
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
