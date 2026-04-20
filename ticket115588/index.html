@@ -150,6 +150,12 @@
     }
     .hi:hover { background: var(--bg-card-hover); border-color: rgba(180,140,40,0.15); }
     .hi.active { border-color: var(--accent); background: var(--accent-glow); }
+    .hi-top { display: flex; align-items: center; gap: 6px; }
+    .hi-room {
+      font-size: 0.6rem; font-weight: 600; font-family: var(--font-mono);
+      background: var(--accent-soft); color: var(--accent); padding: 1px 6px;
+      border-radius: 100px; white-space: nowrap;
+    }
     .hi-month { font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; color: var(--ink); }
     .hi-tenant { font-size: 0.7rem; color: var(--ink-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .hi-total { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500; color: var(--accent); margin-top: 2px; }
@@ -1007,15 +1013,22 @@ function save() {
 }
 
 // ── LOAD ──
-function load(id) {
+function load(id, room) {
+  if (room && room !== currentRoom && ROOMS[room]) {
+    currentRoom = room;
+    document.getElementById('f-room').value = room;
+    // Update UI without re-pulling cloud (we already have data)
+    const rd = ROOMS[room];
+    document.getElementById('f-name').value = rd.name;
+    document.getElementById('sidebar-sub').textContent = `Căn hộ ${room} · Tầng ${rd.floor}`;
+    document.getElementById('receipt-apt').textContent = `APARTMENT ${room} — FLOOR ${rd.floor}`;
+    document.getElementById('t-apt-preview').textContent = `Căn hộ ${room} — Tầng ${rd.floor}`;
+    document.getElementById('t-footer-preview').textContent = `Phiếu thu tự động — Căn hộ ${room}, Tầng ${rd.floor}`;
+    document.getElementById('rent-rate').textContent = vnd(rd.rentRate);
+  }
   const r = getHist().find(x => x.id === id);
   if (!r) return;
   editId = r.id;
-  if (r.room && ROOMS[r.room]) {
-    currentRoom = r.room;
-    document.getElementById('f-room').value = r.room;
-    onRoomChange();
-  }
   document.getElementById('f-from').value = r.dateFrom || '';
   document.getElementById('f-to').value = r.dateTo || '';
   document.getElementById('f-name').value = r.name || ROOMS[currentRoom].name;
@@ -1029,16 +1042,24 @@ function load(id) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function loadAndShare(id, room) {
+  event.stopPropagation();
+  load(id, room);
+  editId = id;
+  shareReceipt();
+}
+
 // ── DELETE ──
-function del(id, e) {
+function del(id, room, e) {
   e.stopPropagation();
   if (!confirm('Xóa phiếu thu này?')) return;
-  const h = getHist().filter(x => x.id !== id);
-  localStorage.setItem(getStore(), JSON.stringify(h));
+  const storeKey = `receipt-${room || currentRoom}`;
+  const h = (JSON.parse(localStorage.getItem(storeKey)||'[]')).filter(x => x.id !== id);
+  localStorage.setItem(storeKey, JSON.stringify(h));
   if (editId === id) { editId = null; newReceipt(); }
   renderHist();
   toast('🗑', 'Đã xóa');
-  cloudDelete(id, currentRoom);
+  cloudDelete(id, room || currentRoom);
 }
 
 function clearAll() {
@@ -1074,14 +1095,15 @@ function markPaid(id, ts) {
   toast('✅', 'Phiếu thu đã được xác nhận thanh toán!');
 }
 
-function togglePaid(id, e) {
+function togglePaid(id, room, e) {
   e.stopPropagation();
-  const hist = getHist();
+  const storeKey = `receipt-${room || currentRoom}`;
+  const hist = JSON.parse(localStorage.getItem(storeKey)||'[]');
   const r = hist.find(x => x.id === id);
   if (r) { r.paid = !r.paid; r.paidAt = r.paid ? new Date().toISOString() : null; }
-  localStorage.setItem(getStore(), JSON.stringify(hist));
+  localStorage.setItem(storeKey, JSON.stringify(hist));
   renderHist();
-  if (r) cloudSave(r);
+  if (r) cloudSave({...r, room: room || currentRoom});
 }
 
 // ── SHARE (Clean URL) ──
@@ -1190,9 +1212,9 @@ function nativeShare() {
 
 function closeModal() { document.getElementById('share-modal').classList.remove('open'); }
 
-// ── RENDER HISTORY ──
+// ── RENDER HISTORY (all rooms) ──
 function renderHist() {
-  const hist = getHist();
+  const hist = getAllHist();
   const list = document.getElementById('hist-list');
   const footer = document.getElementById('sb-footer');
 
@@ -1204,15 +1226,15 @@ function renderHist() {
 
   footer.style.display = '';
   list.innerHTML = hist.map((r, i) => `
-    <div class="hi${editId===r.id?' active':''}" onclick="load('${r.id}')" style="animation:fadeUp .3s var(--ease-out) ${i*0.04}s backwards">
-      <div class="hi-month">${fmtPeriodShort(r)}</div>
+    <div class="hi${editId===r.id?' active':''}" onclick="load('${r.id}','${r.room||currentRoom}')" style="animation:fadeUp .3s var(--ease-out) ${i*0.04}s backwards">
+      <div class="hi-top"><span class="hi-room">${r.room||currentRoom}</span><span class="hi-month">${fmtPeriodShort(r)}</span></div>
       <div class="hi-tenant">${r.name || '(Chưa nhập tên)'}</div>
       <div class="hi-total">${vnd(r.total||0)}</div>
       ${r.paid ? '<div class="hi-paid">✓ Đã thanh toán</div>' : ''}
       <div class="hi-actions">
-        <button class="hi-btn hi-btn-share" onclick="event.stopPropagation();editId='${r.id}';load('${r.id}');shareReceipt()" title="Gửi">🔗</button>
-        <button class="hi-btn" style="background:${r.paid?'var(--success-soft)':'var(--accent-soft)'};color:${r.paid?'var(--success-text)':'var(--accent)'}" onclick="togglePaid('${r.id}',event)" title="${r.paid?'Bỏ đánh dấu':'Đánh dấu đã TT'}">💰</button>
-        <button class="hi-btn hi-btn-del" onclick="del('${r.id}',event)" title="Xóa">✕</button>
+        <button class="hi-btn hi-btn-share" onclick="event.stopPropagation();loadAndShare('${r.id}','${r.room||currentRoom}')" title="Gửi">🔗</button>
+        <button class="hi-btn" style="background:${r.paid?'var(--success-soft)':'var(--accent-soft)'};color:${r.paid?'var(--success-text)':'var(--accent)'}" onclick="togglePaid('${r.id}','${r.room||currentRoom}',event)" title="${r.paid?'Bỏ đánh dấu':'Đánh dấu đã TT'}">💰</button>
+        <button class="hi-btn hi-btn-del" onclick="del('${r.id}','${r.room||currentRoom}',event)" title="Xóa">✕</button>
       </div>
     </div>
   `).join('');
@@ -1315,6 +1337,18 @@ function copyAcct() {
 // ── UTILITIES ──
 function getHist() { try { return JSON.parse(localStorage.getItem(getStore())||'[]'); } catch { return []; } }
 
+function getAllHist() {
+  const all = [];
+  Object.keys(ROOMS).forEach(room => {
+    try {
+      const items = JSON.parse(localStorage.getItem(`receipt-${room}`) || '[]');
+      items.forEach(r => { r.room = r.room || room; all.push(r); });
+    } catch {}
+  });
+  all.sort((a, b) => (b.ts || '').localeCompare(a.ts || ''));
+  return all;
+}
+
 // ── CLOUD SYNC (Google Sheets) ──
 function syncStatus(msg, type) {
   const el = document.getElementById('sync-indicator');
@@ -1372,33 +1406,39 @@ async function cloudPushAll() {
 }
 
 async function cloudPull() {
-  if (!SHEET_URL) { toast('⚠️', 'Chưa cấu hình SHEET_URL'); return; }
+  if (!SHEET_URL) return;
   try {
     syncStatus('☁️ Đang kéo dữ liệu...', 'syncing');
-    const res = await fetch(SHEET_URL + '?room=' + currentRoom);
+    const res = await fetch(SHEET_URL);
     const json = await res.json();
     if (!json.success || !json.data) throw new Error(json.error || 'Invalid response');
 
     const cloudData = json.data;
-    const local = getHist();
 
-    // Merge: cloud wins for same ID, keep local-only items
-    const merged = [...cloudData];
-    local.forEach(lr => {
-      if (!merged.find(cr => cr.id === lr.id)) merged.push(lr);
+    // Group by room and merge into localStorage
+    const byRoom = {};
+    cloudData.forEach(r => {
+      const rm = r.room || currentRoom;
+      if (!byRoom[rm]) byRoom[rm] = [];
+      byRoom[rm].push(r);
     });
 
-    // Sort newest first
-    merged.sort((a, b) => (b.ts || '').localeCompare(a.ts || ''));
+    Object.keys(byRoom).forEach(room => {
+      const storeKey = `receipt-${room}`;
+      const local = JSON.parse(localStorage.getItem(storeKey) || '[]');
+      const merged = [...byRoom[room]];
+      local.forEach(lr => {
+        if (!merged.find(cr => cr.id === lr.id)) merged.push(lr);
+      });
+      merged.sort((a, b) => (b.ts || '').localeCompare(a.ts || ''));
+      localStorage.setItem(storeKey, JSON.stringify(merged));
+    });
 
-    localStorage.setItem(getStore(), JSON.stringify(merged));
     renderHist();
-    syncStatus('✓ Đã kéo ' + cloudData.length + ' phiếu', 'ok');
-    toast('☁️', `Đã kéo ${cloudData.length} phiếu từ Cloud (tổng: ${merged.length})`);
+    syncStatus('✓ Đã đồng bộ ' + cloudData.length + ' phiếu', 'ok');
   } catch (err) {
     console.error('Cloud pull failed:', err);
     syncStatus('⚠ Lỗi pull', 'error');
-    toast('❌', 'Lỗi kéo dữ liệu từ Cloud');
   }
 }
 
