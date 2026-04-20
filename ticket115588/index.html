@@ -324,79 +324,93 @@
     .cal-summary-item { display: flex; align-items: center; gap: 4px; }
     .cal-summary-dot { width: 6px; height: 6px; border-radius: 50%; }
 
-    /* ═══ MONTHLY TRACKER (inline dashboard) ═══ */
-    .tracker-overlay { display: none; } /* legacy — no longer needed */
+    /* ═══ MONTHLY TRACKER (inline dashboard, theme-aware) ═══ */
+    .tracker-overlay { display: none; }
     .tracker-inline {
-      background: #111318; border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px; padding: 28px; color: #e8e6e1;
+      --trk-bg: var(--bg-card); --trk-border: var(--border);
+      --trk-ink: var(--ink); --trk-muted: var(--ink-muted); --trk-faint: var(--ink-faint);
+      --trk-cell-bg: rgba(0,0,0,0.03); --trk-cell-border: rgba(0,0,0,0.06);
+      --trk-room-bg: rgba(0,0,0,0.02); --trk-room-border: rgba(0,0,0,0.04);
+      --trk-month-bg: rgba(0,0,0,0.02);
+      background: var(--trk-bg); border: 1px solid var(--trk-border);
+      border-radius: 16px; padding: 28px; color: var(--trk-ink);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    [data-theme="dark"] .tracker-inline {
+      --trk-bg: #111318; --trk-border: rgba(255,255,255,0.08);
+      --trk-ink: #e8e6e1; --trk-muted: #a0a0a0; --trk-faint: #666;
+      --trk-cell-bg: rgba(255,255,255,0.03); --trk-cell-border: rgba(255,255,255,0.05);
+      --trk-room-bg: rgba(255,255,255,0.02); --trk-room-border: rgba(255,255,255,0.04);
+      --trk-month-bg: rgba(255,255,255,0.02);
       box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     }
     .tracker-header {
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 24px; padding-bottom: 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid var(--trk-cell-border);
     }
     .tracker-title {
       font-family: var(--font-display); font-size: 1.35rem; font-weight: 700;
-      color: #fff; letter-spacing: -0.02em;
+      color: var(--trk-ink); letter-spacing: -0.02em;
     }
     .tracker-year-nav { display: flex; align-items: center; gap: 8px; }
     .tracker-year-btn {
-      width: 32px; height: 32px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.04); color: #a0a0a0; cursor: pointer;
+      width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--trk-cell-border);
+      background: var(--trk-cell-bg); color: var(--trk-muted); cursor: pointer;
       font-size: 0.9rem; display: flex; align-items: center; justify-content: center;
       transition: all 0.2s ease;
     }
-    .tracker-year-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .tracker-year-btn:hover { background: var(--accent-soft); color: var(--accent); }
     .tracker-year {
       font-family: var(--font-mono); font-size: 1.1rem; font-weight: 800;
-      color: #c8a646; min-width: 54px; text-align: center;
+      color: var(--accent); min-width: 54px; text-align: center;
     }
     .tracker-close {
-      width: 32px; height: 32px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.04); color: #888; cursor: pointer;
+      width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--trk-cell-border);
+      background: var(--trk-cell-bg); color: var(--trk-faint); cursor: pointer;
       font-size: 1rem; display: flex; align-items: center; justify-content: center;
     }
     .tracker-close:hover { background: rgba(239,68,68,0.2); color: #ef4444; }
 
     .tracker-months {
       display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px;
-      margin-bottom: 20px; position: sticky; top: 0; background: #111318;
+      margin-bottom: 20px; position: sticky; top: 0; background: var(--trk-bg);
       z-index: 1; padding: 8px 0 12px;
     }
     .tracker-month-hdr {
       text-align: center; font-size: 0.7rem; font-weight: 700;
-      font-family: var(--font-mono); color: #666;
+      font-family: var(--font-mono); color: var(--trk-faint);
       padding: 8px 0; border-radius: 6px;
-      background: rgba(255,255,255,0.02);
+      background: var(--trk-month-bg);
     }
     .tracker-month-hdr.now {
-      background: rgba(200,166,70,0.15); color: #c8a646;
+      background: rgba(200,166,70,0.15); color: var(--accent);
       box-shadow: 0 0 0 1px rgba(200,166,70,0.3);
     }
 
     .tracker-room {
       margin-bottom: 20px; padding: 16px;
-      background: rgba(255,255,255,0.02); border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.04);
+      background: var(--trk-room-bg); border-radius: 12px;
+      border: 1px solid var(--trk-room-border);
     }
     .tracker-room-header {
       display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
     }
     .tracker-room-badge {
       font-size: 0.7rem; font-weight: 800; font-family: var(--font-mono);
-      background: rgba(200,166,70,0.15); color: #c8a646;
+      background: rgba(200,166,70,0.15); color: var(--accent);
       padding: 3px 12px; border-radius: 6px; letter-spacing: 0.05em;
     }
     .tracker-room-name {
-      font-size: 0.82rem; font-weight: 500; color: #999;
+      font-size: 0.82rem; font-weight: 500; color: var(--trk-muted);
     }
 
     .tracker-grid {
       display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px;
     }
     .tracker-cell {
-      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+      background: var(--trk-cell-bg); border: 1px solid var(--trk-cell-border);
       border-radius: 8px; padding: 6px 4px;
       display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
       min-height: 52px; transition: all 0.2s ease;
@@ -415,26 +429,28 @@
     .tracker-svc-icon { font-size: 0.75rem; filter: saturate(1.2); }
     .tracker-svc-status { font-size: 0.55rem; font-weight: 800; letter-spacing: 0.03em; }
     .tracker-svc.collected {
-      background: rgba(34,197,94,0.2); color: #4ade80;
+      background: rgba(34,197,94,0.2); color: #22c55e;
       border: 1px solid rgba(34,197,94,0.25);
     }
+    [data-theme="dark"] .tracker-svc.collected { color: #4ade80; }
     .tracker-svc.pending {
-      background: rgba(245,158,11,0.18); color: #fbbf24;
+      background: rgba(245,158,11,0.18); color: #d97706;
       border: 1px solid rgba(245,158,11,0.25);
     }
+    [data-theme="dark"] .tracker-svc.pending { color: #fbbf24; }
     .tracker-svc.notdue {
-      background: rgba(255,255,255,0.02); color: #444;
+      background: var(--trk-cell-bg); color: var(--trk-faint);
       border: 1px solid transparent; opacity: 0.4;
     }
 
     .tracker-legend {
       display: flex; gap: 20px; justify-content: center;
-      padding: 16px 0 4px; border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 16px 0 4px; border-top: 1px solid var(--trk-cell-border);
       margin-top: 12px;
     }
     .tracker-legend-item {
       display: flex; align-items: center; gap: 6px;
-      font-size: 0.68rem; color: #888; font-weight: 500;
+      font-size: 0.68rem; color: var(--trk-muted); font-weight: 500;
     }
     .tracker-legend-dot { width: 10px; height: 10px; border-radius: 3px; }
 
@@ -1408,10 +1424,10 @@ async function clearAll() {
 function newReceipt() {
   editId = null;
   document.getElementById('f-name').value = ROOMS[currentRoom].name;
-  document.getElementById('f-el').value = '';
-  document.getElementById('f-wa').value = '';
-  document.getElementById('f-wi').value = '';
-  document.getElementById('f-rent').value = '1';
+  document.getElementById('f-el').value = '0';
+  document.getElementById('f-wa').value = '0';
+  document.getElementById('f-wi').value = '0';
+  document.getElementById('f-rent').value = '0';
   const now = new Date();
   const to = new Date(now.getFullYear(), now.getMonth(), 14);
   const from = new Date(to); from.setMonth(from.getMonth() - 1);
@@ -1805,6 +1821,13 @@ function renderHist() {
   if (filterRoom !== 'all') {
     hist = hist.filter(r => (r.room || '4031') === filterRoom);
   }
+
+  // Sort by most recent first (dateTo or ts fallback)
+  hist = [...hist].sort((a, b) => {
+    const da = new Date(a.dateTo || a.ts || 0);
+    const db = new Date(b.dateTo || b.ts || 0);
+    return db - da;
+  });
 
   const list = document.getElementById('hist-list');
 
