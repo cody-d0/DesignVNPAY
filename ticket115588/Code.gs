@@ -73,11 +73,8 @@ function doGet(e) {
         var val = rows[i][c];
         var key = headers[c];
         // Convert Date objects to YYYY-MM-DD (prevent UTC shift)
-        if (val instanceof Date) {
-          var yy = val.getFullYear();
-          var mm = ('0'+(val.getMonth()+1)).slice(-2);
-          var dd = ('0'+val.getDate()).slice(-2);
-          val = yy + '-' + mm + '-' + dd;
+        if (val && typeof val.getFullYear === 'function') {
+          val = Utilities.formatDate(val, Session.getScriptTimeZone(), 'yyyy-MM-dd');
         }
         if (key==='el'||key==='wa'||key==='wi'||key==='rentMonths'||key==='rent'||key==='total') val = Number(val)||0;
         if (key==='paid') val = (val===true||val==='true');
