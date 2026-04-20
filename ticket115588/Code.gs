@@ -1,169 +1,163 @@
 // ═══════════════════════════════════════════════
-// Google Apps Script — Phiếu Thu Backend
+// Google Apps Script — Phiếu Thu Backend v2
 // Sheet = Single Source of Truth
-// Copy toàn bộ file này vào Apps Script editor
 // ═══════════════════════════════════════════════
 
-const SHEET_NAME = 'Receipts';
-const HEADERS = ['id','room','dateFrom','dateTo','name','el','wa','wi','rentMonths','rent','total','paid','paidAt','ts'];
+var SHEET_NAME = 'Receipts';
+var HEADERS = ['id','room','dateFrom','dateTo','name','el','wa','wi','rentMonths','rent','total','paid','paidAt','ts'];
 
-// ── SETUP: Chạy 1 lần để tạo sheet + header ──
 function setupSheet() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let sheet = ss.getSheetByName(SHEET_NAME);
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(SHEET_NAME);
   if (!sheet) sheet = ss.insertSheet(SHEET_NAME);
-  
   sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
   sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
   sheet.setFrozenRows(1);
-  HEADERS.forEach((_, i) => sheet.autoResizeColumn(i + 1));
-  
-  Logger.log('✅ Sheet "Receipts" đã được tạo với ' + HEADERS.length + ' cột');
+  Logger.log('Done');
 }
 
-// ── POST Handler ──
 function doPost(e) {
-  const lock = LockService.getScriptLock();
+  var lock = LockService.getScriptLock();
   lock.tryLock(10000);
-  
   try {
-    const body = JSON.parse(e.postData.contents);
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
-    if (!sheet) return jsonOut({ success: false, error: 'Sheet not found' });
-    
-    // ── save (upsert single receipt) ──
+    var body = JSON.parse(e.postData.contents);
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+    if (!sheet) return out({success:false, error:'No sheet'});
+
     if (body.action === 'save') {
-      const r = body.receipt;
-      if (!r || !r.id) return jsonOut({ success: false, error: 'Missing receipt' });
-      
-      const rowData = HEADERS.map(h => r[h] !== undefined ? r[h] : '');
-      const existingRow = findRow(sheet, r.id, r.room);
-      
-      if (existingRow > 0) {
-        sheet.getRange(existingRow, 1, 1, HEADERS.length).setValues([rowData]);
+      var r = body.receipt;
+      if (!r || !r.id) return out({success:false, error:'No id'});
+      var row = HEADERS.map(function(h){ return r[h] !== undefined ? r[h] : ''; });
+      var existing = findRow(sheet, r.id, r.room);
+      if (existing > 0) {
+        sheet.getRange(existing, 1, 1, HEADERS.length).setValues([row]);
       } else {
-        sheet.appendRow(rowData);
+        sheet.appendRow(row);
       }
-      return jsonOut({ success: true, action: 'saved', id: r.id });
+      return out({success:true, action:'saved', id:r.id});
     }
-    
-    // ── saveAll (bulk sync) ──
+
     if (body.action === 'saveAll') {
-      const receipts = body.receipts || [];
-      receipts.forEach(r => {
-        const rowData = HEADERS.map(h => r[h] !== undefined ? r[h] : '');
-        const existingRow = findRow(sheet, r.id, r.room);
-        if (existingRow > 0) {
-          sheet.getRange(existingRow, 1, 1, HEADERS.length).setValues([rowData]);
+      var receipts = body.receipts || [];
+      for (var j = 0; j < receipts.length; j++) {
+        var r2 = receipts[j];
+        var row2 = HEADERS.map(function(h){ return r2[h] !== undefined ? r2[h] : ''; });
+        var ex = findRow(sheet, r2.id, r2.room);
+        if (ex > 0) {
+          sheet.getRange(ex, 1, 1, HEADERS.length).setValues([row2]);
         } else {
-          sheet.appendRow(rowData);
+          sheet.appendRow(row2);
         }
-      });
-      return jsonOut({ success: true, action: 'saveAll', saved: receipts.length });
-    }
-    
-    // ── delete (single receipt) ──
-    if (body.action === 'delete') {
-      const existingRow = findRow(sheet, body.id, body.room);
-      if (existingRow > 0) {
-        sheet.deleteRow(existingRow);
-        return jsonOut({ success: true, action: 'deleted' });
       }
-      return jsonOut({ success: true, action: 'deleted', note: 'not found' });
+      return out({success:true, action:'saveAll', saved:receipts.length});
     }
-    
-    // ── deleteAll (bulk delete — all data or by room) ──
+
+    if (body.action === 'delete') {
+      var found = findRow(sheet, body.id, body.room);
+      if (found > 0) sheet.deleteRow(found);
+      return out({success:true, action:'deleted'});
+    }
+
     if (body.action === 'deleteAll') {
-      return doDeleteAll(sheet, body.room);
+      return clearSheet(sheet, body.room);
     }
-    
-    return jsonOut({ success: false, error: 'Unknown action' });
-    
-  } catch (err) {
-    return jsonOut({ success: false, error: err.toString() });
+
+    return out({success:false, error:'Unknown action'});
+  } catch(err) {
+    return out({success:false, error:String(err)});
   } finally {
     lock.releaseLock();
   }
 }
 
-// ── GET Handler ──
 function doGet(e) {
   try {
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
-    if (!sheet) return jsonOut({ success: false, error: 'Sheet not found' });
-    
-    // Support deleteAll via GET (fallback for no-cors POST issues)
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+    if (!sheet) return out({success:false, error:'No sheet'});
+
+    // deleteAll via GET (fallback)
     if (e.parameter.action === 'deleteAll') {
-      const lock = LockService.getScriptLock();
+      var lock = LockService.getScriptLock();
       lock.tryLock(10000);
       try {
-        const result = doDeleteAll(sheet, e.parameter.room);
-        return result;
+        return clearSheet(sheet, e.parameter.room);
       } finally {
         lock.releaseLock();
       }
     }
-    
-    const rows = sheet.getDataRange().getValues();
-    if (rows.length <= 1) return jsonOut({ success: true, data: [] });
-    
-    const headers = rows[0];
-    const room = e.parameter.room;
-    const receipts = [];
-    
-    for (let i = 1; i < rows.length; i++) {
-      const obj = {};
-      headers.forEach((h, idx) => {
-        let val = rows[i][idx];
-        if (['el','wa','wi','rentMonths','rent','total'].includes(h)) val = Number(val) || 0;
-        if (h === 'paid') val = val === true || val === 'true';
-        obj[h] = val;
-      });
-      if (!room || obj.room === room) receipts.push(obj);
+
+    // delete single via GET (fallback)
+    if (e.parameter.action === 'delete' && e.parameter.id) {
+      var lock2 = LockService.getScriptLock();
+      lock2.tryLock(10000);
+      try {
+        var f = findRow(sheet, e.parameter.id, e.parameter.room);
+        if (f > 0) sheet.deleteRow(f);
+        return out({success:true, action:'deleted'});
+      } finally {
+        lock2.releaseLock();
+      }
     }
-    
-    receipts.sort((a, b) => (b.ts || '').localeCompare(a.ts || ''));
-    return jsonOut({ success: true, data: receipts, total: receipts.length });
-    
-  } catch (err) {
-    return jsonOut({ success: false, error: err.toString() });
+
+    // List all receipts
+    var rows = sheet.getDataRange().getValues();
+    if (rows.length <= 1) return out({success:true, data:[]});
+
+    var headers = rows[0];
+    var room = e.parameter.room;
+    var result = [];
+
+    for (var i = 1; i < rows.length; i++) {
+      var obj = {};
+      for (var c = 0; c < headers.length; c++) {
+        var val = rows[i][c];
+        var h = headers[c];
+        if (h==='el'||h==='wa'||h==='wi'||h==='rentMonths'||h==='rent'||h==='total') val = Number(val)||0;
+        if (h==='paid') val = (val===true||val==='true');
+        obj[h] = val;
+      }
+      if (!room || obj.room === room) result.push(obj);
+    }
+
+    result.sort(function(a,b){ return (b.ts||'').localeCompare(a.ts||''); });
+    return out({success:true, data:result, total:result.length});
+
+  } catch(err) {
+    return out({success:false, error:String(err)});
   }
 }
 
-// ── deleteAll helper (used by both GET and POST) ──
-function doDeleteAll(sheet, room) {
-  const lastRow = sheet.getLastRow();
-  if (lastRow <= 1) return jsonOut({ success: true, action: 'deleteAll', deleted: 0 });
-  
+function clearSheet(sheet, room) {
+  var lastRow = sheet.getLastRow();
+  if (lastRow <= 1) return out({success:true, action:'deleteAll', deleted:0});
+
   if (!room) {
-    // Delete ALL data rows at once (keep header)
-    sheet.deleteRows(2, lastRow - 1);
-    return jsonOut({ success: true, action: 'deleteAll', deleted: lastRow - 1 });
+    // Delete all data rows at once
+    var count = lastRow - 1;
+    sheet.deleteRows(2, count);
+    return out({success:true, action:'deleteAll', deleted:count});
   }
-  
+
   // Delete by room (bottom-up)
-  const data = sheet.getDataRange().getValues();
-  let deleted = 0;
-  for (let i = data.length - 1; i >= 1; i--) {
+  var data = sheet.getDataRange().getValues();
+  var deleted = 0;
+  for (var i = data.length - 1; i >= 1; i--) {
     if (String(data[i][1]) === String(room)) {
       sheet.deleteRow(i + 1);
       deleted++;
     }
   }
-  return jsonOut({ success: true, action: 'deleteAll', deleted });
+  return out({success:true, action:'deleteAll', deleted:deleted});
 }
 
-// ── Helpers ──
 function findRow(sheet, id, room) {
-  const data = sheet.getDataRange().getValues();
-  for (let i = 1; i < data.length; i++) {
+  var data = sheet.getDataRange().getValues();
+  for (var i = 1; i < data.length; i++) {
     if (String(data[i][0]) === String(id) && String(data[i][1]) === String(room)) return i + 1;
   }
   return -1;
 }
 
-function jsonOut(obj) {
-  return ContentService
-    .createTextOutput(JSON.stringify(obj))
-    .setMimeType(ContentService.MimeType.JSON);
+function out(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }

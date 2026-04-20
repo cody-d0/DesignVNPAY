@@ -1380,11 +1380,7 @@ async function cloudSave(receipt) {
 async function cloudDelete(id, room) {
   if (!SHEET_URL) return;
   try {
-    await fetch(SHEET_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'delete', id, room })
-    });
+    await fetch(SHEET_URL + '?action=delete&id=' + encodeURIComponent(id) + '&room=' + encodeURIComponent(room));
   } catch (err) { console.warn('Cloud delete failed:', err); }
 }
 
