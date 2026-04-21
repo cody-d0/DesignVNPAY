@@ -108,47 +108,96 @@
       position: sticky; top: 0; z-index: 50;
       background: var(--bg-panel); border-bottom: 1px solid var(--border);
       padding: 12px 28px; display: flex; align-items: center; justify-content: space-between;
-      gap: 16px; backdrop-filter: blur(12px);
+      gap: 12px; backdrop-filter: blur(12px);
       transition: background 0.3s ease;
     }
-    .dash-brand { display: flex; align-items: center; gap: 10px; }
+    .dash-brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
     .dash-brand-icon {
       width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-      border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; font-size: 17px;
+      border-radius: var(--r-md); display: flex; align-items: center; justify-content: center;
+      font-size: 17px; flex-shrink: 0;
     }
-    .dash-brand-title { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; color: var(--ink); }
-    .dash-brand-sub { font-size: 0.65rem; color: var(--ink-faint); letter-spacing: 0.06em; text-transform: uppercase; }
-    .dash-controls { display: flex; align-items: center; gap: 10px; }
+    .dash-brand-title {
+      font-family: var(--font-display); font-size: 1.15rem; font-weight: 700;
+      color: var(--ink); white-space: nowrap;
+    }
+    .dash-brand-sub {
+      font-size: 0.65rem; color: var(--ink-faint); letter-spacing: 0.06em;
+      text-transform: uppercase; white-space: nowrap;
+    }
+    .dash-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .dash-room-select {
       padding: 7px 14px; background: var(--bg-input); border: 1px solid var(--border);
       border-radius: var(--r-md); font-family: var(--font-mono); font-size: 0.78rem;
       color: var(--ink); cursor: pointer; font-weight: 600;
+      min-height: 36px; min-width: 0;
     }
     .btn-new-receipt {
-      padding: 8px 18px; background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      padding: 0 18px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--accent-dark));
       border: none; border-radius: var(--r-md); color: #fff; font-family: var(--font-body);
       font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center;
       gap: 6px; transition: all 0.25s var(--ease-out);
-      box-shadow: 0 2px 10px rgba(180,140,40,0.25);
+      box-shadow: 0 2px 10px rgba(180,140,40,0.25); white-space: nowrap;
     }
     [data-theme="light"] .btn-new-receipt { color: #FFFEF5; }
     .btn-new-receipt:hover { box-shadow: 0 4px 20px rgba(180,140,40,0.4); transform: translateY(-1px); }
-    @media (max-width: 700px) {
+
+    /* Mobile-only: label collapses to icon */
+    .btn-new-receipt .btn-label-full { display: inline; }
+    .btn-new-receipt .btn-label-short { display: none; }
+
+    /* ── Responsive: Tablet (≤1024px) ── */
+    @media (max-width: 1024px) {
+      .dash-toolbar { padding: 12px 20px; }
+    }
+
+    /* ── Responsive: Small tablet / Large phone (≤768px) ── */
+    @media (max-width: 768px) {
       .dash-toolbar {
-        padding: 10px 12px; flex-wrap: wrap;
+        padding: 10px 14px; flex-wrap: wrap; gap: 8px;
       }
-      .dash-brand-icon { width: 32px; height: 32px; font-size: 15px; }
-      .dash-brand-title { font-size: 0.95rem; }
+      .dash-brand { flex: 1; min-width: 0; }
       .dash-brand-sub { display: none; }
-      .dash-controls { width: 100%; justify-content: flex-end; gap: 8px; }
-      .dash-room-select { font-size: 0.72rem; padding: 6px 10px; flex: 1; min-width: 0; }
-      .btn-new-receipt { font-size: 0.72rem; padding: 7px 12px; gap: 4px; white-space: nowrap; }
-      .theme-btn { width: 32px; height: 32px; font-size: 0.9rem; }
+      .dash-controls {
+        flex-shrink: 1; gap: 6px;
+      }
+      .dash-room-select { padding: 6px 10px; font-size: 0.75rem; }
+      .btn-new-receipt { padding: 0 14px; font-size: 0.75rem; gap: 4px; }
+    }
+
+    /* ── Responsive: Phone (≤480px) ── */
+    @media (max-width: 480px) {
+      .dash-toolbar {
+        padding: 8px 10px; gap: 6px;
+      }
+      .dash-brand-icon { width: 32px; height: 32px; font-size: 14px; }
+      .dash-brand-title { font-size: 0.9rem; }
+      .dash-controls {
+        width: 100%; justify-content: stretch; gap: 6px;
+      }
+      .dash-room-select { flex: 1; min-width: 0; font-size: 0.72rem; min-height: 40px; }
+      .theme-btn { min-width: 40px; min-height: 40px; }
+      .btn-new-receipt {
+        flex: 1; justify-content: center;
+        height: 40px; font-size: 0.75rem; min-height: 40px;
+      }
+    }
+
+    /* ── Responsive: Small phone (≤375px) ── */
+    @media (max-width: 375px) {
+      .dash-toolbar { padding: 6px 8px; }
+      .dash-brand-icon { width: 28px; height: 28px; font-size: 13px; }
+      .dash-brand-title { font-size: 0.82rem; }
+      .btn-new-receipt .btn-label-full { display: none; }
+      .btn-new-receipt .btn-label-short { display: inline; }
+      .dash-room-select { font-size: 0.68rem; padding: 5px 8px; }
     }
 
     /* ═══ DASHBOARD CONTENT ═══ */
-    .dash-content { padding: 24px 28px; max-width: 1200px; margin: 0 auto; width: 100%; }
-    @media (max-width: 700px) { .dash-content { padding: 16px 12px; } }
+    .dash-content { padding: 24px 28px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+    @media (max-width: 1024px) { .dash-content { padding: 20px 20px; } }
+    @media (max-width: 768px) { .dash-content { padding: 16px 14px; } }
+    @media (max-width: 480px) { .dash-content { padding: 12px 8px; } }
 
     /* ═══ HISTORY GRID (below tracker) ═══ */
     .dash-history { margin-top: 32px; }
@@ -165,7 +214,8 @@
       display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 10px;
     }
-    @media (max-width: 700px) { .history-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { .history-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; } }
+    @media (max-width: 480px) { .history-grid { grid-template-columns: 1fr; gap: 8px; } }
 
     /* ═══ RECEIPT FORM MODAL (Layer 2) ═══ */
     .receipt-modal-overlay {
@@ -191,12 +241,13 @@
       transition: all 0.2s ease; z-index: 5;
     }
     .receipt-modal-close:hover { background: var(--danger-soft); color: var(--danger); }
-    @media (max-width: 700px) {
+    @media (max-width: 768px) {
       .receipt-modal-overlay { padding: 0; align-items: stretch; }
       .receipt-modal-panel {
         border-radius: 0; max-width: 100%; min-height: 100vh;
         padding: 20px 16px 40px;
       }
+      .receipt-modal-close { width: 44px; height: 44px; top: 10px; right: 10px; }
     }
 
     /* ═══ SIDEBAR — hidden in new layout ═══ */
@@ -476,21 +527,31 @@
     }
     .btn-tracker:hover { background: var(--accent-soft); color: var(--accent); border-color: rgba(180,140,40,0.3); }
 
-    @media (max-width: 700px) {
+    @media (max-width: 768px) {
       .tracker-inline { padding: 16px 12px; border-radius: 12px; }
       .tracker-header { margin-bottom: 16px; padding-bottom: 12px; }
       .tracker-title { font-size: 1.1rem; }
       .tracker-months { gap: 2px; }
-      .tracker-month-hdr { font-size: 0.5rem; padding: 5px 0; }
+      .tracker-month-hdr { font-size: 0.55rem; padding: 6px 0; }
       .tracker-grid { grid-template-columns: repeat(6, 1fr); gap: 4px; }
-      .tracker-cell { min-height: 64px; }
+      .tracker-cell { min-height: 60px; }
       .tracker-room { padding: 10px; }
       .tracker-year-btn { width: 28px; height: 28px; font-size: 0.8rem; }
       .tracker-year { font-size: 0.95rem; }
       .tracker-close { display: none; }
     }
-    @media (max-width: 400px) {
+    @media (max-width: 480px) {
+      .tracker-inline { padding: 12px 8px; border-radius: 10px; }
+      .tracker-title { font-size: 1rem; }
+      .tracker-month-hdr { font-size: 0.48rem; padding: 4px 0; }
+      .tracker-grid { grid-template-columns: repeat(6, 1fr); gap: 3px; }
+      .tracker-cell { min-height: 52px; padding: 4px 2px; }
+      .tracker-svc { padding: 2px 1px; }
+      .tracker-svc-icon { font-size: 0.65rem; }
+    }
+    @media (max-width: 375px) {
       .tracker-grid { grid-template-columns: repeat(4, 1fr); }
+      .tracker-cell { min-height: 60px; }
     }
     .sync-indicator.syncing { color: var(--accent); background: var(--accent-soft); }
     .sync-indicator.ok { color: var(--success-text); background: var(--success-soft); }
@@ -875,7 +936,7 @@
           <option value="4032">4032 — Tầng 4</option>
         </select>
         <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Đổi giao diện sáng/tối">🌙</button>
-        <button class="btn-new-receipt" onclick="openReceiptForm()">✚ Tạo phiếu thu</button>
+        <button class="btn-new-receipt" onclick="openReceiptForm()">✚ <span class="btn-label-full">Tạo phiếu thu</span><span class="btn-label-short">Tạo mới</span></button>
       </div>
     </div>
 
