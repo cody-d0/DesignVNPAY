@@ -103,101 +103,85 @@
       display: flex; flex-direction: column; min-height: 100vh;
     }
 
-    /* ═══ DASHBOARD TOOLBAR ═══ */
+    /* ═══ DASHBOARD TOOLBAR — Always single row ═══ */
     .dash-toolbar {
       position: sticky; top: 0; z-index: 50;
       background: var(--bg-panel); border-bottom: 1px solid var(--border);
-      padding: 12px 28px; display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 24px; display: flex; align-items: center;
       gap: 12px; backdrop-filter: blur(12px);
       transition: background 0.3s ease;
     }
-    .dash-brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .dash-brand { display: flex; align-items: center; gap: 10px; min-width: 0; flex-shrink: 1; }
     .dash-brand-icon {
-      width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      width: 34px; height: 34px; background: linear-gradient(135deg, var(--accent), var(--accent-dark));
       border-radius: var(--r-md); display: flex; align-items: center; justify-content: center;
-      font-size: 17px; flex-shrink: 0;
+      font-size: 16px; flex-shrink: 0;
     }
+    .dash-brand-text { min-width: 0; }
     .dash-brand-title {
-      font-family: var(--font-display); font-size: 1.15rem; font-weight: 700;
-      color: var(--ink); white-space: nowrap;
+      font-family: var(--font-display); font-size: 1.05rem; font-weight: 700;
+      color: var(--ink); white-space: nowrap; line-height: 1.2;
     }
     .dash-brand-sub {
-      font-size: 0.65rem; color: var(--ink-faint); letter-spacing: 0.06em;
-      text-transform: uppercase; white-space: nowrap;
+      font-size: 0.6rem; color: var(--ink-faint); letter-spacing: 0.06em;
+      text-transform: uppercase; white-space: nowrap; line-height: 1.2;
     }
-    .dash-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .dash-spacer { flex: 1; }
+    .dash-controls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     .dash-room-select {
-      padding: 7px 14px; background: var(--bg-input); border: 1px solid var(--border);
-      border-radius: var(--r-md); font-family: var(--font-mono); font-size: 0.78rem;
-      color: var(--ink); cursor: pointer; font-weight: 600;
-      min-height: 36px; min-width: 0;
+      padding: 6px 12px; background: var(--bg-input); border: 1px solid var(--border);
+      border-radius: var(--r-md); font-family: var(--font-mono); font-size: 0.75rem;
+      color: var(--ink); cursor: pointer; font-weight: 600; height: 34px;
     }
     .btn-new-receipt {
-      padding: 0 18px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      padding: 0 16px; height: 34px; background: linear-gradient(135deg, var(--accent), var(--accent-dark));
       border: none; border-radius: var(--r-md); color: #fff; font-family: var(--font-body);
-      font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center;
-      gap: 6px; transition: all 0.25s var(--ease-out);
+      font-size: 0.78rem; font-weight: 600; cursor: pointer; display: flex; align-items: center;
+      gap: 5px; transition: all 0.25s var(--ease-out);
       box-shadow: 0 2px 10px rgba(180,140,40,0.25); white-space: nowrap;
     }
     [data-theme="light"] .btn-new-receipt { color: #FFFEF5; }
     .btn-new-receipt:hover { box-shadow: 0 4px 20px rgba(180,140,40,0.4); transform: translateY(-1px); }
 
-    /* Mobile-only: label collapses to icon */
-    .btn-new-receipt .btn-label-full { display: inline; }
-    .btn-new-receipt .btn-label-short { display: none; }
+    /* Label collapse system */
+    .lbl-desktop { display: inline; }
+    .lbl-compact { display: none; }
+    .lbl-icon-only { display: none; }
 
-    /* ── Responsive: Tablet (≤1024px) ── */
     @media (max-width: 1024px) {
-      .dash-toolbar { padding: 12px 20px; }
+      .dash-toolbar { padding: 10px 16px; gap: 10px; }
     }
-
-    /* ── Responsive: Small tablet / Large phone (≤768px) ── */
     @media (max-width: 768px) {
-      .dash-toolbar {
-        padding: 10px 14px; flex-wrap: wrap; gap: 8px;
-      }
-      .dash-brand { flex: 1; min-width: 0; }
+      .dash-toolbar { padding: 8px 12px; gap: 8px; }
       .dash-brand-sub { display: none; }
-      .dash-controls {
-        flex-shrink: 1; gap: 6px;
-      }
-      .dash-room-select { padding: 6px 10px; font-size: 0.75rem; }
-      .btn-new-receipt { padding: 0 14px; font-size: 0.75rem; gap: 4px; }
+      .dash-brand-icon { width: 30px; height: 30px; font-size: 14px; }
+      .dash-brand-title { font-size: 0.95rem; }
+      .dash-room-select { padding: 5px 8px; font-size: 0.7rem; height: 32px; }
+      .btn-new-receipt { padding: 0 12px; height: 32px; font-size: 0.72rem; }
+      .lbl-desktop { display: none; }
+      .lbl-compact { display: inline; }
     }
-
-    /* ── Responsive: Phone (≤480px) ── */
     @media (max-width: 480px) {
-      .dash-toolbar {
-        padding: 8px 10px; gap: 6px;
-      }
-      .dash-brand-icon { width: 32px; height: 32px; font-size: 14px; }
-      .dash-brand-title { font-size: 0.9rem; }
-      .dash-controls {
-        width: 100%; justify-content: stretch; gap: 6px;
-      }
-      .dash-room-select { flex: 1; min-width: 0; font-size: 0.72rem; min-height: 40px; }
-      .theme-btn { min-width: 40px; min-height: 40px; }
-      .btn-new-receipt {
-        flex: 1; justify-content: center;
-        height: 40px; font-size: 0.75rem; min-height: 40px;
-      }
-    }
-
-    /* ── Responsive: Small phone (≤375px) ── */
-    @media (max-width: 375px) {
-      .dash-toolbar { padding: 6px 8px; }
+      .dash-toolbar { padding: 6px 8px; gap: 6px; }
       .dash-brand-icon { width: 28px; height: 28px; font-size: 13px; }
-      .dash-brand-title { font-size: 0.82rem; }
-      .btn-new-receipt .btn-label-full { display: none; }
-      .btn-new-receipt .btn-label-short { display: inline; }
-      .dash-room-select { font-size: 0.68rem; padding: 5px 8px; }
+      .dash-brand-title { font-size: 0.85rem; }
+      .dash-room-select { font-size: 0.65rem; padding: 4px 6px; max-width: 100px; }
+      .btn-new-receipt { padding: 0 10px; font-size: 0.7rem; gap: 3px; }
+      .theme-btn { width: 30px; height: 30px; font-size: 0.85rem; }
+    }
+    @media (max-width: 375px) {
+      .dash-brand-text { display: none; }
+      .lbl-compact { display: none; }
+      .lbl-icon-only { display: inline; }
+      .btn-new-receipt { padding: 0 8px; }
+      .dash-room-select { max-width: 80px; font-size: 0.6rem; }
     }
 
     /* ═══ DASHBOARD CONTENT ═══ */
     .dash-content { padding: 24px 28px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box; }
-    @media (max-width: 1024px) { .dash-content { padding: 20px 20px; } }
-    @media (max-width: 768px) { .dash-content { padding: 16px 14px; } }
-    @media (max-width: 480px) { .dash-content { padding: 12px 8px; } }
+    @media (max-width: 1024px) { .dash-content { padding: 20px 16px; } }
+    @media (max-width: 768px) { .dash-content { padding: 14px 10px; } }
+    @media (max-width: 480px) { .dash-content { padding: 10px 6px; } }
 
     /* ═══ HISTORY GRID (below tracker) ═══ */
     .dash-history { margin-top: 32px; }
@@ -439,21 +423,8 @@
     }
     .tracker-close:hover { background: rgba(239,68,68,0.2); color: #ef4444; }
 
-    .tracker-months {
-      display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px;
-      margin-bottom: 20px; position: sticky; top: 0; background: var(--trk-bg);
-      z-index: 1; padding: 8px 0 12px;
-    }
-    .tracker-month-hdr {
-      text-align: center; font-size: 0.7rem; font-weight: 700;
-      font-family: var(--font-mono); color: var(--trk-faint);
-      padding: 8px 0; border-radius: 6px;
-      background: var(--trk-month-bg);
-    }
-    .tracker-month-hdr.now {
-      background: rgba(200,166,70,0.15); color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(200,166,70,0.3);
-    }
+    .tracker-months { display: none; }
+    .tracker-month-hdr { display: none; }
 
     .tracker-room {
       margin-bottom: 20px; padding: 16px;
@@ -477,9 +448,18 @@
     }
     .tracker-cell {
       background: var(--trk-cell-bg); border: 1px solid var(--trk-cell-border);
-      border-radius: 8px; padding: 6px 4px;
-      display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
-      min-height: 52px; transition: all 0.2s ease;
+      border-radius: 8px; padding: 4px;
+      display: flex; flex-direction: column; gap: 3px;
+      min-height: 68px; transition: all 0.2s ease;
+    }
+    .tracker-cell-month {
+      font-size: 0.58rem; font-weight: 800; font-family: var(--font-mono);
+      color: var(--trk-faint); text-align: center; letter-spacing: 0.04em;
+      padding: 1px 0; line-height: 1;
+    }
+    .tracker-cell.now-col .tracker-cell-month { color: var(--accent); }
+    .tracker-cell-services {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3px; flex: 1;
     }
     .tracker-cell.now-col {
       border-color: rgba(200,166,70,0.35);
@@ -531,10 +511,8 @@
       .tracker-inline { padding: 16px 12px; border-radius: 12px; }
       .tracker-header { margin-bottom: 16px; padding-bottom: 12px; }
       .tracker-title { font-size: 1.1rem; }
-      .tracker-months { gap: 2px; }
-      .tracker-month-hdr { font-size: 0.55rem; padding: 6px 0; }
       .tracker-grid { grid-template-columns: repeat(6, 1fr); gap: 4px; }
-      .tracker-cell { min-height: 60px; }
+      .tracker-cell { min-height: 64px; }
       .tracker-room { padding: 10px; }
       .tracker-year-btn { width: 28px; height: 28px; font-size: 0.8rem; }
       .tracker-year { font-size: 0.95rem; }
@@ -543,15 +521,15 @@
     @media (max-width: 480px) {
       .tracker-inline { padding: 12px 8px; border-radius: 10px; }
       .tracker-title { font-size: 1rem; }
-      .tracker-month-hdr { font-size: 0.48rem; padding: 4px 0; }
       .tracker-grid { grid-template-columns: repeat(6, 1fr); gap: 3px; }
-      .tracker-cell { min-height: 52px; padding: 4px 2px; }
+      .tracker-cell { min-height: 56px; padding: 3px; }
+      .tracker-cell-month { font-size: 0.5rem; }
       .tracker-svc { padding: 2px 1px; }
       .tracker-svc-icon { font-size: 0.65rem; }
     }
     @media (max-width: 375px) {
       .tracker-grid { grid-template-columns: repeat(4, 1fr); }
-      .tracker-cell { min-height: 60px; }
+      .tracker-cell { min-height: 64px; }
     }
     .sync-indicator.syncing { color: var(--accent); background: var(--accent-soft); }
     .sync-indicator.ok { color: var(--success-text); background: var(--success-soft); }
@@ -920,23 +898,24 @@
 <div class="app-view active" id="view-admin">
   <div class="admin-app">
 
-    <!-- ═══ DASHBOARD TOOLBAR ═══ -->
+    <!-- ═══ DASHBOARD TOOLBAR — Single Row ═══ -->
     <div class="dash-toolbar">
       <div class="dash-brand">
         <div class="dash-brand-icon">🧾</div>
-        <div>
+        <div class="dash-brand-text">
           <div class="dash-brand-title">Phiếu Thu</div>
           <div class="dash-brand-sub" id="sidebar-sub">Quản lý thu tiền</div>
         </div>
       </div>
+      <div class="dash-spacer"></div>
       <div class="dash-controls">
         <select class="dash-room-select" id="f-room-dash" onchange="onRoomChangeDash()">
           <option value="all">🏢 Tất cả phòng</option>
-          <option value="4031">4031 — Tầng 4</option>
-          <option value="4032">4032 — Tầng 4</option>
+          <option value="4031">4031</option>
+          <option value="4032">4032</option>
         </select>
         <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Đổi giao diện sáng/tối">🌙</button>
-        <button class="btn-new-receipt" onclick="openReceiptForm()">✚ <span class="btn-label-full">Tạo phiếu thu</span><span class="btn-label-short">Tạo mới</span></button>
+        <button class="btn-new-receipt" onclick="openReceiptForm()">✚ <span class="lbl-desktop">Tạo phiếu thu</span><span class="lbl-compact">Tạo mới</span><span class="lbl-icon-only"></span></button>
       </div>
     </div>
 
@@ -1855,6 +1834,8 @@ function renderTracker() {
       });
 
       html += `<div class="tracker-cell${isNow?' now-col':''}">`;
+      html += `<div class="tracker-cell-month">T${m+1}</div>`;
+      html += `<div class="tracker-cell-services">`;
 
       for (const svc of SVC_DEFS) {
         let status = 'notdue';
@@ -1878,7 +1859,7 @@ function renderTracker() {
         </div>`;
       }
 
-      html += `</div>`;
+      html += `</div></div>`;
     }
 
     html += `</div></div>`;
