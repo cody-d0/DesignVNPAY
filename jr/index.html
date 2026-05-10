@@ -390,15 +390,26 @@
     display: grid;
     place-items: start center;
     padding: 12vh 16px 16px;
+    transition: opacity 220ms ease;
   }
   .spotlight[hidden] { display: none; }
+  .spotlight.closing { opacity: 0; }
   .sp-backdrop {
     position: absolute; inset: 0;
     background: rgba(15,15,25,0.32);
     backdrop-filter: blur(28px) saturate(160%);
     -webkit-backdrop-filter: blur(28px) saturate(160%);
-    animation: sp-fade 200ms ease both;
+    animation: sp-fade 220ms ease both;
   }
+  /* Calm the page beneath while the spotlight is open */
+  body.spotlight-active .hero,
+  body.spotlight-active .activity-log {
+    opacity: 0.16;
+    filter: blur(2px);
+    pointer-events: none;
+    transition: opacity 280ms ease, filter 280ms ease;
+  }
+  body .hero, body .activity-log { transition: opacity 280ms ease, filter 280ms ease; }
   .sp-card {
     position: relative;
     width: min(640px, 100%);
@@ -411,14 +422,18 @@
       0 30px 80px rgba(0,0,0,0.32),
       0 8px 24px rgba(0,0,0,0.16),
       inset 0 1px 0 rgba(255,255,255,0.7);
-    animation: sp-in 320ms cubic-bezier(0.22,1,0.36,1) both;
+    animation: sp-in 360ms cubic-bezier(0.22,1,0.36,1) both;
     backdrop-filter: blur(40px) saturate(180%);
     -webkit-backdrop-filter: blur(40px) saturate(180%);
   }
   @keyframes sp-fade { from { opacity: 0; } to { opacity: 1; } }
   @keyframes sp-in {
-    from { transform: translateY(-14px) scale(0.96); opacity: 0; }
-    to { transform: translateY(0) scale(1); opacity: 1; }
+    from { transform: translateY(-12px) scale(0.97); opacity: 0; filter: blur(4px); }
+    to { transform: translateY(0) scale(1); opacity: 1; filter: blur(0); }
+  }
+  @keyframes sp-row-in {
+    from { opacity: 0; transform: translateX(-6px); }
+    to { opacity: 1; transform: translateX(0); }
   }
   .sp-close {
     position: absolute; top: 14px; right: 14px;
@@ -445,8 +460,11 @@
     font-size: 22px;
     letter-spacing: -0.02em;
     flex-shrink: 0;
+    overflow: hidden;
     box-shadow: 0 6px 16px rgba(102,126,234,0.35);
+    transition: box-shadow 240ms ease;
   }
+  .sp-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .sp-headline { min-width: 0; flex: 1; }
   .sp-name {
     font-family: "Onest", -apple-system, sans-serif;
@@ -475,7 +493,12 @@
     gap: 16px;
     padding: 8px 0;
     font-size: 13px;
+    animation: sp-row-in 380ms cubic-bezier(0.22,1,0.36,1) both;
   }
+  .sp-row:nth-child(1) { animation-delay: 80ms; }
+  .sp-row:nth-child(2) { animation-delay: 130ms; }
+  .sp-row:nth-child(3) { animation-delay: 180ms; }
+  .sp-row:nth-child(4) { animation-delay: 230ms; }
   .sp-row .lbl {
     color: #A1A1AA;
     text-transform: uppercase;
@@ -502,6 +525,11 @@
     gap: 10px;
     border-top: 1px solid rgba(0,0,0,0.06);
     padding-top: 14px;
+    animation: sp-row-in 380ms cubic-bezier(0.22,1,0.36,1) 280ms both;
+  }
+  .sp-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.45), 0 4px 12px rgba(0,0,0,0.18);
   }
   .sp-btn {
     display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -785,9 +813,28 @@
     if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
     return (parts[0][0] + parts[1][0]).toUpperCase();
   }
+  function seedHue(s) {
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+    return h % 360;
+  }
   function showSpotlight(data, token) {
-    document.getElementById('spName').textContent = data.user.displayName || '—';
-    document.getElementById('spAvatar').textContent = getInitials(data.user.displayName);
+    const name = data.user.displayName || '';
+    document.getElementById('spName').textContent = name || '—';
+
+    const avatarEl = document.getElementById('spAvatar');
+    if (data.user.portraitDataUrl) {
+      avatarEl.innerHTML = '<img src="' + data.user.portraitDataUrl + '" alt="" />';
+      avatarEl.style.background = '';
+      avatarEl.style.boxShadow = '0 6px 16px rgba(0,0,0,0.22)';
+    } else {
+      const h = seedHue(data.user.name || name || token);
+      const h2 = (h + 50) % 360;
+      avatarEl.innerHTML = '';
+      avatarEl.textContent = data.user.initials || getInitials(name);
+      avatarEl.style.background = 'linear-gradient(135deg, hsl(' + h + ' 70% 62%), hsl(' + h2 + ' 65% 50%))';
+      avatarEl.style.boxShadow = '0 6px 16px hsl(' + h + ' 70% 50% / 0.4)';
+    }
 
     const yrs = Object.keys(data.years || {}).sort();
     const yearRange = yrs.length > 1 ? `${yrs[0]}–${yrs[yrs.length - 1]}` : (yrs[0] || '');
@@ -824,19 +871,33 @@
       };
     });
 
+    spotlight.classList.remove('closing');
     spotlight.hidden = false;
+    document.body.classList.add('spotlight-active');
     document.body.style.overflow = 'hidden';
+    // Move focus to the primary action once the entrance settles
+    setTimeout(() => {
+      const firstBtn = spotlight.querySelector('.sp-btn[data-view="dashboard"]');
+      if (firstBtn) firstBtn.focus({ preventScroll: true });
+    }, 360);
   }
   function hideSpotlight() {
-    spotlight.hidden = true;
-    document.body.style.overflow = '';
-    // Restore the form so user can run another lookup
-    submit.disabled = false;
-    inputWrap.classList.remove('syncing');
-    input.readOnly = false;
-    hint.classList.remove('hide');
-    activityLog.classList.remove('active');
-    activityLog.innerHTML = '';
+    if (spotlight.hidden) return;
+    spotlight.classList.add('closing');
+    document.body.classList.remove('spotlight-active');
+    setTimeout(() => {
+      spotlight.hidden = true;
+      spotlight.classList.remove('closing');
+      document.body.style.overflow = '';
+      // Restore the form so user can run another lookup
+      submit.disabled = false;
+      inputWrap.classList.remove('syncing');
+      input.readOnly = false;
+      hint.classList.remove('hide');
+      activityLog.classList.remove('active');
+      activityLog.innerHTML = '';
+      input.focus({ preventScroll: true });
+    }, 220);
   }
   spClose.addEventListener('click', hideSpotlight);
   spBackdrop.addEventListener('click', hideSpotlight);
