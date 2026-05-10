@@ -244,16 +244,8 @@
     letter-spacing: 0.02em;
   }
   .search-hint.error { color: var(--error); }
-  .search-hint a {
-    color: rgba(255,255,255,0.85);
-    text-decoration: underline;
-    text-decoration-color: rgba(255,255,255,0.4);
-    text-underline-offset: 3px;
-    cursor: pointer;
-    transition: all 150ms ease;
-  }
-  .search-hint a:hover { color: var(--accent); text-decoration-color: var(--accent); }
   .search-hint strong { color: #fff; }
+  #hintText { display: inline-block; transition: opacity 220ms ease; }
 
   /* ━━━━━━━━━━━━━━━ INLINE ACTIVITY LOG ━━━━━━━━━━━━━━━ */
   .activity-log {
@@ -513,7 +505,7 @@
     }
 
     if (!v) {
-      hintText.textContent = (teamStats ? teamStats.designers : 38) + ' designers · không cần gõ @vnpay.vn';
+      hintText.textContent = hints[hintIdx];
       return;
     }
     if (!USERNAME_RE.test(v)) {
@@ -611,6 +603,39 @@
     return t.slice(0, 3);
   }
 
+  // Aggregated, non-identifying hints derived from team stats
+  let hints = ['38 designers · không cần gõ @vnpay.vn'];
+  let hintIdx = 0;
+  function buildHints(t) {
+    const fmt = n => n.toLocaleString('en-US');
+    const total = t.totalTickets;
+    const completion = Math.round((t.totalDone / total) * 100);
+    const years = Object.entries(t.years || {}).map(([y, n]) => [parseInt(y, 10), n]);
+    const yearNums = years.map(([y]) => y).sort((a, b) => a - b);
+    const yearSpan = yearNums.length ? yearNums[yearNums.length - 1] - yearNums[0] + 1 : 0;
+    const peakYear = years.length ? years.reduce((a, b) => a[1] > b[1] ? a : b) : null;
+    const wt = Object.entries(t.workTypes || {}).sort((a, b) => b[1] - a[1]);
+    const top = wt[0];
+    const topPct = top ? Math.round((top[1] / total) * 100) : 0;
+    const out = [
+      `${t.designers} designers · ${fmt(total)} tickets · ${t.uniqueBrands} brands`,
+      yearSpan ? `${yearNums[0]} → ${yearNums[yearNums.length - 1]} · ${yearSpan} năm lịch sử thiết kế` : null,
+      top ? `${top[0]} dẫn đầu · ${fmt(top[1])} tickets · ${topPct}% tổng` : null,
+      `${completion}% hoàn thành · ${fmt(t.totalDone)}/${fmt(total)} done`,
+      peakYear ? `Năm sôi động nhất: ${peakYear[0]} · ${fmt(peakYear[1])} tickets` : null,
+      `${t.designers} designers · không cần gõ @vnpay.vn`,
+    ];
+    return out.filter(Boolean);
+  }
+  function showHint(i) {
+    hintIdx = ((i % hints.length) + hints.length) % hints.length;
+    hintText.style.opacity = '0';
+    setTimeout(() => {
+      hintText.textContent = hints[hintIdx];
+      hintText.style.opacity = '1';
+    }, 220);
+  }
+
   (async function() {
     try {
       const r = await fetch('./data/_sync-index.json');
@@ -618,7 +643,14 @@
       const idx = await r.json();
       availableUsers = idx.users || [];
       teamStats = idx.team || null;
-      hintText.textContent = teamStats.designers + ' designers · không cần gõ @vnpay.vn';
+      if (teamStats) hints = buildHints(teamStats);
+      hintText.textContent = hints[0];
+      // Rotate while input is empty
+      setInterval(() => {
+        if (input.value.trim()) return;
+        if (document.hidden) return;
+        showHint(hintIdx + 1);
+      }, 4500);
     } catch (err) {
       hintText.textContent = 'Catalog unavailable · enter email';
     }
