@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#f3eee5" />
+<meta name="robots" content="noindex, nofollow, noarchive"/>
+<title>Design Atlas · DES — team surface</title>
+<style>
+  :root {
+    --bg:      oklch(97% 0.012 80);
+    --paper:   oklch(99% 0.005 80);
+    --fg:      oklch(20% 0.02 60);
+    --muted:   oklch(48% 0.015 60);
+    --border:  oklch(89% 0.012 80);
+    --accent:  oklch(58% 0.16 35);
+    --warn:    oklch(70% 0.16 70);
+    --good:    oklch(58% 0.14 145);
+    --serif: 'Iowan Old Style', 'Cormorant Garamond', 'Charter', Georgia, serif;
+    --sans:  -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --mono:  ui-monospace, 'JetBrains Mono', 'IBM Plex Mono', Menlo, monospace;
+    --c-mobile:    oklch(58% 0.16 35);
+    --c-web:       oklch(28% 0.04 250);
+    --c-ai:        oklch(58% 0.14 255);
+    --c-animation: oklch(58% 0.10 130);
+    --c-research:  oklch(60% 0.10 75);
+    --c-other:     oklch(60% 0.012 60);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--fg); font: 14px/1.5 var(--sans); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  svg { max-width: 100%; max-height: 100%; }
+
+  .deck { position: fixed; inset: 0; display: grid; place-items: center; overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 50%, color-mix(in oklch, var(--fg) 4%, transparent), transparent 70%),
+      radial-gradient(circle, color-mix(in oklch, var(--fg) 10%, transparent) 1px, transparent 1.4px) 0 0 / 28px 28px,
+      var(--bg);
+    animation: grid-drift 12s linear infinite;
+  }
+  @keyframes grid-drift { from { background-position: 0 0, 0 0, 0 0; } to { background-position: 0 0, 28px 28px, 0 0; } }
+  .canvas { width: 1920px; height: 1080px; position: relative; transform-origin: center; }
+  .slide { position: absolute; inset: 0; padding: 144px 96px 112px; opacity: 0; pointer-events: none; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: color-mix(in oklch, var(--fg) 18%, transparent) transparent; }
+  .slide::-webkit-scrollbar { width: 8px; }
+  .slide::-webkit-scrollbar-thumb { background: color-mix(in oklch, var(--fg) 18%, transparent); border-radius: 4px; }
+  .slide.active { opacity: 1; pointer-events: auto; }
+  .slide.active.enter-right { animation: enter-right 360ms cubic-bezier(.22,1,.36,1) forwards; }
+  .slide.active.enter-left  { animation: enter-left  360ms cubic-bezier(.22,1,.36,1) forwards; }
+  @keyframes enter-right { from { opacity: 0; transform: translateX(56px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes enter-left  { from { opacity: 0; transform: translateX(-56px); } to { opacity: 1; transform: translateX(0); } }
+
+  /* Editorial chrome */
+  .chrome { position: absolute; left: 96px; right: 96px; font: 16px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; pointer-events: none; }
+  .chrome.top { top: 56px; display: flex; justify-content: space-between; align-items: center; }
+  .chrome.top .right { display: flex; align-items: center; gap: 24px; }
+  .chrome.top .rule { width: 80px; height: 1px; background: var(--fg); opacity: 0.6; }
+  .chrome.bot { bottom: 56px; display: flex; justify-content: space-between; align-items: center; }
+  .chrome b { color: var(--fg); font-weight: 500; letter-spacing: 0.16em; }
+  .chrome .live-dot { display: inline-block; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; margin-right: 12px; vertical-align: 2px; animation: live-pulse 3s ease-in-out infinite; }
+  @keyframes live-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.4); } }
+  .chrome .baseline { position: absolute; left: 0; right: 0; height: 1px; background: color-mix(in oklch, var(--fg) 22%, transparent); }
+  .chrome.top .baseline { bottom: -16px; }
+  .chrome.bot .baseline { top: -16px; }
+
+  .folio { position: absolute; left: 96px; top: 96px; display: flex; align-items: baseline; gap: 16px; font: 14px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; }
+  .folio .roman { font: italic 24px/1 var(--serif); color: var(--muted); letter-spacing: 0; text-transform: none; }
+  .folio .rule { width: 32px; height: 1px; background: var(--fg); opacity: 0.55; }
+
+  /* Title row at top of body slides */
+  .title-row { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 64px; margin-bottom: 56px; }
+  .title { font: clamp(56px, 6vw, 96px)/1.0 var(--serif); letter-spacing: -0.018em; color: var(--fg); }
+  .title .em { font-style: italic; }
+  .title .accent { font-style: italic; color: var(--accent); }
+  .title-meta { font: 14px/1.5 var(--mono); color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; text-align: right; }
+  .title-meta b { color: var(--fg); font-weight: 500; }
+
+  /* Entrance staggers */
+  .anim { opacity: 0; transform: translateY(12px); }
+  .slide.active.play .anim { animation: rise 720ms cubic-bezier(.22,1,.36,1) forwards; }
+  .slide.active.play .d0 { animation-delay: 0ms; }
+  .slide.active.play .d1 { animation-delay: 100ms; }
+  .slide.active.play .d2 { animation-delay: 200ms; }
+  .slide.active.play .d3 { animation-delay: 300ms; }
+  .slide.active.play .d4 { animation-delay: 400ms; }
+  .slide.active.play .d5 { animation-delay: 500ms; }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ─── Slide 01: COVER ─────────────────────────────────────────── */
+  .cover { display: grid; grid-template-rows: auto 1fr auto; gap: 64px; }
+  .cover .kicker { display: flex; align-items: center; gap: 24px; font: 14px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; }
+  .cover .kicker .rule { flex: 1; height: 1px; background: var(--fg); opacity: 0.4; max-width: 560px; }
+  .cover .kicker .accent-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: live-pulse 3s ease-in-out infinite; }
+  .cover-body { display: flex; flex-direction: column; justify-content: center; gap: 40px; }
+  .cover-name { font: clamp(72px, 9vw, 168px)/0.94 var(--serif); letter-spacing: -0.025em; color: var(--fg); text-wrap: balance; max-width: 1400px; }
+  .cover-name .em { font-style: italic; }
+  .cover-name .accent { font-style: italic; color: var(--accent); }
+  .cover-sub { font: italic 32px/1.3 var(--serif); color: var(--muted); max-width: 960px; }
+  .cover-sub em { color: var(--accent); font-style: italic; }
+  .stat-ribbon { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border-top: 1px solid var(--fg); padding-top: 32px; }
+  .stat-ribbon .stat { padding: 0 32px; border-right: 1px solid var(--border); }
+  .stat-ribbon .stat:first-child { padding-left: 0; }
+  .stat-ribbon .stat:last-child { border-right: 0; padding-right: 0; }
+  .stat-ribbon .stat .key { font: 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; }
+  .stat-ribbon .stat .v { font: italic 56px/0.95 var(--serif); color: var(--fg); letter-spacing: -0.014em; }
+  .stat-ribbon .stat .v.accent { color: var(--accent); }
+  .stat-ribbon .stat .meta { font: 13px/1.4 var(--sans); color: var(--muted); margin-top: 8px; }
+
+  /* ─── Slide grid utilities ──────────────────────────────────── */
+  .lede { font: italic 28px/1.45 var(--serif); color: var(--fg); max-width: 1600px; margin-bottom: 48px; }
+  .lede em { color: var(--accent); }
+  .lede strong { color: var(--fg); font-weight: 600; }
+
+  .h2 { font: clamp(40px, 4.5vw, 72px)/1.0 var(--serif); letter-spacing: -0.018em; color: var(--fg); margin-bottom: 32px; }
+  .h2 .em { font-style: italic; }
+  .h2 .accent { font-style: italic; color: var(--accent); }
+
+  /* Donut */
+  .donut-row { display: grid; grid-template-columns: 480px 1fr; gap: 64px; align-items: center; }
+  .donut-wrap { width: 480px; height: 480px; position: relative; }
+  .donut-wrap svg { width: 100%; height: 100%; }
+  .donut-inner { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .donut-inner .key { font: 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 8px; }
+  .donut-inner .v { font: italic 64px/1 var(--serif); color: var(--accent); letter-spacing: -0.018em; }
+  .donut-inner .meta { font: 13px/1.4 var(--mono); color: var(--muted); margin-top: 6px; letter-spacing: 0.06em; }
+  .donut-legend { display: flex; flex-direction: column; gap: 16px; }
+  .donut-legend .it { display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 16px; padding: 12px 0; border-bottom: 1px dashed var(--border); }
+  .donut-legend .sw { width: 16px; height: 16px; }
+  .donut-legend b { font: 18px/1 var(--serif); color: var(--fg); font-style: italic; }
+  .donut-legend .num { font: 14px/1 var(--mono); color: var(--muted); letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
+
+  /* Cluster panels */
+  .cluster-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 24px; align-items: stretch; }
+  .cluster { background: var(--paper); border: 1px solid var(--fg); padding: 32px; display: flex; flex-direction: column; gap: 16px; }
+  .cluster .tag { font: 11px/1 var(--mono); color: var(--accent); letter-spacing: 0.18em; text-transform: uppercase; }
+  .cluster h3 { font: italic 36px/1.05 var(--serif); color: var(--fg); }
+  .cluster .members { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .cluster .member { font: 13px/1 var(--mono); padding: 8px 12px; background: var(--bg); border: 1px solid var(--border); letter-spacing: 0.04em; }
+  .cluster .desc { font: 16px/1.4 var(--serif); color: var(--muted); font-style: italic; margin-top: auto; }
+
+  /* Anchor cards */
+  .anchor-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; }
+  .anchor-card { background: var(--paper); border: 1px solid var(--fg); padding: 32px 24px; display: flex; flex-direction: column; gap: 16px; position: relative; }
+  .anchor-card .rank { position: absolute; top: 12px; right: 16px; font: italic 32px/1 var(--serif); color: var(--muted); }
+  .anchor-card .glyph { width: 72px; height: 72px; background: var(--fg); color: var(--bg); display: grid; place-items: center; font: italic 36px/1 var(--serif); }
+  .anchor-card .glyph.accent { background: var(--accent); }
+  .anchor-card .name { font: 14px/1 var(--mono); letter-spacing: 0.06em; color: var(--fg); }
+  .anchor-card .stat { font: italic 28px/1.1 var(--serif); color: var(--accent); margin-top: auto; }
+  .anchor-card .meta { font: 11px/1.3 var(--mono); color: var(--muted); letter-spacing: 0.16em; text-transform: uppercase; }
+
+  /* Risk table */
+  .risk-table { display: flex; flex-direction: column; border-top: 1px solid var(--fg); }
+  .risk-row { display: grid; grid-template-columns: 1fr 200px 200px 120px; gap: 24px; align-items: center; padding: 16px 0; border-bottom: 1px dashed var(--border); }
+  .risk-row.head { font: 11px/1 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; padding: 12px 0; }
+  .risk-row .brand { font: italic 22px/1.3 var(--serif); color: var(--fg); }
+  .risk-row .meter { display: flex; flex-direction: column; gap: 6px; }
+  .risk-row .meter .bar { height: 4px; background: var(--border); position: relative; overflow: hidden; }
+  .risk-row .meter .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); width: var(--p, 0%); transition: width 700ms cubic-bezier(.22,1,.36,1); }
+  .slide.active.play .risk-row .meter .bar i { width: var(--p); }
+  .risk-row .meter span { font: 11px/1 var(--mono); color: var(--muted); letter-spacing: 0.04em; }
+  .risk-row .owner { font: 13px/1 var(--mono); color: var(--muted); letter-spacing: 0.04em; }
+  .risk-row .risk-tag { font: 11px/1 var(--mono); color: var(--bg); background: var(--accent); padding: 6px 10px; letter-spacing: 0.18em; text-transform: uppercase; text-align: center; }
+
+  /* Talent matrix 2x2 quadrant */
+  .matrix-row { display: grid; grid-template-columns: 1fr 320px; gap: 64px; align-items: stretch; }
+  .matrix { aspect-ratio: 1.4 / 1; position: relative; border: 1px solid var(--fg); padding: 32px; }
+  .matrix .axis-x { position: absolute; left: 0; right: 0; bottom: 32px; height: 1px; background: var(--fg); opacity: 0.3; }
+  .matrix .axis-y { position: absolute; top: 32px; bottom: 32px; left: 50%; width: 1px; background: var(--fg); opacity: 0.3; }
+  .matrix .axis-label { position: absolute; font: 10px/1 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; }
+  .matrix .axis-label.x { bottom: 8px; }
+  .matrix .axis-label.y { left: 8px; transform-origin: left center; }
+  .matrix .axis-label.lo-x { left: 32px; }
+  .matrix .axis-label.hi-x { right: 32px; text-align: right; }
+  .matrix .axis-label.lo-y { top: 50%; transform: translateY(-50%) rotate(-90deg); }
+  .matrix .axis-label.hi-y { top: 32px; transform: rotate(-90deg) translateY(-50%); transform-origin: top left; left: 16px; }
+  .matrix .quad { position: absolute; font: italic 22px/1.2 var(--serif); color: var(--muted); }
+  .matrix .quad b { display: block; font: 11px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg); margin-bottom: 4px; font-style: normal; }
+  .matrix .quad.A { top: 64px; right: 64px; text-align: right; }
+  .matrix .quad.B { top: 64px; left: 64px; }
+  .matrix .quad.C { bottom: 64px; left: 64px; }
+  .matrix .quad.D { bottom: 64px; right: 64px; text-align: right; }
+  .matrix .dot { position: absolute; width: 14px; height: 14px; border-radius: 50%; transform: translate(-50%, -50%); transition: opacity 320ms ease; }
+  .matrix .dot.A { background: var(--good); }
+  .matrix .dot.B { background: var(--accent); }
+  .matrix .dot.C { background: color-mix(in oklch, var(--fg) 30%, transparent); }
+  .matrix .dot.D { background: var(--warn); }
+  .matrix-legend { display: flex; flex-direction: column; gap: 14px; align-self: center; }
+  .matrix-legend .it { display: grid; grid-template-columns: 16px auto auto; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px dashed var(--border); }
+  .matrix-legend .sw { width: 12px; height: 12px; border-radius: 50%; }
+  .matrix-legend b { font: italic 18px/1 var(--serif); color: var(--fg); }
+  .matrix-legend .n { font: 18px/1 var(--mono); color: var(--accent); letter-spacing: 0; font-variant-numeric: tabular-nums; }
+  .matrix-legend small { display: block; font: 11px/1.3 var(--mono); color: var(--muted); letter-spacing: 0.06em; margin-top: 4px; grid-column: 2 / -1; }
+
+  /* Riser cards */
+  .riser-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; }
+  .riser-card { background: var(--paper); border: 1px solid var(--good); border-left-width: 6px; padding: 28px 24px; display: flex; flex-direction: column; gap: 12px; }
+  .riser-card .ribbon { font: 11px/1 var(--mono); color: var(--good); letter-spacing: 0.18em; text-transform: uppercase; }
+  .riser-card .token { font: 14px/1 var(--mono); color: var(--fg); letter-spacing: 0.04em; }
+  .riser-card .slope { font: italic 48px/1 var(--serif); color: var(--good); letter-spacing: -0.018em; }
+  .riser-card .meta { font: 12px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: auto; }
+  .riser-card .arrow { font: 32px/1 var(--serif); color: var(--good); }
+
+  /* Gap cards */
+  .gap-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .gap-card { background: var(--paper); border: 2px dashed var(--accent); padding: 40px 32px; display: flex; flex-direction: column; gap: 20px; }
+  .gap-card .label { font: 11px/1 var(--mono); color: var(--accent); letter-spacing: 0.18em; text-transform: uppercase; }
+  .gap-card h3 { font: italic 56px/1 var(--serif); color: var(--fg); letter-spacing: -0.018em; }
+  .gap-card .row { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 1px dashed var(--border); }
+  .gap-card .row .key { font: 11px/1 var(--mono); color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
+  .gap-card .row .v { font: italic 22px/1 var(--serif); color: var(--fg); }
+  .gap-card .row .v.zero { color: var(--accent); }
+  .gap-card .desc { font: italic 14px/1.4 var(--serif); color: var(--muted); margin-top: auto; }
+
+  /* Shock viz */
+  .shock-row { display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: center; }
+  .shock-card { background: var(--paper); border: 3px solid var(--accent); padding: 48px; }
+  .shock-card .label { font: 11px/1 var(--mono); color: var(--accent); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 16px; }
+  .shock-card .who { font: italic 56px/1 var(--serif); color: var(--fg); letter-spacing: -0.018em; margin-bottom: 24px; }
+  .shock-card .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; padding-top: 24px; border-top: 1px solid var(--fg); }
+  .shock-card .stats .k { font: 11px/1 var(--mono); color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+  .shock-card .stats .v { font: italic 48px/1 var(--serif); color: var(--accent); }
+  .shock-bars { display: flex; flex-direction: column; gap: 14px; }
+  .shock-bar { display: grid; grid-template-columns: 200px 1fr 80px; gap: 16px; align-items: center; }
+  .shock-bar .who { font: 13px/1 var(--mono); color: var(--fg); letter-spacing: 0.04em; }
+  .shock-bar .bar { height: 10px; background: var(--border); position: relative; overflow: hidden; }
+  .shock-bar .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: color-mix(in oklch, var(--accent) 60%, transparent); width: var(--p, 0%); transition: width 700ms cubic-bezier(.22,1,.36,1); }
+  .shock-bar.peak .bar i { background: var(--accent); }
+  .slide.active.play .shock-bar .bar i { width: var(--p); }
+  .shock-bar .v { font: italic 22px/1 var(--serif); color: var(--fg); text-align: right; }
+
+  /* Hub designers (PageRank top) — small avatars grid */
+  .hub-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 32px; align-items: stretch; }
+  .hub-card { background: var(--paper); border: 1px solid var(--fg); padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+  .hub-card .glyph { width: 56px; height: 56px; background: var(--fg); color: var(--bg); display: grid; place-items: center; font: italic 28px/1 var(--serif); }
+  .hub-card .glyph.top { background: var(--accent); }
+  .hub-card .pr { font: italic 36px/1 var(--serif); color: var(--accent); letter-spacing: -0.018em; }
+  .hub-card .label { font: 11px/1 var(--mono); color: var(--muted); letter-spacing: 0.16em; text-transform: uppercase; }
+  .hub-card .token { font: 11px/1 var(--mono); color: var(--fg); letter-spacing: 0.04em; }
+
+  /* CTA closing */
+  .cta { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 32px; text-align: center; padding: 0 64px; }
+  .cta .big { font: clamp(56px, 7vw, 128px)/1 var(--serif); letter-spacing: -0.025em; color: var(--fg); }
+  .cta .big .accent { font-style: italic; color: var(--accent); }
+  .cta .sub { font: italic 28px/1.4 var(--serif); color: var(--muted); max-width: 840px; }
+  .cta a { display: inline-block; background: var(--fg); color: var(--bg); font: 14px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; padding: 20px 32px; text-decoration: none; transition: background 200ms ease; }
+  .cta a:hover { background: var(--accent); }
+
+  /* HUD */
+  .hud { position: fixed; bottom: 16px; left: 16px; right: 16px; display: flex; justify-content: flex-end; align-items: center; pointer-events: none; z-index: 100; gap: 16px; }
+  .hud > * { pointer-events: auto; }
+  .nav { display: flex; gap: 0; background: var(--paper); border: 1px solid var(--fg); }
+  .nav button { background: transparent; border: 0; padding: 10px 16px; font: 10px/1 var(--mono); color: var(--fg); letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; border-right: 1px solid var(--border); min-height: 44px; }
+  .nav button:last-child { border-right: 0; }
+  .nav button:hover { background: var(--fg); color: var(--bg); }
+  .nav .pos { padding: 10px 16px; font: italic 14px/1 var(--serif); color: var(--muted); align-self: center; }
+
+  /* Loading + err */
+  .loading, .err { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 200; padding: 48px; text-align: center; }
+  .loading.hidden, .err.hidden { display: none; }
+  .loading .focal { width: 12px; height: 12px; background: var(--accent); border-radius: 50%; animation: focal-pulse 2s ease-in-out infinite; }
+  @keyframes focal-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.5; } }
+  .loading .label, .err h2 { font: italic 32px/1.1 var(--serif); color: var(--fg); }
+  .err p { font: 16px/1.5 var(--sans); color: var(--muted); max-width: 600px; }
+
+  /* jr-home backlink */
+  .jr-home {
+    position: fixed; top: 14px; left: 14px; z-index: 1000;
+    font: 500 11px/1 var(--mono);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 9px 13px;
+    background: var(--fg);
+    color: var(--bg);
+    text-decoration: none;
+    border: 1px solid var(--fg);
+    transition: background 180ms ease;
+  }
+  .jr-home:hover { background: var(--accent); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; }
+  }
+  @media print {
+    html, body { overflow: visible !important; height: auto !important; }
+    .deck { position: static !important; height: auto !important; }
+    .canvas { width: 1920px !important; height: 1080px !important; transform: none !important; page-break-after: always; }
+    .slide { opacity: 1 !important; pointer-events: auto !important; transform: none !important; position: relative !important; }
+    .hud, .loading, .err, .jr-home { display: none !important; }
+  }
+  @page { size: 1920px 1080px; margin: 0; }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+  <div class="canvas" id="canvas">
+    <!-- Editorial chrome, lives inside canvas -->
+    <div class="chrome top"><div id="chr-tl">VNPAY DESIGN — DESIGN ATLAS · DES PROJECT</div><div class="right"><div class="rule"></div><div id="chr-tr">JR.SERVICEHUB.VN</div></div><div class="baseline"></div></div>
+    <div class="folio"><div class="rule"></div><div class="roman">i.</div><div id="folio-name">PLATE ONE · COVER</div></div>
+    <div class="chrome bot"><div><span class="live-dot"></span><b>SIGNAL · LIVE</b> &nbsp; TEAM ATLAS</div><div id="chr-br">PLATE / 01 OF 10</div><div class="baseline"></div></div>
+
+    <!-- Slide 01: Cover -->
+    <section class="slide cover" data-slide="1" data-screen-label="01 Cover">
+      <div class="kicker anim d0"><span class="accent-dot"></span><span>DES · DESIGN INDEX · ATLAS EDITION</span><span class="rule"></span><span>VOL. JR-2026</span></div>
+      <div class="cover-body">
+        <div class="cover-name anim d1">Design <span class="em">surface</span>. The team, <span class="accent">mapped.</span></div>
+        <div class="cover-sub anim d2">Mỗi designer là một <em>tag</em>. Mỗi tag là một góc nhìn. Mười plate, một full design surface — từ network anchors tới white-space gaps.</div>
+      </div>
+      <div class="stat-ribbon anim d3">
+        <div class="stat"><div class="key">Roster</div><div class="v" id="cv-roster">—</div><div class="meta">Designers indexed</div></div>
+        <div class="stat"><div class="key">Brand surface</div><div class="v" id="cv-brands">—</div><div class="meta">Unique brands touched</div></div>
+        <div class="stat"><div class="key">Clusters</div><div class="v accent" id="cv-clusters">—</div><div class="meta">Brand co-staffing groups</div></div>
+        <div class="stat"><div class="key">Anchors</div><div class="v" id="cv-anchors">—</div><div class="meta">Network hubs (PageRank top)</div></div>
+        <div class="stat"><div class="key">Span</div><div class="v" id="cv-span">—</div><div class="meta">Years of design history</div></div>
+      </div>
+    </section>
+
+    <!-- Slide 02: Mobile horizon -->
+    <section class="slide" data-slide="2">
+      <div class="anim d0"><h2 class="h2"><span class="em">Mobile</span> <span class="accent">horizon.</span></h2></div>
+      <div class="lede anim d1">Mobile is the team's center of gravity — the dominant specialty for <strong id="mh-mob-pct">—</strong> of the roster. Web sits as a secondary surface; <em>AI · animation · research</em> appear as touch-points but <em>never as anyone's primary craft</em>.</div>
+      <div class="donut-row anim d2">
+        <div class="donut-wrap"><svg viewBox="0 0 480 480" id="mh-donut"></svg><div class="donut-inner"><div class="key">Dominant</div><div class="v" id="mh-dom">—</div><div class="meta" id="mh-dom-meta">—</div></div></div>
+        <div class="donut-legend" id="mh-legend"></div>
+      </div>
+    </section>
+
+    <!-- Slide 03: Brand clusters -->
+    <section class="slide" data-slide="3">
+      <div class="anim d0"><h2 class="h2"><span class="em">Three</span> brand <span class="accent">clusters.</span></h2></div>
+      <div class="lede anim d1">Brand co-staffing reveals a clean partition: a <em>state-banking core</em> handled by almost everyone, an <em>adjacent</em> cluster of secondary banks + auth, and a <em>lifestyle</em> niche. Cross-cluster connectors are rare.</div>
+      <div class="cluster-grid anim d2" id="bc-grid"></div>
+    </section>
+
+    <!-- Slide 04: Critical-5 anchors -->
+    <section class="slide" data-slide="4">
+      <div class="anim d0"><h2 class="h2"><span class="em">Critical</span> <span class="accent">five.</span></h2></div>
+      <div class="lede anim d1">Bipartite PageRank surfaces <strong>five anchors</strong> who hold the bulk of network centrality. Lose one — disrupt the brand-designer graph; lose two — fragment the surface.</div>
+      <div class="anchor-grid anim d2" id="an-grid"></div>
+    </section>
+
+    <!-- Slide 05: Bus-factor risk -->
+    <section class="slide" data-slide="5">
+      <div class="anim d0"><h2 class="h2"><span class="em">Bus</span> factor <span class="accent">one.</span></h2></div>
+      <div class="lede anim d1">Eight brands depend on a <em>single owner</em> for ≥70% of their work. Two of them are <strong>Research</strong> and <strong>UXR</strong> — capability domains with growth potential, owned by one person each. Highest-priority redundancy work.</div>
+      <div class="risk-table anim d2">
+        <div class="risk-row head"><div>Brand</div><div>Owner share</div><div>Total tickets</div><div>Risk</div></div>
+        <div id="bf-rows"></div>
+      </div>
+    </section>
+
+    <!-- Slide 06: Talent matrix -->
+    <section class="slide" data-slide="6">
+      <div class="anim d0"><h2 class="h2"><span class="em">Talent</span> <span class="accent">matrix.</span></h2></div>
+      <div class="lede anim d1">Every designer plotted on <em>success</em> (composite of velocity + recency + breadth) versus <em>attrition risk</em> (declining slope, peak age, narrow surface). Six <strong>at-risk stars</strong> warrant immediate retention attention.</div>
+      <div class="matrix-row anim d2">
+        <div class="matrix" id="tm-matrix">
+          <div class="axis-x"></div><div class="axis-y"></div>
+          <div class="axis-label x lo-x">low success</div>
+          <div class="axis-label x hi-x">high success</div>
+          <div class="axis-label y hi-y">high risk</div>
+          <div class="quad A"><b>A · STARS</b><br>high success<br>low risk</div>
+          <div class="quad B"><b>B · AT-RISK</b><br>high success<br>high risk</div>
+          <div class="quad C"><b>C · STABLE</b><br>low success<br>low risk</div>
+          <div class="quad D"><b>D · STRUGGLING</b><br>low success<br>high risk</div>
+        </div>
+        <div class="matrix-legend" id="tm-legend"></div>
+      </div>
+    </section>
+
+    <!-- Slide 07: Pipeline risers -->
+    <section class="slide" data-slide="7">
+      <div class="anim d0"><h2 class="h2"><span class="em">Pipeline</span> <span class="accent">risers.</span></h2></div>
+      <div class="lede anim d1">Five designers with strong velocity in the 1-4 year tenure window. They are the ready successors — invest, mentor, expand their scope.</div>
+      <div class="riser-grid anim d2" id="rs-grid"></div>
+    </section>
+
+    <!-- Slide 08: Capability gaps (white space) -->
+    <section class="slide" data-slide="8">
+      <div class="anim d0"><h2 class="h2"><span class="em">White</span> <span class="accent">space.</span></h2></div>
+      <div class="lede anim d1">Three growth domains have <em>touch-points but no owner</em> — designers occasionally work them but no one specializes. The team's expansion frontier is right here.</div>
+      <div class="gap-grid anim d2" id="gp-grid"></div>
+    </section>
+
+    <!-- Slide 09: Network shock -->
+    <section class="slide" data-slide="9">
+      <div class="anim d0"><h2 class="h2"><span class="em">Single</span> point of <span class="accent">failure.</span></h2></div>
+      <div class="lede anim d1">Departure simulation: one designer dwarfs the rest. Their exit would <em>orphan nine brands</em> and severely impact fifteen more. The next-largest shock is four-times smaller.</div>
+      <div class="shock-row anim d2">
+        <div class="shock-card">
+          <div class="label">If they leave —</div>
+          <div class="who" id="sh-who">—</div>
+          <div class="stats">
+            <div><div class="k">Orphan brands</div><div class="v" id="sh-orph">—</div></div>
+            <div><div class="k">High-impact</div><div class="v" id="sh-high">—</div></div>
+            <div><div class="k">Composite shock</div><div class="v" id="sh-comp">—</div></div>
+          </div>
+        </div>
+        <div class="shock-bars" id="sh-bars"></div>
+      </div>
+    </section>
+
+    <!-- Slide 10: CTA -->
+    <section class="slide" data-slide="10">
+      <div class="cta">
+        <div class="anim d0"><div class="big">Find your <span class="accent">tag.</span></div></div>
+        <div class="anim d1"><div class="sub">Mỗi designer là một dispatch. Atlas là cách team tự nhìn mình từ trên cao. Mở dispatch của bạn — ten plates, một góc nhìn riêng.</div></div>
+        <div class="anim d2"><a href="./" id="cta-link">Open my dispatch →</a></div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<a class="jr-home" id="jrHome" href="./" aria-label="Back to home">← jr</a>
+<script>(function(){var e=null;try{if(document.referrer){var u=new URL(document.referrer);if(u.origin===location.origin){var p=u.pathname;if(p==='/jr/'||p==='/jr/index.html')e='./';else if(p==='/jr/editorial.html')e='./editorial.html';}}}catch(_){}if(!e){try{e=sessionStorage.getItem('jr_entry');}catch(_){}}if(e){var n=document.getElementById('jrHome');if(n)n.href=e;}})();</script>
+
+<div class="hud">
+  <div class="nav">
+    <button id="prev">◀ PREV</button>
+    <span class="pos"><span id="pos-num">01</span><span class="total"> / 10</span></span>
+    <button id="next">NEXT ▶</button>
+    <button id="print">PRINT</button>
+  </div>
+</div>
+
+<div class="loading" id="loading"><div class="focal"></div><div class="label">Loading atlas…</div></div>
+<div class="err hidden" id="err"><h2 id="err-title">Atlas unavailable.</h2><p id="err-body">Could not load team profile data.</p></div>
+
+<script>
+'use strict';
+const C_WT = { mobile: 'var(--c-mobile)', web: 'var(--c-web)', ai: 'var(--c-ai)', animation: 'var(--c-animation)', research: 'var(--c-research)', other: 'var(--c-other)' };
+const L_WT = { mobile: 'Mobile', web: 'Web', ai: 'AI', animation: 'Animation', research: 'Research', other: 'Other' };
+
+// Canvas scale-to-fit
+const canvas = document.getElementById('canvas');
+function fit() { const s = Math.min(innerWidth/1920, innerHeight/1080); canvas.style.transform = 'scale('+s+')'; }
+addEventListener('resize', fit); fit();
+
+// Slide nav
+const slides = [...document.querySelectorAll('.slide')];
+let cur = 0;
+function showSlide(i, dir) {
+  const n = Math.max(0, Math.min(slides.length-1, i));
+  if (dir == null) dir = n >= cur ? 'forward' : 'back';
+  cur = n;
+  slides.forEach((s, k) => { s.classList.toggle('active', k === cur); s.classList.remove('play','enter-right','enter-left'); if (k !== cur) s.scrollTop = 0; });
+  slides[cur].classList.add(dir === 'back' ? 'enter-left' : 'enter-right');
+  slides[cur].scrollTop = 0;
+  requestAnimationFrame(() => slides[cur].classList.add('play'));
+  document.getElementById('pos-num').textContent = String(cur+1).padStart(2,'0');
+  const folioRomans = ['i','ii','iii','iv','v','vi','vii','viii','ix','x'];
+  const folioNames = ['PLATE ONE · COVER','PLATE TWO · MOBILE HORIZON','PLATE THREE · BRAND CLUSTERS','PLATE FOUR · CRITICAL FIVE','PLATE FIVE · BUS FACTOR','PLATE SIX · TALENT MATRIX','PLATE SEVEN · PIPELINE RISERS','PLATE EIGHT · WHITE SPACE','PLATE NINE · SINGLE POINT','PLATE TEN · CTA'];
+  document.querySelector('.folio .roman').textContent = folioRomans[cur] + '.';
+  document.getElementById('folio-name').textContent = folioNames[cur];
+  document.getElementById('chr-br').textContent = 'PLATE / ' + String(cur+1).padStart(2,'0') + ' OF 10';
+}
+document.getElementById('prev').addEventListener('click', () => showSlide(cur-1, 'back'));
+document.getElementById('next').addEventListener('click', () => showSlide(cur+1, 'forward'));
+document.getElementById('print').addEventListener('click', () => { slides.forEach(s => s.classList.add('play','active')); setTimeout(() => { print(); setTimeout(() => slides.forEach((s,k) => { s.classList.toggle('active', k === cur); if (k !== cur) s.classList.remove('play'); }), 200); }, 80); });
+addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); showSlide(cur+1, 'forward'); }
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); showSlide(cur-1, 'back'); }
+  else if (e.key === 'Home') { showSlide(0, 'back'); }
+  else if (e.key === 'End') { showSlide(slides.length-1, 'forward'); }
+});
+
+function escapeHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function shortToken(t) { return t ? t.slice(0,8) : '—'; }
+
+// Boot
+async function boot() {
+  document.getElementById('loading').classList.remove('hidden');
+  try {
+    const [profile, insights, sync] = await Promise.all([
+      fetch('./data/_team-profile.json').then(r => r.json()),
+      fetch('./data/_team-insights.json').then(r => r.json()),
+      fetch('./data/_sync-index.json').then(r => r.json()),
+    ]);
+    render(profile, insights, sync);
+    document.getElementById('loading').classList.add('hidden');
+    showSlide(0, 'forward');
+  } catch (e) {
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('err').classList.remove('hidden');
+    document.getElementById('err-body').textContent = 'Error: ' + e.message;
+  }
+}
+boot();
+
+function render(p, ins, sync) {
+  const team = sync.team || {};
+  const roster = (sync.users || []).length;
+  const dd = ins.deep_dive || {};
+  const wtShare = p.workType_share || {};
+
+  // ─── Slide 01: Cover stats ───
+  document.getElementById('cv-roster').textContent = roster;
+  document.getElementById('cv-brands').textContent = dd.brand_universe_size || '—';
+  document.getElementById('cv-clusters').textContent = (dd.brand_clusters || []).length || '—';
+  document.getElementById('cv-anchors').textContent = '5';
+  const yrs = Object.keys(team.years || {});
+  document.getElementById('cv-span').textContent = yrs.length ? yrs.length + 'y' : '—';
+
+  // ─── Slide 02: Mobile horizon donut ───
+  const wtPairs = Object.entries(wtShare).filter(([_, v]) => v > 0).sort((a,b) => b[1]-a[1]);
+  const sumWT = wtPairs.reduce((s, [_,v]) => s+v, 0) || 1;
+  const cx = 240, cy = 240, r = 180, sw = 56;
+  const C = 2 * Math.PI * r;
+  let acc = 0;
+  let donutSvg = '';
+  wtPairs.forEach(([k, v]) => {
+    const frac = v / sumWT;
+    const dash = frac * C;
+    donutSvg += '<circle r="'+r+'" cx="'+cx+'" cy="'+cy+'" fill="none" stroke="'+C_WT[k]+'" stroke-width="'+sw+'" stroke-dasharray="'+dash.toFixed(2)+' '+(C-dash).toFixed(2)+'" stroke-dashoffset="'+(-acc*C).toFixed(2)+'" transform="rotate(-90 '+cx+' '+cy+')" />';
+    acc += frac;
+  });
+  document.getElementById('mh-donut').innerHTML = donutSvg;
+  const top = wtPairs[0];
+  document.getElementById('mh-dom').textContent = top ? L_WT[top[0]] : '—';
+  document.getElementById('mh-dom-meta').textContent = top ? Math.round(top[1]*100) + '% of team work' : '';
+  document.getElementById('mh-mob-pct').textContent = top ? Math.round(top[1]*100) + '%' : '—';
+  document.getElementById('mh-legend').innerHTML = wtPairs.map(([k,v]) => '<div class="it"><span class="sw" style="background:'+C_WT[k]+'"></span><b>'+L_WT[k]+'</b><span class="num">'+Math.round(v*100)+'%</span></div>').join('');
+
+  // ─── Slide 03: Brand clusters ───
+  const clusters = dd.brand_clusters || [];
+  const cTitles = ['State-banking core', 'Banking-adjacent', 'Lifestyle vertical'];
+  const cDescs = ['Trục chính. Mọi designer đều chạm. Co-staffing Jaccard ≥ 0.65.', 'Secondary banks và auth — gắn với cluster chính.', 'Niche promo + lifestyle. Cross-cluster connectors là tài sản hiếm.'];
+  document.getElementById('bc-grid').innerHTML = clusters.slice(0,3).map((c, i) => {
+    return '<div class="cluster"><span class="tag">Cluster '+ (i+1) +'</span><h3>'+ escapeHtml(cTitles[i] || 'Cluster') +'</h3><div class="members">' +
+      c.members.map(m => '<span class="member">'+ escapeHtml(m) +'</span>').join('') +
+      '</div><div class="desc">'+ escapeHtml(cDescs[i] || '') +'</div></div>';
+  }).join('');
+
+  // ─── Slide 04: Critical-5 anchors ───
+  const anchors = (dd.pagerank_designers_top || []).slice(0, 5);
+  document.getElementById('an-grid').innerHTML = anchors.map((a, i) => {
+    const cls = i === 0 ? 'accent' : '';
+    return '<div class="anchor-card"><span class="rank">'+ (i+1).toString().padStart(2,'0') +'.</span>' +
+      '<div class="glyph '+ cls +'">' + (i+1) + '</div>' +
+      '<div class="name">'+ shortToken(a.token) +'</div>' +
+      '<div class="stat">PR '+ a.pr.toFixed(3) +'</div>' +
+      '<div class="meta">'+ a.brands +' brands · network anchor</div></div>';
+  }).join('');
+
+  // ─── Slide 05: Bus factor ───
+  const bf1 = dd.bus_factor_1 || [];
+  const maxTotal = bf1.reduce((m, r) => Math.max(m, r.total), 1);
+  document.getElementById('bf-rows').innerHTML = bf1.slice(0, 8).map(r => {
+    const ownerPct = Math.round(r.share * 100);
+    const totalPct = Math.round((r.total / maxTotal) * 100);
+    return '<div class="risk-row">' +
+      '<div class="brand">'+ escapeHtml(r.brand) +'</div>' +
+      '<div class="meter"><div class="bar" style="--p:'+ ownerPct +'%"><i></i></div><span>'+ ownerPct +'% bởi '+ shortToken(r.owner) +'</span></div>' +
+      '<div class="meter"><div class="bar" style="--p:'+ totalPct +'%"><i></i></div><span>'+ r.total +' tickets</span></div>' +
+      '<div class="risk-tag">Bus 1</div>' +
+    '</div>';
+  }).join('');
+
+  // ─── Slide 06: Talent matrix ───
+  const tm = (ins.predictive && ins.predictive.talent_matrix) || {};
+  const tmm = (ins.predictive && ins.predictive.talent_matrix_members) || {};
+  const matrix = document.getElementById('tm-matrix');
+  // Plot dots — pseudo-position based on quadrant + jitter for visual
+  const succ = (ins.predictive && ins.predictive.success_scores) || {};
+  const risk = (ins.predictive && ins.predictive.attrition_risks) || {};
+  // Build per-designer x/y from p.designers (use percentile or rank approx)
+  const designerEntries = Object.entries(p.designers || {});
+  const dots = [];
+  designerEntries.forEach(([tok, d]) => {
+    // Use total and tenure as proxy if predictive maps don't have this token
+    const sScore = succ[tok];
+    const rScore = risk[tok];
+    let s, r;
+    if (typeof sScore === 'number' && typeof rScore === 'number') { s = sScore; r = rScore; }
+    else {
+      // approx success from percentiles total + completion
+      s = (d.percentiles.total + d.percentiles.completion + d.percentiles.versatility) / 300;
+      r = 0.4;
+    }
+    let q = 'A';
+    if (s >= 0.45 && r < 0.4) q = 'A';
+    else if (s >= 0.45 && r >= 0.4) q = 'B';
+    else if (s < 0.45 && r < 0.4) q = 'C';
+    else q = 'D';
+    dots.push({ tok, x: s, y: r, q });
+  });
+  // Append dots to matrix
+  const dotHtml = dots.map(d => {
+    const xPct = Math.min(96, Math.max(4, 4 + d.x * 92));
+    const yPct = Math.min(96, Math.max(4, 96 - d.y * 92));
+    return '<div class="dot '+ d.q +'" style="left:'+ xPct +'%;top:'+ yPct +'%" title="'+ shortToken(d.tok) +'"></div>';
+  }).join('');
+  // Append to matrix without removing axis/label/quad children
+  const matrixContent = matrix.innerHTML;
+  matrix.innerHTML = matrixContent + dotHtml;
+  // Legend
+  const labels = { A_star: 'A · Stars', B_at_risk: 'B · At-risk', C_stable: 'C · Stable', D_growing: 'D · Struggling' };
+  const subs = { A_star: 'high success · low risk', B_at_risk: 'high success · high risk', C_stable: 'low success · low risk', D_growing: 'low success · high risk' };
+  document.getElementById('tm-legend').innerHTML = ['A_star','B_at_risk','C_stable','D_growing'].map(k => {
+    const sw = k === 'A_star' ? 'var(--good)' : k === 'B_at_risk' ? 'var(--accent)' : k === 'C_stable' ? 'color-mix(in oklch, var(--fg) 30%, transparent)' : 'var(--warn)';
+    return '<div class="it"><span class="sw" style="background:'+ sw +'"></span><b>'+ labels[k] +'</b><span class="n">'+ (tm[k] || 0) +'</span><small>'+ subs[k] +'</small></div>';
+  }).join('');
+
+  // ─── Slide 07: Pipeline risers ───
+  const risers = (ins.predictive && ins.predictive.high_potential_risers) || [];
+  document.getElementById('rs-grid').innerHTML = risers.slice(0,5).map((r, i) => {
+    return '<div class="riser-card">' +
+      '<span class="ribbon">Riser ' + String.fromCharCode(65+i) + '</span>' +
+      '<div class="token">'+ shortToken(r.token) +'</div>' +
+      '<div class="slope">+'+ r.slope +'</div>' +
+      '<div class="arrow">↗</div>' +
+      '<div class="meta">tickets / year · tenure '+ r.tenure_years +'y · success '+ r.success.toFixed(2) +'</div>' +
+    '</div>';
+  }).join('');
+
+  // ─── Slide 08: White space (capability gaps) ───
+  const rare = (dd.rare_specialty_holders) || {};
+  const rareLabels = { ai: 'AI', animation: 'Animation', research: 'Research' };
+  const rareDescs = {
+    ai: 'Touch-points: vài designer làm AI workspots nhưng không ai lấy AI làm chuyên môn chính.',
+    animation: 'Touch-points hạn chế. Hiện không có animation lead chính thức.',
+    research: 'Single owner. Bus-factor 1. Capability lớn, người ít.',
+  };
+  document.getElementById('gp-grid').innerHTML = ['ai','animation','research'].map(k => {
+    const holders = (rare[k] || []).length;
+    return '<div class="gap-card">' +
+      '<span class="label">Gap · '+ k +'</span>' +
+      '<h3>'+ rareLabels[k] +'</h3>' +
+      '<div class="row"><span class="key">Touched by</span><span class="v">'+ holders +'</span></div>' +
+      '<div class="row"><span class="key">Owned by (dominant)</span><span class="v zero">0</span></div>' +
+      '<div class="desc">'+ rareDescs[k] +'</div>' +
+    '</div>';
+  }).join('');
+
+  // ─── Slide 09: Network shock ───
+  const shocks = (ins.predictive && ins.predictive.departure_shock_top) || [];
+  if (shocks.length) {
+    const top = shocks[0];
+    document.getElementById('sh-who').textContent = shortToken(top.token);
+    document.getElementById('sh-orph').textContent = top.orphaned_brands;
+    document.getElementById('sh-high').textContent = top.high_impact_brands;
+    document.getElementById('sh-comp').textContent = top.composite;
+    const maxComp = top.composite || 1;
+    document.getElementById('sh-bars').innerHTML = shocks.slice(0,6).map((s, i) => {
+      const pct = Math.round((s.composite / maxComp) * 100);
+      return '<div class="shock-bar'+ (i === 0 ? ' peak' : '') +'">' +
+        '<span class="who">'+ shortToken(s.token) +'</span>' +
+        '<div class="bar" style="--p:'+ pct +'%"><i></i></div>' +
+        '<span class="v">'+ s.composite +'</span>' +
+      '</div>';
+    }).join('');
+  }
+}
+</script>
+</body>
+</html>
