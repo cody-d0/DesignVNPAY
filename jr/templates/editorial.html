@@ -563,6 +563,40 @@
   </div>
 
 <script>
+async function deriveKey(password, saltB64, iterations) {
+  const salt = Uint8Array.from(atob(saltB64), c => c.charCodeAt(0));
+  const baseKey = await crypto.subtle.importKey('raw',
+    new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations, hash: 'SHA-256' },
+    baseKey, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+}
+async function decryptBundle(bundle, password) {
+  const key = await deriveKey(password, bundle.salt, bundle.iter);
+  const iv = Uint8Array.from(atob(bundle.iv), c => c.charCodeAt(0));
+  const ct = Uint8Array.from(atob(bundle.ct), c => c.charCodeAt(0));
+  const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+async function unlockBundle(bundle, app) {
+  for (let i = 0; i < 3; i++) {
+    let pw = sessionStorage.getItem('jr_pw');
+    if (!pw) {
+      pw = window.prompt(i === 0 ? 'Access password:' : 'Wrong password — try again:');
+      if (!pw) { app.innerHTML = '<div class="state error">Password required.</div>'; return null; }
+    }
+    try {
+      const data = await decryptBundle(bundle, pw);
+      sessionStorage.setItem('jr_pw', pw);
+      return data;
+    } catch (_) {
+      sessionStorage.removeItem('jr_pw');
+    }
+  }
+  app.innerHTML = '<div class="state error">Could not decrypt profile.</div>';
+  return null;
+}
+
 (async function() {
   const params = new URLSearchParams(location.search);
   const token = params.get('t');
@@ -575,15 +609,19 @@
   }
   try { history.replaceState(null, '', './editorial.html'); } catch (_) {}
 
-  let data;
+  let bundle;
   try {
     const r = await fetch('../data/' + token + '.json');
     if (!r.ok) throw new Error('Profile not found');
-    data = await r.json();
+    bundle = await r.json();
   } catch (e) {
     app.innerHTML = '<div class="state error">Failed to load profile.</div>';
     return;
   }
+  const data = (bundle && bundle.v === 1 && bundle.ct)
+    ? await unlockBundle(bundle, app)
+    : bundle;
+  if (!data) return;
 
   document.title = data.user.displayName + ' — Editorial Portfolio';
   app.innerHTML = render(data);
