@@ -38,7 +38,12 @@
   }
   @keyframes grid-drift { from { background-position: 0 0, 0 0, 0 0; } to { background-position: 0 0, 28px 28px, 0 0; } }
   .canvas { width: 1920px; height: 1080px; position: relative; transform-origin: center; }
-  .slide { position: absolute; inset: 0; padding: 144px 80px 96px; opacity: 0; pointer-events: none; transform: translateX(0); }
+  .slide { position: absolute; inset: 0; padding: 144px 80px 96px; opacity: 0; pointer-events: none; transform: translateX(0); overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+  .slide::-webkit-scrollbar { width: 8px; }
+  .slide::-webkit-scrollbar-track { background: transparent; }
+  .slide::-webkit-scrollbar-thumb { background: color-mix(in oklch, var(--fg) 18%, transparent); border-radius: 4px; }
+  .slide::-webkit-scrollbar-thumb:hover { background: color-mix(in oklch, var(--fg) 32%, transparent); }
+  .slide { scrollbar-width: thin; scrollbar-color: color-mix(in oklch, var(--fg) 18%, transparent) transparent; }
   .slide.active { opacity: 1; pointer-events: auto; }
   .slide.active.enter-right { animation: slide-enter-right 360ms cubic-bezier(.22,1,.36,1) forwards; }
   .slide.active.enter-left  { animation: slide-enter-left  360ms cubic-bezier(.22,1,.36,1) forwards; }
@@ -408,7 +413,8 @@
     </section>
   </div>
 </div>
-<a class="jr-home" href="./" aria-label="Back to home">← jr</a>
+<a class="jr-home" id="jrHome" href="./" aria-label="Back to home">← jr</a>
+<script>(function(){var e=sessionStorage.getItem('jr_entry');if(e){var n=document.getElementById('jrHome');if(n)n.href=e;}})();</script>
 <div class="hud">
   <div class="nav">
     <button id="prev">◀ PREV</button>
@@ -446,9 +452,11 @@ function showSlide(i, direction) {
   slides.forEach((s, k) => {
     s.classList.toggle('active', k === cur);
     s.classList.remove('play', 'enter-right', 'enter-left');
+    if (k !== cur) s.scrollTop = 0;
   });
   const enterClass = direction === 'back' ? 'enter-left' : 'enter-right';
   slides[cur].classList.add(enterClass);
+  slides[cur].scrollTop = 0;
   // Replay entrance after frame
   requestAnimationFrame(() => slides[cur].classList.add('play'));
   document.getElementById('cnum').textContent = String(cur + 1).padStart(2, '0');
