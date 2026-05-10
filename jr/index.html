@@ -421,7 +421,7 @@
         </button>
       </div>
       <div class="search-hint" id="hint">
-        <span id="hintText">38 designers indexed · try </span><a id="suggestLink" href="#"></a>
+        <span id="hintText">38 designers · try</span><a id="suggestLink" href="#"></a>
       </div>
 
       <!-- Inline activity log — appears below form during sync -->
@@ -505,7 +505,7 @@
     }
 
     if (!v) {
-      hintText.textContent = (teamStats ? teamStats.designers : 38) + ' designers indexed · try ';
+      hintText.textContent = (teamStats ? teamStats.designers : 38) + ' designers · try';
       pickSuggestion();
       return;
     }
@@ -548,7 +548,7 @@
       if (!r.ok) throw new Error('User not found');
       userData = await r.json();
     } catch (err) {
-      pushLog({ id: 'user', kind: 'error', title: 'User not in index', meta: uid });
+      pushLog({ id: 'user', kind: 'error', title: 'User not found', meta: uid });
       // Restore form so user can try again
       setTimeout(() => {
         submit.disabled = false;
@@ -573,7 +573,7 @@
     }
     pushToast({ id: 'tickets', kind: 'success', title: total + ' tickets fetched', meta: 'Across ' + Object.keys(userData.years || {}).length + ' years' });
 
-    pushToast({ id: 'brands', spinner: true, title: 'Classifying brands', meta: 'Bucket matching' });
+    pushToast({ id: 'brands', spinner: true, title: 'Classifying brands', meta: 'Specialty match' });
     await delay(380);
     pushToast({ id: 'brands', kind: 'success', title: userData.buckets.length + ' brands identified', meta: userData.buckets.slice(0,3).map(b => b.label).join(', ') });
 
@@ -636,14 +636,14 @@
         sorted[Math.floor(sorted.length * 0.3)],
         sorted[Math.floor(sorted.length * 0.6)],
       ].filter(Boolean);
-      hintText.textContent = teamStats.designers + ' designers indexed · try ';
+      hintText.textContent = teamStats.designers + ' designers · try';
       pickSuggestion();
       // Rotate suggestion every 4s if input empty
       setInterval(() => {
         if (!input.value.trim()) pickSuggestion();
       }, 4000);
     } catch (err) {
-      hintText.textContent = 'Index unavailable · enter email';
+      hintText.textContent = 'Catalog unavailable · enter email';
     }
   })();
 
