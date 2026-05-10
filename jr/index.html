@@ -543,9 +543,13 @@
     await delay(450);
 
     let userData = null;
+    let userToken = null;
     try {
-      const r = await fetch('./data/' + uid + '.json');
-      if (!r.ok) throw new Error('User not found');
+      const entry = availableUsers.find(u => u.id === uid);
+      if (!entry || !entry.token) throw new Error('User not found');
+      userToken = entry.token;
+      const r = await fetch('./data/' + userToken + '.json');
+      if (!r.ok) throw new Error('Profile unavailable');
       userData = await r.json();
     } catch (err) {
       pushLog({ id: 'user', kind: 'error', title: 'User not found', meta: uid });
@@ -587,7 +591,7 @@
 
     overlay.classList.add('active');
     await delay(600);
-    location.href = './templates/glass.html?u=' + encodeURIComponent(uid);
+    location.href = './templates/glass.html?t=' + encodeURIComponent(userToken);
   });
 
   function inferTagPreview(d) {

@@ -693,21 +693,24 @@ const IOS_GRADIENTS = [
 
 (async function() {
   const params = new URLSearchParams(location.search);
-  const username = params.get('u') || params.get('user');
-  const dataPath = params.get('data') || (username ? '../data/' + username + '.json' : null);
+  const token = params.get('t');
+  const TOKEN_RE = /^[a-f0-9]{12}$/;
   const app = document.getElementById('app');
 
-  if (!dataPath) {
-    app.innerHTML = '<div class="state error">Missing user param. Use <code>?u=username</code></div>';
+  if (!token || !TOKEN_RE.test(token)) {
+    app.innerHTML = '<div class="state error">Invalid or missing token.</div>';
     return;
   }
+  // Mask URL so token isn't trivially copied/edited from the address bar
+  try { history.replaceState(null, '', './glass.html'); } catch (_) {}
+
   let data;
   try {
-    const r = await fetch(dataPath);
-    if (!r.ok) throw new Error('HTTP ' + r.status + ' on ' + dataPath);
+    const r = await fetch('../data/' + token + '.json');
+    if (!r.ok) throw new Error('Profile not found');
     data = await r.json();
   } catch (e) {
-    app.innerHTML = '<div class="state error">Failed to load: ' + escapeHtml(e.message) + '</div>';
+    app.innerHTML = '<div class="state error">Failed to load profile.</div>';
     return;
   }
   document.title = data.user.displayName + ' — Glass Portfolio';
