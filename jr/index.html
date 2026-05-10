@@ -171,7 +171,6 @@
     border-color: rgba(255,107,107,0.6);
     box-shadow: 0 0 0 4px rgba(255,107,107,0.16);
   }
-  .search-input-wrap.pw-wrap { grid-template-columns: 1fr; margin-top: 10px; }
 
   .search-input {
     min-width: 0;
@@ -421,17 +420,6 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </button>
       </div>
-      <div class="search-input-wrap pw-wrap" id="pwWrap">
-        <input
-          type="password"
-          class="search-input"
-          id="passwordInput"
-          placeholder="access password"
-          autocomplete="current-password"
-          spellcheck="false"
-          required
-        />
-      </div>
       <div class="search-hint" id="hint">
         <span id="hintText">38 designers · try</span><a id="suggestLink" href="#"></a>
       </div>
@@ -450,8 +438,6 @@
 <script>
   const form = document.getElementById('syncForm');
   const input = document.getElementById('usernameInput');
-  const passwordInput = document.getElementById('passwordInput');
-  const pwWrap = document.getElementById('pwWrap');
   const inputWrap = document.getElementById('inputWrap');
   const submit = document.getElementById('syncBtn');
   const hint = document.getElementById('hint');
@@ -459,26 +445,6 @@
   const suggestLink = document.getElementById('suggestLink');
   const activityLog = document.getElementById('activityLog');
   const overlay = document.getElementById('syncOverlay');
-
-  // Hydrate password from session if user already authenticated this session
-  const cachedPw = sessionStorage.getItem('jr_pw');
-  if (cachedPw) passwordInput.value = cachedPw;
-
-  async function deriveKey(password, saltB64, iterations) {
-    const salt = Uint8Array.from(atob(saltB64), c => c.charCodeAt(0));
-    const baseKey = await crypto.subtle.importKey('raw',
-      new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
-    return crypto.subtle.deriveKey(
-      { name: 'PBKDF2', salt, iterations, hash: 'SHA-256' },
-      baseKey, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
-  }
-  async function decryptBundle(bundle, password) {
-    const key = await deriveKey(password, bundle.salt, bundle.iter);
-    const iv = Uint8Array.from(atob(bundle.iv), c => c.charCodeAt(0));
-    const ct = Uint8Array.from(atob(bundle.ct), c => c.charCodeAt(0));
-    const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
-    return JSON.parse(new TextDecoder().decode(pt));
-  }
 
   let availableUsers = [];
   let teamStats = null;
@@ -563,7 +529,6 @@
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const username = input.value.trim().toLowerCase();
-    const password = passwordInput.value;
     if (!USERNAME_RE.test(username)) {
       inputWrap.classList.add('invalid');
       hint.classList.add('error');
@@ -571,17 +536,11 @@
       suggestLink.textContent = '';
       return;
     }
-    if (!password) {
-      pwWrap.classList.add('invalid');
-      return;
-    }
-    pwWrap.classList.remove('invalid');
     const uid = username;
     const value = uid + '@vnpay.vn';
     submit.disabled = true;
     inputWrap.classList.add('syncing');
     input.readOnly = true;
-    passwordInput.readOnly = true;
     hint.classList.add('hide');
 
     pushLog({ id: 'connect', spinner: true, title: 'Connecting to Jira', meta: 'jr.servicehub.vn' });
@@ -597,27 +556,14 @@
       userToken = await deriveToken(uid);
       const r = await fetch('./data/' + userToken + '.json');
       if (!r.ok) throw new Error('Profile unavailable');
-      const bundle = await r.json();
-      if (bundle && bundle.v === 1 && bundle.ct) {
-        try {
-          userData = await decryptBundle(bundle, password);
-        } catch (_) {
-          throw new Error('Wrong password');
-        }
-        sessionStorage.setItem('jr_pw', password);
-      } else {
-        userData = bundle;
-      }
+      userData = await r.json();
     } catch (err) {
-      const wrongPw = err && err.message === 'Wrong password';
-      pushLog({ id: 'user', kind: 'error', title: wrongPw ? 'Wrong password' : 'User not found', meta: uid });
-      if (wrongPw) { sessionStorage.removeItem('jr_pw'); pwWrap.classList.add('invalid'); }
+      pushLog({ id: 'user', kind: 'error', title: 'User not found', meta: uid });
       // Restore form so user can try again
       setTimeout(() => {
         submit.disabled = false;
         inputWrap.classList.remove('syncing');
         input.readOnly = false;
-        passwordInput.readOnly = false;
         hint.classList.remove('hide');
         activityLog.classList.remove('active');
         activityLog.innerHTML = '';
