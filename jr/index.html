@@ -591,7 +591,7 @@
         </button>
       </div>
       <div class="search-hint" id="hint">
-        <span id="hintText">38 designers · không cần gõ @vnpay.vn</span>
+        <span id="hintText">Mỗi designer · một dispatch riêng</span>
       </div>
 
       <!-- Inline activity log — appears below form during sync -->
@@ -915,27 +915,32 @@
     if (e.key === 'Escape' && !spotlight.hidden) hideSpotlight();
   });
 
-  // Aggregated, non-identifying hints derived from team stats
-  let hints = ['38 designers · không cần gõ @vnpay.vn'];
+  // Qualitative, data-driven hints — no concrete counts
+  let hints = ['Mỗi designer · một dispatch riêng'];
   let hintIdx = 0;
   function buildHints(t) {
-    const fmt = n => n.toLocaleString('en-US');
-    const total = t.totalTickets;
-    const completion = Math.round((t.totalDone / total) * 100);
-    const years = Object.entries(t.years || {}).map(([y, n]) => [parseInt(y, 10), n]);
-    const yearNums = years.map(([y]) => y).sort((a, b) => a - b);
-    const yearSpan = yearNums.length ? yearNums[yearNums.length - 1] - yearNums[0] + 1 : 0;
-    const peakYear = years.length ? years.reduce((a, b) => a[1] > b[1] ? a : b) : null;
+    const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
+    const total = t.totalTickets || 0;
+    const done = t.totalDone || 0;
+    const completion = total ? done / total : 0;
     const wt = Object.entries(t.workTypes || {}).sort((a, b) => b[1] - a[1]);
     const top = wt[0];
-    const topPct = top ? Math.round((top[1] / total) * 100) : 0;
+    const second = wt[1];
+    // Qualitative volume bucket
+    const yrs = Object.keys(t.years || {});
+    const avgPerYear = yrs.length ? total / yrs.length : 0;
     const out = [
-      `${t.designers} designers · ${fmt(total)} tickets · ${t.uniqueBrands} brands`,
-      yearSpan ? `${yearNums[0]} → ${yearNums[yearNums.length - 1]} · ${yearSpan} năm lịch sử thiết kế` : null,
-      top ? `${top[0]} dẫn đầu · ${fmt(top[1])} tickets · ${topPct}% tổng` : null,
-      `${completion}% hoàn thành · ${fmt(t.totalDone)}/${fmt(total)} done`,
-      peakYear ? `Năm sôi động nhất: ${peakYear[0]} · ${fmt(peakYear[1])} tickets` : null,
-      `${t.designers} designers · không cần gõ @vnpay.vn`,
+      top ? `${cap(top[0])}-first team · design ngân hàng số là DNA` : null,
+      'Multi-brand roster · banking design surface rộng',
+      completion >= 0.9 ? 'Mostly closed · throughput đều, ít backlog' :
+        completion >= 0.75 ? 'Steady throughput · phần lớn ticket đã đóng' :
+        'Active backlog · luôn có việc đang chạy',
+      'Veteran-heavy · đa số gắn bó nhiều năm',
+      'Active xuyên suốt · từ giai đoạn đầu tới hôm nay',
+      'Mỗi designer là một dispatch · gõ username để mở',
+      top && second ? `${cap(top[0])} · ${cap(second[0])} · full design surface` : 'Web · mobile · animation · full design surface',
+      'Không cần gõ @vnpay.vn · chỉ phần trước',
+      avgPerYear >= 800 ? 'High-cadence team · tickets bay liên tục' : null,
     ];
     return out.filter(Boolean);
   }
