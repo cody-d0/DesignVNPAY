@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#f3eee5" />
+<meta name="robots" content="noindex, nofollow, noarchive"/>
+<title>Designer dispatch · DES atlas</title>
+<style>
+  :root {
+    --bg:      oklch(97% 0.012 80);
+    --paper:   oklch(99% 0.005 80);
+    --fg:      oklch(20% 0.02 60);
+    --muted:   oklch(48% 0.015 60);
+    --border:  oklch(89% 0.012 80);
+    --accent:  oklch(58% 0.16 35);
+    --serif: 'Iowan Old Style', 'Cormorant Garamond', 'Charter', Georgia, serif;
+    --sans:  -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --mono:  ui-monospace, 'JetBrains Mono', 'IBM Plex Mono', Menlo, monospace;
+    /* WorkType palette (stable across slides) */
+    --wt-mobile:    oklch(58% 0.16 35);
+    --wt-web:       oklch(28% 0.04 250);
+    --wt-ai:        oklch(58% 0.14 255);
+    --wt-animation: oklch(58% 0.10 130);
+    --wt-research:  oklch(60% 0.10 75);
+    --wt-other:     oklch(60% 0.012 60);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--fg); font: 14px/1.5 var(--sans); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  svg { max-width: 100%; max-height: 100%; }
+  /* Deck framework — 1920×1080 scale-to-fit */
+  .deck { position: fixed; inset: 0; display: grid; place-items: center; overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 50%, color-mix(in oklch, var(--fg) 4%, transparent), transparent 70%),
+      radial-gradient(circle, color-mix(in oklch, var(--fg) 10%, transparent) 1px, transparent 1.4px) 0 0 / 28px 28px,
+      var(--bg);
+    animation: grid-drift 12s linear infinite;
+  }
+  @keyframes grid-drift { from { background-position: 0 0, 0 0, 0 0; } to { background-position: 0 0, 28px 28px, 0 0; } }
+  .canvas { width: 1920px; height: 1080px; position: relative; transform-origin: center; }
+  .slide { position: absolute; inset: 0; padding: 144px 80px 96px; opacity: 0; pointer-events: none; transform: translateX(0); }
+  .slide.active { opacity: 1; pointer-events: auto; }
+  .slide.active.enter-right { animation: slide-enter-right 360ms cubic-bezier(.22,1,.36,1) forwards; }
+  .slide.active.enter-left  { animation: slide-enter-left  360ms cubic-bezier(.22,1,.36,1) forwards; }
+  @keyframes slide-enter-right { from { opacity: 0; transform: translateX(56px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes slide-enter-left  { from { opacity: 0; transform: translateX(-56px); } to { opacity: 1; transform: translateX(0); } }
+  /* Editorial chrome (sits inside canvas so it scales with canvas) */
+  .chrome { position: absolute; left: 80px; right: 80px; font: 16px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; pointer-events: none; }
+  .chrome.top { top: 56px; display: flex; justify-content: space-between; align-items: center; }
+  .chrome.top .right { display: flex; align-items: center; gap: 24px; }
+  .chrome.top .rule { width: 80px; height: 1px; background: var(--fg); opacity: 0.6; }
+  .chrome.bot { bottom: 56px; display: flex; justify-content: space-between; align-items: center; }
+  .chrome b { color: var(--fg); font-weight: 500; letter-spacing: 0.16em; }
+  .chrome .live-dot { display: inline-block; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; margin-right: 12px; vertical-align: 2px; animation: live-pulse 3s ease-in-out infinite; }
+  @keyframes live-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.4); } }
+  .chrome .baseline { position: absolute; left: 0; right: 0; height: 1px; background: color-mix(in oklch, var(--fg) 22%, transparent); }
+  .chrome.top .baseline { bottom: -16px; }
+  .chrome.bot .baseline { top: -16px; }
+  /* Slide ledger lower-right (counter) */
+  .counter { position: absolute; right: 80px; bottom: 56px; font: italic 24px/1 var(--serif); color: var(--fg); letter-spacing: 0; text-transform: none; }
+  .counter .total { color: var(--muted); }
+  /* Plate folio top-left (slide tag) */
+  .folio { position: absolute; left: 80px; top: 96px; display: flex; align-items: baseline; gap: 16px; font: 14px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; }
+  .folio .roman { font: italic 24px/1 var(--serif); color: var(--muted); letter-spacing: 0; text-transform: none; }
+  .folio .rule { width: 32px; height: 1px; background: var(--fg); opacity: 0.55; }
+  /* Title row at top of body slides */
+  .title-row { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 64px; margin-bottom: 56px; }
+  .title { font: clamp(56px, 6vw, 96px)/1.0 var(--serif); letter-spacing: -0.018em; color: var(--fg); }
+  .title .em { font-style: italic; }
+  .title .accent { font-style: italic; color: var(--accent); }
+  .title-meta { font: 14px/1.5 var(--mono); color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; text-align: right; }
+  .title-meta b { color: var(--fg); font-weight: 500; }
+  /* Entrance staggers */
+  .anim { opacity: 0; transform: translateY(12px); }
+  .slide.active.play .anim { animation: rise 720ms cubic-bezier(.22,1,.36,1) forwards; }
+  .slide.active.play .d0 { animation-delay: 0ms; }
+  .slide.active.play .d1 { animation-delay: 100ms; }
+  .slide.active.play .d2 { animation-delay: 200ms; }
+  .slide.active.play .d3 { animation-delay: 300ms; }
+  .slide.active.play .d4 { animation-delay: 400ms; }
+  .slide.active.play .d5 { animation-delay: 500ms; }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes scale-in { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+  /* ─── SLIDE 01: COVER ─────────────────────────────────────────── */
+  .cover { display: grid; grid-template-rows: auto 1fr auto; gap: 64px; }
+  .cover .kicker { display: flex; align-items: center; gap: 24px; font: 14px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; }
+  .cover .kicker .rule { flex: 1; height: 1px; background: var(--fg); opacity: 0.4; max-width: 560px; }
+  .cover .kicker .accent-dot { display: inline-block; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: live-pulse 3s ease-in-out infinite; }
+  .cover-body { display: grid; grid-template-columns: 560px 1fr; gap: 80px; align-items: center; }
+  .portrait { width: 560px; height: 560px; position: relative; background: var(--surface); border: 1px solid var(--fg); overflow: hidden; }
+  .portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .portrait::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--fg) 12%, transparent); pointer-events: none; }
+  .portrait .stamp { position: absolute; top: 16px; left: 16px; font: 12px/1 var(--mono); color: var(--bg); background: var(--fg); padding: 8px 12px; letter-spacing: 0.18em; text-transform: uppercase; }
+  .cover-info { display: flex; flex-direction: column; gap: 32px; }
+  .cover-name { font: clamp(64px, 7.5vw, 128px)/0.96 var(--serif); letter-spacing: -0.02em; color: var(--fg); text-wrap: balance; }
+  .cover-name .em { font-style: italic; }
+  .cover-name .accent { font-style: italic; color: var(--accent); }
+  .cover-role { font: italic 28px/1.3 var(--serif); color: var(--muted); }
+  .cover-role .at { font: 16px/1 var(--mono); color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; padding-left: 16px; font-style: normal; vertical-align: 4px; }
+  .cover-tags { display: flex; gap: 16px; flex-wrap: wrap; font: 11px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; }
+  .cover-tags .tag { padding: 8px 14px; border: 1px solid var(--fg); color: var(--fg); }
+  .cover-tags .tag.accent { background: var(--fg); color: var(--bg); }
+  .stat-ribbon { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1px solid var(--fg); padding-top: 32px; }
+  .stat-ribbon .stat { padding: 0 32px; border-right: 1px solid var(--border); }
+  .stat-ribbon .stat:first-child { padding-left: 0; }
+  .stat-ribbon .stat:last-child { border-right: 0; padding-right: 0; }
+  .stat-ribbon .stat .key { font: 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; }
+  .stat-ribbon .stat .v { font: italic 64px/0.95 var(--serif); color: var(--fg); letter-spacing: -0.014em; }
+  .stat-ribbon .stat .v sup { font: 11px/1 var(--mono); font-style: normal; color: var(--muted); letter-spacing: 0.16em; text-transform: uppercase; vertical-align: top; padding-left: 8px; }
+  .stat-ribbon .stat .v.text { font-size: 38px; font-style: italic; }
+  .stat-ribbon .stat .v.accent { color: var(--accent); }
+  .stat-ribbon .stat .meta { font: 13px/1.4 var(--sans); color: var(--muted); margin-top: 8px; }
+  /* ─── SLIDE 02: TEMPO ─────────────────────────────────────────── */
+  .tempo { display: grid; grid-template-rows: auto auto 1fr; gap: 48px; }
+  .yearbars { display: flex; gap: 16px; align-items: flex-end; height: 280px; padding: 0; border-bottom: 1px solid var(--fg); }
+  .yearbar { flex: 1; display: flex; flex-direction: column; align-items: stretch; gap: 12px; }
+  .yearbar .stack { display: flex; flex-direction: column-reverse; height: 240px; background: color-mix(in oklch, var(--fg) 4%, transparent); position: relative; overflow: hidden; }
+  .yearbar .seg { width: 100%; min-height: 0; transition: height 700ms cubic-bezier(.22,1,.36,1); height: 0; }
+  .slide.active.play .yearbar .seg { height: var(--h, 0); }
+  .yearbar .seg.mobile { background: var(--wt-mobile); }
+  .yearbar .seg.web { background: var(--wt-web); }
+  .yearbar .seg.ai { background: var(--wt-ai); }
+  .yearbar .seg.animation { background: var(--wt-animation); }
+  .yearbar .seg.research { background: var(--wt-research); }
+  .yearbar .seg.other { background: var(--wt-other); }
+  .yearbar .label { font: 14px/1 var(--mono); color: var(--muted); letter-spacing: 0.12em; text-align: center; text-transform: uppercase; }
+  .yearbar .label b { display: block; font: italic 32px/1 var(--serif); color: var(--fg); letter-spacing: 0; text-transform: none; margin-top: 8px; }
+  .heatmap { display: grid; grid-template-columns: 80px repeat(12, 1fr); gap: 4px; align-items: center; }
+  .heatmap .hm-y { font: italic 20px/1 var(--serif); color: var(--fg); letter-spacing: 0; }
+  .heatmap .hm-c { aspect-ratio: 1; background: color-mix(in oklch, var(--fg) calc(var(--c, 0) * 1%), transparent); border: 1px solid color-mix(in oklch, var(--fg) calc(var(--c, 0) * 0.5%), var(--border)); position: relative; opacity: 0; }
+  .slide.active.play .heatmap .hm-c { animation: heatmap-in 240ms ease-out forwards; }
+  @keyframes heatmap-in { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+  .heatmap .hm-c.empty { background: transparent; border-style: dashed; }
+  .heatmap .hm-c .v { position: absolute; inset: 0; display: grid; place-items: center; font: 11px/1 var(--mono); color: var(--bg); font-weight: 600; }
+  .heatmap .hm-c.dim .v { color: var(--fg); }
+  .hm-cols { display: grid; grid-template-columns: 80px repeat(12, 1fr); gap: 4px; font: 11px/1 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; padding-bottom: 8px; border-bottom: 1px dashed var(--border); }
+  .hm-cols span { text-align: center; }
+  .tempo-caption { display: flex; justify-content: space-between; gap: 48px; padding-top: 24px; font: italic 18px/1.45 var(--serif); color: var(--fg); }
+  .tempo-caption .meta { font: 13px/1.4 var(--mono); color: var(--muted); font-style: normal; letter-spacing: 0.06em; text-transform: uppercase; }
+  /* ─── SLIDE 03: SPECIALTY ─────────────────────────────────────── */
+  .specialty { display: grid; grid-template-columns: 600px 1fr; gap: 96px; align-items: center; }
+  .donut-wrap { display: flex; flex-direction: column; gap: 32px; align-items: center; }
+  .donut { width: 520px; height: 520px; position: relative; }
+  .donut svg { width: 100%; height: 100%; }
+  .donut .inner { position: absolute; inset: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; }
+  .donut .inner .key { font: 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; }
+  .donut .inner .v { font: italic 72px/0.95 var(--serif); color: var(--accent); letter-spacing: -0.018em; }
+  .donut .inner .meta { font: 14px/1.4 var(--sans); color: var(--muted); }
+  .donut-legend { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 24px; width: 100%; }
+  .donut-legend .item { display: flex; align-items: baseline; gap: 8px; font: 12px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+  .donut-legend .sw { width: 10px; height: 10px; flex: none; align-self: center; }
+  .donut-legend .item b { color: var(--fg); font-weight: 500; }
+  .donut-legend .item .num { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--fg); }
+  .specialty-info { display: flex; flex-direction: column; gap: 40px; }
+  .specialty-info .lede { font: 22px/1.4 var(--serif); color: var(--fg); max-width: 56ch; }
+  .specialty-info .lede em { color: var(--accent); }
+  .priority-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+  .priority-row .p { display: flex; flex-direction: column; gap: 8px; }
+  .priority-row .p .label { font: 10px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; }
+  .priority-row .p .v { font: italic 36px/1 var(--serif); color: var(--fg); }
+  .priority-row .p.high .v, .priority-row .p.highest .v { color: var(--accent); }
+  .priority-row .p .bar { height: 2px; background: var(--border); overflow: hidden; }
+  .priority-row .p .bar i { display: block; height: 100%; background: var(--fg); width: 0%; transition: width 700ms cubic-bezier(.22,1,.36,1); }
+  .priority-row .p.highest .bar i, .priority-row .p.high .bar i { background: var(--accent); }
+  .slide.active.play .priority-row .p .bar i { width: var(--p, 0%); }
+  .executor-block { padding-top: 32px; border-top: 1px solid var(--fg); display: flex; flex-direction: column; gap: 16px; }
+  .executor-block .label { font: 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; }
+  .executor-block .row { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; font: italic 28px/1 var(--serif); color: var(--fg); }
+  .executor-block .row .v { color: var(--fg); }
+  .executor-block .row .v.muted { color: var(--muted); }
+  .executor-block .bar { height: 4px; background: color-mix(in oklch, var(--fg) 8%, transparent); position: relative; overflow: hidden; }
+  .executor-block .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); width: 0%; transition: width 900ms cubic-bezier(.22,1,.36,1); }
+  .slide.active.play .executor-block .bar i { width: var(--ratio, 50%); }
+  .executor-block .meta { font: 13px/1.5 var(--sans); color: var(--muted); }
+  /* ─── SLIDE 04: BRAND PORTFOLIO ───────────────────────────────── */
+  .brands { display: grid; grid-template-rows: auto 1fr auto; gap: 32px; height: 100%; }
+  .brand-ledger { display: grid; grid-template-columns: 1fr; gap: 0; border-top: 1px solid var(--fg); }
+  .brow { display: grid; grid-template-columns: 60px 320px 1fr 220px 200px; align-items: baseline; gap: 24px; padding: 24px 0; border-bottom: 1px dashed var(--border); }
+  .brow.head { padding: 16px 0; font: 11px/1 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; border-bottom: 1px solid var(--fg); }
+  .brow .rank { font: italic 28px/1 var(--serif); color: var(--muted); }
+  .brow .label { font: italic 28px/1.1 var(--serif); color: var(--fg); letter-spacing: -0.008em; }
+  .brow .label .id { display: block; font: 10px/1.4 var(--mono); color: var(--muted); font-style: normal; letter-spacing: 0.18em; text-transform: uppercase; margin-top: 4px; }
+  .brow .barwrap { display: flex; align-items: center; gap: 16px; }
+  .brow .barwrap .bar { flex: 1; height: 18px; background: color-mix(in oklch, var(--fg) 6%, transparent); position: relative; overflow: hidden; }
+  .brow .barwrap .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--fg); width: 0%; transition: width 800ms cubic-bezier(.22,1,.36,1); }
+  .brow .barwrap .bar i.wip { background: var(--accent); }
+  .slide.active.play .brow .barwrap .bar i { width: var(--p, 0%); }
+  .brow .barwrap .count { font: italic 28px/1 var(--serif); color: var(--fg); min-width: 60px; text-align: right; font-variant-numeric: tabular-nums; }
+  .brow .pills { display: flex; gap: 8px; align-items: center; }
+  .brow .pills .pill { font: 11px/1 var(--mono); padding: 8px 12px; letter-spacing: 0.12em; text-transform: uppercase; font-variant-numeric: tabular-nums; }
+  .brow .pills .pill.done { border: 1px solid color-mix(in oklch, var(--fg) 40%, transparent); color: var(--fg); }
+  .brow .pills .pill.wip { background: var(--accent); color: var(--bg); }
+  .brow .meta { font: 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; text-align: right; font-variant-numeric: tabular-nums; }
+  .brand-foot { display: flex; justify-content: space-between; align-items: baseline; padding-top: 16px; border-top: 1px solid var(--border); font: italic 18px/1.4 var(--serif); color: var(--muted); }
+  .brand-foot .meta { font: 11px/1.4 var(--mono); color: var(--muted); font-style: normal; letter-spacing: 0.18em; text-transform: uppercase; }
+  /* ─── SLIDE 05: SIGNATURE PROJECT ─────────────────────────────── */
+  .signature { display: grid; grid-template-columns: 600px 1fr; gap: 80px; height: 100%; }
+  .sig-left { display: flex; flex-direction: column; gap: 48px; padding-right: 48px; border-right: 1px solid var(--border); }
+  .sig-card { padding: 32px; border: 1px solid var(--fg); background: var(--paper); }
+  .sig-card .id { font: 10px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 8px; }
+  .sig-card .label { font: italic clamp(48px, 4vw, 64px)/0.95 var(--serif); color: var(--fg); letter-spacing: -0.016em; margin-bottom: 16px; text-wrap: balance; }
+  .sig-card .label .accent { color: var(--accent); }
+  .sig-card .meta { font: 13px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 24px; font-variant-numeric: tabular-nums; }
+  .sig-card .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .sig-card .stats .s { display: flex; flex-direction: column; gap: 4px; }
+  .sig-card .stats .s .k { font: 10px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; }
+  .sig-card .stats .s .v { font: italic 32px/1 var(--serif); color: var(--fg); }
+  .sig-card .stats .s.accent .v { color: var(--accent); }
+  .topproj { display: flex; flex-direction: column; gap: 0; }
+  .topproj .head { font: 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; padding-bottom: 12px; border-bottom: 1px solid var(--fg); }
+  .topproj .row { display: grid; grid-template-columns: 100px 1fr auto; align-items: baseline; gap: 16px; padding: 16px 0; border-bottom: 1px dashed var(--border); }
+  .topproj .row:last-child { border-bottom: 0; }
+  .topproj .row .key { font: 11px/1 var(--mono); color: var(--accent); letter-spacing: 0.06em; }
+  .topproj .row .ttl { font: italic 17px/1.3 var(--serif); color: var(--fg); }
+  .topproj .row .n { font: 12px/1 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; letter-spacing: 0.06em; text-transform: uppercase; }
+  .sig-right { display: flex; flex-direction: column; gap: 0; }
+  .sig-right .head { font: 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; padding-bottom: 12px; border-bottom: 1px solid var(--fg); margin-bottom: 8px; }
+  .ticket { display: grid; grid-template-columns: 130px 1fr 110px; align-items: baseline; gap: 16px; padding: 20px 0; border-bottom: 1px dashed var(--border); }
+  .ticket:last-child { border-bottom: 0; }
+  .ticket .key { font: 12px/1 var(--mono); color: var(--accent); letter-spacing: 0.06em; }
+  .ticket .summary { font: italic 18px/1.4 var(--serif); color: var(--fg); }
+  .ticket .summary .type { font: 9px/1 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; font-style: normal; display: block; margin-bottom: 4px; }
+  .ticket .status { font: 10px/1 var(--mono); padding: 8px 12px; letter-spacing: 0.18em; text-transform: uppercase; text-align: center; justify-self: end; min-width: 100px; }
+  .ticket .status.done { border: 1px solid color-mix(in oklch, var(--fg) 30%, transparent); color: var(--muted); }
+  .ticket .status.wip { background: var(--accent); color: var(--bg); }
+  .ticket .updated { font: 10px/1 var(--mono); color: var(--muted); letter-spacing: 0.06em; margin-top: 6px; text-transform: uppercase; }
+  /* ─── SLIDE 06: COLLAB NETWORK ────────────────────────────────── */
+  .network { display: grid; grid-template-rows: auto 1fr auto; gap: 32px; height: 100%; }
+  .nw-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+  .nw-col h3 { font: 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; padding-bottom: 12px; border-bottom: 1px solid var(--fg); margin-bottom: 0; }
+  .nw-col h3 b { color: var(--fg); font-weight: 500; }
+  .nw-row { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 16px; padding: 16px 0; border-bottom: 1px dashed var(--border); }
+  .nw-row .who { display: flex; flex-direction: column; gap: 8px; }
+  .nw-row .who .name { font: italic 22px/1.2 var(--serif); color: var(--fg); }
+  .nw-row .who .id { font: 10px/1 var(--mono); color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
+  .nw-row .bar { width: 100%; grid-column: 1 / -1; height: 4px; background: color-mix(in oklch, var(--fg) 6%, transparent); margin-top: 0; position: relative; overflow: hidden; }
+  .nw-row .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--fg); width: 0%; transition: width 800ms cubic-bezier(.22,1,.36,1); }
+  .slide.active.play .nw-row .bar i { width: var(--p, 0%); }
+  .nw-row .count { font: italic 28px/1 var(--serif); color: var(--fg); font-variant-numeric: tabular-nums; }
+  .nw-foot { display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 64px; padding-top: 24px; border-top: 1px solid var(--fg); align-items: center; }
+  .nw-foot .stat .k { font: 10px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 8px; }
+  .nw-foot .stat .v { font: italic 64px/0.9 var(--serif); color: var(--fg); letter-spacing: -0.014em; }
+  .nw-foot .stat .v.accent { color: var(--accent); }
+  .nw-foot .stat .meta { font: 13px/1.4 var(--sans); color: var(--muted); margin-top: 8px; }
+  .nw-foot .closer { font: italic 22px/1.4 var(--serif); color: var(--fg); }
+  .nw-foot .closer em { color: var(--accent); }
+  .empty-msg { font: italic 18px/1.5 var(--serif); color: var(--muted); padding: 32px 0; }
+  /* HUD: nav (single-designer mode — switcher dropped) */
+  .hud { position: fixed; bottom: 16px; left: 16px; right: 16px; display: flex; justify-content: flex-end; align-items: center; pointer-events: none; z-index: 100; gap: 16px; }
+  .hud > * { pointer-events: auto; }
+  .nav button#print { background: var(--accent); color: var(--bg); border-right: 0; font-weight: 600; }
+  .nav button#print:hover { background: var(--fg); }
+  .nav { display: flex; gap: 0; background: var(--paper); border: 1px solid var(--fg); align-items: stretch; }
+  .nav button { background: transparent; border: 0; padding: 8px 14px; font: 10px/1 var(--mono); color: var(--fg); letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; border-right: 1px solid var(--border); }
+  .nav button:last-child { border-right: 0; }
+  .nav button:hover { background: var(--fg); color: var(--bg); }
+  .nav .pos { padding: 8px 14px; font: italic 14px/1 var(--serif); color: var(--fg); letter-spacing: 0; border-right: 1px solid var(--border); display: flex; align-items: center; }
+  .nav .pos .total { color: var(--muted); padding-left: 4px; }
+  /* Loading state */
+  .loading { position: fixed; inset: 0; display: grid; place-items: center; background: var(--bg); z-index: 200; }
+  .loading.hidden { display: none; }
+  .loading .focal { width: 12px; height: 12px; background: var(--accent); border-radius: 50%; animation: focal-pulse 3s ease-in-out infinite; }
+  @keyframes focal-pulse { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklch, var(--accent) 50%, transparent); transform: scale(1); } 50% { box-shadow: 0 0 0 24px color-mix(in oklch, var(--accent) 0%, transparent); transform: scale(1.3); } }
+  .loading .label { position: absolute; bottom: 80px; font: italic 18px/1 var(--serif); color: var(--muted); }
+  .err { position: fixed; inset: 0; display: grid; place-items: center; background: var(--bg); z-index: 200; padding: 80px; text-align: center; }
+  .err.hidden { display: none; }
+  .err h2 { font: italic 56px/1 var(--serif); color: var(--accent); margin-bottom: 16px; }
+  .err p { font: 16px/1.5 var(--sans); color: var(--muted); max-width: 640px; }
+  .err code { font: 14px/1 var(--mono); background: color-mix(in oklch, var(--fg) 6%, transparent); padding: 4px 8px; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition: none !important; } }
+  /* ─── jr backlink (editorial pill) ─────────────────────── */
+  .jr-home {
+    position: fixed; top: 14px; left: 14px; z-index: 1000;
+    font: 500 11px/1 var(--mono);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 9px 13px;
+    background: var(--fg);
+    color: var(--bg);
+    text-decoration: none;
+    border: 1px solid var(--fg);
+    transition: background 180ms ease, color 180ms ease;
+  }
+  .jr-home:hover { background: var(--accent); color: var(--bg); }
+  /* ─── Print stylesheet (PDF export) ────────────────────── */
+  @media print {
+    html, body { overflow: visible !important; height: auto !important; width: auto !important; }
+    body { background: var(--bg); animation: none !important; }
+    .deck { position: static !important; display: block !important; height: auto !important; place-items: stretch !important; background: var(--bg) !important; }
+    .canvas { position: static !important; width: 1920px !important; height: auto !important; transform: none !important; margin: 0 auto; }
+    .slide { position: relative !important; inset: auto !important; width: 1920px !important; height: 1080px !important; opacity: 1 !important; transform: none !important; animation: none !important; pointer-events: auto !important; page-break-after: always; page-break-inside: avoid; }
+    .slide:last-of-type { page-break-after: auto; }
+    .slide .anim { opacity: 1 !important; transform: none !important; animation: none !important; }
+    .yearbar .seg { height: var(--h, 0) !important; }
+    .heatmap .hm-c { opacity: 1 !important; transform: none !important; animation: none !important; }
+    .priority-row .p .bar i { width: var(--p, 0%) !important; }
+    .executor-block .bar i { width: var(--ratio, 0%) !important; }
+    .brow .barwrap .bar i { width: var(--p, 0%) !important; }
+    .nw-row .bar i { width: var(--p, 0%) !important; }
+    .hud, .loading, .err, .jr-home { display: none !important; }
+  }
+  @page { size: 1920px 1080px; margin: 0; }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+  <div class="canvas" id="canvas">
+    <div class="chrome top"><div id="chr-tl">VNPAY DESIGN — DESIGNER DISPATCH · 2026</div><div class="right"><div class="rule"></div><div id="chr-tr">JR.SERVICEHUB.VN</div></div><div class="baseline"></div></div>
+    <div class="chrome bot"><div><span class="live-dot"></span><b>SIGNAL · LIVE</b> &nbsp; DES PROJECT</div><div id="chr-br">DISPATCH / 0001</div><div class="baseline"></div></div>
+    <div class="folio" id="folio"><span class="roman">i.</span><span class="rule"></span><span id="folio-name">PLATE ONE · COVER</span></div>
+    <div class="counter"><span id="cnum">01</span><span class="total"> / 07</span></div>
+
+    <!-- SLIDE 01 — COVER -->
+    <section class="slide cover" data-slide="1" data-screen-label="01 Cover">
+      <div class="cover anim d0" style="display: contents;">
+        <div class="kicker anim d0"><span class="accent-dot"></span><span id="kic-l">DISPATCH №00 · DESIGN ROSTER</span><span class="rule"></span><span id="kic-r">VOL. JR-2026</span></div>
+        <div class="cover-body">
+          <div class="portrait anim d1"><img id="p-img" alt="" /><div class="stamp" id="p-stamp">SUBJ. №00</div></div>
+          <div class="cover-info">
+            <h1 class="cover-name anim d2" id="c-name">—</h1>
+            <p class="cover-role anim d2" id="c-role">—<span class="at" id="c-email">—</span></p>
+            <div class="cover-tags anim d3" id="c-tags"></div>
+          </div>
+        </div>
+        <div class="stat-ribbon anim d4">
+          <div class="stat"><div class="key">Total tickets</div><div class="v"><span id="s-total">—</span><sup>iss</sup></div><div class="meta" id="s-total-m">—</div></div>
+          <div class="stat"><div class="key">Brands worked</div><div class="v"><span id="s-buckets">—</span><sup>br</sup></div><div class="meta" id="s-buckets-m">—</div></div>
+          <div class="stat"><div class="key">Tenure</div><div class="v"><span id="s-tenure">—</span><sup>yrs</sup></div><div class="meta" id="s-tenure-m">—</div></div>
+          <div class="stat"><div class="key">Dominant specialty</div><div class="v text accent" id="s-spec">—</div><div class="meta" id="s-spec-m">—</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 02 — TEMPO -->
+    <section class="slide tempo" data-slide="2" data-screen-label="02 Tempo">
+      <div class="title-row anim d0"><h2 class="title"><span class="em">Tempo</span>, by <span class="accent">year &amp; month.</span></h2><div class="title-meta">Stacked by work type<br><b>Heatmap · cell ≙ month</b></div></div>
+      <div class="yearbars anim d1" id="yearbars"></div>
+      <div class="anim d2">
+        <div class="hm-cols"><span></span><span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MAY</span><span>JUN</span><span>JUL</span><span>AUG</span><span>SEP</span><span>OCT</span><span>NOV</span><span>DEC</span></div>
+        <div class="heatmap" id="heatmap"></div>
+      </div>
+      <div class="tempo-caption anim d3"><div id="tempo-line">—</div><div class="meta" id="tempo-meta">—</div></div>
+    </section>
+
+    <!-- SLIDE 03 — SPECIALTY -->
+    <section class="slide specialty" data-slide="3" data-screen-label="03 Specialty">
+      <div class="title-row anim d0" style="grid-column: 1 / -1;"><h2 class="title"><span class="em">What</span> they <span class="accent">make.</span></h2><div class="title-meta">Work-type mix · executor ratio<br><b>Priority spread</b></div></div>
+      <div class="donut-wrap anim d1">
+        <div class="donut" id="donut"></div>
+        <div class="donut-legend" id="donut-legend"></div>
+      </div>
+      <div class="specialty-info">
+        <p class="lede anim d2" id="spec-lede">—</p>
+        <div class="priority-row anim d3" id="prio-row"></div>
+        <div class="executor-block anim d4">
+          <div class="label">Executor vs. reporter ratio</div>
+          <div class="row"><span class="v"><em id="ex-pct">—</em>% executor</span><span class="v muted" id="rep-pct">— reporter</span></div>
+          <div class="bar"><i id="ex-bar"></i></div>
+          <div class="meta" id="ex-meta">—</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 04 — BRAND PORTFOLIO -->
+    <section class="slide brands" data-slide="4" data-screen-label="04 Brands">
+      <div class="title-row anim d0"><h2 class="title"><span class="em">Brand</span> portfolio <span class="accent">ledger.</span></h2><div class="title-meta" id="br-meta"><b>—</b><br>—</div></div>
+      <div class="brand-ledger anim d1" id="brand-ledger"></div>
+      <div class="brand-foot anim d2"><div id="br-foot">—</div><div class="meta" id="br-foot-r">—</div></div>
+    </section>
+
+    <!-- SLIDE 05 — SIGNATURE -->
+    <section class="slide signature" data-slide="5" data-screen-label="05 Signature">
+      <div class="title-row anim d0" style="grid-column: 1 / -1;"><h2 class="title"><span class="em">Signature</span> <span class="accent">project.</span></h2><div class="title-meta" id="sig-meta">Bucket #1<br><b>—</b></div></div>
+      <div class="sig-left anim d1">
+        <div class="sig-card">
+          <div class="id" id="sig-id">—</div>
+          <h3 class="label" id="sig-label">—</h3>
+          <div class="meta" id="sig-yrange">—</div>
+          <div class="stats">
+            <div class="s"><div class="k">Total</div><div class="v" id="sig-total">—</div></div>
+            <div class="s"><div class="k">Done</div><div class="v" id="sig-done">—</div></div>
+            <div class="s accent"><div class="k">In progress</div><div class="v" id="sig-wip">—</div></div>
+          </div>
+        </div>
+        <div class="topproj">
+          <div class="head">Top projects in bucket</div>
+          <div id="sig-proj"></div>
+        </div>
+      </div>
+      <div class="sig-right anim d2">
+        <div class="head">Recent ticket samples</div>
+        <div id="sig-tickets"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 06 — NETWORK -->
+    <section class="slide network" data-slide="6" data-screen-label="06 Network">
+      <div class="title-row anim d0"><h2 class="title"><span class="em">Who</span> they work <span class="accent">with.</span></h2><div class="title-meta">Top reporters · top creators<br><b>Comment density</b></div></div>
+      <div class="nw-cols anim d1">
+        <div class="nw-col"><h3>Top <b>reporters</b> · who assigns to them</h3><div id="nw-rep"></div></div>
+        <div class="nw-col"><h3>Top <b>creators</b> · who they create for</h3><div id="nw-cre"></div></div>
+      </div>
+      <div class="nw-foot anim d2">
+        <div class="stat"><div class="k">Comment density</div><div class="v" id="nw-comm">—</div><div class="meta" id="nw-comm-m">—</div></div>
+        <div class="stat"><div class="k">Executor ratio</div><div class="v accent" id="nw-ex">—</div><div class="meta" id="nw-ex-m">—</div></div>
+        <div class="closer" id="nw-closer">—</div>
+      </div>
+    </section>
+  </div>
+</div>
+<a class="jr-home" href="./" aria-label="Back to home">← jr</a>
+<div class="hud">
+  <div class="nav">
+    <button id="prev">◀ PREV</button>
+    <span class="pos"><span id="pos-num">01</span><span class="total"> / 06</span></span>
+    <button id="next">NEXT ▶</button>
+    <button id="print" title="Print all 7 plates as PDF">PRINT</button>
+  </div>
+</div>
+<div class="loading" id="loading"><div class="focal"></div><div class="label">Loading dispatch…</div></div>
+<div class="err hidden" id="err"><div><h2 id="err-title">Invalid or missing token.</h2><p id="err-body">Open this deck via the search form on <a href="./" style="color: var(--accent);">/jr/</a>.</p></div></div>
+<script>
+'use strict';
+// ─── Token-driven single-designer loader ──────────────────
+const TOKEN_RE = /^[a-f0-9]{12}$/;
+const WT_ORDER = ['mobile', 'web', 'ai', 'animation', 'research', 'other'];
+const WT_LABEL = { mobile: 'Mobile', web: 'Web', ai: 'AI', animation: 'Animation', research: 'Research', other: 'Other' };
+const WT_COLOR = { mobile: 'var(--wt-mobile)', web: 'var(--wt-web)', ai: 'var(--wt-ai)', animation: 'var(--wt-animation)', research: 'var(--wt-research)', other: 'var(--wt-other)' };
+const PRIO_ORDER = ['Highest', 'High', 'Medium', 'Low', 'Lowest'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+// ─── Scale-to-fit ──────────────────────────────────────────
+const canvas = document.getElementById('canvas');
+function fit() {
+  const sx = innerWidth / 1920, sy = innerHeight / 1080;
+  const s = Math.min(sx, sy);
+  canvas.style.transform = 'scale(' + s + ')';
+}
+addEventListener('resize', fit); fit();
+// ─── Slide nav ────────────────────────────────────────────
+const slides = [...document.querySelectorAll('.slide')];
+let cur = 0;
+function showSlide(i, direction) {
+  const next = Math.max(0, Math.min(slides.length - 1, i));
+  if (direction == null) direction = next >= cur ? 'forward' : 'back';
+  cur = next;
+  slides.forEach((s, k) => {
+    s.classList.toggle('active', k === cur);
+    s.classList.remove('play', 'enter-right', 'enter-left');
+  });
+  const enterClass = direction === 'back' ? 'enter-left' : 'enter-right';
+  slides[cur].classList.add(enterClass);
+  // Replay entrance after frame
+  requestAnimationFrame(() => slides[cur].classList.add('play'));
+  document.getElementById('cnum').textContent = String(cur + 1).padStart(2, '0');
+  document.getElementById('pos-num').textContent = String(cur + 1).padStart(2, '0');
+  const folioRomans = ['i','ii','iii','iv','v','vi'];
+  document.querySelector('.folio .roman').textContent = folioRomans[cur] + '.';
+  const folioNames = ['PLATE ONE · COVER','PLATE TWO · TEMPO','PLATE THREE · SPECIALTY','PLATE FOUR · BRANDS','PLATE FIVE · SIGNATURE','PLATE SIX · NETWORK'];
+  document.getElementById('folio-name').textContent = folioNames[cur];
+  // Update bottom-right chrome with plate number
+  document.getElementById('chr-br').textContent = 'PLATE / ' + String(cur + 1).padStart(2, '0') + ' OF 06';
+  if (currentToken) localStorage.setItem('deck-pos:' + currentToken, String(cur));
+}
+document.getElementById('prev').addEventListener('click', () => showSlide(cur - 1, 'back'));
+document.getElementById('next').addEventListener('click', () => showSlide(cur + 1, 'forward'));
+document.getElementById('print').addEventListener('click', () => {
+  // Force every slide into .play so all bar-fills + heatmap reveals are baked in
+  slides.forEach(s => s.classList.add('play', 'active'));
+  setTimeout(() => {
+    window.print();
+    setTimeout(() => {
+      slides.forEach((s, k) => {
+        s.classList.toggle('active', k === cur);
+        if (k !== cur) s.classList.remove('play');
+      });
+    }, 200);
+  }, 80);
+});
+addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'j' || e.key === 'PageDown') { e.preventDefault(); showSlide(cur + 1, 'forward'); }
+  else if (e.key === 'ArrowLeft' || e.key === 'k' || e.key === 'PageUp') { e.preventDefault(); showSlide(cur - 1, 'back'); }
+  else if (e.key === 'Home') { showSlide(0, 'back'); }
+  else if (e.key === 'End') { showSlide(slides.length - 1, 'forward'); }
+});
+// ─── Load + render ────────────────────────────────────────
+let currentToken = null;
+const params = new URLSearchParams(location.search);
+const tokenParam = params.get('t') || '';
+boot();
+async function boot() {
+  document.getElementById('loading').classList.remove('hidden');
+  if (!TOKEN_RE.test(tokenParam)) { showErr('invalid'); return; }
+  // Mask URL so the token isn't trivially copied / edited from the address bar
+  try { history.replaceState(null, '', './d.html'); } catch (_) {}
+  try {
+    const r = await fetch('./data/' + tokenParam + '.json');
+    if (!r.ok) throw new Error('Profile not found (' + r.status + ')');
+    const data = await r.json();
+    currentToken = tokenParam;
+    render(data);
+    document.getElementById('loading').classList.add('hidden');
+    const stored = parseInt(localStorage.getItem('deck-pos:' + tokenParam) || '0', 10);
+    showSlide(isNaN(stored) ? 0 : stored, 'forward');
+  } catch (err) {
+    console.error('boot: failed to fetch profile', err);
+    showErr('fetch', err);
+  }
+}
+function showErr(kind, err) {
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('err').classList.remove('hidden');
+  const title = document.getElementById('err-title');
+  const body  = document.getElementById('err-body');
+  if (kind === 'fetch') {
+    title.textContent = 'Couldn’t load the dossier.';
+    body.innerHTML = 'The profile failed to load. ' +
+      (err && err.message ? '<br><br><span style="color: var(--muted); font-size: 12px;">Error: ' + escapeHtml(err.message) + '</span>' : '');
+  } else {
+    title.textContent = 'Invalid or missing token.';
+    body.innerHTML = 'Open this deck via the search form on <a href="./" style="color: var(--accent);">/jr/</a> so a valid token is supplied.';
+  }
+}
+// ─── Render dispatch ──────────────────────────────────────
+function render(d) {
+  renderChrome(d);
+  renderCover(d);
+  renderTempo(d);
+  renderSpecialty(d);
+  renderBrands(d);
+  renderSignature(d);
+  renderNetwork(d);
+}
+function renderChrome(d) {
+  const dispatchN = computeDispatchN(d.user.name);
+  document.getElementById('chr-tl').textContent = 'VNPAY DESIGN — DISPATCH №' + dispatchN + ' · ' + d.user.displayName.split(' - ')[0].toUpperCase();
+  document.getElementById('chr-tr').textContent = (d.jiraBaseUrl || '').replace(/^https?:\/\//, '').toUpperCase();
+}
+function computeDispatchN(name) {
+  // Stable 2-digit fingerprint of the username
+  let h = 0; for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xff;
+  return String(20 + (h % 80)).padStart(2, '0');
+}
+// ─── 01 Cover ─────────────────────────────────────────────
+function renderCover(d) {
+  const dispatchN = computeDispatchN(d.user.name);
+  document.getElementById('kic-l').textContent = 'DISPATCH №' + dispatchN + ' · DESIGN ROSTER';
+  // Display name → split into "first" + "last" for italic accent treatment
+  const dn = d.user.displayName.split(' - ')[0].trim();
+  const parts = dn.split(' ');
+  let nameHtml;
+  if (parts.length >= 2) {
+    nameHtml = '<span class="em">' + escapeHtml(parts.slice(0, -1).join(' ')) + '</span> <span class="accent">' + escapeHtml(parts[parts.length - 1]) + '.</span>';
+  } else { nameHtml = '<span class="accent">' + escapeHtml(dn) + '.</span>'; }
+  document.getElementById('c-name').innerHTML = nameHtml;
+  // Role line
+  const roleSuffix = d.user.displayName.split(' - ')[1] || '';
+  document.getElementById('c-role').innerHTML = (roleSuffix ? '<em>' + escapeHtml(roleSuffix) + '</em>' : '<em>VNPAY designer</em>') + '<span class="at">@' + escapeHtml(d.user.name) + '</span>';
+  // Portrait
+  const img = document.getElementById('p-img');
+  img.src = d.user.portraitDataUrl;
+  img.alt = d.user.displayName;
+  document.getElementById('p-stamp').textContent = 'SUBJ · ' + d.user.initials;
+  // Tags
+  const tags = [];
+  const yrs = computeTenureYears(d.tenure);
+  if (yrs >= 4) tags.push({ t: 'VETERAN', accent: true });
+  else if (yrs > 0 && yrs < 1) tags.push({ t: 'NEWCOMER', accent: true });
+  if (d.buckets.length >= 30) tags.push({ t: 'POLYMATH', accent: true });
+  else if (d.buckets.length <= 8) tags.push({ t: 'FOCUSED', accent: false });
+  if (d.executorRatio >= 0.7) tags.push({ t: 'EXECUTOR', accent: false });
+  else if (d.executorRatio < 0.3) tags.push({ t: 'OVERSIGHT', accent: false });
+  const high = (d.priorities['Highest'] || 0) + (d.priorities['High'] || 0);
+  if (d.totalIssues >= 20 && high / d.totalIssues >= 0.25) tags.push({ t: 'FIREFIGHTER', accent: true });
+  if (d.dominantSpecialty) tags.push({ t: d.dominantSpecialty.toUpperCase() + '-FIRST', accent: false });
+  document.getElementById('c-tags').innerHTML = tags.slice(0, 5).map(t => '<span class="tag' + (t.accent ? ' accent' : '') + '">' + t.t + '</span>').join('');
+  // Stat ribbon
+  document.getElementById('s-total').textContent = d.totalIssues.toLocaleString();
+  document.getElementById('s-total-m').textContent = 'Across ' + Object.keys(d.years).length + ' years';
+  document.getElementById('s-buckets').textContent = d.buckets.length;
+  document.getElementById('s-buckets-m').textContent = topNBucketsList(d.buckets, 3) + (d.buckets.length > 3 ? ' …' : '');
+  document.getElementById('s-tenure').textContent = yrs.toFixed(1);
+  document.getElementById('s-tenure-m').textContent = formatTenure(d.tenure);
+  document.getElementById('s-spec').textContent = (d.dominantSpecialty || 'mixed').replace(/^./, c => c.toUpperCase());
+  const mix = d.workTypes; const sum = Object.values(mix).reduce((a,b)=>a+b,0);
+  const dom = d.dominantSpecialty || 'mixed';
+  const pct = sum ? Math.round(((mix[dom] || 0) / sum) * 100) : 0;
+  document.getElementById('s-spec-m').textContent = pct + '% of work · ' + (mix[dom] || 0) + ' tickets';
+}
+function computeTenureYears(t) { if (!t || !t.earliest || !t.latest) return 0; return (new Date(t.latest) - new Date(t.earliest)) / (365.25 * 86400000); }
+function formatTenure(t) { if (!t) return '—'; const a = (t.earliest || '').slice(0, 7); const b = (t.latest || '').slice(0, 7); return a + ' → ' + b; }
+function topNBucketsList(buckets, n) { return buckets.slice().sort((a,b)=>b.ticketCount-a.ticketCount).slice(0, n).map(b => (b.wordmark || b.label).split(/[\s—-]/)[0]).join(' · '); }
+// ─── 02 Tempo ─────────────────────────────────────────────
+function renderTempo(d) {
+  // Yearly stacked bars
+  const years = Object.keys(d.years).sort();
+  const maxYear = Math.max(...Object.values(d.years), 1);
+  // Per-year breakdown by workType (approx — we don't have year×type, so pro-rate via total workType share)
+  const totalWT = Object.values(d.workTypes).reduce((a,b)=>a+b,0);
+  const wtShare = {};
+  WT_ORDER.forEach(k => wtShare[k] = totalWT ? (d.workTypes[k] || 0) / totalWT : 0);
+  const yb = document.getElementById('yearbars');
+  yb.innerHTML = years.map(y => {
+    const total = d.years[y];
+    const totalH = (total / maxYear) * 100;
+    const segs = WT_ORDER.map(wt => {
+      const h = wtShare[wt] * totalH;
+      if (h < 0.5) return '';
+      return '<div class="seg ' + wt + '" style="--h: ' + h.toFixed(2) + '%"></div>';
+    }).join('');
+    return '<div class="yearbar"><div class="stack">' + segs + '</div><div class="label">' + y + '<b>' + total + '</b></div></div>';
+  }).join('');
+  // Heatmap
+  const ma = d.monthlyActivity || {};
+  const maxM = Math.max(1, ...Object.values(ma));
+  const hm = document.getElementById('heatmap');
+  hm.innerHTML = years.map((y, yi) => {
+    let row = '<div class="hm-y">' + y + '</div>';
+    for (let m = 1; m <= 12; m++) {
+      const k = y + '-' + String(m).padStart(2, '0');
+      const v = ma[k] || 0;
+      const c = v ? Math.round((v / maxM) * 60) + 16 : 0;
+      const dim = c < 30;
+      const idx = yi * 12 + (m - 1);
+      const stagger = (idx * 8) + 'ms';
+      row += '<div class="hm-c' + (v ? '' : ' empty') + (dim ? ' dim' : '') + '" style="--c: ' + c + '; animation-delay: ' + stagger + ';">' + (v ? '<span class="v">' + v + '</span>' : '') + '</div>';
+    }
+    return row;
+  }).join('');
+  // Caption — peak month
+  let peak = { k: null, v: 0 };
+  for (const [k, v] of Object.entries(ma)) { if (v > peak.v) peak = { k, v }; }
+  const peakLine = peak.k ? 'Peak month <em>' + formatMonth(peak.k) + '</em> at <em>' + peak.v + '</em> tickets — the busiest single month on file.' : 'Activity is too sparse to call a peak.';
+  document.getElementById('tempo-line').innerHTML = peakLine;
+  const peakYear = years.reduce((a, y) => d.years[y] > d.years[a] ? y : a, years[0]);
+  document.getElementById('tempo-meta').textContent = years.length + ' YEARS · PEAK YEAR ' + peakYear + ' (' + d.years[peakYear] + ' tickets)';
+}
+function formatMonth(k) { const [y, m] = k.split('-'); return MONTHS[parseInt(m, 10) - 1] + ' ' + y; }
+// ─── 03 Specialty ─────────────────────────────────────────
+function renderSpecialty(d) {
+  const wt = d.workTypes;
+  const total = Object.values(wt).reduce((a,b)=>a+b,0) || 1;
+  // Donut SVG
+  const cx = 260, cy = 260, r = 200, sw = 56;
+  const C = 2 * Math.PI * r;
+  let acc = 0;
+  const segs = WT_ORDER.filter(k => wt[k] > 0).map(k => {
+    const v = wt[k]; const frac = v / total;
+    const dash = frac * C;
+    const offset = -acc * C;
+    acc += frac;
+    return '<circle r="' + r + '" cx="' + cx + '" cy="' + cy + '" fill="none" stroke="' + WT_COLOR[k] + '" stroke-width="' + sw + '" stroke-dasharray="' + dash.toFixed(2) + ' ' + (C - dash).toFixed(2) + '" stroke-dashoffset="' + offset.toFixed(2) + '" transform="rotate(-90 ' + cx + ' ' + cy + ')" style="transition: stroke-dashoffset 800ms cubic-bezier(.22,1,.36,1)" />';
+  }).join('');
+  document.getElementById('donut').innerHTML = '<svg viewBox="0 0 520 520">' + segs + '</svg><div class="inner"><div class="key">Dominant</div><div class="v">' + (d.dominantSpecialty || 'mixed').replace(/^./, c => c.toUpperCase()) + '</div><div class="meta">' + (wt[d.dominantSpecialty] || 0) + ' / ' + total + ' tickets · ' + Math.round(((wt[d.dominantSpecialty] || 0) / total) * 100) + '%</div></div>';
+  // Legend
+  document.getElementById('donut-legend').innerHTML = WT_ORDER.filter(k => wt[k] > 0).map(k => {
+    const v = wt[k]; const pct = Math.round((v / total) * 100);
+    return '<div class="item"><span class="sw" style="background: ' + WT_COLOR[k] + '"></span><b>' + WT_LABEL[k] + '</b><span class="num">' + v + ' · ' + pct + '%</span></div>';
+  }).join('');
+  // Lede
+  const top2 = WT_ORDER.filter(k => wt[k] > 0).map(k => ({ k, v: wt[k] })).sort((a,b) => b.v - a.v).slice(0, 2);
+  const ledeText = top2.length === 1
+    ? 'Single-domain — <em>' + WT_LABEL[top2[0].k].toLowerCase() + '</em> work, full stop.'
+    : 'Centred on <em>' + WT_LABEL[top2[0].k].toLowerCase() + '</em> work (' + Math.round((top2[0].v/total)*100) + '%) with a steady <em>' + WT_LABEL[top2[1].k].toLowerCase() + '</em> sideline (' + Math.round((top2[1].v/total)*100) + '%).';
+  document.getElementById('spec-lede').innerHTML = ledeText;
+  // Priorities
+  const prio = d.priorities;
+  const prioTotal = Object.values(prio).reduce((a,b)=>a+b,0) || 1;
+  const cells = ['Highest','High','Medium','Low'].map(p => {
+    const v = prio[p] || 0; const pct = Math.round((v / prioTotal) * 100);
+    return '<div class="p ' + p.toLowerCase() + '"><div class="label">' + p + '</div><div class="v">' + v + '</div><div class="bar"><i style="--p: ' + pct + '%"></i></div></div>';
+  }).join('');
+  document.getElementById('prio-row').innerHTML = cells;
+  // Apply --p (CSS var) via inline style after a tick to trigger transition
+  // (already in the template via style attr; just need .play class)
+  // Executor ratio
+  const ex = d.executorRatio || 0;
+  const exPct = Math.round(ex * 100);
+  document.getElementById('ex-pct').textContent = exPct;
+  document.getElementById('rep-pct').textContent = (100 - exPct) + '% reporter';
+  document.getElementById('ex-bar').style.setProperty('--ratio', exPct + '%');
+  // Force reflow to ensure transition triggers when slide replays
+  document.getElementById('ex-meta').textContent = exPct >= 70 ? 'Mostly the hands on the keyboard — they execute the work.' : exPct <= 30 ? 'Mostly opens tickets for others — oversight role.' : 'Hybrid — executes and assigns in roughly equal measure.';
+}
+// ─── 04 Brand portfolio ───────────────────────────────────
+function renderBrands(d) {
+  const sorted = d.buckets.slice().sort((a,b) => b.ticketCount - a.ticketCount);
+  const top = sorted.slice(0, 8);
+  const max = Math.max(...top.map(b => b.ticketCount), 1);
+  document.getElementById('br-meta').innerHTML = '<b>' + d.buckets.length + ' BRANDS · ' + d.totalIssues + ' TICKETS</b><br>Top 8 by ticket count';
+  const ledger = '<div class="brow head"><div>#</div><div>Brand</div><div>Ticket count</div><div>Status</div><div>Year range</div></div>' +
+    top.map((b, i) => {
+      const pct = Math.round((b.ticketCount / max) * 100);
+      const yrs = Object.keys(b.years || {}).sort();
+      const yrange = yrs.length ? yrs[0] + (yrs.length > 1 ? '–' + yrs[yrs.length-1] : '') : '—';
+      const wipPct = b.ticketCount ? Math.round((b.wipCount / b.ticketCount) * 100) : 0;
+      return '<div class="brow"><div class="rank">' + String(i+1).padStart(2,'0') + '</div>' +
+        '<div class="label">' + escapeHtml(b.label) + '<span class="id">' + escapeHtml(b.id) + '</span></div>' +
+        '<div class="barwrap"><div class="bar"><i style="--p: ' + pct + '%"></i></div><div class="count">' + b.ticketCount + '</div></div>' +
+        '<div class="pills"><span class="pill done">' + b.doneCount + ' DONE</span>' + (b.wipCount > 0 ? '<span class="pill wip">' + b.wipCount + ' WIP</span>' : '') + '</div>' +
+        '<div class="meta">' + yrange + '</div></div>';
+    }).join('');
+  document.getElementById('brand-ledger').innerHTML = ledger;
+  const more = d.buckets.length - top.length;
+  document.getElementById('br-foot').innerHTML = more > 0 ? 'And <em>' + more + '</em> more bucket' + (more === 1 ? '' : 's') + ' — full ledger on file.' : 'Full ledger shown — every bucket they touched.';
+  const totalDone = d.buckets.reduce((s,b) => s + b.doneCount, 0);
+  const totalWip = d.buckets.reduce((s,b) => s + b.wipCount, 0);
+  document.getElementById('br-foot-r').textContent = totalDone + ' DONE · ' + totalWip + ' WIP · ' + Math.round((totalDone/(totalDone+totalWip||1))*100) + '% COMPLETION';
+}
+// ─── 05 Signature project ─────────────────────────────────
+function renderSignature(d) {
+  const sorted = d.buckets.slice().sort((a,b) => b.ticketCount - a.ticketCount);
+  const b = sorted[0]; if (!b) return;
+  document.getElementById('sig-meta').innerHTML = 'Bucket #1 of ' + d.buckets.length + '<br><b>' + Math.round((b.ticketCount / d.totalIssues) * 100) + '% of total work</b>';
+  document.getElementById('sig-id').textContent = b.id;
+  // Label with italic accent on first word
+  const labelParts = b.label.split(' ');
+  const labelHtml = labelParts.length > 1 ? escapeHtml(labelParts[0]) + ' <span class="accent">' + escapeHtml(labelParts.slice(1).join(' ')) + '</span>' : '<span class="accent">' + escapeHtml(b.label) + '</span>';
+  document.getElementById('sig-label').innerHTML = labelHtml;
+  const yrs = Object.keys(b.years || {}).sort();
+  const yrange = yrs.length ? yrs[0] + (yrs.length > 1 ? ' – ' + yrs[yrs.length-1] : '') : '—';
+  document.getElementById('sig-yrange').textContent = yrange + ' · LATEST ' + (b.latestUpdate || '—');
+  document.getElementById('sig-total').textContent = b.ticketCount;
+  document.getElementById('sig-done').textContent = b.doneCount;
+  document.getElementById('sig-wip').textContent = b.wipCount;
+  // Top projects
+  const topProj = (b.topProjects || []).slice(0, 5);
+  document.getElementById('sig-proj').innerHTML = topProj.map(p => {
+    return '<div class="row"><div class="key">' + escapeHtml(p.key) + '</div><div class="ttl">' + escapeHtml(p.title) + '</div><div class="n">' + p.count + ' ticket' + (p.count === 1 ? '' : 's') + '</div></div>';
+  }).join('') || '<div class="empty-msg">No project breakdown available.</div>';
+  // Sample tickets
+  const samples = (b.sampleTickets || []).slice(0, 5);
+  document.getElementById('sig-tickets').innerHTML = samples.map(t => {
+    const isDone = t.status && t.status.toLowerCase().includes('done');
+    return '<div class="ticket"><div class="key">' + escapeHtml(t.key) + '<div class="updated">' + (t.updated || '—') + '</div></div><div class="summary"><span class="type">' + escapeHtml(t.type || '—') + '</span>' + escapeHtml(t.summary) + '</div><div class="status ' + (isDone ? 'done' : 'wip') + '">' + escapeHtml(t.status || '—') + '</div></div>';
+  }).join('') || '<div class="empty-msg">No sample tickets in this bucket.</div>';
+}
+// ─── 06 Network ───────────────────────────────────────────
+function renderNetwork(d) {
+  const reps = (d.topReporters || []).slice(0, 5);
+  const cres = (d.topCreators || []).slice(0, 5);
+  const renderList = (items, max, fallback) => {
+    if (!items.length) return '<div class="empty-msg">' + fallback + '</div>';
+    return items.map(p => {
+      const pct = Math.round((p.count / max) * 100);
+      return '<div class="nw-row"><div class="who"><div class="name">' + escapeHtml(p.name) + '</div><div class="id">@' + escapeHtml(p.id) + '</div></div><div class="count">' + p.count + '</div><div class="bar"><i style="--p: ' + pct + '%"></i></div></div>';
+    }).join('');
+  };
+  const repMax = Math.max(...reps.map(r => r.count), 1);
+  const creMax = Math.max(...cres.map(r => r.count), 1);
+  document.getElementById('nw-rep').innerHTML = renderList(reps, repMax, 'No reporter data — they create their own tickets.');
+  document.getElementById('nw-cre').innerHTML = renderList(cres, creMax, 'No creator data on file.');
+  // Footer stats
+  const ct = d.commentTotal || 0;
+  const ratio = ct ? (ct / d.totalIssues).toFixed(1) : '0';
+  document.getElementById('nw-comm').textContent = ct.toLocaleString();
+  document.getElementById('nw-comm-m').textContent = ratio + ' COMMENTS PER TICKET' + (ct === 0 ? ' · QUIET WORKER' : '');
+  const exPct = Math.round((d.executorRatio || 0) * 100);
+  document.getElementById('nw-ex').textContent = exPct + '%';
+  document.getElementById('nw-ex-m').textContent = exPct >= 70 ? 'EXECUTOR' : exPct <= 30 ? 'REPORTER' : 'HYBRID';
+  // Closer
+  const topRep = reps[0];
+  const closer = !reps.length ? '<em>Self-directed</em> — they open and close their own tickets.' : ct === 0 ? 'Receives work from <em>' + escapeHtml((topRep.name || '').split(' ')[0]) + '</em> and others, but rarely comments.' : 'Most assigned by <em>' + escapeHtml((topRep.name || '').split(' ')[0]) + '</em> — ' + topRep.count + ' tickets across the record.';
+  document.getElementById('nw-closer').innerHTML = closer;
+}
+// ─── Util ─────────────────────────────────────────────────
+function escapeHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+</script>
+</body>
+</html>
