@@ -646,6 +646,16 @@
       hintText.textContent = 'Index unavailable · enter email';
     }
   })();
+
+  // Reset transient sync state when restored from bfcache (back navigation)
+  window.addEventListener('pageshow', (e) => {
+    if (!e.persisted) return;
+    overlay.classList.remove('active');
+    inputWrap.classList.remove('syncing');
+    activityLog.classList.remove('active');
+    activityLog.innerHTML = '';
+    submit.disabled = false;
+  });
 </script>
 </body>
 </html>
