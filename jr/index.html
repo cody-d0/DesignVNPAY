@@ -422,7 +422,7 @@
         </button>
       </div>
       <div class="search-hint" id="hint">
-        <span id="hintText">38 designers · try</span><a id="suggestLink" href="#"></a>
+        <span id="hintText">38 designers · không cần gõ @vnpay.vn</span>
       </div>
 
       <!-- Inline activity log — appears below form during sync -->
@@ -443,7 +443,6 @@
   const submit = document.getElementById('syncBtn');
   const hint = document.getElementById('hint');
   const hintText = document.getElementById('hintText');
-  const suggestLink = document.getElementById('suggestLink');
   const activityLog = document.getElementById('activityLog');
   const overlay = document.getElementById('syncOverlay');
 
@@ -514,17 +513,14 @@
     }
 
     if (!v) {
-      hintText.textContent = (teamStats ? teamStats.designers : 38) + ' designers · try';
-      pickSuggestion();
+      hintText.textContent = (teamStats ? teamStats.designers : 38) + ' designers · không cần gõ @vnpay.vn';
       return;
     }
     if (!USERNAME_RE.test(v)) {
       hintText.textContent = 'Username chỉ chứa chữ, số, . _ -';
-      suggestLink.textContent = '';
       return;
     }
     hintText.innerHTML = '<span style="color: var(--success);">✓</span> Định dạng hợp lệ ';
-    suggestLink.textContent = '';
   });
 
   form.addEventListener('submit', async (e) => {
@@ -534,7 +530,6 @@
       inputWrap.classList.add('invalid');
       hint.classList.add('error');
       hintText.textContent = 'Username chỉ chứa chữ, số, . _ -';
-      suggestLink.textContent = '';
       return;
     }
     const uid = username;
@@ -616,19 +611,6 @@
     return t.slice(0, 3);
   }
 
-  // Inline rotating suggestion — surfaces displayName + direct token link, no username slug exposed
-  let sugSamples = [];
-  let sugIdx = 0;
-  function pickSuggestion() {
-    if (!sugSamples.length) { suggestLink.textContent = ''; return; }
-    const u = sugSamples[sugIdx % sugSamples.length];
-    sugIdx++;
-    const short = (u.displayName || '').split(',')[0].trim() || 'view';
-    suggestLink.textContent = short;
-    suggestLink.href = './g.html?t=' + encodeURIComponent(u.token);
-    suggestLink.onclick = null;
-  }
-
   (async function() {
     try {
       const r = await fetch('./data/_sync-index.json');
@@ -636,19 +618,7 @@
       const idx = await r.json();
       availableUsers = idx.users || [];
       teamStats = idx.team || null;
-      // Pick interesting samples (varied tier)
-      const sorted = availableUsers.slice().sort((a,b) => b.ticketCount - a.ticketCount);
-      sugSamples = [
-        sorted[0],
-        sorted[Math.floor(sorted.length * 0.3)],
-        sorted[Math.floor(sorted.length * 0.6)],
-      ].filter(Boolean);
-      hintText.textContent = teamStats.designers + ' designers · try';
-      pickSuggestion();
-      // Rotate suggestion every 4s if input empty
-      setInterval(() => {
-        if (!input.value.trim()) pickSuggestion();
-      }, 4000);
+      hintText.textContent = teamStats.designers + ' designers · không cần gõ @vnpay.vn';
     } catch (err) {
       hintText.textContent = 'Catalog unavailable · enter email';
     }
