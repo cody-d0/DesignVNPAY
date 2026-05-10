@@ -647,14 +647,9 @@
     }
   })();
 
-  // Reset transient sync state when restored from bfcache (back navigation)
+  // Force fresh load on back navigation — bfcache restores stale sync overlay state
   window.addEventListener('pageshow', (e) => {
-    if (!e.persisted) return;
-    overlay.classList.remove('active');
-    inputWrap.classList.remove('syncing');
-    activityLog.classList.remove('active');
-    activityLog.innerHTML = '';
-    submit.disabled = false;
+    if (e.persisted) location.reload();
   });
 </script>
 </body>
