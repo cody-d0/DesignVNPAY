@@ -452,6 +452,14 @@
   const USERNAME_RE = /^[a-z0-9._-]+$/i;
   // Allow paste of full email — strip @vnpay.vn automatically
   const EMAIL_RE = /^([a-z0-9._-]+)@vnpay\.vn$/i;
+  // Salt embedded at build time. Tokens derive from sha256(`${uid}:${SALT}`).slice(0,12).
+  const SALT = 'd4d388a88523b66d1e2be73514ef6790';
+  async function deriveToken(uid) {
+    const buf = new TextEncoder().encode(uid + ':' + SALT);
+    const digest = await crypto.subtle.digest('SHA-256', buf);
+    return Array.from(new Uint8Array(digest)).slice(0, 6)
+      .map(b => b.toString(16).padStart(2, '0')).join('');
+  }
 
   const ICONS = {
     info: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm1 9h-2v6h2zm0-4h-2v2h2z"/></svg>',
@@ -545,9 +553,7 @@
     let userData = null;
     let userToken = null;
     try {
-      const entry = availableUsers.find(u => u.id === uid);
-      if (!entry || !entry.token) throw new Error('User not found');
-      userToken = entry.token;
+      userToken = await deriveToken(uid);
       const r = await fetch('./data/' + userToken + '.json');
       if (!r.ok) throw new Error('Profile unavailable');
       userData = await r.json();
@@ -609,21 +615,17 @@
     return t.slice(0, 3);
   }
 
-  // Inline rotating suggestion
+  // Inline rotating suggestion — surfaces displayName + direct token link, no username slug exposed
   let sugSamples = [];
   let sugIdx = 0;
   function pickSuggestion() {
     if (!sugSamples.length) { suggestLink.textContent = ''; return; }
     const u = sugSamples[sugIdx % sugSamples.length];
     sugIdx++;
-    suggestLink.textContent = u.id;
-    suggestLink.href = '#';
-    suggestLink.onclick = (e) => {
-      e.preventDefault();
-      input.value = u.id;
-      input.dispatchEvent(new Event('input'));
-      input.focus();
-    };
+    const short = (u.displayName || '').split(',')[0].trim() || 'view';
+    suggestLink.textContent = short;
+    suggestLink.href = './templates/glass.html?t=' + encodeURIComponent(u.token);
+    suggestLink.onclick = null;
   }
 
   (async function() {
