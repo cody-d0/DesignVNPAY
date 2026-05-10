@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>VNPAY Design — Portfolio Sync</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --primary: #FFFFFF;
+    --text: #FFFFFF;
+    --muted: rgba(255,255,255,0.72);
+    --muted-2: rgba(255,255,255,0.5);
+    --line: rgba(255,255,255,0.18);
+    --line-strong: rgba(255,255,255,0.26);
+    --success: #5DD4A8;
+    --error: #FF6B6B;
+    --accent: #FFD60A;
+    --glass-bg: rgba(255,255,255,0.14);
+    --glass-bg-strong: rgba(255,255,255,0.22);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "IBM Plex Sans", -apple-system, sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+    overflow-x: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    /* Vibrant gradient mesh — matches glass template aesthetic */
+    background:
+      radial-gradient(1200px 800px at 10% 10%, #FF9A9E 0%, transparent 60%),
+      radial-gradient(1000px 700px at 90% 20%, #A18CD1 0%, transparent 55%),
+      radial-gradient(900px 800px at 50% 100%, #FAD0C4 0%, transparent 50%),
+      radial-gradient(800px 600px at 80% 80%, #FBC2EB 0%, transparent 50%),
+      linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-attachment: fixed;
+  }
+  /* Animated drift for living feel */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: -10%;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(255,200,150,0.25) 0%, transparent 30%),
+      radial-gradient(circle at 70% 70%, rgba(150,200,255,0.25) 0%, transparent 30%);
+    filter: blur(60px);
+    z-index: 0;
+    pointer-events: none;
+    animation: drift 20s ease-in-out infinite alternate;
+  }
+  @keyframes drift {
+    0% { transform: translate(0,0) scale(1); }
+    100% { transform: translate(2%,-2%) scale(1.05); }
+  }
+
+  /* Center hero — search-first */
+  .hero {
+    position: relative;
+    z-index: 5;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px 48px;
+    text-align: center;
+  }
+  .hero-inner {
+    width: 100%;
+    max-width: 560px;
+  }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "IBM Plex Mono";
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 999px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .hero-eyebrow .dot {
+    width: 6px; height: 6px;
+    background: var(--success);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 8px rgba(93,212,168,0.8);
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.4); }
+  }
+  .hero h1 {
+    font-family: "Bricolage Grotesque", "IBM Plex Sans", sans-serif;
+    font-variation-settings: "opsz" 96, "wght" 600;
+    font-size: clamp(2.6rem, 7vw, 4.4rem);
+    font-weight: 600;
+    letter-spacing: -0.05em;
+    line-height: 0.95;
+    margin-bottom: 44px;
+    color: #fff;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.14);
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-variation-settings: "opsz" 96, "wght" 400;
+    font-weight: 400;
+    color: var(--accent);
+    text-shadow: 0 2px 24px rgba(255,214,10,0.45);
+  }
+
+  /* Search input — Liquid Glass with locked email suffix */
+  .search-form { position: relative; }
+  .search-input-wrap {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: stretch;
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 18px;
+    overflow: hidden;
+    transition: all 250ms cubic-bezier(0.22,1,0.36,1);
+    box-shadow:
+      0 16px 40px rgba(0,0,0,0.18),
+      0 4px 12px rgba(0,0,0,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.4),
+      inset 0 -1px 0 rgba(0,0,0,0.08);
+  }
+  /* Specular highlight */
+  .search-input-wrap::before {
+    content: '';
+    position: absolute;
+    top: -30%; left: -10%;
+    width: 60%; height: 100%;
+    background: radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%);
+    filter: blur(12px);
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: 0.8;
+  }
+  .search-input-wrap:focus-within {
+    background: rgba(255,255,255,0.24);
+    border-color: rgba(255,255,255,0.5);
+    box-shadow:
+      0 0 0 4px rgba(255,255,255,0.12),
+      0 24px 60px rgba(0,0,0,0.2),
+      inset 0 1px 0 rgba(255,255,255,0.5);
+    transform: translateY(-1px);
+  }
+  .search-input-wrap.invalid {
+    background: rgba(255,107,107,0.16);
+    border-color: rgba(255,107,107,0.6);
+    box-shadow: 0 0 0 4px rgba(255,107,107,0.16);
+  }
+
+  .search-input {
+    min-width: 0;
+    padding: 18px 8px 18px 22px;
+    border: 0;
+    background: transparent;
+    font-family: "IBM Plex Sans";
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+    outline: none;
+    letter-spacing: -0.01em;
+    position: relative;
+    z-index: 1;
+  }
+  .search-input::placeholder { color: rgba(255,255,255,0.45); font-weight: 400; }
+
+  /* Locked @vnpay.vn suffix — visually part of input, not editable */
+  .email-suffix {
+    display: flex;
+    align-items: center;
+    padding: 0 14px 0 0;
+    font-family: "IBM Plex Mono";
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.78);
+    letter-spacing: -0.01em;
+    user-select: none;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .search-submit {
+    margin: 6px;
+    padding: 0 18px;
+    background: rgba(255,255,255,0.92);
+    color: #1a1a1c;
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 14px;
+    font-family: "IBM Plex Sans";
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: all 200ms cubic-bezier(0.22,1,0.36,1);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    z-index: 2;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.8);
+  }
+  .search-submit:hover {
+    background: #fff;
+    transform: scale(1.03);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,1);
+  }
+  .search-submit:active { transform: scale(0.97); }
+  .search-submit:disabled { background: rgba(255,255,255,0.4); color: rgba(0,0,0,0.4); cursor: not-allowed; transform: none; }
+  .search-submit svg { width: 13px; height: 13px; }
+
+  /* Hint */
+  .search-hint {
+    margin-top: 16px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    font-family: "IBM Plex Mono";
+    text-align: center;
+    min-height: 18px;
+    letter-spacing: 0.02em;
+  }
+  .search-hint.error { color: var(--error); }
+  .search-hint a {
+    color: rgba(255,255,255,0.85);
+    text-decoration: underline;
+    text-decoration-color: rgba(255,255,255,0.4);
+    text-underline-offset: 3px;
+    cursor: pointer;
+    transition: all 150ms ease;
+  }
+  .search-hint a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+  .search-hint strong { color: #fff; }
+
+  /* ━━━━━━━━━━━━━━━ INLINE ACTIVITY LOG ━━━━━━━━━━━━━━━ */
+  .activity-log {
+    margin-top: 16px;
+    padding: 8px 16px;
+    background: rgba(20,20,22,0.32);
+    backdrop-filter: blur(30px) saturate(160%);
+    -webkit-backdrop-filter: blur(30px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.2);
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    text-align: left;
+  }
+  .activity-log.active { display: flex; animation: logBlockIn 380ms cubic-bezier(0.22,1,0.36,1); }
+  @keyframes logBlockIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .log-line {
+    display: grid;
+    grid-template-columns: 16px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    font-size: 13px;
+    animation: logIn 280ms cubic-bezier(0.22,1,0.36,1);
+  }
+  .log-line:last-child { border-bottom: 0; }
+  @keyframes logIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .log-icon {
+    width: 14px; height: 14px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+    color: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.16);
+  }
+  .log-icon svg { width: 9px; height: 9px; }
+  .log-icon.spinner {
+    background: transparent;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-top-color: rgba(255,255,255,0.9);
+    animation: spin 700ms linear infinite;
+  }
+  .log-line.success .log-icon { color: var(--success); background: rgba(93,212,168,0.18); }
+  .log-line.error .log-icon { color: var(--error); background: rgba(255,107,107,0.18); }
+  .log-title {
+    font-weight: 500;
+    color: rgba(255,255,255,0.95);
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .log-line.in-progress .log-title { color: rgba(255,255,255,0.6); }
+  .log-meta {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    font-family: "IBM Plex Mono";
+    letter-spacing: 0.02em;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .log-progress {
+    grid-column: 2 / -1;
+    height: 2px;
+    background: rgba(255,255,255,0.1);
+    margin-top: 4px;
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .log-progress-bar {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 200ms cubic-bezier(0.22,1,0.36,1);
+    box-shadow: 0 0 8px rgba(255,214,10,0.6);
+  }
+
+  .search-input-wrap.syncing { pointer-events: none; }
+  .search-input-wrap.syncing .search-submit { display: none; }
+  .search-input-wrap.syncing .search-input { color: rgba(255,255,255,0.7); }
+  .search-hint.hide { display: none; }
+
+  .sync-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(20,20,22,0.4);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    z-index: 500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .sync-overlay.active { display: flex; }
+  .sync-spinner {
+    width: 36px; height: 36px;
+    border: 3px solid rgba(255,255,255,0.2);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 800ms linear infinite;
+  }
+  .sync-text {
+    font-family: "IBM Plex Mono";
+    font-size: 12px;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; }
+  }
+  @media (max-width: 768px) {
+    .hero { padding: 24px 20px 40px; }
+    .search-input { padding: 16px 6px 16px 18px; font-size: 15px; }
+    .email-suffix { font-size: 13px; padding: 0 10px 0 0; }
+    .search-submit { padding: 0 14px; font-size: 12px; }
+  }
+  @media (max-width: 420px) {
+    .email-suffix { font-size: 12px; padding: 0 8px 0 0; }
+    .search-input { padding-left: 14px; }
+    .search-submit { padding: 0 12px; }
+  }
+</style>
+</head>
+<body>
+
+<main class="hero">
+  <div class="hero-inner">
+    <span class="hero-eyebrow">
+      <span class="dot"></span>
+      Live · DES project
+    </span>
+    <h1>Sync your <em>portfolio</em>.</h1>
+
+    <form class="search-form" id="syncForm" autocomplete="off">
+      <div class="search-input-wrap" id="inputWrap">
+        <input
+          type="text"
+          class="search-input"
+          id="usernameInput"
+          placeholder="username"
+          spellcheck="false"
+          autocomplete="username"
+          autocapitalize="none"
+          inputmode="email"
+          required
+        />
+        <span class="email-suffix" aria-hidden="true">@vnpay.vn</span>
+        <button type="submit" class="search-submit" id="syncBtn">
+          Sync
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+      <div class="search-hint" id="hint">
+        <span id="hintText">38 designers indexed · try </span><a id="suggestLink" href="#"></a>
+      </div>
+
+      <!-- Inline activity log — appears below form during sync -->
+      <div class="activity-log" id="activityLog" aria-live="polite"></div>
+    </form>
+  </div>
+</main>
+
+<div class="sync-overlay" id="syncOverlay">
+  <div class="sync-spinner"></div>
+  <div class="sync-text">Opening portfolio</div>
+</div>
+
+<script>
+  const form = document.getElementById('syncForm');
+  const input = document.getElementById('usernameInput');
+  const inputWrap = document.getElementById('inputWrap');
+  const submit = document.getElementById('syncBtn');
+  const hint = document.getElementById('hint');
+  const hintText = document.getElementById('hintText');
+  const suggestLink = document.getElementById('suggestLink');
+  const activityLog = document.getElementById('activityLog');
+  const overlay = document.getElementById('syncOverlay');
+
+  let availableUsers = [];
+  let teamStats = null;
+  // Username only — domain is locked suffix
+  const USERNAME_RE = /^[a-z0-9._-]+$/i;
+  // Allow paste of full email — strip @vnpay.vn automatically
+  const EMAIL_RE = /^([a-z0-9._-]+)@vnpay\.vn$/i;
+
+  const ICONS = {
+    info: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm1 9h-2v6h2zm0-4h-2v2h2z"/></svg>',
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>',
+    error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+  };
+
+  // Inline activity log — append/update lines in #activityLog
+  function pushLog({ id, kind = 'info', spinner = false, title, meta = '', progress = null }) {
+    activityLog.classList.add('active');
+    let el = id ? document.getElementById('log-' + id) : null;
+    const isNew = !el;
+    if (isNew) {
+      el = document.createElement('div');
+      if (id) el.id = 'log-' + id;
+      activityLog.appendChild(el);
+    }
+    const stateClass = spinner ? 'in-progress' : (kind === 'success' ? 'success' : kind === 'error' ? 'error' : '');
+    el.className = 'log-line ' + stateClass;
+    const iconHtml = spinner
+      ? '<div class="log-icon spinner"></div>'
+      : '<div class="log-icon">' + (ICONS[kind === 'success' ? 'check' : kind === 'error' ? 'error' : 'info']) + '</div>';
+    el.innerHTML =
+      iconHtml +
+      '<div class="log-title">' + escapeHtml(title) + '</div>' +
+      (meta ? '<div class="log-meta">' + escapeHtml(meta) + '</div>' : '<div></div>') +
+      (progress != null
+        ? '<div class="log-progress"><div class="log-progress-bar" style="width:' + Math.min(100, Math.max(0, progress)) + '%"></div></div>'
+        : '');
+    return el;
+  }
+  // Backwards compat for older callers
+  const pushToast = pushLog;
+  const dismissToast = () => {}; // no-op — log lines persist
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  input.addEventListener('input', () => {
+    inputWrap.classList.remove('invalid');
+    hint.classList.remove('error');
+    let v = input.value.trim();
+
+    // If user pasted a full email, strip the @vnpay.vn suffix
+    const m = v.match(EMAIL_RE);
+    if (m) {
+      input.value = m[1];
+      v = m[1];
+    }
+
+    if (!v) {
+      hintText.textContent = (teamStats ? teamStats.designers : 38) + ' designers indexed · try ';
+      pickSuggestion();
+      return;
+    }
+    if (!USERNAME_RE.test(v)) {
+      hintText.textContent = 'Username chỉ chứa chữ, số, . _ -';
+      suggestLink.textContent = '';
+      return;
+    }
+    hintText.innerHTML = '<span style="color: var(--success);">✓</span> Định dạng hợp lệ ';
+    suggestLink.textContent = '';
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = input.value.trim().toLowerCase();
+    if (!USERNAME_RE.test(username)) {
+      inputWrap.classList.add('invalid');
+      hint.classList.add('error');
+      hintText.textContent = 'Username chỉ chứa chữ, số, . _ -';
+      suggestLink.textContent = '';
+      return;
+    }
+    const uid = username;
+    const value = uid + '@vnpay.vn';
+    submit.disabled = true;
+    inputWrap.classList.add('syncing');
+    input.readOnly = true;
+    hint.classList.add('hide');
+
+    pushLog({ id: 'connect', spinner: true, title: 'Connecting to Jira', meta: 'jr.servicehub.vn' });
+    await delay(600);
+    pushToast({ id: 'connect', kind: 'success', title: 'Connected', meta: 'Authenticated · DES project' });
+
+    pushToast({ id: 'user', spinner: true, title: 'Resolving identity', meta: value });
+    await delay(450);
+
+    let userData = null;
+    try {
+      const r = await fetch('./data/' + uid + '.json');
+      if (!r.ok) throw new Error('User not found');
+      userData = await r.json();
+    } catch (err) {
+      pushLog({ id: 'user', kind: 'error', title: 'User not in index', meta: uid });
+      // Restore form so user can try again
+      setTimeout(() => {
+        submit.disabled = false;
+        inputWrap.classList.remove('syncing');
+        input.readOnly = false;
+        hint.classList.remove('hide');
+        activityLog.classList.remove('active');
+        activityLog.innerHTML = '';
+      }, 2400);
+      return;
+    }
+
+    pushToast({ id: 'user', kind: 'success', title: userData.user.displayName, meta: '@' + userData.user.name });
+
+    const total = userData.totalIssues;
+    pushToast({ id: 'tickets', spinner: true, title: 'Fetching tickets', meta: '0 / ' + total, progress: 0 });
+    const steps = 10;
+    for (let i = 1; i <= steps; i++) {
+      await delay(50 + Math.random() * 30);
+      const n = Math.round((i / steps) * total);
+      pushToast({ id: 'tickets', spinner: true, title: 'Fetching tickets', meta: n + ' / ' + total, progress: (i/steps) * 100 });
+    }
+    pushToast({ id: 'tickets', kind: 'success', title: total + ' tickets fetched', meta: 'Across ' + Object.keys(userData.years || {}).length + ' years' });
+
+    pushToast({ id: 'brands', spinner: true, title: 'Classifying brands', meta: 'Bucket matching' });
+    await delay(380);
+    pushToast({ id: 'brands', kind: 'success', title: userData.buckets.length + ' brands identified', meta: userData.buckets.slice(0,3).map(b => b.label).join(', ') });
+
+    pushToast({ id: 'tags', spinner: true, title: 'Computing auto-tags', meta: 'Tenure · workload' });
+    await delay(320);
+    const inferredTags = inferTagPreview(userData);
+    pushToast({ id: 'tags', kind: 'success', title: 'Tags computed', meta: inferredTags.length ? inferredTags.join(' · ').toUpperCase() : 'Specialty: ' + (userData.dominantSpecialty || 'general') });
+
+    await delay(300);
+    pushToast({ id: 'done', kind: 'success', title: 'Sync complete', meta: 'Opening portfolio…' });
+
+    overlay.classList.add('active');
+    await delay(600);
+    location.href = './templates/glass.html?u=' + encodeURIComponent(uid);
+  });
+
+  function inferTagPreview(d) {
+    const t = [];
+    const total = d.totalIssues;
+    const high = ((d.priorities && d.priorities['Highest']) || 0) + ((d.priorities && d.priorities['High']) || 0);
+    if (d.tenure?.earliest && d.tenure?.latest) {
+      const yrs = (new Date(d.tenure.latest) - new Date(d.tenure.earliest)) / (365.25 * 86400000);
+      if (yrs >= 3) t.push('veteran');
+      else if (yrs > 0 && yrs < 1) t.push('newcomer');
+    }
+    if (d.buckets.length >= 15) t.push('multi-brand');
+    else if (d.buckets.length <= 3) t.push('focused');
+    if (total >= 20 && high / total >= 0.25) t.push('firefighter');
+    return t.slice(0, 3);
+  }
+
+  // Inline rotating suggestion
+  let sugSamples = [];
+  let sugIdx = 0;
+  function pickSuggestion() {
+    if (!sugSamples.length) { suggestLink.textContent = ''; return; }
+    const u = sugSamples[sugIdx % sugSamples.length];
+    sugIdx++;
+    suggestLink.textContent = u.id;
+    suggestLink.href = '#';
+    suggestLink.onclick = (e) => {
+      e.preventDefault();
+      input.value = u.id;
+      input.dispatchEvent(new Event('input'));
+      input.focus();
+    };
+  }
+
+  (async function() {
+    try {
+      const r = await fetch('./data/_sync-index.json');
+      if (!r.ok) throw new Error('No index');
+      const idx = await r.json();
+      availableUsers = idx.users || [];
+      teamStats = idx.team || null;
+      // Pick interesting samples (varied tier)
+      const sorted = availableUsers.slice().sort((a,b) => b.ticketCount - a.ticketCount);
+      sugSamples = [
+        sorted[0],
+        sorted[Math.floor(sorted.length * 0.3)],
+        sorted[Math.floor(sorted.length * 0.6)],
+      ].filter(Boolean);
+      hintText.textContent = teamStats.designers + ' designers indexed · try ';
+      pickSuggestion();
+      // Rotate suggestion every 4s if input empty
+      setInterval(() => {
+        if (!input.value.trim()) pickSuggestion();
+      }, 4000);
+    } catch (err) {
+      hintText.textContent = 'Index unavailable · enter email';
+    }
+  })();
+</script>
+</body>
+</html>
