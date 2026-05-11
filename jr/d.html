@@ -254,12 +254,21 @@
   .hud { position: fixed; bottom: 16px; left: 16px; right: 16px; display: flex; justify-content: flex-end; align-items: center; pointer-events: none; z-index: 100; gap: 16px; }
   .hud > * { pointer-events: auto; }
   .nav button#print { background: var(--accent); color: var(--bg); border-right: 0; font-weight: 600; }
-  .nav button#print:hover { background: var(--fg); }
+  .nav button#print:hover, .nav button#print:focus-visible { background: var(--fg); }
   .nav { display: flex; gap: 0; background: var(--paper); border: 1px solid var(--fg); align-items: stretch; }
-  .nav button { background: transparent; border: 0; padding: 8px 14px; font: 10px/1 var(--mono); color: var(--fg); letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; border-right: 1px solid var(--border); }
+  .nav button {
+    background: transparent; border: 0;
+    padding: 0 16px; min-height: 44px; min-width: 44px;
+    font: 10px/1 var(--mono); color: var(--fg);
+    letter-spacing: 0.16em; text-transform: uppercase;
+    cursor: pointer; border-right: 1px solid var(--border);
+    transition: background 200ms ease, color 200ms ease;
+  }
   .nav button:last-child { border-right: 0; }
   .nav button:hover { background: var(--fg); color: var(--bg); }
-  .nav .pos { padding: 8px 14px; font: italic 14px/1 var(--serif); color: var(--fg); letter-spacing: 0; border-right: 1px solid var(--border); display: flex; align-items: center; }
+  .nav button:focus-visible { outline: 0; box-shadow: inset 0 0 0 2px var(--accent); }
+  .nav button:active { transform: translateY(1px); }
+  .nav .pos { padding: 0 16px; min-height: 44px; display: flex; align-items: center; font: italic 14px/1 var(--serif); color: var(--fg); letter-spacing: 0; border-right: 1px solid var(--border); }
   .nav .pos .total { color: var(--muted); padding-left: 4px; }
   /* Loading state */
   .loading { position: fixed; inset: 0; display: grid; place-items: center; background: var(--bg); z-index: 200; }
@@ -287,6 +296,8 @@
     transition: background 180ms ease, color 180ms ease;
   }
   .jr-home:hover { background: var(--accent); color: var(--bg); }
+  .jr-home:focus-visible { outline: 0; box-shadow: 0 0 0 3px var(--accent); }
+  .jr-home:active { transform: translateY(1px); }
 
   /* ───── Responsive: under 900px, drop 1920×1080 canvas mode and stack slides ───── */
   @media (max-width: 900px) {
@@ -331,8 +342,12 @@
     .chrome, .folio { display: none !important; }
     .hud { position: sticky; bottom: 0; left: 0; right: 0; padding: 10px 16px; background: var(--bg); border-top: 1px solid var(--fg); justify-content: center; z-index: 100; }
     .nav { width: 100%; max-width: 480px; }
-    .nav button { flex: 1; padding: 12px 8px; font-size: 11px; }
-    .nav .pos { padding: 12px 8px; font-size: 12px; }
+    /* HUD prev/next obsolete on mobile vertical stack — scroll is the affordance.
+       Keep only PRINT button so users can still export. */
+    .hud { padding: 8px 16px; }
+    .nav button#prev, .nav button#next, .nav .pos { display: none !important; }
+    .nav button { flex: 1; padding: 0 12px; font-size: 12px; min-height: 48px; }
+    .nav { max-width: 200px; }
     .title { font-size: clamp(28px, 7vw, 44px) !important; line-height: 1.05 !important; }
     .title-row { grid-template-columns: 1fr !important; gap: 16px !important; margin-bottom: 24px !important; }
     .title-meta { text-align: left !important; }
@@ -346,7 +361,10 @@
     .stat-ribbon .stat .v { font-size: 28px !important; }
     .stat-ribbon .stat .v.text { font-size: 22px !important; }
     .stat-ribbon .key, .stat-ribbon .meta { letter-spacing: 0.06em !important; }
+    /* Body font ≥16px on mobile per a11y readable-font-size */
+    html, body { font-size: 16px !important; }
     .cover-tags { gap: 8px !important; }
+    .cover-tags .tag { padding: 10px 14px !important; min-height: 36px !important; display: inline-flex; align-items: center; }
     .cover-role { font-size: 18px !important; }
     /* Per-plate grids collapse */
     .yearbars { gap: 6px !important; height: 200px !important; }
@@ -500,14 +518,14 @@
 <script>(function(){var e=null;try{if(document.referrer){var u=new URL(document.referrer);if(u.origin===location.origin){var p=u.pathname;if(p==='/jr/'||p==='/jr/index.html')e='./';else if(p==='/jr/editorial.html')e='./editorial.html';}}}catch(_){}if(!e){try{e=sessionStorage.getItem('jr_entry');}catch(_){}}if(e){var n=document.getElementById('jrHome');if(n)n.href=e;}})();</script>
 <div class="hud">
   <div class="nav">
-    <button id="prev">◀ PREV</button>
+    <button id="prev" type="button" aria-label="Previous plate">◀ PREV</button>
     <span class="pos"><span id="pos-num">01</span><span class="total"> / 06</span></span>
-    <button id="next">NEXT ▶</button>
-    <button id="print" title="Print all 7 plates as PDF">PRINT</button>
+    <button id="next" type="button" aria-label="Next plate">NEXT ▶</button>
+    <button id="print" type="button" aria-label="Print all plates as PDF" title="Print all plates as PDF">PRINT</button>
   </div>
 </div>
-<div class="loading" id="loading"><div class="focal"></div><div class="label">Loading dispatch…</div></div>
-<div class="err hidden" id="err"><div><h2 id="err-title">Invalid or missing token.</h2><p id="err-body">Open this deck via the search form on <a href="./" style="color: var(--accent);">/jr/</a>.</p></div></div>
+<div class="loading" id="loading" role="status" aria-live="polite"><div class="focal"></div><div class="label">Loading dispatch…</div></div>
+<div class="err hidden" id="err" role="alert" aria-live="assertive"><div><h2 id="err-title">Invalid or missing token.</h2><p id="err-body">Open this deck via the search form on <a href="./" style="color: var(--accent);">/jr/</a>.</p></div></div>
 <script>
 'use strict';
 // ─── Token-driven single-designer loader ──────────────────
