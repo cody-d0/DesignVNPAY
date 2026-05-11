@@ -278,6 +278,65 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; }
   }
+
+  /* ───── Responsive: under 900px, drop 1920×1080 canvas mode and stack slides vertically ───── */
+  @media (max-width: 900px) {
+    html, body { overflow-y: auto; overflow-x: hidden; height: auto; min-height: 100vh; }
+    .deck { position: relative; height: auto; min-height: 100vh; display: block; overflow: visible; padding: 0; animation: none; }
+    .canvas { width: 100% !important; height: auto !important; transform: none !important; display: block; position: static; }
+    .slide {
+      position: relative; inset: auto;
+      width: 100%; height: auto; min-height: auto;
+      padding: 56px 20px 48px;
+      opacity: 1 !important; pointer-events: auto !important;
+      transform: none !important; filter: none !important;
+      overflow: visible; animation: none !important;
+      border-bottom: 1px solid var(--border);
+    }
+    .slide:last-of-type { border-bottom: 0; }
+    .slide.active, .slide.active.play { animation: none !important; }
+    .anim, .slide.active.play .anim { opacity: 1 !important; transform: none !important; animation: none !important; }
+    /* Hide editorial chrome on mobile — too cramped */
+    .chrome, .folio { display: none !important; }
+    /* HUD: sticky bottom strip */
+    .hud { position: sticky; bottom: 0; left: 0; right: 0; padding: 10px 16px; background: var(--bg); border-top: 1px solid var(--fg); justify-content: center; z-index: 100; }
+    .nav { width: 100%; max-width: 480px; }
+    .nav button { flex: 1; padding: 12px 8px; font-size: 11px; }
+    .nav .pos { padding: 12px 8px; font-size: 12px; }
+    /* Typography */
+    .title, .h2 { font-size: clamp(28px, 7vw, 44px) !important; line-height: 1.05 !important; margin-bottom: 16px !important; }
+    .lede { font-size: 16px !important; line-height: 1.5 !important; margin-bottom: 24px !important; }
+    .cover-name { font-size: clamp(40px, 9vw, 60px) !important; }
+    .cover-sub { font-size: 18px !important; }
+    .cover { gap: 24px; }
+    /* Cover stat ribbon → 2-column */
+    .stat-ribbon { grid-template-columns: 1fr 1fr !important; gap: 16px !important; padding-top: 16px !important; }
+    .stat-ribbon .stat { padding: 12px 8px !important; border-right: 1px solid var(--border) !important; }
+    .stat-ribbon .stat .v { font-size: 28px !important; }
+    /* All grids collapse */
+    .donut-row, .matrix-row, .shock-row { grid-template-columns: 1fr !important; gap: 24px !important; }
+    .donut-wrap { width: min(280px, 100%) !important; height: 280px !important; margin: 0 auto; }
+    .cluster-grid, .anchor-grid, .riser-grid, .gap-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+    .anchor-grid { grid-template-columns: 1fr 1fr !important; }
+    .hub-row { grid-template-columns: 1fr 1fr !important; }
+    /* Risk table → vertical card */
+    .risk-row { grid-template-columns: 1fr !important; gap: 8px !important; padding: 16px 0 !important; }
+    .risk-row.head { display: none !important; }
+    .risk-row .brand { font-size: 18px !important; }
+    /* Matrix shrinks */
+    .matrix { aspect-ratio: 1 / 1; }
+    .matrix .quad { font-size: 12px !important; }
+    /* Shock + cards */
+    .shock-card { padding: 24px !important; }
+    .shock-card .who { font-size: 36px !important; }
+    .shock-card .stats { grid-template-columns: 1fr 1fr 1fr !important; gap: 8px !important; }
+    .shock-card .stats .v { font-size: 28px !important; }
+    .shock-bar { grid-template-columns: 100px 1fr 48px !important; gap: 8px !important; }
+    .gap-card h3 { font-size: 32px !important; }
+    /* Backlink */
+    .jr-home { font-size: 10px; padding: 7px 10px; }
+  }
+
   @media print {
     html, body { overflow: visible !important; height: auto !important; }
     .deck { position: static !important; height: auto !important; }
