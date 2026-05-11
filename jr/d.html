@@ -24,6 +24,15 @@
     --wt-animation: oklch(58% 0.10 130);
     --wt-research:  oklch(60% 0.10 75);
     --wt-other:     oklch(60% 0.012 60);
+    --st-done:      var(--fg);
+    --st-wip:       var(--accent);
+    --st-todo:      color-mix(in oklch, var(--fg) 22%, var(--bg));
+    --it-1: var(--fg);
+    --it-2: var(--accent);
+    --it-3: color-mix(in oklch, var(--fg) 50%, var(--bg));
+    --it-4: color-mix(in oklch, var(--fg) 30%, var(--bg));
+    --it-5: color-mix(in oklch, var(--accent) 50%, var(--bg));
+    --it-rest: color-mix(in oklch, var(--fg) 16%, var(--bg));
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--fg); font: 14px/1.5 var(--sans); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
@@ -38,12 +47,7 @@
   }
   @keyframes grid-drift { from { background-position: 0 0, 0 0, 0 0; } to { background-position: 0 0, 28px 28px, 0 0; } }
   .canvas { width: 1920px; height: 1080px; position: relative; transform-origin: center; }
-  .slide { position: absolute; inset: 0; padding: 144px 80px 96px; opacity: 0; pointer-events: none; transform: translateX(0); overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
-  .slide::-webkit-scrollbar { width: 8px; }
-  .slide::-webkit-scrollbar-track { background: transparent; }
-  .slide::-webkit-scrollbar-thumb { background: color-mix(in oklch, var(--fg) 18%, transparent); border-radius: 4px; }
-  .slide::-webkit-scrollbar-thumb:hover { background: color-mix(in oklch, var(--fg) 32%, transparent); }
-  .slide { scrollbar-width: thin; scrollbar-color: color-mix(in oklch, var(--fg) 18%, transparent) transparent; }
+  .slide { position: absolute; inset: 0; padding: 144px 80px 96px; opacity: 0; pointer-events: none; transform: translateX(0); }
   .slide.active { opacity: 1; pointer-events: auto; }
   .slide.active.enter-right { animation: slide-enter-right 360ms cubic-bezier(.22,1,.36,1) forwards; }
   .slide.active.enter-left  { animation: slide-enter-left  360ms cubic-bezier(.22,1,.36,1) forwards; }
@@ -115,6 +119,11 @@
   .stat-ribbon .stat .v.text { font-size: 38px; font-style: italic; }
   .stat-ribbon .stat .v.accent { color: var(--accent); }
   .stat-ribbon .stat .meta { font: 13px/1.4 var(--sans); color: var(--muted); margin-top: 8px; }
+  .stat-ribbon .stat .spark { display: flex; align-items: flex-end; gap: 4px; height: 32px; margin-top: 16px; padding-top: 12px; border-top: 1px dashed var(--border); }
+  .stat-ribbon .stat .spark .b { flex: 1; background: var(--fg); height: 0; transition: height 700ms cubic-bezier(.22,1,.36,1); position: relative; }
+  .stat-ribbon .stat .spark .b.peak { background: var(--accent); }
+  .stat-ribbon .stat .spark .b .lab { position: absolute; bottom: -16px; left: 0; right: 0; text-align: center; font: 9px/1 var(--mono); color: var(--muted); letter-spacing: 0.06em; }
+  .slide.active.play .stat-ribbon .stat .spark .b { height: var(--h, 0); }
   /* ─── SLIDE 02: TEMPO ─────────────────────────────────────────── */
   .tempo { display: grid; grid-template-rows: auto auto 1fr; gap: 48px; }
   .yearbars { display: flex; gap: 16px; align-items: flex-end; height: 280px; padding: 0; border-bottom: 1px solid var(--fg); }
@@ -130,6 +139,13 @@
   .yearbar .seg.other { background: var(--wt-other); }
   .yearbar .label { font: 14px/1 var(--mono); color: var(--muted); letter-spacing: 0.12em; text-align: center; text-transform: uppercase; }
   .yearbar .label b { display: block; font: italic 32px/1 var(--serif); color: var(--fg); letter-spacing: 0; text-transform: none; margin-top: 8px; }
+  .yearbar .delta { display: block; font: 10px/1 var(--mono); color: var(--muted); letter-spacing: 0.06em; margin-top: 8px; font-variant-numeric: tabular-nums; }
+  .yearbar .delta.up { color: var(--fg); }
+  .yearbar .delta.down { color: var(--accent); }
+  .yearbar .delta.flat { color: var(--muted); }
+  .tempo-velocity { display: flex; align-items: baseline; gap: 12px; padding-top: 12px; margin-top: 12px; border-top: 1px dashed var(--border); font: 13px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; font-style: normal; }
+  .tempo-velocity .v { font: italic 22px/1 var(--serif); color: var(--fg); letter-spacing: 0; text-transform: none; }
+  .tempo-velocity .v.accent { color: var(--accent); }
   .heatmap { display: grid; grid-template-columns: 80px repeat(12, 1fr); gap: 4px; align-items: center; }
   .heatmap .hm-y { font: italic 20px/1 var(--serif); color: var(--fg); letter-spacing: 0; }
   .heatmap .hm-c { aspect-ratio: 1; background: color-mix(in oklch, var(--fg) calc(var(--c, 0) * 1%), transparent); border: 1px solid color-mix(in oklch, var(--fg) calc(var(--c, 0) * 0.5%), var(--border)); position: relative; opacity: 0; }
@@ -156,6 +172,22 @@
   .donut-legend .sw { width: 10px; height: 10px; flex: none; align-self: center; }
   .donut-legend .item b { color: var(--fg); font-weight: 500; }
   .donut-legend .item .num { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--fg); }
+  .issuetype-block { padding-top: 24px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; }
+  .issuetype-block .label { font: 10px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; display: flex; justify-content: space-between; align-items: baseline; }
+  .issuetype-block .label .total { font: italic 14px/1 var(--serif); color: var(--muted); letter-spacing: 0; text-transform: none; }
+  .issuetype-block .stacked { display: flex; height: 16px; background: color-mix(in oklch, var(--fg) 4%, transparent); position: relative; overflow: hidden; }
+  .issuetype-block .stacked .seg { width: 0%; height: 100%; transition: width 800ms cubic-bezier(.22,1,.36,1); }
+  .slide.active.play .issuetype-block .stacked .seg { width: var(--w, 0%); }
+  .issuetype-block .stacked .seg.t1 { background: var(--it-1); }
+  .issuetype-block .stacked .seg.t2 { background: var(--it-2); }
+  .issuetype-block .stacked .seg.t3 { background: var(--it-3); }
+  .issuetype-block .stacked .seg.t4 { background: var(--it-4); }
+  .issuetype-block .stacked .seg.t5 { background: var(--it-5); }
+  .issuetype-block .stacked .seg.tr { background: var(--it-rest); }
+  .issuetype-block .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font: 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; font-variant-numeric: tabular-nums; }
+  .issuetype-block .legend .item { display: inline-flex; align-items: baseline; gap: 8px; }
+  .issuetype-block .legend .sw { width: 8px; height: 8px; flex: none; align-self: center; }
+  .issuetype-block .legend .item b { color: var(--fg); font-weight: 500; }
   .specialty-info { display: flex; flex-direction: column; gap: 40px; }
   .specialty-info .lede { font: 22px/1.4 var(--serif); color: var(--fg); max-width: 56ch; }
   .specialty-info .lede em { color: var(--accent); }
@@ -195,6 +227,23 @@
   .brow .pills .pill { font: 11px/1 var(--mono); padding: 8px 12px; letter-spacing: 0.12em; text-transform: uppercase; font-variant-numeric: tabular-nums; }
   .brow .pills .pill.done { border: 1px solid color-mix(in oklch, var(--fg) 40%, transparent); color: var(--fg); }
   .brow .pills .pill.wip { background: var(--accent); color: var(--bg); }
+  .brow .spectrum { display: flex; flex-direction: column; gap: 8px; }
+  .brow .spectrum .stack { display: flex; height: 14px; background: color-mix(in oklch, var(--fg) 4%, transparent); position: relative; overflow: hidden; }
+  .brow .spectrum .stack .seg { height: 100%; width: 0%; transition: width 800ms cubic-bezier(.22,1,.36,1); }
+  .slide.active.play .brow .spectrum .stack .seg { width: var(--w, 0%); }
+  .brow .spectrum .stack .seg.done { background: var(--st-done); }
+  .brow .spectrum .stack .seg.wip  { background: var(--st-wip); }
+  .brow .spectrum .stack .seg.todo { background: var(--st-todo); }
+  .brow .spectrum .legend { display: flex; gap: 12px; font: 10px/1 var(--mono); color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; font-variant-numeric: tabular-nums; }
+  .brow .spectrum .legend b { color: var(--fg); font-weight: 500; }
+  .brow .spectrum .legend .accent { color: var(--accent); font-weight: 500; }
+  .brow .label .typemix { display: flex; gap: 4px; margin-top: 8px; height: 4px; }
+  .brow .label .typemix .seg { height: 100%; width: 0%; transition: width 700ms cubic-bezier(.22,1,.36,1); }
+  .slide.active.play .brow .label .typemix .seg { width: var(--w, 0%); }
+  .brow .label .typemix .seg.t1 { background: var(--it-1); }
+  .brow .label .typemix .seg.t2 { background: var(--it-2); }
+  .brow .label .typemix .seg.t3 { background: var(--it-3); }
+  .brow .label .typemix .seg.tr { background: var(--it-rest); }
   .brow .meta { font: 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; text-align: right; font-variant-numeric: tabular-nums; }
   .brand-foot { display: flex; justify-content: space-between; align-items: baseline; padding-top: 16px; border-top: 1px solid var(--border); font: italic 18px/1.4 var(--serif); color: var(--muted); }
   .brand-foot .meta { font: 11px/1.4 var(--mono); color: var(--muted); font-style: normal; letter-spacing: 0.18em; text-transform: uppercase; }
@@ -211,6 +260,25 @@
   .sig-card .stats .s .k { font: 10px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; }
   .sig-card .stats .s .v { font: italic 32px/1 var(--serif); color: var(--fg); }
   .sig-card .stats .s.accent .v { color: var(--accent); }
+  .sig-card .spectrum-row { padding-top: 24px; margin-top: 24px; border-top: 1px dashed var(--border); display: flex; flex-direction: column; gap: 8px; }
+  .sig-card .spectrum-row .lab { font: 10px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; display: flex; justify-content: space-between; align-items: baseline; }
+  .sig-card .spectrum-row .lab .v { font: italic 14px/1 var(--serif); color: var(--muted); letter-spacing: 0; text-transform: none; }
+  .sig-card .spectrum-row .stack { display: flex; height: 14px; background: color-mix(in oklch, var(--fg) 4%, transparent); position: relative; overflow: hidden; }
+  .sig-card .spectrum-row .stack .seg { height: 100%; width: 0%; transition: width 800ms cubic-bezier(.22,1,.36,1); }
+  .slide.active.play .sig-card .spectrum-row .stack .seg { width: var(--w, 0%); }
+  .sig-card .spectrum-row .stack .seg.done { background: var(--st-done); }
+  .sig-card .spectrum-row .stack .seg.wip  { background: var(--st-wip); }
+  .sig-card .spectrum-row .stack .seg.todo { background: var(--st-todo); }
+  .sig-card .spectrum-row .stack .seg.t1 { background: var(--it-1); }
+  .sig-card .spectrum-row .stack .seg.t2 { background: var(--it-2); }
+  .sig-card .spectrum-row .stack .seg.t3 { background: var(--it-3); }
+  .sig-card .spectrum-row .stack .seg.t4 { background: var(--it-4); }
+  .sig-card .spectrum-row .stack .seg.t5 { background: var(--it-5); }
+  .sig-card .spectrum-row .stack .seg.tr { background: var(--it-rest); }
+  .sig-card .spectrum-row .legend { display: flex; flex-wrap: wrap; gap: 8px 14px; font: 10px/1 var(--mono); color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; font-variant-numeric: tabular-nums; }
+  .sig-card .spectrum-row .legend .item { display: inline-flex; align-items: baseline; gap: 6px; }
+  .sig-card .spectrum-row .legend .sw { width: 8px; height: 8px; flex: none; align-self: center; }
+  .sig-card .spectrum-row .legend b { color: var(--fg); font-weight: 500; }
   .topproj { display: flex; flex-direction: column; gap: 0; }
   .topproj .head { font: 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; padding-bottom: 12px; border-bottom: 1px solid var(--fg); }
   .topproj .row { display: grid; grid-template-columns: 100px 1fr auto; align-items: baseline; gap: 16px; padding: 16px 0; border-bottom: 1px dashed var(--border); }
@@ -218,6 +286,9 @@
   .topproj .row .key { font: 11px/1 var(--mono); color: var(--accent); letter-spacing: 0.06em; }
   .topproj .row .ttl { font: italic 17px/1.3 var(--serif); color: var(--fg); }
   .topproj .row .n { font: 12px/1 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; letter-spacing: 0.06em; text-transform: uppercase; }
+  .topproj .row .proj-years { display: flex; gap: 2px; align-items: flex-end; height: 14px; margin-top: 6px; }
+  .topproj .row .proj-years .yb { width: 8px; background: var(--border); }
+  .topproj .row .proj-years .yb.peak { background: var(--accent); }
   .sig-right { display: flex; flex-direction: column; gap: 0; }
   .sig-right .head { font: 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; padding-bottom: 12px; border-bottom: 1px solid var(--fg); margin-bottom: 8px; }
   .ticket { display: grid; grid-template-columns: 130px 1fr 110px; align-items: baseline; gap: 16px; padding: 20px 0; border-bottom: 1px dashed var(--border); }
@@ -250,11 +321,9 @@
   .nw-foot .closer { font: italic 22px/1.4 var(--serif); color: var(--fg); }
   .nw-foot .closer em { color: var(--accent); }
   .empty-msg { font: italic 18px/1.5 var(--serif); color: var(--muted); padding: 32px 0; }
-  /* HUD: nav (single-designer mode — switcher dropped) */
+  /* HUD: nav only (switcher dropped — single-designer token mode) */
   .hud { position: fixed; bottom: 16px; left: 16px; right: 16px; display: flex; justify-content: flex-end; align-items: center; pointer-events: none; z-index: 100; gap: 16px; }
   .hud > * { pointer-events: auto; }
-  .nav button#print { background: var(--accent); color: var(--bg); border-right: 0; font-weight: 600; }
-  .nav button#print:hover, .nav button#print:focus-visible { background: var(--fg); }
   .nav { display: flex; gap: 0; background: var(--paper); border: 1px solid var(--fg); align-items: stretch; }
   .nav button {
     background: transparent; border: 0;
@@ -268,7 +337,9 @@
   .nav button:hover { background: var(--fg); color: var(--bg); }
   .nav button:focus-visible { outline: 0; box-shadow: inset 0 0 0 2px var(--accent); }
   .nav button:active { transform: translateY(1px); }
-  .nav .pos { padding: 0 16px; min-height: 44px; display: flex; align-items: center; font: italic 14px/1 var(--serif); color: var(--fg); letter-spacing: 0; border-right: 1px solid var(--border); }
+  .nav button#print { background: var(--accent); color: var(--bg); font-weight: 600; }
+  .nav button#print:hover, .nav button#print:focus-visible { background: var(--fg); }
+  .nav .pos { padding: 0 16px; min-height: 44px; display: flex; align-items: center; font: italic 14px/1 var(--serif); color: var(--fg); border-right: 1px solid var(--border); }
   .nav .pos .total { color: var(--muted); padding-left: 4px; }
   /* Loading state */
   .loading { position: fixed; inset: 0; display: grid; place-items: center; background: var(--bg); z-index: 200; }
@@ -282,32 +353,31 @@
   .err p { font: 16px/1.5 var(--sans); color: var(--muted); max-width: 640px; }
   .err code { font: 14px/1 var(--mono); background: color-mix(in oklch, var(--fg) 6%, transparent); padding: 4px 8px; }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition: none !important; } }
-  /* ─── jr backlink (editorial pill) ─────────────────────── */
+
+  /* jr backlink (editorial pill) */
   .jr-home {
     position: fixed; top: 14px; left: 14px; z-index: 1000;
     font: 500 11px/1 var(--mono);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+    letter-spacing: 0.18em; text-transform: uppercase;
     padding: 9px 13px;
-    background: var(--fg);
-    color: var(--bg);
-    text-decoration: none;
-    border: 1px solid var(--fg);
+    background: var(--fg); color: var(--bg);
+    text-decoration: none; border: 1px solid var(--fg);
     transition: background 180ms ease, color 180ms ease;
+    min-height: 32px; display: inline-flex; align-items: center;
   }
   .jr-home:hover { background: var(--accent); color: var(--bg); }
   .jr-home:focus-visible { outline: 0; box-shadow: 0 0 0 3px var(--accent); }
   .jr-home:active { transform: translateY(1px); }
 
-  /* ───── Responsive: under 900px, drop 1920×1080 canvas mode and stack slides ───── */
+  /* ───── Responsive: under 900px, drop 1920×1080 canvas + stack slides ───── */
   @media (max-width: 900px) {
-    html, body { overflow-y: auto; overflow-x: hidden; height: auto; min-height: 100vh; max-width: 100vw; }
+    html, body { overflow-y: auto; overflow-x: hidden; height: auto; min-height: 100vh; max-width: 100vw; font-size: 16px !important; }
     .deck { position: relative; height: auto; min-height: 100vh; display: block; overflow: visible; padding: 0; animation: none; width: 100%; max-width: 100vw; }
     .canvas { width: 100% !important; max-width: 100vw !important; height: auto !important; transform: none !important; display: block; position: static; }
     .slide {
       position: relative; inset: auto;
       width: 100%; max-width: 100vw; height: auto; min-height: auto;
-      padding: 56px 20px 48px;
+      padding: 56px 20px 80px;
       opacity: 1 !important; pointer-events: auto !important;
       transform: none !important; filter: none !important;
       overflow: visible; animation: none !important;
@@ -317,70 +387,64 @@
     }
     .slide * { min-width: 0; max-width: 100%; box-sizing: border-box; }
     .slide svg { max-width: 100%; height: auto; }
-    /* Force text to wrap aggressively (uppercase + letter-spacing can overflow narrow viewport) */
-    .slide, .slide p, .slide div, .slide span, .slide h1, .slide h2, .slide h3,
-    .lede, .cover-name, .cover-role, .title, .h2,
-    .stat-ribbon .meta, .stat-ribbon .key, .stat-ribbon .v,
-    .ticket .summary, .ticket .key,
-    .brow b, .brow .meta, .signature *, .nw-row *
-    { overflow-wrap: anywhere !important; word-break: break-word !important; }
-    /* Kicker wrap on cover */
-    .cover .kicker { flex-wrap: wrap !important; gap: 8px 16px !important; }
-    .cover .kicker > * { min-width: 0 !important; flex-shrink: 1 !important; }
-    .cover .kicker .rule { display: none !important; }
     .slide:last-of-type { border-bottom: 0; }
     .slide.active, .slide.active.play { animation: none !important; }
     .anim, .slide.active.play .anim { opacity: 1 !important; transform: none !important; animation: none !important; }
-    /* Force all per-plate visualizations to render (was gated by .slide.active.play in desktop carousel) */
+    /* Unblock per-plate visualizations (gated on .active.play in desktop carousel) */
     .yearbar .seg { height: var(--h, 0) !important; }
     .heatmap .hm-c { opacity: 1 !important; transform: none !important; animation: none !important; }
     .priority-row .p .bar i { width: var(--p, 0%) !important; }
     .executor-block .bar i { width: var(--ratio, 0%) !important; }
     .brow .barwrap .bar i { width: var(--p, 0%) !important; }
     .nw-row .bar i { width: var(--p, 0%) !important; }
-    .donut circle { transition: none !important; }
-    .chrome, .folio { display: none !important; }
-    .hud { position: sticky; bottom: 0; left: 0; right: 0; padding: 10px 16px; background: var(--bg); border-top: 1px solid var(--fg); justify-content: center; z-index: 100; }
-    .nav { width: 100%; max-width: 480px; }
-    /* HUD prev/next obsolete on mobile vertical stack — scroll is the affordance.
-       Keep only PRINT button so users can still export. */
-    .hud { padding: 8px 16px; }
-    .nav button#prev, .nav button#next, .nav .pos { display: none !important; }
-    .nav button { flex: 1; padding: 0 12px; font-size: 12px; min-height: 48px; }
-    .nav { max-width: 200px; }
+    /* Editorial chrome ẩn — quá hẹp để đọc */
+    .chrome, .folio, .counter { display: none !important; }
+    /* Force aggressive wrap on uppercase + letter-spacing */
+    .slide, .slide p, .slide div, .slide span, .slide h1, .slide h2, .slide h3, .slide a,
+    .lede, .title, .cover-name, .cover-role, .stat-ribbon .meta, .stat-ribbon .key, .stat-ribbon .v
+    { overflow-wrap: anywhere !important; word-break: break-word !important; }
+    /* Cover kicker wrap */
+    .cover .kicker { flex-wrap: wrap !important; gap: 8px 16px !important; }
+    .cover .kicker > * { min-width: 0 !important; flex-shrink: 1 !important; }
+    .cover .kicker .rule { display: none !important; }
+    /* Typography scale-down */
     .title { font-size: clamp(28px, 7vw, 44px) !important; line-height: 1.05 !important; }
     .title-row { grid-template-columns: 1fr !important; gap: 16px !important; margin-bottom: 24px !important; }
     .title-meta { text-align: left !important; }
-    .cover-name { font-size: clamp(36px, 9vw, 56px) !important; line-height: 1.0 !important; word-break: break-word; }
+    .cover-name { font-size: clamp(36px, 9vw, 56px) !important; line-height: 1.0 !important; }
     .cover-body { grid-template-columns: 1fr !important; gap: 20px !important; }
     .portrait { width: min(220px, 60vw) !important; height: auto !important; max-width: 100% !important; aspect-ratio: 1/1; margin: 0 auto; }
     .portrait img { width: 100%; height: 100%; object-fit: cover; }
     .cover-info { gap: 16px !important; align-items: flex-start; }
+    .cover-role { font-size: 16px !important; }
+    .cover-tags { gap: 8px !important; flex-wrap: wrap; }
+    .cover-tags .tag { padding: 10px 14px !important; min-height: 36px !important; display: inline-flex; align-items: center; }
     .stat-ribbon { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; gap: 16px !important; padding-top: 16px !important; }
-    .stat-ribbon .stat { padding: 12px 8px !important; min-width: 0 !important; }
+    .stat-ribbon .stat { padding: 12px 8px !important; min-width: 0 !important; border-right: 1px solid var(--border) !important; }
     .stat-ribbon .stat .v { font-size: 28px !important; }
     .stat-ribbon .stat .v.text { font-size: 22px !important; }
     .stat-ribbon .key, .stat-ribbon .meta { letter-spacing: 0.06em !important; }
-    /* Body font ≥16px on mobile per a11y readable-font-size */
-    html, body { font-size: 16px !important; }
-    .cover-tags { gap: 8px !important; }
-    .cover-tags .tag { padding: 10px 14px !important; min-height: 36px !important; display: inline-flex; align-items: center; }
-    .cover-role { font-size: 18px !important; }
-    /* Per-plate grids collapse */
+    /* Plate-specific compactions */
     .yearbars { gap: 6px !important; height: 200px !important; }
-    .yearbars .yearbar .label { font-size: 10px !important; }
     .heatmap { grid-template-columns: 32px repeat(12, 1fr) !important; gap: 2px !important; font-size: 9px !important; }
-    .donut-row { grid-template-columns: 1fr !important; gap: 24px !important; }
+    .donut-row { grid-template-columns: minmax(0, 1fr) !important; gap: 24px !important; }
     .donut { width: min(280px, 90%) !important; height: 280px !important; margin: 0 auto; }
     .donut-legend { gap: 8px !important; }
-    .brands-grid, .brow { grid-template-columns: 1fr !important; }
-    .signature, .signature-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
-    .priority-row { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+    .brands-grid, .brow, .brand-ledger { grid-template-columns: minmax(0, 1fr) !important; }
+    .signature, .sig-left, .sig-right { grid-template-columns: minmax(0, 1fr) !important; gap: 16px !important; }
+    .priority-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; gap: 12px !important; }
     .executor-block { padding: 16px !important; }
-    .nw-row { grid-template-columns: 1fr !important; gap: 8px !important; }
+    .nw-row, .nw-cols { grid-template-columns: minmax(0, 1fr) !important; gap: 8px !important; }
+    .ticket { grid-template-columns: minmax(0, 1fr) !important; gap: 8px !important; padding: 14px 0 !important; }
+    .ticket .status { justify-self: start !important; }
+    /* HUD on mobile vertical stack: PREV/NEXT/pos obsolete — scroll IS nav */
+    .hud { position: sticky; bottom: 0; left: 0; right: 0; padding: 8px 16px; background: var(--bg); border-top: 1px solid var(--fg); justify-content: center; z-index: 100; }
+    .nav { width: auto; max-width: 200px; }
+    .nav button#prev, .nav button#next, .nav .pos { display: none !important; }
+    .nav button { flex: 1; padding: 0 12px; font-size: 12px; min-height: 48px; }
     .jr-home { font-size: 10px; padding: 7px 10px; }
   }
-  /* Extra-narrow phones: collapse stat ribbon to 1 col so labels like 'Dominant specialty' fit */
+  /* Extra-narrow phones: collapse stat ribbon to 1 col */
   @media (max-width: 480px) {
     .stat-ribbon { grid-template-columns: minmax(0, 1fr) !important; }
     .stat-ribbon .stat { border-right: 0 !important; border-bottom: 1px solid var(--border) !important; padding: 14px 0 !important; }
@@ -392,7 +456,7 @@
   @media print {
     html, body { overflow: visible !important; height: auto !important; width: auto !important; }
     body { background: var(--bg); animation: none !important; }
-    .deck { position: static !important; display: block !important; height: auto !important; place-items: stretch !important; background: var(--bg) !important; }
+    .deck { position: static !important; display: block !important; height: auto !important; background: var(--bg) !important; }
     .canvas { position: static !important; width: 1920px !important; height: auto !important; transform: none !important; margin: 0 auto; }
     .slide { position: relative !important; inset: auto !important; width: 1920px !important; height: 1080px !important; opacity: 1 !important; transform: none !important; animation: none !important; pointer-events: auto !important; page-break-after: always; page-break-inside: avoid; }
     .slide:last-of-type { page-break-after: auto; }
@@ -414,7 +478,7 @@
     <div class="chrome top"><div id="chr-tl">VNPAY DESIGN — DESIGNER DISPATCH · 2026</div><div class="right"><div class="rule"></div><div id="chr-tr">JR.SERVICEHUB.VN</div></div><div class="baseline"></div></div>
     <div class="chrome bot"><div><span class="live-dot"></span><b>SIGNAL · LIVE</b> &nbsp; DES PROJECT</div><div id="chr-br">DISPATCH / 0001</div><div class="baseline"></div></div>
     <div class="folio" id="folio"><span class="roman">i.</span><span class="rule"></span><span id="folio-name">PLATE ONE · COVER</span></div>
-    <div class="counter"><span id="cnum">01</span><span class="total"> / 07</span></div>
+    <div class="counter"><span id="cnum">01</span><span class="total"> / 06</span></div>
 
     <!-- SLIDE 01 — COVER -->
     <section class="slide cover" data-slide="1" data-screen-label="01 Cover">
@@ -429,8 +493,8 @@
           </div>
         </div>
         <div class="stat-ribbon anim d4">
-          <div class="stat"><div class="key">Total tickets</div><div class="v"><span id="s-total">—</span><sup>iss</sup></div><div class="meta" id="s-total-m">—</div></div>
-          <div class="stat"><div class="key">Brands worked</div><div class="v"><span id="s-buckets">—</span><sup>br</sup></div><div class="meta" id="s-buckets-m">—</div></div>
+          <div class="stat"><div class="key">Total tickets</div><div class="v"><span id="s-total">—</span><sup>iss</sup></div><div class="meta" id="s-total-m">—</div><div class="spark" id="s-spark"></div></div>
+          <div class="stat"><div class="key">Brands worked</div><div class="v"><span id="s-buckets">—</span><sup>br</sup></div><div class="meta" id="s-buckets-m">—</div><div class="spark" id="s-buckets-spark"></div></div>
           <div class="stat"><div class="key">Tenure</div><div class="v"><span id="s-tenure">—</span><sup>yrs</sup></div><div class="meta" id="s-tenure-m">—</div></div>
           <div class="stat"><div class="key">Dominant specialty</div><div class="v text accent" id="s-spec">—</div><div class="meta" id="s-spec-m">—</div></div>
         </div>
@@ -445,7 +509,10 @@
         <div class="hm-cols"><span></span><span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MAY</span><span>JUN</span><span>JUL</span><span>AUG</span><span>SEP</span><span>OCT</span><span>NOV</span><span>DEC</span></div>
         <div class="heatmap" id="heatmap"></div>
       </div>
-      <div class="tempo-caption anim d3"><div id="tempo-line">—</div><div class="meta" id="tempo-meta">—</div></div>
+      <div class="anim d3">
+        <div class="tempo-caption"><div id="tempo-line">—</div><div class="meta" id="tempo-meta">—</div></div>
+        <div class="tempo-velocity" id="tempo-velocity"></div>
+      </div>
     </section>
 
     <!-- SLIDE 03 — SPECIALTY -->
@@ -458,7 +525,12 @@
       <div class="specialty-info">
         <p class="lede anim d2" id="spec-lede">—</p>
         <div class="priority-row anim d3" id="prio-row"></div>
-        <div class="executor-block anim d4">
+        <div class="issuetype-block anim d4" id="issuetype-block">
+          <div class="label"><span>Issue-type lens · what kind of ticket</span><span class="total" id="it-total">—</span></div>
+          <div class="stacked" id="it-stack"></div>
+          <div class="legend" id="it-legend"></div>
+        </div>
+        <div class="executor-block anim d5">
           <div class="label">Executor vs. reporter ratio</div>
           <div class="row"><span class="v"><em id="ex-pct">—</em>% executor</span><span class="v muted" id="rep-pct">— reporter</span></div>
           <div class="bar"><i id="ex-bar"></i></div>
@@ -486,6 +558,16 @@
             <div class="s"><div class="k">Total</div><div class="v" id="sig-total">—</div></div>
             <div class="s"><div class="k">Done</div><div class="v" id="sig-done">—</div></div>
             <div class="s accent"><div class="k">In progress</div><div class="v" id="sig-wip">—</div></div>
+          </div>
+          <div class="spectrum-row" id="sig-status-row">
+            <div class="lab"><span>Status spectrum</span><span class="v" id="sig-status-v">—</span></div>
+            <div class="stack" id="sig-status-stack"></div>
+            <div class="legend" id="sig-status-legend"></div>
+          </div>
+          <div class="spectrum-row" id="sig-types-row">
+            <div class="lab"><span>Type breakdown</span><span class="v" id="sig-types-v">—</span></div>
+            <div class="stack" id="sig-types-stack"></div>
+            <div class="legend" id="sig-types-legend"></div>
           </div>
         </div>
         <div class="topproj">
@@ -519,7 +601,7 @@
 <div class="hud">
   <div class="nav">
     <button id="prev" type="button" aria-label="Previous plate">◀ PREV</button>
-    <span class="pos"><span id="pos-num">01</span><span class="total"> / 06</span></span>
+    <span class="pos" aria-hidden="true"><span id="pos-num">01</span><span class="total"> / 06</span></span>
     <button id="next" type="button" aria-label="Next plate">NEXT ▶</button>
     <button id="print" type="button" aria-label="Print all plates as PDF" title="Print all plates as PDF">PRINT</button>
   </div>
@@ -553,11 +635,9 @@ function showSlide(i, direction) {
   slides.forEach((s, k) => {
     s.classList.toggle('active', k === cur);
     s.classList.remove('play', 'enter-right', 'enter-left');
-    if (k !== cur) s.scrollTop = 0;
   });
   const enterClass = direction === 'back' ? 'enter-left' : 'enter-right';
   slides[cur].classList.add(enterClass);
-  slides[cur].scrollTop = 0;
   // Replay entrance after frame
   requestAnimationFrame(() => slides[cur].classList.add('play'));
   document.getElementById('cnum').textContent = String(cur + 1).padStart(2, '0');
@@ -599,7 +679,6 @@ boot();
 async function boot() {
   document.getElementById('loading').classList.remove('hidden');
   if (!TOKEN_RE.test(tokenParam)) { showErr('invalid'); return; }
-  // Mask URL so the token isn't trivially copied / edited from the address bar
   try { history.replaceState(null, '', './d.html'); } catch (_) {}
   try {
     const r = await fetch('./data/' + tokenParam + '.json');
@@ -622,11 +701,11 @@ function showErr(kind, err) {
   const body  = document.getElementById('err-body');
   if (kind === 'fetch') {
     title.textContent = 'Couldn’t load the dossier.';
-    body.innerHTML = 'The profile failed to load. ' +
-      (err && err.message ? '<br><br><span style="color: var(--muted); font-size: 12px;">Error: ' + escapeHtml(err.message) + '</span>' : '');
+    body.innerHTML = 'The profile failed to load.' +
+      (err && err.message ? '<br><br><span style="color: var(--muted); font-size: 12px;">' + escapeHtml(err.message) + '</span>' : '');
   } else {
     title.textContent = 'Invalid or missing token.';
-    body.innerHTML = 'Open this deck via the search form on <a href="./" style="color: var(--accent);">/jr/</a> so a valid token is supplied.';
+    body.innerHTML = 'Open this deck via the search form on <a href="./" style="color: var(--accent);">/jr/</a>.';
   }
 }
 // ─── Render dispatch ──────────────────────────────────────
@@ -685,8 +764,26 @@ function renderCover(d) {
   // Stat ribbon
   document.getElementById('s-total').textContent = d.totalIssues.toLocaleString();
   document.getElementById('s-total-m').textContent = 'Across ' + Object.keys(d.years).length + ' years';
+  // Yearly sparkline — micro-bars, peak in accent
+  const sparkYears = Object.keys(d.years).sort();
+  const sparkMax = Math.max(...sparkYears.map(y => d.years[y]), 1);
+  const peakY = sparkYears.reduce((a, y) => d.years[y] > d.years[a] ? y : a, sparkYears[0]);
+  document.getElementById('s-spark').innerHTML = sparkYears.map(y => {
+    const h = Math.max(2, Math.round((d.years[y] / sparkMax) * 100));
+    const isPeak = y === peakY;
+    return '<div class="b' + (isPeak ? ' peak' : '') + '" style="--h: ' + h + '%" title="' + y + ': ' + d.years[y] + '"><span class="lab">' + y.slice(2) + '</span></div>';
+  }).join('');
   document.getElementById('s-buckets').textContent = d.buckets.length;
   document.getElementById('s-buckets-m').textContent = topNBucketsList(d.buckets, 3) + (d.buckets.length > 3 ? ' …' : '');
+  // Brands sparkline — top-8 buckets as mini bars, tallest in accent
+  const bkSorted = d.buckets.slice().sort((a, b) => b.ticketCount - a.ticketCount);
+  const bkTop = bkSorted.slice(0, 8);
+  const bkMax = Math.max(...bkTop.map(b => b.ticketCount), 1);
+  const bkPeak = bkTop.reduce((a, b) => b.ticketCount > a.ticketCount ? b : a, bkTop[0]);
+  document.getElementById('s-buckets-spark').innerHTML = bkTop.map(b => {
+    const h = Math.max(2, Math.round((b.ticketCount / bkMax) * 100));
+    return '<div class="b' + (b === bkPeak ? ' peak' : '') + '" style="--h: ' + h + '%" title="' + escapeHtml(b.label) + ': ' + b.ticketCount + '"></div>';
+  }).join('');
   document.getElementById('s-tenure').textContent = yrs.toFixed(1);
   document.getElementById('s-tenure-m').textContent = formatTenure(d.tenure);
   document.getElementById('s-spec').textContent = (d.dominantSpecialty || 'mixed').replace(/^./, c => c.toUpperCase());
@@ -708,7 +805,7 @@ function renderTempo(d) {
   const wtShare = {};
   WT_ORDER.forEach(k => wtShare[k] = totalWT ? (d.workTypes[k] || 0) / totalWT : 0);
   const yb = document.getElementById('yearbars');
-  yb.innerHTML = years.map(y => {
+  yb.innerHTML = years.map((y, i) => {
     const total = d.years[y];
     const totalH = (total / maxYear) * 100;
     const segs = WT_ORDER.map(wt => {
@@ -716,7 +813,14 @@ function renderTempo(d) {
       if (h < 0.5) return '';
       return '<div class="seg ' + wt + '" style="--h: ' + h.toFixed(2) + '%"></div>';
     }).join('');
-    return '<div class="yearbar"><div class="stack">' + segs + '</div><div class="label">' + y + '<b>' + total + '</b></div></div>';
+    const prev = i > 0 ? d.years[years[i-1]] : null;
+    let deltaCls = 'flat', deltaStr = '— first';
+    if (prev != null && prev > 0) {
+      const delta = ((total - prev) / prev) * 100;
+      deltaCls = delta > 8 ? 'up' : delta < -8 ? 'down' : 'flat';
+      deltaStr = (delta > 0 ? '+' : '') + Math.round(delta) + '% YoY';
+    } else if (prev === 0 && total > 0) { deltaCls = 'up'; deltaStr = '— resumed'; }
+    return '<div class="yearbar"><div class="stack">' + segs + '</div><div class="label">' + y + '<b>' + total + '</b><span class="delta ' + deltaCls + '">' + deltaStr + '</span></div></div>';
   }).join('');
   // Heatmap
   const ma = d.monthlyActivity || {};
@@ -742,8 +846,75 @@ function renderTempo(d) {
   document.getElementById('tempo-line').innerHTML = peakLine;
   const peakYear = years.reduce((a, y) => d.years[y] > d.years[a] ? y : a, years[0]);
   document.getElementById('tempo-meta').textContent = years.length + ' YEARS · PEAK YEAR ' + peakYear + ' (' + d.years[peakYear] + ' tickets)';
+  // Velocity — active months vs span, avg tickets per active month, cadence label
+  const activeMonths = Object.values(ma).filter(v => v > 0).length;
+  const spanMonths = years.length * 12;
+  const totalAcrossMonths = Object.values(ma).reduce((a,b)=>a+b,0);
+  const avg = activeMonths ? (totalAcrossMonths / activeMonths).toFixed(1) : '0';
+  const cadence = activeMonths >= 36 ? 'sustained' : activeMonths >= 18 ? 'steady' : activeMonths >= 6 ? 'episodic' : 'sparse';
+  document.getElementById('tempo-velocity').innerHTML = 'Velocity &nbsp; · &nbsp; Active <span class="v">' + activeMonths + '</span> of ' + spanMonths + ' months · Avg <span class="v accent">' + avg + '</span> tickets/month · Cadence <span class="v">' + cadence + '</span>';
 }
 function formatMonth(k) { const [y, m] = k.split('-'); return MONTHS[parseInt(m, 10) - 1] + ' ' + y; }
+// ─── Spectrum helpers (status / type) ─────────────────────
+const STATUS_BUCKETS = {
+  done: ['done', 'closed', 'resolved', 'complete', 'completed', 'released', 'shipped', 'merged'],
+  wip:  ['progress', 'review', 'testing', 'doing', 'working', 'dev', 'design', 'approved', 'qa', 'verifying'],
+  todo: ['to do', 'todo', 'open', 'wait', 'backlog', 'new', 'reopen', 'cancel', 'block']
+};
+function classifyStatus(name) {
+  const k = (name || '').toLowerCase().trim();
+  if (!k) return 'todo';
+  for (const bucket of ['done', 'wip', 'todo']) {
+    if (STATUS_BUCKETS[bucket].some(s => k.includes(s))) return bucket;
+  }
+  return 'todo';
+}
+function bucketStatusCounts(statusCounts) {
+  const out = { done: 0, wip: 0, todo: 0 };
+  for (const [k, v] of Object.entries(statusCounts || {})) out[classifyStatus(k)] += v;
+  return out;
+}
+function statusSpectrumParts(statusCounts) {
+  const b = bucketStatusCounts(statusCounts);
+  const sum = Math.max(b.done + b.wip + b.todo, 1);
+  const segs = ['done', 'wip', 'todo'].filter(k => b[k] > 0).map(k => {
+    const w = (b[k] / sum) * 100;
+    return '<div class="seg ' + k + '" style="--w: ' + w.toFixed(2) + '%"></div>';
+  }).join('');
+  const parts = [];
+  if (b.done > 0) parts.push('<b>' + b.done + '</b> done');
+  if (b.wip  > 0) parts.push('<span class="accent">' + b.wip + ' wip</span>');
+  if (b.todo > 0) parts.push(b.todo + ' open');
+  return { stack: segs, legend: parts.join(' · '), buckets: b };
+}
+function typeSpectrumParts(typeCounts, topN) {
+  const n = topN || 5;
+  const entries = Object.entries(typeCounts || {}).sort((a, b) => b[1] - a[1]);
+  if (!entries.length) return { stack: '', legend: '', total: 0 };
+  const total = entries.reduce((s, [, v]) => s + v, 0) || 1;
+  const top = entries.slice(0, n);
+  const restV = entries.slice(n).reduce((s, [, v]) => s + v, 0);
+  const stack = top.map(([k, v], i) => {
+    const w = (v / total) * 100;
+    return '<div class="seg t' + (i + 1) + '" style="--w: ' + w.toFixed(2) + '%" title="' + escapeHtml(k) + ': ' + v + ' (' + Math.round(w) + '%)"></div>';
+  }).join('') + (restV > 0 ? '<div class="seg tr" style="--w: ' + ((restV / total) * 100).toFixed(2) + '%" title="Other: ' + restV + ' (' + Math.round((restV / total) * 100) + '%)"></div>' : '');
+  const legend = top.map(([k, v], i) => {
+    const pct = Math.round((v / total) * 100);
+    return '<div class="item"><span class="sw" style="background: var(--it-' + (i + 1) + ');"></span><b>' + escapeHtml(k) + '</b> ' + v + ' · ' + pct + '%</div>';
+  }).join('') + (restV > 0 ? '<div class="item"><span class="sw" style="background: var(--it-rest);"></span><b>Other</b> ' + restV + ' · ' + Math.round((restV / total) * 100) + '%</div>' : '');
+  return { stack, legend, total, top };
+}
+function typeMixDotsHTML(typeCounts) {
+  const entries = Object.entries(typeCounts || {}).sort((a, b) => b[1] - a[1]);
+  if (!entries.length) return '';
+  const total = entries.reduce((s, [, v]) => s + v, 0) || 1;
+  const top = entries.slice(0, 3);
+  const restV = entries.slice(3).reduce((s, [, v]) => s + v, 0);
+  return '<div class="typemix">' + top.map(([k, v], i) => {
+    const w = (v / total) * 100;
+    return '<div class="seg t' + (i + 1) + '" style="--w: ' + w.toFixed(2) + '%" title="' + escapeHtml(k) + ': ' + v + '"></div>';
+  }).join('') + (restV > 0 ? '<div class="seg tr" style="--w: ' + ((restV / total) * 100).toFixed(2) + '%" title="other: ' + restV + '"></div>' : '') + '</div>';
+}
 // ─── 03 Specialty ─────────────────────────────────────────
 function renderSpecialty(d) {
   const wt = d.workTypes;
@@ -779,8 +950,16 @@ function renderSpecialty(d) {
     return '<div class="p ' + p.toLowerCase() + '"><div class="label">' + p + '</div><div class="v">' + v + '</div><div class="bar"><i style="--p: ' + pct + '%"></i></div></div>';
   }).join('');
   document.getElementById('prio-row').innerHTML = cells;
-  // Apply --p (CSS var) via inline style after a tick to trigger transition
-  // (already in the template via style attr; just need .play class)
+  // Issue-type lens — surface d.issueTypes (Sub-task / Story / Task / Design / Epic / …)
+  const itParts = typeSpectrumParts(d.issueTypes || {}, 5);
+  if (itParts.total > 0) {
+    document.getElementById('issuetype-block').style.display = '';
+    document.getElementById('it-total').textContent = itParts.total + ' tickets · ' + (itParts.top || []).length + ' top types';
+    document.getElementById('it-stack').innerHTML = itParts.stack;
+    document.getElementById('it-legend').innerHTML = itParts.legend;
+  } else {
+    document.getElementById('issuetype-block').style.display = 'none';
+  }
   // Executor ratio
   const ex = d.executorRatio || 0;
   const exPct = Math.round(ex * 100);
@@ -796,16 +975,17 @@ function renderBrands(d) {
   const top = sorted.slice(0, 8);
   const max = Math.max(...top.map(b => b.ticketCount), 1);
   document.getElementById('br-meta').innerHTML = '<b>' + d.buckets.length + ' BRANDS · ' + d.totalIssues + ' TICKETS</b><br>Top 8 by ticket count';
-  const ledger = '<div class="brow head"><div>#</div><div>Brand</div><div>Ticket count</div><div>Status</div><div>Year range</div></div>' +
+  const ledger = '<div class="brow head"><div>#</div><div>Brand · type-mix</div><div>Ticket count</div><div>Status spectrum</div><div>Year range</div></div>' +
     top.map((b, i) => {
       const pct = Math.round((b.ticketCount / max) * 100);
       const yrs = Object.keys(b.years || {}).sort();
       const yrange = yrs.length ? yrs[0] + (yrs.length > 1 ? '–' + yrs[yrs.length-1] : '') : '—';
-      const wipPct = b.ticketCount ? Math.round((b.wipCount / b.ticketCount) * 100) : 0;
+      const sp = statusSpectrumParts(b.statusCounts || { Done: b.doneCount });
+      const typeMix = typeMixDotsHTML(b.typeCounts);
       return '<div class="brow"><div class="rank">' + String(i+1).padStart(2,'0') + '</div>' +
-        '<div class="label">' + escapeHtml(b.label) + '<span class="id">' + escapeHtml(b.id) + '</span></div>' +
+        '<div class="label">' + escapeHtml(b.label) + '<span class="id">' + escapeHtml(b.id) + '</span>' + typeMix + '</div>' +
         '<div class="barwrap"><div class="bar"><i style="--p: ' + pct + '%"></i></div><div class="count">' + b.ticketCount + '</div></div>' +
-        '<div class="pills"><span class="pill done">' + b.doneCount + ' DONE</span>' + (b.wipCount > 0 ? '<span class="pill wip">' + b.wipCount + ' WIP</span>' : '') + '</div>' +
+        '<div class="spectrum"><div class="stack">' + sp.stack + '</div><div class="legend">' + sp.legend + '</div></div>' +
         '<div class="meta">' + yrange + '</div></div>';
     }).join('');
   document.getElementById('brand-ledger').innerHTML = ledger;
@@ -831,10 +1011,33 @@ function renderSignature(d) {
   document.getElementById('sig-total').textContent = b.ticketCount;
   document.getElementById('sig-done').textContent = b.doneCount;
   document.getElementById('sig-wip').textContent = b.wipCount;
+  // Status spectrum (full status names from b.statusCounts)
+  const sp = statusSpectrumParts(b.statusCounts || { Done: b.doneCount });
+  document.getElementById('sig-status-stack').innerHTML = sp.stack;
+  document.getElementById('sig-status-legend').innerHTML = sp.legend;
+  const statusKeys = Object.keys(b.statusCounts || {});
+  document.getElementById('sig-status-v').textContent = statusKeys.length + ' state' + (statusKeys.length === 1 ? '' : 's');
+  // Type breakdown
+  const tp = typeSpectrumParts(b.typeCounts || {}, 5);
+  if (tp.total > 0) {
+    document.getElementById('sig-types-row').style.display = '';
+    document.getElementById('sig-types-stack').innerHTML = tp.stack;
+    document.getElementById('sig-types-legend').innerHTML = tp.legend;
+    document.getElementById('sig-types-v').textContent = (tp.top || []).length + ' top types';
+  } else {
+    document.getElementById('sig-types-row').style.display = 'none';
+  }
   // Top projects
   const topProj = (b.topProjects || []).slice(0, 5);
   document.getElementById('sig-proj').innerHTML = topProj.map(p => {
-    return '<div class="row"><div class="key">' + escapeHtml(p.key) + '</div><div class="ttl">' + escapeHtml(p.title) + '</div><div class="n">' + p.count + ' ticket' + (p.count === 1 ? '' : 's') + '</div></div>';
+    const yrs = Object.keys(p.years || {}).sort();
+    const yMax = Math.max(...yrs.map(y => p.years[y]), 1);
+    const yPeak = yrs.length ? yrs.reduce((a, y) => p.years[y] > p.years[a] ? y : a, yrs[0]) : null;
+    const yearBars = yrs.length > 1 ? '<div class="proj-years">' + yrs.map(y => {
+      const h = Math.max(2, Math.round((p.years[y] / yMax) * 100));
+      return '<div class="yb' + (y === yPeak ? ' peak' : '') + '" style="height: ' + h + '%" title="' + y + ': ' + p.years[y] + '"></div>';
+    }).join('') + '</div>' : '';
+    return '<div class="row"><div class="key">' + escapeHtml(p.key) + '</div><div class="ttl">' + escapeHtml(p.title) + yearBars + '</div><div class="n">' + p.count + ' ticket' + (p.count === 1 ? '' : 's') + '</div></div>';
   }).join('') || '<div class="empty-msg">No project breakdown available.</div>';
   // Sample tickets
   const samples = (b.sampleTickets || []).slice(0, 5);
