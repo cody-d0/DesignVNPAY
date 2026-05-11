@@ -324,15 +324,16 @@
     .cover-name { font-size: clamp(40px, 9vw, 60px) !important; }
     .cover-sub { font-size: 18px !important; }
     .cover { gap: 24px; }
-    /* Cover stat ribbon → 2-column */
-    .stat-ribbon { grid-template-columns: 1fr 1fr !important; gap: 16px !important; padding-top: 16px !important; }
-    .stat-ribbon .stat { padding: 12px 8px !important; border-right: 1px solid var(--border) !important; }
+    /* Cover stat ribbon → 2-column (minmax(0,1fr) lets columns shrink below natural label width) */
+    .stat-ribbon { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; gap: 16px !important; padding-top: 16px !important; }
+    .stat-ribbon .stat { padding: 12px 8px !important; border-right: 1px solid var(--border) !important; min-width: 0 !important; }
     .stat-ribbon .stat .v { font-size: 28px !important; }
-    /* All grids collapse */
-    .donut-row, .matrix-row, .shock-row { grid-template-columns: 1fr !important; gap: 24px !important; }
+    .stat-ribbon .key, .stat-ribbon .meta { letter-spacing: 0.06em !important; }
+    /* All grids collapse with minmax(0,...) so labels can wrap inside narrow cells */
+    .donut-row, .matrix-row, .shock-row { grid-template-columns: minmax(0, 1fr) !important; gap: 24px !important; }
     .donut-wrap { width: min(280px, 100%) !important; height: 280px !important; margin: 0 auto; }
-    .cluster-grid, .riser-grid, .gap-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
-    .anchor-grid { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+    .cluster-grid, .riser-grid, .gap-grid { grid-template-columns: minmax(0, 1fr) !important; gap: 16px !important; }
+    .anchor-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; gap: 12px !important; }
     .anchor-card { padding: 20px 14px !important; }
     .anchor-card .stat { font-size: 22px !important; line-height: 1.1; }
     .anchor-card .meta { font-size: 9px !important; }
@@ -342,7 +343,7 @@
     .cluster h3 { font-size: 24px !important; }
     .hub-row { grid-template-columns: 1fr 1fr !important; }
     /* Risk table → vertical card */
-    .risk-row { grid-template-columns: 1fr !important; gap: 8px !important; padding: 16px 0 !important; }
+    .risk-row { grid-template-columns: minmax(0, 1fr) !important; gap: 8px !important; padding: 16px 0 !important; }
     .risk-row.head { display: none !important; }
     .risk-row .brand { font-size: 18px !important; word-break: break-word; }
     .risk-row .meter span { font-size: 10px !important; }
