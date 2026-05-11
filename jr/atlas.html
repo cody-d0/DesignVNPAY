@@ -507,7 +507,8 @@ boot();
 function render(p, ins, sync) {
   const team = sync.team || {};
   const roster = (sync.users || []).length;
-  const dd = ins.deep_dive || {};
+  // Merge both deep-dive layers (deep_dive has brand/year/career; dimension_deep_dive has PageRank/bus-factor/clusters)
+  const dd = Object.assign({}, ins.deep_dive || {}, ins.dimension_deep_dive || {});
   const wtShare = p.workType_share || {};
 
   // ─── Slide 01: Cover stats ───
