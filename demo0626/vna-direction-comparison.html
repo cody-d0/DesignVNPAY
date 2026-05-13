@@ -1,0 +1,280 @@
+
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vietnam Airlines · Visual Direction Comparison</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      min-height: 100vh;
+      background: #0c0c0f;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      padding: 48px 40px 80px;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; gap: 0;
+    }
+
+    .page-header { text-align: center; margin-bottom: 40px; }
+    .page-eyebrow {
+      font-size: 11px; font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(255,255,255,0.28); margin-bottom: 10px;
+    }
+    .page-title { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; color: #fff; margin: 0 0 8px; }
+    .page-sub   { font-size: 14px; color: rgba(255,255,255,0.38); margin: 0; }
+
+    .screen-nav {
+      display: flex; gap: 8px; margin-bottom: 44px; flex-wrap: wrap; justify-content: center;
+    }
+    .sn-btn {
+      position: relative; padding: 10px 18px; border-radius: 10px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.45); font-family: inherit; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: background 0.14s, color 0.14s, border-color 0.14s;
+    }
+    .sn-btn:hover { background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.7); }
+    .sn-btn.active {
+      background: rgba(255,255,255,0.11); border-color: rgba(255,255,255,0.26);
+      color: rgba(255,255,255,0.95); font-weight: 600;
+    }
+    .sn-btn.active::after {
+      content: ''; position: absolute; bottom: -3px; left: 50%; transform: translateX(-50%);
+      width: 20px; height: 2px; border-radius: 1px;
+      background: oklch(58% 0.18 255);
+    }
+    .sn-meta { font-size: 10px; font-family: ui-monospace, Menlo, monospace; color: rgba(255,255,255,0.28); display: block; margin-top: 2px; font-weight: 400; }
+
+    .dir-row {
+      display: flex; align-items: flex-start; gap: 28px; justify-content: center;
+    }
+
+    .dir-col { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+
+    .dir-head { width: 250px; display: flex; flex-direction: column; gap: 6px; text-align: center; }
+    .dir-swatch-row { display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .dir-swatch { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .dir-name { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: rgba(255,255,255,0.92); }
+    .dir-ref  { font-size: 10px; font-family: ui-monospace, 'SF Mono', Menlo, monospace; color: rgba(255,255,255,0.28); letter-spacing: 0.04em; }
+    .dir-badge {
+      display: inline-block; padding: 3px 8px; border-radius: 4px;
+      font-size: 10px; font-family: ui-monospace, Menlo, monospace;
+      letter-spacing: 0.04em; font-weight: 500; align-self: center;
+    }
+
+    .dir-col.modern .dir-badge   { background: oklch(58% 0.18 255 / 0.15); color: oklch(65% 0.16 255); }
+    .dir-col.modern .ds-bg       { background: oklch(99% 0.002 240); border: 1px solid rgba(255,255,255,0.2); }
+    .dir-col.modern .ds-fg       { background: oklch(18% 0.012 250); }
+    .dir-col.modern .ds-accent   { background: oklch(58% 0.18 255); }
+    .dir-col.tech .dir-badge     { background: oklch(58% 0.16 145 / 0.15); color: oklch(58% 0.16 145); }
+    .dir-col.tech .ds-bg         { background: oklch(98% 0.005 250); border: 1px solid rgba(255,255,255,0.2); }
+    .dir-col.tech .ds-fg         { background: oklch(22% 0.02 240); }
+    .dir-col.tech .ds-accent     { background: oklch(58% 0.16 145); }
+    .dir-col.brutalist .dir-badge{ background: oklch(60% 0.22 25 / 0.15); color: oklch(65% 0.18 25); }
+    .dir-col.brutalist .ds-bg    { background: oklch(96% 0.004 100); border: 1px solid rgba(255,255,255,0.2); }
+    .dir-col.brutalist .ds-fg    { background: oklch(15% 0.02 100); }
+    .dir-col.brutalist .ds-accent{ background: oklch(60% 0.22 25); }
+
+    .clay-phone {
+      position: relative; padding: 32px 20px 28px; border-radius: 58px;
+      background: #f0f0f3;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.12),
+        0 16px 48px rgba(0,0,0,0.32), 0 40px 80px -8px rgba(0,0,0,0.22);
+      zoom: 0.60; flex-shrink: 0;
+    }
+    .clay-phone::before {
+      content: ''; position: absolute; right: -5px; top: 200px;
+      width: 5px; height: 58px; background: #e2e2e5; border-radius: 0 3px 3px 0;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+    }
+    .clay-phone::after {
+      content: ''; position: absolute; left: -5px; top: 160px;
+      width: 5px; height: 40px; background: #e2e2e5; border-radius: 3px 0 0 3px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.1), 0 56px 0 #e2e2e5, 0 56px 0 1px rgba(0,0,0,0.1);
+    }
+    .clay-screen { width: 390px; height: 844px; border-radius: 40px; overflow: hidden; position: relative; }
+    .clay-screen iframe { width: 390px; height: 844px; border: 0; display: block; }
+    .clay-screen::after {
+      content: ''; position: absolute; inset: 0; border-radius: 40px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -1px 0 rgba(0,0,0,0.05);
+      pointer-events: none;
+    }
+
+    .dir-divider { width: 1px; align-self: stretch; margin: 80px 0 40px; background: rgba(255,255,255,0.07); flex-shrink: 0; }
+
+    .legend {
+      margin-top: 48px; display: flex; gap: 40px; justify-content: center;
+      border-top: 1px solid rgba(255,255,255,0.07); padding-top: 32px; flex-wrap: wrap;
+    }
+    .leg-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .leg-row { display: flex; gap: 4px; }
+    .leg-swatch { width: 12px; height: 12px; border-radius: 50%; }
+    .leg-name { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.55); }
+    .leg-accent { font-size: 11px; font-family: ui-monospace, Menlo, monospace; font-weight: 600; }
+    .leg-item.modern  .leg-accent { color: oklch(65% 0.16 255); }
+    .leg-item.tech    .leg-accent { color: oklch(58% 0.16 145); }
+    .leg-item.brut    .leg-accent { color: oklch(65% 0.18 25); }
+
+    @keyframes slide-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .page-header { animation: slide-up 0.4s ease 0.04s both; }
+    .screen-nav  { animation: slide-up 0.4s ease 0.10s both; }
+    .dir-row     { animation: slide-up 0.5s ease 0.16s both; }
+    .legend      { animation: slide-up 0.4s ease 0.22s both; }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="page-header">
+      <div class="page-eyebrow">Vietnam Airlines · SF1 Booking Flow · 3 Visual Directions</div>
+      <h1 class="page-title">Direction Comparison</h1>
+      <p class="page-sub">Cùng dữ liệu — 3 visual direction khác nhau. Chọn màn hình để so sánh.</p>
+    </div>
+
+    <div class="screen-nav" id="screen-nav">
+      <button class="sn-btn active" data-screen="01-search.html">
+        Tìm chuyến
+        <span class="sn-meta">01 · SearchShell</span>
+      </button>
+      <button class="sn-btn" data-screen="02-results.html">
+        Kết quả
+        <span class="sn-meta">02 · ResultsShell</span>
+      </button>
+      <button class="sn-btn" data-screen="03-booking.html">
+        Đặt chỗ
+        <span class="sn-meta">03 · BookingShell</span>
+      </button>
+      <button class="sn-btn" data-screen="04-payment.html">
+        Thanh toán
+        <span class="sn-meta">04 · PaymentShell</span>
+      </button>
+      <button class="sn-btn" data-screen="05-confirmation.html">
+        Xác nhận
+        <span class="sn-meta">05 · ConfirmShell</span>
+      </button>
+    </div>
+
+    <div class="dir-row">
+
+      <div class="dir-col modern">
+        <div class="dir-head">
+          <div class="dir-swatch-row">
+            <div class="dir-swatch ds-bg"></div>
+            <div class="dir-swatch ds-fg"></div>
+            <div class="dir-swatch ds-accent"></div>
+          </div>
+          <div class="dir-name">Modern Minimal</div>
+          <div class="dir-ref">Linear · Vercel · Notion</div>
+          <span class="dir-badge">Cobalt · System sans</span>
+        </div>
+        <div class="clay-phone">
+          <div class="clay-screen">
+            <iframe id="iframe-modern" src="01-search.html?dir=modern" title="Modern Minimal" loading="eager" sandbox="allow-scripts allow-same-origin"></iframe>
+          </div>
+        </div>
+      </div>
+
+      <div class="dir-divider"></div>
+
+      <div class="dir-col tech">
+        <div class="dir-head">
+          <div class="dir-swatch-row">
+            <div class="dir-swatch ds-bg"></div>
+            <div class="dir-swatch ds-fg"></div>
+            <div class="dir-swatch ds-accent"></div>
+          </div>
+          <div class="dir-name">Tech / Utility</div>
+          <div class="dir-ref">Datadog · GitHub · Sentry</div>
+          <span class="dir-badge">Green · Dense · Tabular</span>
+        </div>
+        <div class="clay-phone">
+          <div class="clay-screen">
+            <iframe id="iframe-tech" src="01-search.html?dir=tech" title="Tech / Utility" loading="eager" sandbox="allow-scripts allow-same-origin"></iframe>
+          </div>
+        </div>
+      </div>
+
+      <div class="dir-divider"></div>
+
+      <div class="dir-col brutalist">
+        <div class="dir-head">
+          <div class="dir-swatch-row">
+            <div class="dir-swatch ds-bg"></div>
+            <div class="dir-swatch ds-fg"></div>
+            <div class="dir-swatch ds-accent"></div>
+          </div>
+          <div class="dir-name">Brutalist</div>
+          <div class="dir-ref">Are.na · Yale · Read.cv</div>
+          <span class="dir-badge">Orange · Mono body · No radius</span>
+        </div>
+        <div class="clay-phone">
+          <div class="clay-screen">
+            <iframe id="iframe-brutalist" src="01-search.html?dir=brutalist" title="Brutalist" loading="eager" sandbox="allow-scripts allow-same-origin"></iframe>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="legend">
+      <div class="leg-item modern">
+        <div class="leg-row">
+          <div class="leg-swatch" style="background:oklch(99% 0.002 240);border:1px solid rgba(255,255,255,0.2)"></div>
+          <div class="leg-swatch" style="background:oklch(18% 0.012 250)"></div>
+          <div class="leg-swatch" style="background:oklch(58% 0.18 255)"></div>
+        </div>
+        <div class="leg-name">Modern Minimal</div>
+        <div class="leg-accent">radius: 16px · accent: cobalt</div>
+      </div>
+      <div class="leg-item tech">
+        <div class="leg-row">
+          <div class="leg-swatch" style="background:oklch(98% 0.005 250);border:1px solid rgba(255,255,255,0.2)"></div>
+          <div class="leg-swatch" style="background:oklch(22% 0.02 240)"></div>
+          <div class="leg-swatch" style="background:oklch(58% 0.16 145)"></div>
+        </div>
+        <div class="leg-name">Tech / Utility</div>
+        <div class="leg-accent">radius: 4px · accent: green</div>
+      </div>
+      <div class="leg-item brut">
+        <div class="leg-row">
+          <div class="leg-swatch" style="background:oklch(96% 0.004 100);border:1px solid rgba(255,255,255,0.2)"></div>
+          <div class="leg-swatch" style="background:oklch(15% 0.02 100)"></div>
+          <div class="leg-swatch" style="background:oklch(60% 0.22 25)"></div>
+        </div>
+        <div class="leg-name">Brutalist</div>
+        <div class="leg-accent">radius: 0 · accent: orange-red</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const iframes = {
+      modern:    document.getElementById('iframe-modern'),
+      tech:      document.getElementById('iframe-tech'),
+      brutalist: document.getElementById('iframe-brutalist'),
+    };
+
+    function updateAll(screen) {
+      iframes.modern.src    = screen + '?dir=modern';
+      iframes.tech.src      = screen + '?dir=tech';
+      iframes.brutalist.src = screen + '?dir=brutalist';
+    }
+
+    document.getElementById('screen-nav').addEventListener('click', function(e) {
+      const btn = e.target.closest('.sn-btn');
+      if (!btn) return;
+      this.querySelectorAll('.sn-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      updateAll(btn.dataset.screen);
+    });
+  </script>
+</body>
+</html>

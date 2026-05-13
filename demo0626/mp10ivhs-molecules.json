@@ -1,0 +1,1946 @@
+{
+  "$comment": [
+    "═══════════════════════════════════════════════════════════",
+    "  molecules.json — HOME Domain (Compliant v3.0)",
+    "  Generated: 2026-05-08 via shell-architecture skill",
+    "  Sequential IDs M-01..M-18 per shell-architecture convention",
+    "═══════════════════════════════════════════════════════════",
+    "",
+    "LIFECYCLE:",
+    "  T1 (shell-architecture):    10 structural fields per molecule (DONE)",
+    "  T2 (molecule-description):  APPENDS enrichment{} block (DONE)",
+    "  T3 (D2.6 agent overlay):    composed_prompt (DEFERRED)",
+    "",
+    "VNAairline EXTENSIONS:",
+    "  - tier_variants{} per molecule (5-tier Lotusmiles)",
+    "  - cpm_state dimension (where applicable — 0 in HOME)",
+    "  - cultural_theme dimension (Zone A)"
+  ],
+  "meta": {
+    "domain": "home",
+    "version": "v1.0",
+    "schema_version": "3.0",
+    "molecule_count": 18,
+    "enriched_count": 18,
+    "generated_at": "2026-05-08",
+    "shell": "DashboardShell",
+    "source_artifacts": [
+      "urd/core/home-dashboard.md",
+      "domains/home/SF0-home-dashboard/ANALYSIS.md",
+      "domains/home/SF0-home-dashboard/SCREEN-MODEL.md",
+      "EXECUTIVE-SUMMARY.md §8 (auto-injected via [EXEC-SUMM] tags)",
+      "skills/ux-skills/references/domains/airline/lotusmiles.json",
+      "skills/ux-skills/references/domains/airline/heuristics.json"
+    ]
+  },
+  "molecules": [
+    {
+      "id": "M-01",
+      "name": "TierBadgePersistent",
+      "shell": "DashboardShell",
+      "slot": "HeaderInfo",
+      "category": "🔁 SHARED",
+      "level": "molecule",
+      "screens": "MH-H1 + ALL screens (cross-app persistent header strip)",
+      "note": "Persistent across ALL major screens, not just Home. Tier identity always visible.",
+      "structure": [
+        {
+          "name": "TierIcon",
+          "detail": "tier emoji (🌸/🪁/✨/💎/✈️)",
+          "type": "icon"
+        },
+        {
+          "name": "TierLabel",
+          "detail": "Vietnamese tier name + bilingual EN",
+          "type": "text"
+        },
+        {
+          "name": "MilesCount",
+          "detail": "tabular numerals",
+          "type": "text"
+        }
+      ],
+      "state_dimensions": [
+        {
+          "key": "tier",
+          "values": [
+            "Silver",
+            "Titanium",
+            "Gold",
+            "Platinum",
+            "MillionMiler"
+          ]
+        },
+        {
+          "key": "miles_display",
+          "values": [
+            "compact",
+            "expanded",
+            "hidden"
+          ]
+        },
+        {
+          "key": "upgrade_state",
+          "values": [
+            "just_upgraded_celebration",
+            "stable",
+            "near_downgrade"
+          ]
+        }
+      ],
+      "tier_variants": {
+        "Silver": {
+          "icon": "🌸",
+          "color_token": "color.tier.silver.base",
+          "voice_tone": "Welcome"
+        },
+        "Titanium": {
+          "icon": "🪁",
+          "color_token": "color.tier.titanium.base",
+          "voice_tone": "Recognized"
+        },
+        "Gold": {
+          "icon": "✨",
+          "color_token": "color.tier.gold.base",
+          "voice_tone": "Premium"
+        },
+        "Platinum": {
+          "icon": "💎",
+          "color_token": "color.tier.platinum.base",
+          "voice_tone": "Curated"
+        },
+        "MillionMiler": {
+          "icon": "✈️",
+          "color_token": "color.tier.million-miler.base",
+          "voice_tone": "Lifetime gratitude"
+        }
+      },
+      "enrichment": {
+        "context": {
+          "problem": "Lotusmiles tier hidden until Profile (3+ taps) — 30%+ high-value customers feel mass-market generic",
+          "trigger": "URD §H Zone A spec + AR-LOY-01 [Critical]",
+          "origin": "[EXEC-SUMM] N-02 Tier-driven persona axis (white-space) + audit C-04 violation",
+          "predecessor": null
+        },
+        "intent": {
+          "quote": "Tier identity must be visible in 0 taps — every screen, every session, persistent recognition.",
+          "primary_goal": "User feels recognized at premium tier within 1 second of session",
+          "personas": "P-02 Anh Tuấn (Titanium frequent commuter) + P-03 Chị Hương (Gold senior business) + P-05 Bà Mai (MM lifetime VIP)",
+          "context_of_use": "Header strip persistent across ALL screens — Home, Trips, Profile, Tools, modal overlays",
+          "value_pyramid": "Functional (visibility) → Emotional (recognition) → Self-actualization (loyalty pride)"
+        },
+        "insight": {
+          "core_pattern": "Persistent identity badge — Marriott Bonvoy + SQ KrisFlyer pattern",
+          "behavioral": "Recognition-Trust correlation: persistent tier visibility +35% perceived service quality (Deloitte 2022)",
+          "differentiation": "Most competitors show tier on Profile only. SQ on Home. VNA: persistent EVERY screen.",
+          "state_machine": "5 tier × 3 miles_display × 3 upgrade_state = 45 combinations"
+        },
+        "evidence": [
+          {
+            "type": "🔍",
+            "claim": "AR-LOY-01 Tier badge persistent across screens [Critical]",
+            "source": "airline pack heuristics.json"
+          },
+          {
+            "type": "🏦",
+            "claim": "Lotusmiles 5-tier verified vietnamairlines.com 2026-05-07",
+            "source": "airline pack lotusmiles.json"
+          },
+          {
+            "type": "🛡️",
+            "claim": "Insight N-02 Tier-driven persona axis = white-space (Rule 2)",
+            "source": "EXECUTIVE-SUMMARY.md §5"
+          }
+        ],
+        "handoff": {
+          "priority": "P0",
+          "complexity": "low",
+          "dependencies": [],
+          "acceptance": [
+            "Tier badge renders within 100ms of screen mount",
+            "Tier change (upgrade/downgrade) triggers token re-render without flicker",
+            "Badge visible across all 33 screens including modals (z-index: persistent)"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M-02",
+      "name": "GreetingHeader",
+      "shell": "DashboardShell",
+      "slot": "HeaderInfo",
+      "category": "⭐ ĐẶC THÙ",
+      "level": "molecule",
+      "screens": "MH-H1 (Home only)",
+      "note": "Tier-aware + cultural moment + i18n. Single screen but high state variation.",
+      "structure": [
+        {
+          "name": "GreetingText",
+          "detail": "tier-aware + name + cultural suffix template",
+          "type": "text"
+        },
+        {
+          "name": "AvatarThumbnail",
+          "detail": "user avatar 40dp circle, tap → Profile",
+          "type": "action"
+        },
+        {
+          "name": "CulturalDecoration",
+          "detail": "lotus/Tết/holiday motif micro-detail",
+          "type": "icon"
+        }
+      ],
+      "state_dimensions": [
+        {
+          "key": "tier",
+          "values": [
+            "Silver",
+            "Titanium",
+            "Gold",
+            "Platinum",
+            "MillionMiler"
+          ]
+        },
+        {
+          "key": "cultural_theme",
+          "values": [
+            "default",
+            "tet",
+            "le_30_4",
+            "le_lao_dong",
+            "quoc_khanh",
+            "mid_autumn",
+            "birthday"
+          ]
+        },
+        {
+          "key": "first_session",
+          "values": [
+            "true",
+            "false"
+          ]
+        }
+      ],
+      "tier_variants": {
+        "Silver": "Chào {name}! Sẵn sàng cho hành trình mới? 🌸",
+        "Titanium": "Chào anh/chị {name} 🪁",
+        "Gold": "Chào ông/bà {name} — Lotus Lounge sẵn sàng",
+        "Platinum": "Chào anh/chị {name} — gia đình đã được giữ chỗ",
+        "MillionMiler": "Cảm ơn ông/bà {name} — chuyến bay thứ {flight_count}"
+      },
+      "enrichment": {
+        "context": {
+          "problem": "Generic greeting feels faceless corporate — Million Miler treated same as Silver",
+          "trigger": "URD §H Zone A Greeting + airline pack ux_brand_promise per tier",
+          "origin": "[EXEC-SUMM] N-02 Tier-persona + N-07 Cultural integration",
+          "predecessor": "M-01"
+        },
+        "intent": {
+          "quote": "Greeting honors tier promise + cultural moment + day rhythm.",
+          "primary_goal": "User feels 'app knows me' within first impression",
+          "personas": "All 7 personas (cross-tier + foreign + family)",
+          "context_of_use": "First view on Home Dashboard mỗi session",
+          "value_pyramid": "Emotional (warmth) → Belonging (recognition)"
+        },
+        "insight": {
+          "core_pattern": "Per-tier voice tone — adapted from lotusmiles.json ux_brand_promise",
+          "behavioral": "Personal greeting +26% recommendation rate (HBR 2020)",
+          "differentiation": "Most airlines: generic greeting. SQ KrisFlyer: tier-name. VNA: tier + cultural + flight count (MM)",
+          "state_machine": "5 tier × 7 cultural × 6 lang × 2 first_session = 420 (collapsed via i18n + theme overlay)"
+        },
+        "evidence": [
+          {
+            "type": "🔍",
+            "claim": "Per-tier voice tone tokens in design-tokens.md",
+            "source": "09-handoff/design-tokens.md"
+          },
+          {
+            "type": "🏦",
+            "claim": "lotusmiles.json ux_brand_promise: 'Welcome' → 'Lifetime gratitude'",
+            "source": "airline pack lotusmiles.json"
+          },
+          {
+            "type": "📊",
+            "claim": "HBR personalization +26% rec rate",
+            "source": "I-001 Hyper-Personalization deck"
+          }
+        ],
+        "handoff": {
+          "priority": "P1",
+          "complexity": "medium",
+          "dependencies": [
+            "M-01"
+          ],
+          "acceptance": [
+            "Greeting copy matches tier voice tone tokens 100%",
+            "Cultural overlay activates within ±7 days of cultural event",
+            "Birthday greeting triggered when device locale + user.birthday matches today",
+            "i18n fallback: any language → en-US fallback if vi-VN not available"
+          ]
+        }
+      },
+      "runtime_dimensions": [
+        {
+          "key": "language",
+          "values": [
+            "vi-VN",
+            "en-US",
+            "ko-KR",
+            "zh-CN",
+            "ja-JP",
+            "fr-FR"
+          ],
+          "note": "Removed from state_dimensions 2026-05-08 — multi-language handled at runtime via i18n, not Figma variant"
+        }
+      ]
+    },
+    {
+      "id": "M-03",
+      "name": "WeatherMiniCard",
+      "shell": "DashboardShell",
+      "slot": "HeaderInfo",
+      "category": "🔁 SHARED",
+      "level": "molecule",
+      "screens": "MH-H1 + departure context views (cross-context: origin + destination)",
+      "note": "Origin context default; switches to destination after booking confirmed",
+      "structure": [
+        {
+          "name": "WeatherIcon",
+          "detail": "AccuWeather/OpenWeather adaptive icon",
+          "type": "icon"
+        },
+        {
+          "name": "TempReading",
+          "detail": "current temp + city code",
+          "type": "text"
+        },
+        {
+          "name": "DelayRiskIndicator",
+          "detail": "shown if weather risk >30%",
+          "type": "badge"
+        }
+      ],
+      "state_dimensions": [
+        {
+          "key": "weather_state",
+          "values": [
+            "sunny",
+            "cloudy",
+            "rainy",
+            "stormy",
+            "snowy",
+            "foggy"
+          ]
+        },
+        {
+          "key": "time_of_day",
+          "values": [
+            "morning",
+            "afternoon",
+            "evening",
+            "night"
+          ]
+        },
+        {
+          "key": "delay_risk",
+          "values": [
+            "none",
+            "low",
+            "medium",
+            "high"
+          ]
+        }
+      ],
+      "enrichment": {
+        "context": {
+          "problem": "No weather/timezone awareness — user surprised by weather at destination",
+          "trigger": "URD §H Zone A weather + I-002 Adaptive UI Pillar 2",
+          "origin": "[EXEC-SUMM] §8 Phase 3 Pillar 2 Adaptive UI",
+          "predecessor": "M-02"
+        },
+        "intent": {
+          "quote": "Weather + delay risk surfaced before user thinks to check.",
+          "primary_goal": "User makes informed prep decision (clothing, departure time) automatically",
+          "personas": "All travelers — esp Anh Tuấn (Titanium business for delay prediction)",
+          "context_of_use": "Home Zone A header strip; switches to destination after booking",
+          "value_pyramid": "Functional (info) → Confidence (preparation)"
+        },
+        "insight": {
+          "core_pattern": "Apple Weather Lockscreen widget pattern + Lufthansa weather integration",
+          "behavioral": "NN/g 2020: context-aware interface +25% satisfaction",
+          "differentiation": "Generic airline apps: no weather. VNA: weather + delay risk in same component",
+          "state_machine": "6 weather × 4 time × 4 risk × 2 source = 192"
+        },
+        "evidence": [
+          {
+            "type": "🔍",
+            "claim": "I-002 Adaptive UI deck Pillar 2 weather integration",
+            "source": "VNAinput/VNA - DeskResearch1b-compressed.pdf"
+          },
+          {
+            "type": "📊",
+            "claim": "NASA ASRS: 70% delays = weather (early detection critical)",
+            "source": "I-002 citation"
+          },
+          {
+            "type": "📈",
+            "claim": "NN/g context-aware UI +25% satisfaction",
+            "source": "I-002 citation"
+          }
+        ],
+        "handoff": {
+          "priority": "P1",
+          "complexity": "medium",
+          "dependencies": [],
+          "acceptance": [
+            "Weather updates every 30min from API",
+            "Delay risk threshold >30% triggers indicator visibility",
+            "Origin → destination switch happens within 1 hour of booking confirmation"
+          ]
+        }
+      },
+      "runtime_dimensions": [
+        {
+          "key": "data_source",
+          "values": [
+            "origin_city",
+            "destination_city"
+          ],
+          "note": "Removed from state_dimensions 2026-05-08 — origin vs destination weather is gate logic, not UI variant"
+        }
+      ]
+    },
+    {
+      "id": "M-04",
+      "name": "FlightMiniCard",
+      "shell": "DashboardShell",
+      "slot": "HeaderInfo",
+      "category": "🔁 SHARED",
+      "level": "molecule",
+      "screens": "MH-H1 (when active trip) + Trips list + lockscreen Live Activity (cross-context)",
+      "note": "Persistent when active trip; visible across multiple shells via header strip + Live Activity widget",
+      "structure": [
+        {
+          "name": "FlightCode",
+          "detail": "VN+number (vd VN225)",
+          "type": "text"
+        },
+        {
+          "name": "RouteIcon",
+          "detail": "origin → destination airport codes with ✈️",
+          "type": "icon"
+        },
+        {
+          "name": "TimeCountdown",
+          "detail": "boarding/departure relative time",
+          "type": "text"
+        },
+        {
+          "name": "GateIndicator",
+          "detail": "gate code + terminal",
+          "type": "text"
+        },
+        {
+          "name": "StatusPill",
+          "detail": "on-time/delay/boarding/cancelled color-coded",
+          "type": "badge"
+        }
+      ],
+      "state_dimensions": [
+        {
+          "key": "flight_phase",
+          "values": [
+            "pre_booking",
+            "booked_far",
+            "T-24h",
+            "T-2h_boarding",
+            "boarding",
+            "in_air",
+            "post_arrival",
+            "no_active_trip"
+          ]
+        },
+        {
+          "key": "status",
+          "values": [
+            "on_time",
+            "delay_minor",
+            "delay_major",
+            "cancelled",
+            "boarding_open",
+            "boarding_final"
+          ]
+        }
+      ],
+      "enrichment": {
+        "context": {
+          "problem": "No quick flight reference at Home — user navigates 5+ taps to see current flight",
+          "trigger": "URD §H Zone A Mini-card + AR-NAV-04 [Critical]",
+          "origin": "[EXEC-SUMM] N-01 Foundation gap + N-03 Disruption silence",
+          "predecessor": "M-02"
+        },
+        "intent": {
+          "quote": "Current flight always visible 0 taps. Boarding pass 1 tap away. Live Activity for lockscreen.",
+          "primary_goal": "User checks flight status without app navigation",
+          "personas": "P-02 Titanium (frequent commuter) + P-03 Gold (international) + ALL when traveling",
+          "context_of_use": "Home Zone A header. Persistent on other screens via header strip when active trip.",
+          "value_pyramid": "Functional → Trust (always in control)"
+        },
+        "insight": {
+          "core_pattern": "Delta Live Activity + persistent flight context (industry table-stakes 2026)",
+          "behavioral": "Reduce gate anxiety -45% with Live Activity boarding zone (Delta study)",
+          "differentiation": "Old VNA: no mini-card. Industry: Delta best-in-class. VNAairline: matches Delta + tier-aware status",
+          "state_machine": "8 phase × 6 status × 3 live_activity = 144"
+        },
+        "evidence": [
+          {
+            "type": "🔍",
+            "claim": "URD §H Zone A Mini-card spec: VN214 HAN→SGN Boarding 3h Gate D2",
+            "source": "urd/core/home-dashboard.md"
+          },
+          {
+            "type": "🏦",
+            "claim": "Delta Live Activity pioneer (industry pattern 2026)",
+            "source": "airline pack benchmarks-global.md"
+          },
+          {
+            "type": "🛡️",
+            "claim": "AR-NAV-04 Persistent flight reference [Critical]",
+            "source": "airline pack heuristics.json"
+          }
+        ],
+        "handoff": {
+          "priority": "P0",
+          "complexity": "high",
+          "dependencies": [
+            "M-02"
+          ],
+          "acceptance": [
+            "Flight status updates within 30s of operational change",
+            "iOS Live Activity activates 6h before flight, persists through landing",
+            "Visibility logic: active trip in T-7d window OR currently in_air"
+          ]
+        }
+      },
+      "runtime_dimensions": [
+        {
+          "key": "live_activity",
+          "values": [
+            "enabled",
+            "disabled",
+            "n/a"
+          ],
+          "note": "Removed from state_dimensions 2026-05-08 — feature flag (enabled/disabled), not UI variant"
+        }
+      ]
+    },
+    {
+      "id": "M-05",
+      "name": "QuickActionCTA",
+      "shell": "DashboardShell",
+      "slot": "HeaderInfo",
+      "category": "🔁 SHARED",
+      "level": "molecule",
+      "screens": "MH-H1 + similar CTA pattern in Trip Detail (cross-context)",
+      "note": "Max 2 buttons context-aware. Tier-aware variants for premium tiers (Lounge access for Gold+)",
+      "structure": [
+        {
+          "name": "PrimaryCTA",
+          "detail": "context-aware 1st action: Check-in / Add bag / Voice / Lounge",
+          "type": "action"
+        },
+        {
+          "name": "SecondaryCTA",
+          "detail": "context-aware 2nd action: Wi-Fi / seat upgrade / etc.",
+          "type": "action"
+        }
+      ],
+      "state_dimensions": [
+        {
+          "key": "trip_phase",
+          "values": [
+            "pre_booking",
+            "booked_far",
+            "T-24h_check_in",
+            "boarding",
+            "in_air"
+          ]
+        },
+        {
+          "key": "tier",
+          "values": [
+            "Silver",
+            "Titanium",
+            "Gold",
+            "Platinum",
+            "MillionMiler"
+          ]
+        }
+      ],
+      "tier_variants": {
+        "Silver_Titanium": [
+          "[Check-in]",
+          "[Add bag]"
+        ],
+        "Gold_Platinum": [
+          "[Check-in]",
+          "[Lotus Lounge]"
+        ],
+        "MillionMiler": [
+          "[Check-in]",
+          "[Meet & Greet]"
+        ]
+      },
+      "enrichment": {
+        "context": {
+          "problem": "Generic CTAs not context-aware — user navigates to find current action",
+          "trigger": "URD §H Zone A CTA spec — max 2 buttons context-aware",
+          "origin": "[EXEC-SUMM] §8 Pillar 1 Hyper-Personalization predictive action",
+          "predecessor": "M-04"
+        },
+        "intent": {
+          "quote": "Right action, right time, right tier. 1-tap to do most likely thing.",
+          "primary_goal": "User completes likely-next-action in 1 tap from Home",
+          "personas": "All — esp Tuấn (last-minute booking efficiency)",
+          "context_of_use": "Home Zone A bottom row, phase-aware",
+          "value_pyramid": "Functional → Time-savings"
+        },
+        "insight": {
+          "core_pattern": "Context-aware quick actions (iOS Shortcuts pattern + airline-specific)",
+          "behavioral": "Reduce navigation friction — Salesforce -10% transaction abandonment",
+          "differentiation": "Most apps: 4-6 generic icons. VNAairline: max 2 context-aware tier-aware",
+          "state_machine": "5 phase × 5 tier = 25 CTA pair combinations"
+        },
+        "evidence": [
+          {
+            "type": "🔍",
+            "claim": "URD §H Zone A spec: max 2 nút quan trọng nhất",
+            "source": "urd/core/home-dashboard.md"
+          },
+          {
+            "type": "📊",
+            "claim": "Salesforce voice -10% transaction abandonment",
+            "source": "I-003 citation"
+          }
+        ],
+        "handoff": {
+          "priority": "P1",
+          "complexity": "medium",
+          "dependencies": [
+            "M-04"
+          ],
+          "acceptance": [
+            "CTA labels match phase + tier matrix (25 combinations)",
+            "Lounge CTA (Gold+) routes to Lotus Lounge finder, not generic search",
+            "MM CTA includes Meet & Greet booking option"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M-06",
+      "name": "DCZCurrentTripCard",
+      "shell": "DashboardShell",
+      "slot": "DCZ",
+      "category": "⭐ ĐẶC THÙ",
+      "level": "molecule",
+      "screens": "MH-H1 (Zone B when current trip exists)",
+      "note": "Composite trip overview — 'sense of trip ownership' anchor",
+      "structure": [
+        {
+          "name": "FlightHeader",
+          "detail": "code + route + countdown + gate",
+          "type": "text"
+        },
+        {
+          "name": "DepartureLine",
+          "detail": "ETD origin + boarding zone",
+          "type": "text"
+        },
+        {
+          "name": "ArrivalLine",
+          "detail": "ETA destination + terminal",
+          "type": "text"
+        },
+        {
+          "name": "StatusBadgeRow",
+          "detail": "live status with progress bar",
+          "type": "badge"
+        }
+      ],
+      "state_dimensions": [
+        {
+          "key": "trip_status",
+          "values": [
+            "confirmed",
+            "T-24h_check_in_open",
+            "T-2h_boarding_soon",
+            "boarding",
+            "boarded",
+            "in_air",
+            "landing",
+            "completed"
+          ]
+        },
+        {
+          "key": "delay_state",
+          "values": [
+            "on_time",
+            "delayed_minor_15min",
+            "delayed_major_60min",
+            "cancelled"
+          ]
+        }
+      ],
+      "enrichment": {
+        "context": {
+          "problem": "Trip status info buried in Trips tab — user can't glance at progress",
+          "trigger": "URD §H Zone B Flight Overview + AR-NAV-04",
+          "origin": "[EXEC-SUMM] §8 Pillar 2 Adaptive UI dynamic context",
+          "predecessor": "M-04"
+        },
+        "intent": {
+          "quote": "Active trip 'owned' by user — every detail at a glance, no clicks.",
+          "primary_goal": "User feels 'in control' of journey from booking to landing",
+          "personas": "All travelers, esp anxiety-prone (P-07 Family)",
+          "context_of_use": "Home Zone B when current trip exists in T-7 days window",
+          "value_pyramid": "Confidence → Trust"
+        },
+        "insight": {
+          "core_pattern": "Trip ownership UI — Lufthansa pattern + Delta progress bar",
+          "behavioral": "Reduce 'will I be on time?' anxiety -40% with progress visibility",
+          "differentiation": "Status pill + countdown + gate in single card (vs scattered)",
+          "state_machine": "8 trip_status × 4 delay = 32 combinations"
+        },
+        "evidence": [
+          {
+            "type": "🔍",
+            "claim": "URD §H Zone B spec: ETA + gate + countdown boarding",
+            "source": "urd/core/home-dashboard.md"
+          },
+          {
+            "type": "🏦",
+            "claim": "Lufthansa trip overview pattern",
+            "source": "airline pack benchmarks-global.md"
+          }
+        ],
+        "handoff": {
+          "priority": "P0",
+          "complexity": "high",
+          "dependencies": [
+            "M-04"
+          ],
+          "acceptance": [
+            "Trip detail updates every 30s",
+            "Visibility: only when trip in T-7d window OR currently in_air",
+            "Delay state changes trigger M-IRP-01 (cross-domain) push notification"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M-07",
+      "name": "DCZContextActionPills",
+      "shell": "DashboardShell",
+      "slot": "DCZ",
+      "category": "🔁 SHARED",
+      "level": "molecule",
+      "screens": "MH-H1 + Trip Detail screen (cross-context)",
+      "note": "Tier-aware ancillary pills — Lounge exclusive for Gold+",
+      "structure": [
+        {
+          "name": "BoardingPassPill",
+          "detail": "Wallet quick access",
+          "type": "action"
+        },
+        {
+          "name": "WiFiPill",
+          "detail": "buy/manage Wi-Fi",
+          "type": "action"
+        },
+        {
+          "name": "BagPill",
+          "detail": "add/manage baggage",
+          "type": "action"
+        },
+        {
+          "name": "MealPill",
+          "detail": "select special meal",
+          "type": "action"
+        },
+        {
+          "name": "LoungePill",
+          "detail": "Gold+ exclusive — Lotus Lounge invitation",
+          "type": "action"
+        }
+      ],
+      "state_dimensions": [
+        {
+          "key": "ancillary_status",
+          "values": [
+            "available",
+            "purchased",
+            "unavailable",
+            "tier_locked"
+          ]
+        },
+        {
+          "key": "tier",
+          "values": [
+            "Silver",
+            "Titanium",
+            "Gold",
+            "Platinum",
+            "MillionMiler"
+          ]
+        }
+      ],
+      "enrichment": {
+        "context": {
+          "problem": "Ancillary services scattered across menus",
+          "trigger": "URD §H Zone B Contextual Actions",
+          "origin": "[EXEC-SUMM] §8 Pillar 1 + IATA NDC ancillary",
+          "predecessor": "M-06"
+        },
+        "intent": {
+          "quote": "Available ancillaries at a glance, status pill (purchased/available), 1-tap to manage.",
+          "primary_goal": "User sees what they have + can buy in single view",
+          "personas": "Frequent users (Titanium+) + premium tiers (Gold+ for Lounge)",
+          "context_of_use": "Home Zone B below current trip card",
+          "value_pyramid": "Functional → Premium experience (Lounge for Gold+)"
+        },
+        "insight": {
+          "core_pattern": "AR-ANC-01 Ancillary status pills (industry pattern)",
+          "behavioral": "+12% ancillary revenue with right-time visibility (Lufthansa 2021)",
+          "differentiation": "Lounge pill exclusive Gold+ — visual tier benefit reminder",
+          "state_machine": "4 status × 5 tier × 5 pill_types = 100"
+        },
+        "evidence": [
+          {
+            "type": "🔍",
+            "claim": "AR-ANC-01 Ancillary status pills [Critical]",
+            "source": "airline pack heuristics.json"
+          },
+          {
+            "type": "📊",
+            "claim": "Lufthansa seat & meal recs +12% ancillary, +15% CSAT",
+            "source": "I-001 citation"
+          }
+        ],
+        "handoff": {
+          "priority": "P0",
+          "complexity": "medium",
+          "dependencies": [
+            "M-06"
+          ],
+          "acceptance": [
+            "Lounge pill ONLY visible Gold+",
+            "Pill status reflects real-time purchase state",
+            "Tap → routes to ancillary management screen (not generic search)"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M-08",
+      "name": "PredictiveRecommendation",
+      "shell": "DashboardShell",
+      "slot": "DCZ",
+      "category": "⭐ ĐẶC THÙ",
+      "level": "molecule",
+      "screens": "MH-H1 (Zone B when ML pattern detected)",
+      "note": "[ASPIRATION molecule from EXEC-SUMM §8 Pillar 1] handoffPhase: P3 (AI-driven)",
+      "structure": [
+        {
+          "name": "PredictiveText",
+          "detail": "vd 'Bạn thường mua Wi-Fi vào chuyến >3h — thêm 80MB?'",
+          "type": "text"
+        },
+        {
+          "name": "ActionButton",
+          "detail": "[Có ฿100K]",
+          "type": "action"
+        },
+        {
+          "name": "DismissButton",
+          "detail": "[Bỏ qua]",
+          "type": "action"
+        },
+        {
+          "name": "WhyTooltip",
+          "detail": "AR-PRS-03 'Why this suggestion' transparency",
+          "type": "action"
+        }
+      ],
+      "state_dimensions": [
+        {
+          "key": "prediction_confidence",
+          "values": [
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        {
+          "key": "frequency_cap",
+          "values": [
+            "under_cap",
+            "at_cap",
+            "over_cap_hidden"
+          ]
+        }
+      ],
+      "enrichment": {
+        "context": {
+          "problem": "User must remember to buy ancillary — friction + revenue loss",
+          "trigger": "[ASPIRATION] EXEC-SUMM §8 Phase 3 Pillar 1 + URD §H Zone B Predictive",
+          "origin": "[EXEC-SUMM] N-05 Tier-aware proactive (Aspiration Layer)",
+          "predecessor": "M-07"
+        },
+        "intent": {
+          "quote": "Suggest right action right time, with transparency about why.",
+          "primary_goal": "User sees relevant suggestion + can opt out without friction",
+          "personas": "All travelers — esp behavior-pattern users (Titanium repeat patterns)",
+          "context_of_use": "Home Zone B when ML detects pattern + within frequency cap",
+          "value_pyramid": "Functional → Personalization"
+        },
+        "insight": {
+          "core_pattern": "Spotify recommendation transparency + Amazon predictive",
+          "behavioral": "Amadeus +17% upsell with right-time recs",
+          "differentiation": "AR-PRS-03 'Why this suggestion' — privacy-first transparency unique to VNA",
+          "state_machine": "3 confidence × 3 frequency = 9"
+        },
+        "evidence": [
+          {
+            "type": "🔍",
+            "claim": "I-001 Lufthansa seat & meal recs +12%",
+            "source": "I-001 citation"
+          },
+          {
+            "type": "🛡️",
+            "claim": "AR-PRS-03 Why this suggestion transparency",
+            "source": "airline pack heuristics.json"
+          },
+          {
+            "type": "📊",
+            "claim": "Amadeus Travel Pulse +17% upsell right-time",
+            "source": "I-001 citation"
+          }
+        ],
+        "handoff": {
+          "priority": "P3",
+          "complexity": "high",
+          "dependencies": [
+            "ML service",
+            "AR-PRS-03 transparency UI"
+          ],
+          "acceptance": [
+            "Frequency cap: max 2 suggestions/24h per category",
+            "Confidence threshold: only shown if high (>85%) or medium with disambiguation",
+            "Why button surfaces explanation modal — not silent ML"
+          ]
+        }
+      },
+      "aspirational": true
+    },
+    {
+      "id": "M-09",
+      "name": "CrossSaleModule",
+      "shell": "DashboardShell",
+      "slot": "DCZ",
+      "category": "🔁 SHARED",
+      "level": "molecule",
+      "screens": "MH-H1 Zone B + Zone D (cross-context within same shell)",
+      "note": "Lifecycle-aware cross-sale (taxi at airport, hotel >3 days before)",
+      "structure": [
+        {
+          "name": "CrossSaleHeader",
+          "detail": "context-aware 'Khách sạn gần SGN giảm 20%'",
+          "type": "text"
+        },
+        {
+          "name": "OfferCard",
+          "detail": "image + price + tier discount",
+          "type": "container"
+        },
+        {
+          "name": "CTAPrimary",
+          "detail": "[Đặt giờ] / [Combo]",
+          "type": "action"
+        }
+      ],
+      "state_dimensions": [
+        {
+          "key": "cross_sale_trigger",
+          "values": [
+            "3day_before_dest",
+            "at_airport_taxi",
+            "post_flight_hotel",
+            "promo_window"
+          ]
+        },
+        {
+          "key": "offer_type",
+          "values": [
+            "hotel",
+            "taxi",
+            "lounge_pass",
+            "wifi_bundle",
+            "destination_combo"
+          ]
+        }
+      ],
+      "enrichment": {
+        "context": {
+          "problem": "Cross-sale generic — not context-aware → low conversion",
+          "trigger": "URD §H Zone D Smart Suggestions + Pillar 1 Cross-sale",
+          "origin": "[EXEC-SUMM] §8 Pillar 1 + Expedia 25-30% bundled uptake",
+          "predecessor": "M-08"
+        },
+        "intent": {
+          "quote": "Right offer at right life-moment — taxi when at airport, hotel >3 days before destination.",
+          "primary_goal": "Increase ancillary revenue without feeling pushy",
+          "personas": "All travelers — context determines visibility",
+          "context_of_use": "Home Zone B (active trip context) + Zone D (general offers)",
+          "value_pyramid": "Functional → Convenience"
+        },
+        "insight": {
+          "core_pattern": "Lifecycle-aware cross-sale (Booking.com pattern)",
+          "behavioral": "Expedia +25-30% bundled service uptake with right context",
+          "differentiation": "VNA: context-aware (location, time, flight phase) vs generic timed offers",
+          "state_machine": "4 trigger × 5 offer_type = 20"
+        },
+        "evidence": [
+          {
+            "type": "🔍",
+            "claim": "URD §H Zone B Cross-sale spec",
+            "source": "urd/core/home-dashboard.md"
+          },
+          {
+            "type": "📊",
+            "claim": "Expedia +25-30% bundled service uptake",
+            "source": "I-001 citation"
+          }
+        ],
+        "handoff": {
+          "priority": "P2",
+          "complexity": "medium",
+          "dependencies": [
+            "Geofence detection",
+            "Promo Service API"
+          ],
+          "acceptance": [
+            "Geofence at airport detects within 500m radius",
+            ">3 days before destination triggers hotel cross-sale",
+            "Frequency: max 1 cross-sale per category per session"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M-10",
+      "name": "RecentSearchChip",
+      "shell": "DashboardShell",
+      "slot": "RecentSearches",
+      "category": "🔁 SHARED",
+      "level": "molecule",
+      "screens": "MH-H1 + Search Flight screen (cross-context)",
+      "note": "Cloud sync across devices — most airline apps cache local only",
+      "structure": [
+        {
+          "name": "RouteText",
+          "detail": "vd 'HAN ↔ SGN'",
+          "type": "text"
+        },
+        {
+          "name": "DestinationImage",
+          "detail": "thumbnail of destination city",
+          "type": "container"
+        },
+        {
+          "name": "QuickRebookCTA",
+          "detail": "[Đặt lại nhanh]",
+          "type": "action"
+        }
+      ],
+      "state_dimensions": [
+        {
+          "key": "data_source",
+          "values": [
+            "local_cache",
+            "cloud_sync",
+            "popular_route_fallback"
+          ]
+        },
+        {
+          "key": "auth_state",
+          "values": [
+            "logged_in",
+            "logged_out"
+          ]
+        }
+      ],
+      "enrichment": {
+        "context": {
+          "problem": "User must re-enter origin/destination every search — no continuity",
+          "trigger": "URD §H Zone C Recent Searches",
+          "origin": "[EXEC-SUMM] H6 Recognition rather than recall + AR-BKG-01 Smart origin",
+          "predecessor": null
+        },
+        "intent": {
+          "quote": "Continue interrupted journey — recent search/booking 1-tap reuse.",
+          "primary_goal": "User completes booking with 50% fewer inputs",
+          "personas": "P-02 Titanium (last-minute) + P-01 Silver (casual planning)",
+          "context_of_use": "Home Zone C below DCZ",
+          "value_pyramid": "Functional → Time-savings"
+        },
+        "insight": {
+          "core_pattern": "Recent searches chip (Google Flights pattern)",
+          "behavioral": "Recognition over recall — H6 Nielsen heuristic",
+          "differentiation": "Cloud sync across devices — most airline apps cache local only",
+          "state_machine": "3 data_source × 2 auth = 6"
+        },
+        "evidence": [
+          {
+            "type": "🔍",
+            "claim": "URD §H Zone C: 'logged in → cloud sync; not → cache'",
+            "source": "urd/core/home-dashboard.md"
+          },
+          {
+            "type": "🛡️",
+            "claim": "H6 Recognition rather than recall (Nielsen)",
+            "source": "airline pack heuristics.json"
+          }
+        ],
+        "handoff": {
+          "priority": "P1",
+          "complexity": "low",
+          "dependencies": [],
+          "acceptance": [
+            "Logged-in: sync from cloud within 2s",
+            "Logged-out: fall back to local device cache",
+            "Empty state: show popular VN routes (HAN-SGN, SGN-DAD)"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M-11",
+      "name": "PromoBanner",
+      "shell": "DashboardShell",
+      "slot": "SmartSuggestions",
+      "category": "🔁 SHARED",
+      "level": "molecule",
+      "screens": "MH-H1 Zone D + Search results (cross-context)",
+      "note": "Tier-aware + cultural moment + i18n",
+      "structure": [
+        {
+          "name": "PromoTitle",
+          "detail": "vd 'Bay Hà Nội tuần này giảm 15%'",
+          "type": "text"
+        },
+        {
+          "name": "PromoImage",
+          "detail": "destination photo + lotus motif",
+          "type": "container"
+        },
+        {
+          "name": "DiscountBadge",
+          "detail": "tier-aware discount level",
+          "type": "badge"
+        },
+        {
+          "name": "ValidUntilTimer",
+          "detail": "countdown to offer end",
+          "type": "text"
+        }
+      ],
+      "state_dimensions": [
+        {
+          "key": "tier",
+          "values": [
+            "Silver",
+            "Titanium",
+            "Gold",
+            "Platinum",
+            "MillionMiler"
+          ]
+        },
+        {
+          "key": "promo_type",
+          "values": [
+            "route_specific",
+            "loyalty_exclusive",
+            "cultural_moment",
+            "ancillary_bundle"
+          ]
+        }
+      ],
+      "enrichment": {
+        "context": {
+          "problem": "Generic promotional banners ignored — not personalized to user behavior",
+          "trigger": "URD §H Zone D Promo Injection",
+          "origin": "[EXEC-SUMM] Pillar 1 + N-07 Cultural integration",
+          "predecessor": "M-10"
+        },
+        "intent": {
+          "quote": "Personalized promo cards based on travel history + tier + cultural moment.",
+          "primary_goal": "User clicks personalized promo at +26% rate (HBR)",
+          "personas": "All — promo type varies by tier",
+          "context_of_use": "Home Zone D",
+          "value_pyramid": "Functional → Reward Anticipation"
+        },
+        "insight": {
+          "core_pattern": "Personalized offer feed (Spotify/Netflix pattern)",
+          "behavioral": "HBR personalization +26% rec rate, -15% complaints",
+          "differentiation": "Tier-exclusive promos + cultural moment alignment (Tết, Lễ)",
+          "state_machine": "5 tier × 4 promo_type = 20"
+        },
+        "evidence": [
+          {
+            "type": "🔍",
+            "claim": "URD §H Zone D Promo Injection",
+            "source": "urd/core/home-dashboard.md"
+          },
+          {
+            "type": "📊",
+            "claim": "HBR +26% recommendation, -15% complaints",
+            "source": "I-001 citation"
+          }
+        ],
+        "handoff": {
+          "priority": "P2",
+          "complexity": "medium",
+          "dependencies": [
+            "Promo Service API",
+            "Cultural Calendar Service"
+          ],
+          "acceptance": [
+            "Tier-exclusive promos hidden from non-eligible tiers",
+            "Cultural promo activates within ±7 days of cultural event",
+            "Discount badge shows tier-aware rate"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M-12",
+      "name": "LocalDiscoveryCard",
+      "shell": "DashboardShell",
+      "slot": "SmartSuggestions",
+      "category": "⭐ ĐẶC THÙ",
+      "level": "molecule",
+      "screens": "MH-H1 Zone D (post-arrival mode)",
+      "note": "[ASPIRATION molecule from EXEC-SUMM §8 — journey extension]",
+      "structure": [
+        {
+          "name": "DiscoveryHeader",
+          "detail": "'Ăn gì gần sân bay HAN?' / 'Khám phá Hà Nội'",
+          "type": "text"
+        },
+        {
+          "name": "ListingPills",
+          "detail": "restaurant/attraction/transport partner",
+          "type": "action"
+        },
+        {
+          "name": "ExternalPartnerBadge",
+          "detail": "third-party partner indicator",
+          "type": "badge"
+        }
+      ],
+      "state_dimensions": [
+        {
+          "key": "user_location",
+          "values": [
+            "airport_arrival",
+            "city_center",
+            "hotel_area",
+            "in_transit"
+          ]
+        },
+        {
+          "key": "trip_phase",
+          "values": [
+            "pre_flight",
+            "in_air",
+            "post_arrival",
+            "return_journey"
+          ]
+        }
+      ],
+      "enrichment": {
+        "context": {
+          "problem": "App stops being useful after arrival — no journey extension",
+          "trigger": "[ASPIRATION] EXEC-SUMM §8 + URD §H Zone D Local Discovery",
+          "origin": "[EXEC-SUMM] §8 Pillar 1 cross-sale extension post-flight",
+          "predecessor": "M-11"
+        },
+        "intent": {
+          "quote": "Extend journey value beyond flight — discover destination through VNA.",
+          "primary_goal": "User uses app for first 24h at destination (vs leaving for Google Maps)",
+          "personas": "P-01 Silver (leisure traveler) + P-06 Min-jun (foreign tourist)",
+          "context_of_use": "Home Zone D when geofence detects post-arrival",
+          "value_pyramid": "Functional → Discovery → Journey extension"
+        },
+        "insight": {
+          "core_pattern": "Post-arrival concierge UX (Marriott Bonvoy + Booking.com)",
+          "behavioral": "Journey extension increases retention 3-4x (Deloitte)",
+          "differentiation": "Most airline apps end at landing. VNA continues with local discovery.",
+          "state_machine": "4 location × 4 phase = 16"
+        },
+        "evidence": [
+          {
+            "type": "🔍",
+            "claim": "URD §H Zone D Local Discovery 'Mở rộng trải nghiệm sau chuyến bay'",
+            "source": "urd/core/home-dashboard.md"
+          },
+          {
+            "type": "📊",
+            "claim": "Deloitte 3-4x retention with personalization",
+            "source": "I-001 citation"
+          }
+        ],
+        "handoff": {
+          "priority": "P3",
+          "complexity": "high",
+          "dependencies": [
+            "External Partner Feed API",
+            "Geofence post-arrival detection"
+          ],
+          "acceptance": [
+            "Geofence detects arrival within 1km of destination airport",
+            "Visibility window: 24h post-arrival",
+            "External partner disclosure (not VNA-owned content)"
+          ]
+        }
+      },
+      "aspirational": true
+    },
+    {
+      "id": "M-13",
+      "name": "MilesSnapshotCard",
+      "shell": "DashboardShell",
+      "slot": "LoyaltySnapshot",
+      "category": "🔁 SHARED",
+      "level": "molecule",
+      "screens": "MH-H1 + Lotusmiles full screen (cross-context)",
+      "note": "Tier ladder progress + recovery indicator (90/60/30 days)",
+      "structure": [
+        {
+          "name": "MilesNumber",
+          "detail": "tabular numerals current miles",
+          "type": "text"
+        },
+        {
+          "name": "ToNextTierGauge",
+          "detail": "progress bar miles to next tier",
+          "type": "container"
+        },
+        {
+          "name": "NextTierTarget",
+          "detail": "vd 'Còn 12,000 miles để lên Gold'",
+          "type": "text"
+        },
+        {
+          "name": "TierDownIndicator",
+          "detail": "shown if at risk of downgrade",
+          "type": "badge"
+        }
+      ],
+      "state_dimensions": [
+        {
+          "key": "tier",
+          "values": [
+            "Silver",
+            "Titanium",
+            "Gold",
+            "Platinum",
+            "MillionMiler"
+          ]
+        },
+        {
+          "key": "auth_state",
+          "values": [
+            "logged_in_full",
+            "logged_in_no_data",
+            "logged_out"
+          ]
+        },
+        {
+          "key": "downgrade_risk",
+          "values": [
+            "safe",
+            "90_days_warning",
+            "60_days_alert",
+            "30_days_critical"
+          ]
+        }
+      ],
+      "tier_variants": {
+        "Silver": "Còn 1,500 miles để lên Titanium 🪁",
+        "Titanium": "Còn 18,000 miles để lên Gold 🌸",
+        "Gold": "Còn 20,000 miles để lên Platinum 💎",
+        "Platinum": "Đang trên hành trình tới Million Miler — {percent}% complete",
+        "MillionMiler": "✈️ Million Miler — Cảm ơn vì hành trình {lifetime_miles} dặm trọn đời"
+      },
+      "enrichment": {
+        "context": {
+          "problem": "Miles balance shown nhưng no progress visualization → users don't engage",
+          "trigger": "URD §H Zone E Miles Snapshot + AR-LOY-02",
+          "origin": "[EXEC-SUMM] N-02 Tier-driven persona axis + N-06 Tier downgrade despair",
+          "predecessor": "M-01"
+        },
+        "intent": {
+          "quote": "Miles + tier progress visible. Downgrade despair handled with grace + recovery path.",
+          "primary_goal": "User engages with loyalty progression weekly (not monthly)",
+          "personas": "All tier holders — esp Gold+ at risk of downgrade",
+          "context_of_use": "Home Zone E primary card",
+          "value_pyramid": "Reward anticipation → Achievement"
+        },
+        "insight": {
+          "core_pattern": "Cathay Pacific tier progress + Marriott Bonvoy gauge",
+          "behavioral": "Loss aversion 3x stronger than gain (Kahneman) → downgrade UX critical",
+          "differentiation": "Recovery roadmap UI 90/60/30 days — competitive white-space",
+          "state_machine": "5 tier × 3 auth × 4 downgrade = 60"
+        },
+        "evidence": [
+          {
+            "type": "🔍",
+            "claim": "AR-LOY-02 Tier progress visualization [Critical]",
+            "source": "airline pack heuristics.json"
+          },
+          {
+            "type": "🏦",
+            "claim": "lotusmiles.json ux_implications: 'Gold→Titanium hits hardest'",
+            "source": "airline pack lotusmiles.json"
+          }
+        ],
+        "handoff": {
+          "priority": "P0",
+          "complexity": "high",
+          "dependencies": [
+            "Lotusmiles CRM API",
+            "M-01 TierBadgePersistent"
+          ],
+          "acceptance": [
+            "Tier ladder updates in real-time on flight credit",
+            "Recovery indicator triggered at exactly 90, 60, 30 days from expiry",
+            "MillionMiler tier hides recovery indicator (lifetime validity)"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M-14",
+      "name": "RewardOfferCard",
+      "shell": "DashboardShell",
+      "slot": "LoyaltySnapshot",
+      "category": "🔁 SHARED",
+      "level": "molecule",
+      "screens": "MH-H1 + Lotusmiles redemption (cross-context)",
+      "note": "1-tap redemption with biometric confirm",
+      "structure": [
+        {
+          "name": "RewardImage",
+          "detail": "service icon (Wi-Fi, lounge, upgrade)",
+          "type": "icon"
+        },
+        {
+          "name": "MilesPriceTag",
+          "detail": "vd '500 miles cho Wi-Fi'",
+          "type": "text"
+        },
+        {
+          "name": "OneTapRedemption",
+          "detail": "[Đổi ngay]",
+          "type": "action"
+        }
+      ],
+      "state_dimensions": [
+        {
+          "key": "redemption_eligibility",
+          "values": [
+            "eligible",
+            "insufficient_miles",
+            "tier_restricted"
+          ]
+        },
+        {
+          "key": "tier",
+          "values": [
+            "Silver",
+            "Titanium",
+            "Gold",
+            "Platinum",
+            "MillionMiler"
+          ]
+        }
+      ],
+      "enrichment": {
+        "context": {
+          "problem": "Miles redemption multi-step (5+ taps) → users don't redeem → miles expire",
+          "trigger": "URD §H Zone E Reward Offer + AR-LOY-04 1-tap redemption",
+          "origin": "[EXEC-SUMM] N-02 + Lotusmiles micro-loop",
+          "predecessor": "M-13"
+        },
+        "intent": {
+          "quote": "1-tap redemption creates micro-loop of reward usage → engagement.",
+          "primary_goal": "User redeems miles 2x more frequently",
+          "personas": "Frequent redemers (Titanium+)",
+          "context_of_use": "Home Zone E secondary + Lotusmiles tab",
+          "value_pyramid": "Reward Anticipation → Achievement"
+        },
+        "insight": {
+          "core_pattern": "Starbucks Rewards 1-tap redemption (cross-industry)",
+          "behavioral": "Frequency loop creates micro-rewards habit",
+          "differentiation": "Most loyalty programs: 4-step redemption. VNA: 1-tap from Home",
+          "state_machine": "3 eligibility × 5 tier = 15"
+        },
+        "evidence": [
+          {
+            "type": "🔍",
+            "claim": "URD §H Zone E: 'Dùng 500 miles để mua Wi-Fi?'",
+            "source": "urd/core/home-dashboard.md"
+          },
+          {
+            "type": "🛡️",
+            "claim": "AR-LOY-04 Mile redemption 1-tap [Recommended]",
+            "source": "airline pack heuristics.json"
+          }
+        ],
+        "handoff": {
+          "priority": "P1",
+          "complexity": "medium",
+          "dependencies": [
+            "M-13",
+            "Lotusmiles Redemption API",
+            "Biometric auth"
+          ],
+          "acceptance": [
+            "1-tap with biometric confirm (Face ID / Fingerprint)",
+            "Insufficient miles state shows shortfall amount",
+            "Tier-restricted reward shows upgrade path to unlock"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M-15",
+      "name": "TierLevelupPrompt",
+      "shell": "DashboardShell",
+      "slot": "LoyaltySnapshot",
+      "category": "⭐ ĐẶC THÙ",
+      "level": "molecule",
+      "screens": "MH-H1 (Zone E gamification)",
+      "note": "[ASPIRATION] Goal gradient effect — visible only when within 5 segments/miles",
+      "structure": [
+        {
+          "name": "ProgressGauge",
+          "detail": "segments + miles dual-axis bar",
+          "type": "container"
+        },
+        {
+          "name": "MotivationalCopy",
+          "detail": "vd 'Chỉ còn 1 chuyến nữa để lên Silver!'",
+          "type": "text"
+        },
+        {
+          "name": "CelebrationAnimation",
+          "detail": "shown on level-up (lotus burst)",
+          "type": "container"
+        }
+      ],
+      "state_dimensions": [
+        {
+          "key": "tier_progression_state",
+          "values": [
+            "mid_tier_progress",
+            "near_levelup_5_segments",
+            "near_levelup_2_segments",
+            "just_leveled_up_celebration"
+          ]
+        },
+        {
+          "key": "segment_or_miles_path",
+          "values": [
+            "segments_close",
+            "miles_close",
+            "both_balanced"
+          ]
+        }
+      ],
+      "enrichment": {
+        "context": {
+          "problem": "Tier progression invisible — users don't know how close they are to upgrade",
+          "trigger": "[ASPIRATION] EXEC-SUMM §8 Phase 2 + URD §H Zone E Levelup",
+          "origin": "[EXEC-SUMM] N-02 + gamified Cathay pattern",
+          "predecessor": "M-13"
+        },
+        "intent": {
+          "quote": "Make tier upgrade visible + motivating. Celebrate level-up loud.",
+          "primary_goal": "User adopts behavior change to reach next tier (book 1-2 more flights/year)",
+          "personas": "Titanium aspiring Gold + Gold aspiring Platinum",
+          "context_of_use": "Home Zone E when within 5 segments / 5K miles of next tier",
+          "value_pyramid": "Reward Anticipation → Achievement → Belonging"
+        },
+        "insight": {
+          "core_pattern": "Gamified levelup — Duolingo streak + Cathay tier progress",
+          "behavioral": "Goal gradient effect — proximity to goal increases effort 30%+",
+          "differentiation": "Dual-axis (segments + miles) shows both paths to upgrade",
+          "state_machine": "4 progress × 3 path = 12"
+        },
+        "evidence": [
+          {
+            "type": "🔍",
+            "claim": "URD §H Zone E: 'Giữ tương tác và động lực sử dụng'",
+            "source": "urd/core/home-dashboard.md"
+          },
+          {
+            "type": "🏦",
+            "claim": "Cathay Pacific tier progress visualization",
+            "source": "airline pack benchmarks-global.md"
+          }
+        ],
+        "handoff": {
+          "priority": "P1",
+          "complexity": "medium",
+          "dependencies": [
+            "M-13",
+            "Gamification engine"
+          ],
+          "acceptance": [
+            "Visibility logic: only when within 5 segments OR 5K miles of next tier",
+            "Celebration animation triggers on actual tier upgrade event",
+            "Dual-axis shows whichever path is closer (segments vs miles)"
+          ]
+        }
+      },
+      "aspirational": true
+    },
+    {
+      "id": "M-16",
+      "name": "MillionMilerTribute",
+      "shell": "DashboardShell",
+      "slot": "LoyaltySnapshot",
+      "category": "⭐ ĐẶC THÙ",
+      "level": "molecule",
+      "screens": "MH-H1 (Zone E exclusive — only D1=MM)",
+      "note": "[ASPIRATION] Lifetime tribute UI — only for Million Miler tier (<0.5% of base)",
+      "structure": [
+        {
+          "name": "CumulativeFlightCounter",
+          "detail": "vd 'Chuyến bay thứ 1,247'",
+          "type": "text"
+        },
+        {
+          "name": "DecadeTimeline",
+          "detail": "decade-by-decade visualization",
+          "type": "container"
+        },
+        {
+          "name": "LifetimeMilesTotal",
+          "detail": "vd '1,234,567 dặm trọn đời'",
+          "type": "text"
+        },
+        {
+          "name": "PersonalWelcomeMessage",
+          "detail": "reverent tone with name",
+          "type": "text"
+        },
+        {
+          "name": "MeetAndGreetCTA",
+          "detail": "Million Miler exclusive booking",
+          "type": "action"
+        }
+      ],
+      "state_dimensions": [
+        {
+          "key": "tier_qualified",
+          "values": [
+            "Million_Miler_only_visible",
+            "non_MM_locked_hidden"
+          ]
+        },
+        {
+          "key": "cumulative_milestone",
+          "values": [
+            "just_reached_1M_celebration",
+            "ongoing_decades",
+            "anniversary_year"
+          ]
+        }
+      ],
+      "enrichment": {
+        "context": {
+          "problem": "Million Miler population <0.5% — these decades-loyal customers feel like generic users",
+          "trigger": "[ASPIRATION] EXEC-SUMM §8 Phase 2 + N-11 lifetime tribute",
+          "origin": "[EXEC-SUMM] N-11 Lifetime tribute unique to MM tier",
+          "predecessor": "M-13"
+        },
+        "intent": {
+          "quote": "Honor decades of trust with reverent UI — cumulative-flight tribute + meet-and-greet visibility.",
+          "primary_goal": "Million Miler feels uniquely recognized — competitive moat for ultra-loyal segment",
+          "personas": "P-05 Bà Mai (Million Miler lifetime VIP)",
+          "context_of_use": "Home Zone E exclusive section (only D1=MillionMiler)",
+          "value_pyramid": "Belonging → Self-actualization (relationship deep)"
+        },
+        "insight": {
+          "core_pattern": "Lifetime tribute UI — Marriott 'Lifetime Titanium' precedent",
+          "behavioral": "Reverence + recognition for ultra-loyal — emotional moat",
+          "differentiation": "Cumulative-flight counter + decade timeline — first VN airline tribute UI",
+          "state_machine": "2 qualified × 3 milestone = 6 (rare segment, simple state)"
+        },
+        "evidence": [
+          {
+            "type": "🏦",
+            "claim": "lotusmiles.json MM benefits: meet_and_greet, priority_security, lifetime miles",
+            "source": "airline pack lotusmiles.json"
+          },
+          {
+            "type": "🛡️",
+            "claim": "Insight N-11 (severity 🟢 tier-exclusive but high emotional impact)",
+            "source": "EXECUTIVE-SUMMARY.md §5"
+          }
+        ],
+        "handoff": {
+          "priority": "P3",
+          "complexity": "medium",
+          "dependencies": [
+            "M-13",
+            "Cumulative flight counter (lifetime CRM data)"
+          ],
+          "acceptance": [
+            "Visibility ONLY when D1=MillionMiler (privacy + segment exclusivity)",
+            "Decade timeline shows actual flight history per decade",
+            "Meet & Greet CTA opens booking flow with priority code pre-filled"
+          ]
+        }
+      },
+      "aspirational": true
+    },
+    {
+      "id": "M-17",
+      "name": "VoiceMicCenterNav",
+      "shell": "DashboardShell",
+      "slot": "VoiceAINav",
+      "category": "🔁 SHARED",
+      "level": "molecule",
+      "screens": "MH-H1 + ALL screens (cross-app persistent bottom nav)",
+      "note": "Universal navigation hub — Pillar 3 implementation",
+      "structure": [
+        {
+          "name": "MicIcon",
+          "detail": "oversized 56dp center bottom nav",
+          "type": "icon"
+        },
+        {
+          "name": "ListeningWaveAnimation",
+          "detail": "pulse animation when active",
+          "type": "container"
+        },
+        {
+          "name": "ContextHint",
+          "detail": "tier-aware placeholder text",
+          "type": "text"
+        }
+      ],
+      "state_dimensions": [
+        {
+          "key": "mic_state",
+          "values": [
+            "idle",
+            "listening",
+            "processing",
+            "result_displayed",
+            "error_no_intent"
+          ]
+        },
+        {
+          "key": "context_screen",
+          "values": [
+            "home",
+            "flight_detail",
+            "trips",
+            "tools",
+            "profile",
+            "any_modal"
+          ]
+        }
+      ],
+      "enrichment": {
+        "context": {
+          "problem": "Voice not implemented — users with senior/foreign/anxious profiles excluded",
+          "trigger": "URD §H Zone F + I-003 Voice Interaction + AR-NAV-01 [Critical]",
+          "origin": "[EXEC-SUMM] §8 Phase 3 Pillar 3 Voice + N-05 cross-persona accelerator",
+          "predecessor": null
+        },
+        "intent": {
+          "quote": "Zero-friction voice input. 1 tap = speak. Universal nav hub.",
+          "primary_goal": "User completes intent in 1 tap + voice instead of 5+ touches",
+          "personas": "P-05 Bà Mai (MM senior — primary mode) + P-06 Min-jun (foreign tourist) + ALL hands-free moments",
+          "context_of_use": "Center bottom nav, persistent across ALL screens",
+          "value_pyramid": "Functional (efficiency) → Inclusive (a11y) → Premium (KLM peer)"
+        },
+        "insight": {
+          "core_pattern": "KLM voice chatbot Google Assistant precedent (cited)",
+          "behavioral": "Nuance: voice 40-45% faster than typing on mobile",
+          "differentiation": "Vietnamese-first NLU + tier-aware tone + context-aware intent — leapfrog regional",
+          "state_machine": "5 mic_state × 6 context × 6 language = 180"
+        },
+        "evidence": [
+          {
+            "type": "🔍",
+            "claim": "AR-NAV-01 5-tab bottom nav with Voice center [Critical]",
+            "source": "airline pack heuristics.json"
+          },
+          {
+            "type": "📊",
+            "claim": "KLM voice +10-15%/yr engagement",
+            "source": "I-003 citation"
+          },
+          {
+            "type": "📊",
+            "claim": "Nuance voice 40-45% faster than typing",
+            "source": "I-003 citation"
+          },
+          {
+            "type": "🛡️",
+            "claim": "A4A: voice = aviation a11y inevitability",
+            "source": "I-003 citation"
+          }
+        ],
+        "handoff": {
+          "priority": "P1",
+          "complexity": "high",
+          "dependencies": [
+            "NLU service (Vietnamese-first)",
+            "Microphone permission",
+            "Audio processing"
+          ],
+          "acceptance": [
+            "Mic visible in bottom nav center on ALL screens (z-index: navigation)",
+            "Voice intent recognition >85% accuracy for top 10 Vietnamese intents",
+            "Wave animation activates within 100ms of mic tap",
+            "Multi-language detection auto-routes to correct NLU"
+          ]
+        }
+      },
+      "runtime_dimensions": [
+        {
+          "key": "language_input",
+          "values": [
+            "vi-VN",
+            "en-US",
+            "ko-KR",
+            "zh-CN",
+            "ja-JP",
+            "fr-FR"
+          ],
+          "note": "Removed from state_dimensions 2026-05-08 — multi-language handled at runtime via i18n, not Figma variant"
+        }
+      ]
+    },
+    {
+      "id": "M-18",
+      "name": "AISuggestionToast",
+      "shell": "DashboardShell",
+      "slot": "VoiceAINav",
+      "category": "⭐ ĐẶC THÙ",
+      "level": "molecule",
+      "screens": "MH-H1 + active screens (overlay layer, dismissable)",
+      "note": "[ASPIRATION] AI proactive — Pillar 1 + Pillar 3 cross-cutting",
+      "structure": [
+        {
+          "name": "ToastBubble",
+          "detail": "AI mascot avatar + suggestion text",
+          "type": "container"
+        },
+        {
+          "name": "AcceptCTA",
+          "detail": "[Có]",
+          "type": "action"
+        },
+        {
+          "name": "DismissCTA",
+          "detail": "[Bỏ qua]",
+          "type": "action"
+        },
+        {
+          "name": "WhyButton",
+          "detail": "AR-PRS-03 transparency",
+          "type": "action"
+        }
+      ],
+      "state_dimensions": [
+        {
+          "key": "suggestion_type",
+          "values": [
+            "proactive_check_in",
+            "wifi_predictive",
+            "lounge_invitation",
+            "bag_pack_reminder",
+            "irop_proactive"
+          ]
+        },
+        {
+          "key": "ai_confidence",
+          "values": [
+            "high",
+            "medium",
+            "low"
+          ]
+        }
+      ],
+      "enrichment": {
+        "context": {
+          "problem": "User must remember to do tasks — friction + missed actions",
+          "trigger": "[ASPIRATION] EXEC-SUMM §8 + URD §H Zone F AI Suggestion",
+          "origin": "[EXEC-SUMM] §8 Pillar 1 Hyper-Personalization predictive",
+          "predecessor": "M-17"
+        },
+        "intent": {
+          "quote": "AI knows what user likely needs next. Non-intrusive proactive suggestion.",
+          "primary_goal": "User receives 1 timely suggestion per session, accepts at 60%+ rate",
+          "personas": "All — AI confidence determines visibility",
+          "context_of_use": "Floating toast — bottom right, dismissable",
+          "value_pyramid": "Functional → Personalization → Time-savings"
+        },
+        "insight": {
+          "core_pattern": "Proactive AI assistant (Google Assistant + Siri Suggestions)",
+          "behavioral": "Reduce 'forgotten task' friction — Salesforce -10% transaction abandonment",
+          "differentiation": "Tier-aware AI suggestions (Gold+ gets lounge invitation, Silver gets bag reminder)",
+          "state_machine": "5 suggestion × 3 confidence = 15"
+        },
+        "evidence": [
+          {
+            "type": "🔍",
+            "claim": "URD §H Zone F AI Suggestion spec",
+            "source": "urd/core/home-dashboard.md"
+          },
+          {
+            "type": "🛡️",
+            "claim": "AR-PRS-03 Why this suggestion transparency",
+            "source": "airline pack heuristics.json"
+          }
+        ],
+        "handoff": {
+          "priority": "P3",
+          "complexity": "high",
+          "dependencies": [
+            "M-17",
+            "ML prediction service",
+            "Frequency cap engine"
+          ],
+          "acceptance": [
+            "Floating overlay z-index above content but below modals",
+            "Frequency cap: max 1 suggestion per 30min",
+            "Confidence threshold: only high (>85%) for auto-show; medium → with Why button",
+            "Dismissable with 1 tap, doesn't reappear in same session"
+          ]
+        }
+      },
+      "aspirational": true
+    }
+  ]
+}

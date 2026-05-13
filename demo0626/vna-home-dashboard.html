@@ -1,0 +1,654 @@
+
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=390, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0e1017">
+  <title>Trang chủ · Vietnam Airlines</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ══════════════════════════════════════════
+       HOME DASHBOARD — DashboardShell overrides
+       Zone A: dark header  · Zones B-E: light scroll · Zone F: bottom nav
+       ══════════════════════════════════════════ */
+
+    body { background: #0e1017; }
+
+    /* ─── Zone A: Dark header ─── */
+    .zone-a {
+      flex: 0 0 auto;
+      background: #0e1017;
+      padding-bottom: 14px;
+    }
+    .zone-a .statusbar { color: rgba(255,255,255,0.85); }
+
+    /* Tier identity row */
+    .tier-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 20px;
+    }
+    [data-slot="tier-badge"] {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 999px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    [data-slot="tier-badge-icon"] { font-size: 14px; line-height: 1; }
+    [data-slot="tier-badge-label"] {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+      color: rgba(255,255,255,0.9); font-family: var(--font-mono);
+    }
+    .tier-miles {
+      font-size: 12px; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+      color: rgba(255,255,255,0.5);
+      border-left: 1px solid rgba(255,255,255,0.18); margin-left: 4px; padding-left: 8px;
+    }
+    .avatar-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(255,255,255,0.1); border: 1.5px solid rgba(255,255,255,0.2);
+      display: grid; place-items: center;
+      font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.9); cursor: pointer;
+      font-family: var(--font-mono);
+    }
+
+    /* Greeting */
+    [data-slot="greeting-header"] { padding: 0 20px 8px; }
+    .greet-main {
+      font-size: 22px; font-weight: 700; letter-spacing: -0.02em;
+      color: #fff; line-height: 1.2; margin: 0 0 3px;
+    }
+    .greet-sub { font-size: 13px; color: rgba(255,255,255,0.5); font-family: var(--font-mono); }
+
+    /* Weather mini card */
+    [data-slot="weather-mini-card"] {
+      display: flex; align-items: center; gap: 8px;
+      padding: 0 20px 12px;
+    }
+    .w-item {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; padding: 8px 12px;
+    }
+    .w-city { font-size: 11px; font-family: var(--font-mono); color: rgba(255,255,255,0.5); }
+    .w-temp { font-size: 13px; font-weight: 600; font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: rgba(255,255,255,0.9); }
+    .w-arr  { color: rgba(255,255,255,0.3); font-size: 14px; }
+
+    /* Flight mini card */
+    [data-slot="flight-mini-card"] {
+      margin: 0 20px 12px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px; padding: 12px 14px;
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer;
+    }
+    .fmc-logo {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: var(--accent); display: grid; place-items: center; flex-shrink: 0;
+    }
+    .fmc-logo span { color: #fff; font-size: 8px; font-weight: 700; font-family: var(--font-mono); }
+    .fmc-body { flex: 1; }
+    .fmc-route { font-size: 13px; font-weight: 600; color: #fff; letter-spacing: -0.01em; }
+    .fmc-meta  { font-size: 11px; color: rgba(255,255,255,0.5); font-family: var(--font-mono); margin-top: 2px; }
+    .fmc-right { text-align: right; }
+    [data-slot="flight-mini-card-status"] {
+      display: block;
+      font-size: 11px; font-weight: 600; font-family: var(--font-mono);
+      color: oklch(56% 0.16 145);
+    }
+    .fmc-gate { font-size: 11px; color: rgba(255,255,255,0.5); font-family: var(--font-mono); margin-top: 2px; }
+    .fmc-dep  { font-size: 14px; font-weight: 700; font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: oklch(70% 0.16 78); margin-top: 3px; }
+
+    /* Quick action CTAs */
+    [data-slot="quick-action-cta"] { display: flex; gap: 10px; padding: 0 20px; }
+    .cta-p {
+      flex: 1; min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px;
+      background: #fff; color: #0e1017; border: 0;
+      border-radius: 12px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+    .cta-p svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; }
+    .cta-g {
+      flex: 1; min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px;
+      background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85);
+      border: 1px solid rgba(255,255,255,0.2); border-radius: 12px;
+      font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
+    }
+    .cta-g svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+    /* ─── Scrollable body ─── */
+    .scroll { background: var(--bg); }
+
+    /* Zone section headers */
+    .zh { font-size: 11px; font-family: var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+
+    /* ─── Zone B: DCZ ─── */
+    .zone-b { padding: 20px 20px 0; }
+
+    .trip-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+    .trip-top  { background: color-mix(in oklch, var(--accent) 7%, var(--surface)); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; align-items: center; gap: 8px; }
+    .trip-fn   { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; flex: 1; }
+    .trip-date { font-size: 12px; font-family: var(--font-mono); color: var(--muted); }
+    .trip-body { padding: 12px 16px; }
+    .trip-times { display: flex; align-items: baseline; }
+    .trip-t    { font-size: 24px; font-weight: 800; font-family: var(--font-mono); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+    .trip-sep  { flex: 1; text-align: center; font-size: 12px; color: var(--muted); font-family: var(--font-mono); padding-top: 8px; }
+    .trip-ports { display: flex; justify-content: space-between; margin: 6px 0 12px; align-items: baseline; }
+    .trip-port  { font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
+    .trip-tags  { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    /* Action pills (horizontal scroll) */
+    [data-slot="dcz-action-pills"] {
+      overflow-x: auto; scrollbar-width: none;
+      display: flex; gap: 8px;
+      padding: 14px 20px 0;
+    }
+    [data-slot="dcz-action-pills"]::-webkit-scrollbar { display: none; }
+    .ap {
+      display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0;
+      padding: 8px 14px; border-radius: 999px;
+      background: var(--surface); border: 1px solid var(--border);
+      font-size: 13px; font-weight: 500; color: var(--fg); cursor: pointer; white-space: nowrap;
+    }
+    .ap svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.7; }
+    .ap.ap-p { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .ap.ap-p svg { stroke: #fff; }
+
+    /* Predictive recommendation */
+    [data-slot="predictive-recommendation"] { padding: 12px 20px 0; }
+    .pred-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; display: flex; align-items: flex-start; gap: 10px; }
+    .pred-ico { width: 32px; height: 32px; border-radius: 8px; background: color-mix(in oklch, var(--accent) 10%, var(--bg)); display: grid; place-items: center; flex-shrink: 0; }
+    .pred-ico svg { width: 16px; height: 16px; stroke: var(--accent); fill: none; stroke-width: 1.8; }
+    .pred-inner { flex: 1; }
+    .pred-title { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+    .pred-sub   { font-size: 12px; color: var(--muted); }
+    .pred-btns  { display: flex; gap: 8px; margin-top: 10px; }
+    .pred-yes { padding: 8px 14px; border-radius: 8px; background: var(--accent); color: #fff; border: 0; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .pred-no  { padding: 8px 12px; border-radius: 8px; background: transparent; color: var(--muted); border: 1px solid var(--border); font: inherit; font-size: 12px; cursor: pointer; }
+
+    /* Cross-sale */
+    [data-slot="cross-sale"] { padding: 12px 20px 0; }
+    .cs-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+    .cs-thumb { width: 52px; height: 52px; border-radius: 10px; background: oklch(93% 0.008 240); display: grid; place-items: center; flex-shrink: 0; font-size: 22px; }
+    .cs-body { flex: 1; }
+    .cs-name { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+    .cs-meta { font-size: 12px; color: var(--muted); font-family: var(--font-mono); margin-top: 2px; }
+    .cs-link { font-size: 12px; font-weight: 600; color: var(--accent); margin-top: 6px; }
+
+    /* ─── Zone C: Recent Searches ─── */
+    .zone-c { padding: 20px 20px 0; }
+    [data-slot="dashboard-recent-searches"] .chip-row {
+      overflow-x: auto; scrollbar-width: none;
+      display: flex; gap: 8px; padding-bottom: 4px;
+    }
+    [data-slot="dashboard-recent-searches"] .chip-row::-webkit-scrollbar { display: none; }
+    [data-slot="recent-search-chip"] {
+      display: inline-flex; flex-direction: column; gap: 2px; flex-shrink: 0;
+      padding: 8px 14px; border-radius: 12px;
+      background: var(--surface); border: 1px solid var(--border); cursor: pointer;
+    }
+    .rc-rt { font-size: 14px; font-weight: 500; }
+    .rc-mt { font-size: 11px; color: var(--muted); font-family: var(--font-mono); }
+
+    /* ─── Zone D: Smart Suggestions ─── */
+    .zone-d { padding: 20px 20px 0; }
+    .promo-card {
+      border-radius: 16px; overflow: hidden;
+      background: color-mix(in oklch, var(--accent) 8%, var(--surface));
+      border: 1px solid color-mix(in oklch, var(--accent) 22%, transparent);
+    }
+    .promo-body { padding: 16px; }
+    .promo-eye  { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-family: var(--font-mono); margin-bottom: 6px; }
+    .promo-h    { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+    .promo-sub  { font-size: 13px; color: var(--muted); }
+    .promo-foot {
+      padding: 12px 16px 14px;
+      border-top: 1px solid color-mix(in oklch, var(--accent) 15%, transparent);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .promo-chips { display: flex; gap: 6px; }
+    .pc { font-size: 12px; font-family: var(--font-mono); background: color-mix(in oklch, var(--accent) 12%, transparent); color: var(--accent); padding: 4px 8px; border-radius: 6px; }
+    .promo-cta-btn { font-size: 13px; font-weight: 600; color: var(--accent); background: none; border: none; cursor: pointer; font: inherit; }
+
+    /* ─── Zone E: Loyalty Snapshot ─── */
+    .zone-e { padding: 20px 20px 24px; }
+
+    .miles-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+    .miles-top  { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
+    .miles-lbl  { font-size: 11px; font-family: var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+    .miles-tier { font-size: 11px; font-family: var(--font-mono); color: var(--accent); font-weight: 600; }
+    [data-slot="miles-snapshot-number"] {
+      font-size: 36px; font-weight: 800; letter-spacing: -0.03em;
+      font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+      color: var(--fg); line-height: 1; margin-bottom: 4px;
+    }
+    .miles-to   { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+    [data-slot="miles-snapshot-gauge"] { height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; margin-bottom: 8px; }
+    .gauge-fill { height: 100%; border-radius: 3px; background: var(--accent); width: 0; transition: width 1.4s cubic-bezier(0.22, 1, 0.36, 1); }
+    .gauge-labels { display: flex; justify-content: space-between; align-items: baseline; }
+    .gl { font-size: 11px; color: var(--accent); font-family: var(--font-mono); font-weight: 600; }
+    .gr { font-size: 11px; color: var(--muted);  font-family: var(--font-mono); }
+
+    .rw-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+    .rw-ico  { width: 40px; height: 40px; border-radius: 10px; background: color-mix(in oklch, var(--warn) 12%, var(--bg)); display: grid; place-items: center; flex-shrink: 0; }
+    .rw-ico svg { width: 20px; height: 20px; stroke: var(--warn); fill: none; stroke-width: 1.8; }
+    .rw-body { flex: 1; }
+    .rw-title { font-size: 14px; font-weight: 600; }
+    .rw-price { font-size: 13px; font-family: var(--font-mono); color: var(--warn); font-weight: 700; margin-top: 2px; }
+    .rw-btn   { padding: 8px 14px; border-radius: 10px; background: color-mix(in oklch, var(--warn) 12%, transparent); color: oklch(60% 0.16 68); border: 1px solid color-mix(in oklch, var(--warn) 30%, transparent); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+
+    .lup-card { border-radius: 14px; padding: 14px 16px; background: color-mix(in oklch, var(--accent) 7%, var(--surface)); border: 1px solid color-mix(in oklch, var(--accent) 18%, transparent); display: flex; align-items: center; gap: 12px; }
+    .lup-ico   { font-size: 22px; flex-shrink: 0; }
+    .lup-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .lup-sub   { font-size: 12px; color: var(--muted); }
+
+    /* ─── Zone F: Bottom nav ─── */
+    .zone-f { flex: 0 0 auto; position: relative; background: var(--surface); border-top: 1px solid var(--border); }
+
+    /* AI suggestion toast — floats above nav */
+    [data-slot="ai-suggestion-toast"] {
+      position: absolute; bottom: calc(100% + 8px); left: 16px; right: 16px;
+      background: var(--fg); border-radius: 16px; padding: 14px 16px;
+      display: flex; align-items: flex-start; gap: 10px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.22), 0 1px 4px rgba(0,0,0,0.1);
+      animation: toast-up 0.4s cubic-bezier(0.22,1,0.36,1) 1s both;
+    }
+    @keyframes toast-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .t-ico   { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .t-inner { flex: 1; }
+    .t-msg   { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.9); line-height: 1.35; }
+    .t-btns  { display: flex; gap: 8px; margin-top: 8px; }
+    .t-yes   { padding: 8px 14px; border-radius: 8px; background: var(--accent); color: #fff; border: 0; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .t-no    { padding: 8px 12px; border-radius: 8px; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); border: 0; font: inherit; font-size: 12px; cursor: pointer; }
+    .t-x     { width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); border: 0; font-size: 14px; line-height: 1; display: grid; place-items: center; cursor: pointer; flex-shrink: 0; }
+
+    /* Footer tab bar */
+    [data-slot="dashboard-footer-tabbar"] { display: flex; align-items: center; padding: 8px 8px 20px; }
+    .nav-t { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: 0; cursor: pointer; padding: 8px 4px; }
+    .nav-t svg { width: 22px; height: 22px; stroke: var(--muted); fill: none; stroke-width: 1.6; }
+    .nav-t-l { font-size: 10px; font-family: var(--font-mono); color: var(--muted); }
+    .nav-t.active svg { stroke: var(--fg); }
+    .nav-t.active .nav-t-l { color: var(--fg); font-weight: 600; }
+
+    /* Voice mic (center oversize) */
+    .nav-mic-wrap { flex: 1; display: flex; justify-content: center; }
+    [data-slot="voice-mic"] {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--accent); border: 0;
+      display: grid; place-items: center; cursor: pointer; position: relative;
+      box-shadow: 0 4px 16px color-mix(in oklch, var(--accent) 50%, transparent);
+    }
+    [data-slot="voice-mic-icon"] { display: grid; place-items: center; }
+    [data-slot="voice-mic-icon"] svg { width: 24px; height: 24px; stroke: #fff; fill: none; stroke-width: 1.8; }
+    [data-slot="voice-mic-wave"] {
+      position: absolute; inset: -7px;
+      border-radius: 50%; border: 2px solid color-mix(in oklch, var(--accent) 38%, transparent);
+      animation: pulse-ring 2.5s ease-out infinite; pointer-events: none;
+    }
+
+    /* Scroll reveal */
+    .rv { opacity: 0; transform: translateY(14px); transition: opacity 0.38s ease, transform 0.38s ease; }
+    .rv.in { opacity: 1; transform: none; }
+  </style>
+</head>
+<body
+  data-slot="dashboard-shell"
+  data-tier="titanium"
+  data-trip="active"
+  data-phase="T-2h"
+  data-cultural="default"
+  data-lang="vi"
+  data-recovery="safe"
+  data-weather="sunny"
+  data-voice="idle">
+
+<div class="app">
+
+  <!-- ══ ZONE A: HeaderInfo — sticky top ══ -->
+  <div data-slot="dashboard-header-info" class="zone-a">
+
+    <div class="statusbar">
+      <span class="num">9:38</span>
+      <div class="statusbar-icons">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="rgba(255,255,255,0.85)" aria-hidden>
+          <rect x="0" y="7" width="3" height="4" rx=".5"/><rect x="4" y="5" width="3" height="6" rx=".5"/>
+          <rect x="8" y="3" width="3" height="8" rx=".5"/><rect x="12" y="0" width="3" height="11" rx=".5"/>
+        </svg>
+        <svg width="25" height="11" viewBox="0 0 25 11" fill="rgba(255,255,255,0.85)" aria-hidden>
+          <rect x=".5" y=".5" width="21" height="10" rx="2.5" fill="none" stroke="rgba(255,255,255,0.4)"/>
+          <rect x="22" y="3.5" width="1.5" height="4" rx=".4" fill-opacity=".4"/>
+          <rect x="2" y="2" width="18" height="7" rx="1.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- M-01: TierBadgePersistent + avatar -->
+    <div class="tier-row">
+      <div data-slot="tier-badge">
+        <span data-slot="tier-badge-icon">🪁</span>
+        <span data-slot="tier-badge-label">Titanium</span>
+        <span class="tier-miles num">12,450 miles</span>
+      </div>
+      <button class="avatar-btn" aria-label="Hồ sơ">TN</button>
+    </div>
+
+    <!-- M-02: GreetingHeader -->
+    <div data-slot="greeting-header">
+      <p class="greet-main">Chào buổi sáng, anh Tuấn!</p>
+      <p class="greet-sub">VN225 khởi hành sau 1h 58m · T3, 15/06/2026</p>
+    </div>
+
+    <!-- M-03: WeatherMiniCard -->
+    <div data-slot="weather-mini-card">
+      <div class="w-item">
+        <span class="w-city">SGN</span>
+        <span>☀️</span>
+        <span class="w-temp">28°C</span>
+      </div>
+      <span class="w-arr">→</span>
+      <div class="w-item">
+        <span class="w-city">HAN</span>
+        <span>⛅</span>
+        <span class="w-temp">22°C</span>
+      </div>
+    </div>
+
+    <!-- M-04: FlightMiniCard -->
+    <div data-slot="flight-mini-card">
+      <div class="fmc-logo"><span>VN</span></div>
+      <div class="fmc-body">
+        <div class="fmc-route">
+          <span data-slot="flight-mini-card-code">VN225</span> · SGN → HAN
+        </div>
+        <div class="fmc-meta">2h 05m · Bay thẳng · Tân Sơn Nhất</div>
+      </div>
+      <div class="fmc-right">
+        <span data-slot="flight-mini-card-status">Đúng giờ</span>
+        <div class="fmc-gate num">Cửa D2</div>
+        <div class="fmc-dep num">14:30 ↑</div>
+      </div>
+    </div>
+
+    <!-- M-05: QuickActionCTA -->
+    <div data-slot="quick-action-cta">
+      <button class="cta-p">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        Check-in ngay
+      </button>
+      <button class="cta-g">
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        Thêm hành lý
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- ══ SCROLLABLE CONTENT — Zones B–E ══ -->
+  <div class="scroll">
+
+    <!-- ── ZONE B: DCZ ── -->
+    <div data-slot="dashboard-dcz" class="zone-b">
+
+      <div class="zh rv">Chuyến bay hôm nay</div>
+
+      <!-- M-06: DCZCurrentTripCard -->
+      <div data-slot="dcz-trip-card" class="trip-card rv">
+        <div class="trip-top">
+          <div>
+            <div class="trip-fn">VN225 · Hà Nội</div>
+            <div class="trip-date num">T3, 15 tháng 6 · 2026</div>
+          </div>
+          <span class="pill success" style="font-size: 10px;">Đúng giờ</span>
+        </div>
+        <div class="trip-body">
+          <div class="trip-times">
+            <span class="trip-t">14:30</span>
+            <span class="trip-sep">————————→ 2h05m</span>
+            <span class="trip-t">16:35</span>
+          </div>
+          <div class="trip-ports">
+            <span class="trip-port">Tân Sơn Nhất</span>
+            <span class="trip-port">Nội Bài</span>
+          </div>
+          <div class="trip-tags">
+            <span class="pill" style="font-size: 10px;">Ghế 12C</span>
+            <span class="pill" style="font-size: 10px;">Phổ thông</span>
+            <span class="pill" style="font-size: 10px;">2 NL + 1 TE</span>
+            <span class="pill warn" style="font-size: 10px;">Cửa D2</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- M-07: DCZContextActionPills -->
+      <div data-slot="dcz-action-pills" class="rv">
+        <button class="ap ap-p">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          Check-in
+        </button>
+        <button class="ap">
+          <svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>
+          Wi-Fi 80MB
+        </button>
+        <button class="ap">
+          <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+          Hành lý +20kg
+        </button>
+        <button class="ap">
+          <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+          Bữa ăn
+        </button>
+        <button class="ap">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+          Phòng chờ
+        </button>
+      </div>
+
+      <!-- M-08: PredictiveRecommendation -->
+      <div data-slot="predictive-recommendation" class="rv">
+        <div class="pred-card">
+          <div class="pred-ico">
+            <svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="var(--accent)"/></svg>
+          </div>
+          <div class="pred-inner">
+            <div class="pred-title">Thêm Wi-Fi cho chuyến bay?</div>
+            <div class="pred-sub">Bạn thường mua Wi-Fi 80MB trên VN225</div>
+            <div class="pred-btns">
+              <button class="pred-yes">Thêm ngay · 39,000đ</button>
+              <button class="pred-no">Bỏ qua</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M-09: CrossSaleModule -->
+      <div data-slot="cross-sale" class="rv">
+        <div class="cs-card">
+          <div class="cs-thumb">🏨</div>
+          <div class="cs-body">
+            <div class="cs-name">Park Hyatt Hà Nội</div>
+            <div class="cs-meta num">★★★★★ · 1,200,000đ/đêm · 2.5km Hoàn Kiếm</div>
+            <div class="cs-link">Xem ưu đãi →</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /zone-b -->
+
+
+    <!-- ── ZONE C: Recent Searches ── -->
+    <div data-slot="dashboard-recent-searches" class="zone-c rv">
+      <div class="zh">Tìm gần đây</div>
+      <div class="chip-row">
+        <div data-slot="recent-search-chip">
+          <div class="rc-rt">SGN → HAN</div>
+          <div class="rc-mt">3 HK · Tháng 6</div>
+        </div>
+        <div data-slot="recent-search-chip">
+          <div class="rc-rt">HAN → DAD</div>
+          <div class="rc-mt">2 HK · Tháng 7</div>
+        </div>
+        <div data-slot="recent-search-chip">
+          <div class="rc-rt">SGN → PQC</div>
+          <div class="rc-mt">4 HK · Tháng 8</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ── ZONE D: Smart Suggestions ── -->
+    <div data-slot="dashboard-smart-suggestions" class="zone-d rv">
+      <div class="zh">Dành cho bạn</div>
+
+      <!-- M-11: PromoBanner -->
+      <div data-slot="promo-banner" class="promo-card">
+        <div class="promo-body">
+          <div class="promo-eye">Titanium Exclusive · Hết hạn 30/06/2026</div>
+          <div class="promo-h">Vé nội địa từ 690,000đ</div>
+          <div class="promo-sub">Bay khắp Việt Nam với giá ưu đãi hạng Titanium</div>
+        </div>
+        <div class="promo-foot">
+          <div class="promo-chips">
+            <span class="pc">HAN</span><span class="pc">DAD</span>
+            <span class="pc">PQC</span><span class="pc">VCA</span><span class="pc">CXR</span>
+          </div>
+          <button class="promo-cta-btn">Đặt ngay →</button>
+        </div>
+      </div>
+
+      <!-- M-12: LocalDiscoveryCard (empty — not post-arrival) -->
+      <div data-slot="local-discovery"></div>
+
+    </div><!-- /zone-d -->
+
+
+    <!-- ── ZONE E: Loyalty Snapshot ── -->
+    <div data-slot="dashboard-loyalty-snapshot" class="zone-e rv">
+      <div class="zh">Lotusmiles</div>
+
+      <!-- M-13: MilesSnapshotCard -->
+      <div data-slot="miles-snapshot" class="miles-card">
+        <div class="miles-top">
+          <span class="miles-lbl">Số dặm tích lũy</span>
+          <span class="miles-tier num">🪁 TITANIUM</span>
+        </div>
+        <div data-slot="miles-snapshot-number" class="num">12,450</div>
+        <div class="miles-to">Còn <strong>17,550 miles</strong> để lên hạng ✨ Gold</div>
+        <div data-slot="miles-snapshot-gauge">
+          <div class="gauge-fill" id="gauge-fill"></div>
+        </div>
+        <div class="gauge-labels">
+          <span class="gl num">12,450</span>
+          <span class="gr num">30,000 · ✨ Gold</span>
+        </div>
+      </div>
+
+      <!-- M-14: RewardOfferCard -->
+      <div data-slot="reward-offer" class="rw-card" style="margin-top: 12px;">
+        <div class="rw-ico">
+          <svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="var(--warn)"/></svg>
+        </div>
+        <div class="rw-body">
+          <div class="rw-title">Wi-Fi 80MB · VN225</div>
+          <div class="rw-price num">500 miles</div>
+        </div>
+        <button class="rw-btn">Đổi ngay</button>
+      </div>
+
+      <!-- M-15: TierLevelupPrompt -->
+      <div data-slot="tier-levelup-prompt" class="lup-card" style="margin-top: 12px;">
+        <span class="lup-ico">⬆️</span>
+        <div>
+          <div class="lup-title">Gần lên hạng Gold!</div>
+          <div class="lup-sub">Còn 17,550 miles — bay 2 chặng nữa là đạt Gold ✨</div>
+        </div>
+      </div>
+
+      <!-- M-16: MillionMilerTribute (empty — tier ≠ MillionMiler) -->
+      <div data-slot="mm-tribute"></div>
+
+    </div><!-- /zone-e -->
+
+    <div style="height: 8px;"></div>
+  </div><!-- /scroll -->
+
+
+  <!-- ══ ZONE F: VoiceAINav — sticky bottom · CROSS-APP ══ -->
+  <div data-slot="dashboard-voice-ai-nav" class="zone-f">
+
+    <!-- M-18: AISuggestionToast -->
+    <div data-slot="ai-suggestion-toast" id="ai-toast">
+      <span class="t-ico">✈️</span>
+      <div class="t-inner">
+        <div class="t-msg">Check-in chuyến VN225 ngay để chọn ghế tốt hơn?</div>
+        <div class="t-btns">
+          <button class="t-yes">Làm ngay</button>
+          <button class="t-no" id="t-no">Bỏ qua</button>
+        </div>
+      </div>
+      <button class="t-x" id="t-x" aria-label="Đóng">×</button>
+    </div>
+
+    <!-- M-17: VoiceMicCenterNav + footer tabs -->
+    <div data-slot="dashboard-footer-tabbar">
+      <button class="nav-t active" aria-label="Trang chủ">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span class="nav-t-l">Trang chủ</span>
+      </button>
+      <button class="nav-t" aria-label="Chuyến bay">
+        <svg viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 2c-2-2-4-2-5.5-.5L10 5 1.8 6.2c-.5.1-.9.5-.5 1L3 9"/><path d="m10.5 12.5 8-8"/><path d="M4.5 20.5l3-3"/></svg>
+        <span class="nav-t-l">Chuyến bay</span>
+      </button>
+      <div class="nav-mic-wrap">
+        <button data-slot="voice-mic" aria-label="Trợ lý giọng nói">
+          <span data-slot="voice-mic-wave"></span>
+          <span data-slot="voice-mic-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          </span>
+        </button>
+      </div>
+      <button class="nav-t" aria-label="Tiện ích">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span class="nav-t-l">Tiện ích</span>
+      </button>
+      <button class="nav-t" aria-label="Hồ sơ">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="nav-t-l">Hồ sơ</span>
+      </button>
+    </div>
+
+  </div><!-- /zone-f -->
+
+</div><!-- /app -->
+
+<script>
+  // Gauge fill — trigger after paint
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const g = document.getElementById('gauge-fill');
+      if (g) g.style.width = '41.5%';
+    });
+  });
+
+  // Dismiss AI toast
+  function hideToast() {
+    const t = document.getElementById('ai-toast');
+    if (!t) return;
+    Object.assign(t.style, { opacity: '0', transform: 'translateY(8px)', transition: 'opacity 0.2s ease,transform 0.2s ease' });
+    setTimeout(() => t && (t.style.display = 'none'), 220);
+  }
+  document.getElementById('t-x')?.addEventListener('click', hideToast);
+  document.getElementById('t-no')?.addEventListener('click', hideToast);
+
+  // Scroll reveal (IntersectionObserver)
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.06 });
+  document.querySelectorAll('.rv').forEach(el => {
+    if (el.getBoundingClientRect().top < window.innerHeight) { el.classList.add('in'); }
+    else { io.observe(el); }
+  });
+</script>
+</body>
+</html>

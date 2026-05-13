@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=390, initial-scale=1">
+  <meta name="theme-color" content="#fcfcfd">
+  <title>Thanh toán · Vietnam Airlines</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+  (function(){var p=new URLSearchParams(location.search).get('dir');if(!p||p==='modern')return;var t={tech:':root{--bg:oklch(98% 0.005 250);--surface:oklch(100% 0 0);--fg:oklch(22% 0.02 240);--muted:oklch(50% 0.018 240);--border:oklch(90% 0.008 240);--accent:oklch(58% 0.16 145);--radius-card:4px;--radius-xl:6px;--radius-pill:4px}.btn-primary,.btn-secondary,.input-field,.card,.nav-back,.nav-action,.pill{border-radius:4px!important}',brutalist:':root{--bg:oklch(96% 0.004 100);--surface:oklch(100% 0 0);--fg:oklch(15% 0.02 100);--muted:oklch(40% 0.02 100);--border:oklch(15% 0.02 100);--accent:oklch(60% 0.22 25);--radius-card:0;--radius-xl:0;--radius-pill:0}*{border-radius:0!important}.h1,.h2,.nav-title{font-family:"Times New Roman",Georgia,serif}.btn-primary{background:var(--fg);border:2px solid var(--fg)}.btn-secondary{border:2px solid var(--fg)}.card,.input-field{border-color:var(--fg);border-width:1.5px}.pill{background:transparent;border:1px solid currentColor}.nav-back,.nav-action{border:1.5px solid var(--fg)}body{font-family:ui-monospace,"IBM Plex Mono",Menlo,monospace}'};if(t[p]){var s=document.createElement('style');s.textContent=t[p];document.head.appendChild(s);}})();
+  </script>
+  <style>
+    /* Credit card visual */
+    .saved-card {
+      border-radius: 18px;
+      padding: 24px 20px;
+      background: linear-gradient(135deg, oklch(28% 0.06 250) 0%, oklch(18% 0.04 260) 100%);
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .saved-card::before {
+      content: '';
+      position: absolute; top: -30px; right: -20px;
+      width: 140px; height: 140px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .saved-card::after {
+      content: '';
+      position: absolute; bottom: -40px; right: 30px;
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.03);
+    }
+    .card-chip {
+      width: 32px; height: 24px; border-radius: 5px;
+      background: linear-gradient(135deg, oklch(80% 0.12 80), oklch(65% 0.10 75));
+      margin-bottom: 20px; position: relative; z-index: 1;
+    }
+    .card-number { font-size: 17px; font-family: var(--font-mono); letter-spacing: 0.14em; margin-bottom: 14px; position: relative; z-index: 1; }
+    .card-meta { display: flex; justify-content: space-between; align-items: flex-end; position: relative; z-index: 1; }
+    .card-meta-label { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.6; margin-bottom: 2px; }
+    .card-meta-value { font-size: 13px; font-weight: 500; letter-spacing: 0.02em; }
+    .card-brand { font-size: 18px; font-weight: 700; font-family: var(--font-mono); letter-spacing: -0.01em; opacity: 0.85; }
+
+    /* Biometric button */
+    .biometric-wrap { display: flex; flex-direction: column; align-items: center; padding: 8px 0; }
+    .biometric-ring {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--accent); display: grid; place-items: center;
+      position: relative; cursor: pointer;
+    }
+    .biometric-ring::before, .biometric-ring::after {
+      content: ''; position: absolute; inset: 0;
+      border-radius: 50%; background: var(--accent);
+      animation: pulse-ring 2s ease infinite;
+    }
+    .biometric-ring::after { animation-delay: 0.7s; }
+    .biometric-ring svg { width: 32px; height: 32px; stroke: #fff; fill: none; stroke-width: 1.6; position: relative; z-index: 1; }
+    .biometric-label { margin-top: 12px; font-size: 14px; font-weight: 500; color: var(--fg); text-align: center; }
+    .biometric-sub   { margin-top: 3px; font-size: 12px; color: var(--muted); text-align: center; font-family: var(--font-mono); }
+
+    /* Apple Pay / Google Pay buttons */
+    .apay-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; min-height: 50px; padding: 14px 20px;
+      background: var(--fg); color: #fff; border: 0;
+      border-radius: 14px; font: inherit; font-size: 15px; font-weight: 600;
+      cursor: pointer;
+    }
+    .apay-btn svg { width: 22px; height: 22px; flex-shrink: 0; }
+    .gpay-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; min-height: 50px; padding: 14px 20px;
+      background: var(--surface); color: var(--fg);
+      border: 1.5px solid var(--border); border-radius: 14px;
+      font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+    }
+    .gpay-btn svg { width: 22px; height: 22px; flex-shrink: 0; }
+
+    /* Order summary mini */
+    .order-mini {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; border-radius: 12px;
+      background: var(--border); color: var(--fg);
+    }
+    .order-mini-route { font-size: 13px; font-weight: 500; }
+    .order-mini-price { font-size: 16px; font-weight: 700; font-family: var(--font-mono); letter-spacing: -0.01em; color: var(--accent); }
+
+    .add-card-link {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 14px; color: var(--accent); font-size: 14px; font-weight: 500;
+      cursor: pointer; border-radius: 12px; background: var(--accent-soft);
+    }
+    .add-card-link svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+  </style>
+</head>
+<body>
+  <div class="app" data-slot="payment-shell">
+
+    <div class="statusbar">
+      <span class="num">9:47</span>
+      <div class="statusbar-icons">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor" aria-hidden>
+          <rect x="0" y="7" width="3" height="4" rx=".5"/><rect x="4" y="5" width="3" height="6" rx=".5"/>
+          <rect x="8" y="3" width="3" height="8" rx=".5"/><rect x="12" y="0" width="3" height="11" rx=".5"/>
+        </svg>
+        <svg width="25" height="11" viewBox="0 0 25 11" fill="currentColor" aria-hidden>
+          <rect x=".5" y=".5" width="21" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-opacity=".35"/>
+          <rect x="22" y="3.5" width="1.5" height="4" rx=".4" fill-opacity=".35"/>
+          <rect x="2" y="2" width="18" height="7" rx="1.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <div class="nav-header anim">
+      <button class="nav-back" aria-label="Quay lại">
+        <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      </button>
+      <div class="nav-title">Thanh toán</div>
+    </div>
+
+    <div class="scroll">
+      <div class="pad stack anim" style="gap: 16px; padding-top: 4px;">
+
+        <!-- Order summary -->
+        <div class="order-mini">
+          <div>
+            <div class="order-mini-route">VN225 · SGN → HAN · 16/06</div>
+            <div style="font-size: 11px; color: var(--muted); font-family: var(--font-mono); margin-top: 2px;">3 hành khách · Phổ thông</div>
+          </div>
+          <div class="order-mini-price num">3,050,000đ</div>
+        </div>
+
+        <!-- M-09: OneTapPayBiometric -->
+        <div data-slot="payment-action-area">
+          <p style="font-size: 11px; font-family: var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px;">Thẻ đã lưu</p>
+
+          <!-- Saved card visual -->
+          <div class="saved-card">
+            <div class="card-chip"></div>
+            <div class="card-number">•••• •••• •••• 1234</div>
+            <div class="card-meta">
+              <div>
+                <div class="card-meta-label">Chủ thẻ</div>
+                <div class="card-meta-value">NGUYEN VAN A</div>
+              </div>
+              <div>
+                <div class="card-meta-label">Hết hạn</div>
+                <div class="card-meta-value">09 / 28</div>
+              </div>
+              <div class="card-brand">VISA</div>
+            </div>
+          </div>
+
+          <!-- Biometric prompt -->
+          <div data-slot="one-tap-pay-biometric" class="biometric-wrap" style="margin-top: 24px;">
+            <div class="biometric-ring">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="M9 12l2 2 4-4"/>
+              </svg>
+            </div>
+            <div class="biometric-label">Xác thực Face ID</div>
+            <div class="biometric-sub">Nhìn vào màn hình để thanh toán</div>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider-or">HOẶC</div>
+
+        <!-- Apple Pay / Google Pay -->
+        <div data-slot="one-tap-pay-applepay" class="stack" style="gap: 10px;">
+          <button class="apay-btn">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+            </svg>
+            Apple Pay
+          </button>
+          <button class="gpay-btn">
+            <svg viewBox="0 0 24 24" width="22" height="22">
+              <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z" fill="#4285f4"/>
+            </svg>
+            Google Pay
+          </button>
+        </div>
+
+        <!-- M-10: Add new card -->
+        <div data-slot="payment-add-card-area">
+          <div class="add-card-link">
+            <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/><path d="M12 16v-4M10 14h4"/></svg>
+            + Thêm thẻ mới
+          </div>
+        </div>
+
+        <div style="height: 4px;"></div>
+      </div>
+    </div>
+
+    <div class="action-bar" style="background: transparent; border-top: 0; padding-top: 4px;">
+      <p style="text-align: center; font-size: 12px; color: var(--muted); font-family: var(--font-mono); margin: 0 0 10px;">
+        Thanh toán an toàn · SSL 256-bit
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>

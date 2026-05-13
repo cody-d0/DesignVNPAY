@@ -1,0 +1,180 @@
+
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vietnam Airlines · Booking Flow</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      min-height: 100vh;
+      background: #0c0c0f;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      padding: 48px 40px 64px;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    .page-header { text-align: center; margin-bottom: 48px; }
+    .page-eyebrow {
+      font-size: 11px; font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(255,255,255,0.35); margin-bottom: 10px;
+    }
+    .page-title { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; color: #fff; margin: 0 0 8px; }
+    .page-sub { font-size: 15px; color: rgba(255,255,255,0.45); margin: 0; }
+
+    .flow-row { display: flex; align-items: flex-start; gap: 0; justify-content: center; }
+
+    .phone-card { display: flex; flex-direction: column; align-items: center; gap: 0; }
+
+    /* Clay phone — body wrapper with padding bezels */
+    .clay-phone {
+      position: relative;
+      padding: 32px 20px 28px;
+      border-radius: 58px;
+      background: #f0f0f3;
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.08),
+        0 4px 16px rgba(0,0,0,0.12),
+        0 16px 48px rgba(0,0,0,0.32),
+        0 40px 80px -8px rgba(0,0,0,0.22);
+      zoom: 0.58;
+      flex-shrink: 0;
+    }
+    /* Power button — right side */
+    .clay-phone::before {
+      content: '';
+      position: absolute;
+      right: -5px; top: 200px;
+      width: 5px; height: 58px;
+      background: #e2e2e5;
+      border-radius: 0 3px 3px 0;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+    }
+    /* Volume buttons — left side */
+    .clay-phone::after {
+      content: '';
+      position: absolute;
+      left: -5px; top: 160px;
+      width: 5px; height: 40px;
+      background: #e2e2e5;
+      border-radius: 3px 0 0 3px;
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.1),
+        0 56px 0 #e2e2e5,
+        0 56px 0 1px rgba(0,0,0,0.1);
+    }
+    /* Inset screen — correct 390×844 inner area */
+    .clay-screen {
+      width: 390px; height: 844px;
+      border-radius: 40px;
+      overflow: hidden;
+      position: relative;
+    }
+    .clay-screen iframe { width: 390px; height: 844px; border: 0; display: block; }
+    /* Screen edge gloss */
+    .clay-screen::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 40px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -1px 0 rgba(0,0,0,0.05);
+      pointer-events: none;
+    }
+
+    .screen-label { margin-top: 14px; text-align: center; }
+    .sl-step { font-size: 10px; font-family: ui-monospace, 'SF Mono', Menlo, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 3px; }
+    .sl-name { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.75); letter-spacing: -0.01em; }
+
+    .flow-arrow {
+      display: flex; align-items: center; justify-content: center;
+      width: 36px; padding-bottom: 60px;
+      flex-shrink: 0; align-self: center;
+    }
+    .flow-arrow svg { width: 20px; height: 20px; stroke: rgba(255,255,255,0.2); fill: none; stroke-width: 1.5; }
+
+    .spec-footer { margin-top: 48px; display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; }
+    .spec-item { text-align: center; }
+    .spec-num { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; font-family: ui-monospace, 'SF Mono', Menlo, monospace; color: oklch(58% 0.18 255); }
+    .spec-label { font-size: 11px; color: rgba(255,255,255,0.3); font-family: ui-monospace, Menlo, monospace; letter-spacing: 0.04em; margin-top: 2px; }
+
+    @keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .phone-card { animation: slide-up 0.5s ease both; }
+    .phone-card:nth-child(1) { animation-delay: 0.08s; }
+    .phone-card:nth-child(3) { animation-delay: 0.14s; }
+    .phone-card:nth-child(5) { animation-delay: 0.20s; }
+    .phone-card:nth-child(7) { animation-delay: 0.26s; }
+    .phone-card:nth-child(9) { animation-delay: 0.32s; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="page-header">
+      <div class="page-eyebrow">Booking Flow · 5 screens · Modern Minimal</div>
+      <h1 class="page-title">Vietnam Airlines</h1>
+      <p class="page-sub">Search → Results → Booking → Payment → Confirmation</p>
+    </div>
+
+    <div class="flow-row">
+      <div class="phone-card">
+        <div class="clay-phone">
+          <div class="clay-screen">
+            <iframe src="01-search.html" title="Search" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>
+          </div>
+        </div>
+        <div class="screen-label"><div class="sl-step">01</div><div class="sl-name">Tìm chuyến bay</div></div>
+      </div>
+      <div class="flow-arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <div class="phone-card">
+        <div class="clay-phone">
+          <div class="clay-screen">
+            <iframe src="02-results.html" title="Results" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>
+          </div>
+        </div>
+        <div class="screen-label"><div class="sl-step">02</div><div class="sl-name">Kết quả chuyến bay</div></div>
+      </div>
+      <div class="flow-arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <div class="phone-card">
+        <div class="clay-phone">
+          <div class="clay-screen">
+            <iframe src="03-booking.html" title="Booking" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>
+          </div>
+        </div>
+        <div class="screen-label"><div class="sl-step">03</div><div class="sl-name">Xác nhận đặt chỗ</div></div>
+      </div>
+      <div class="flow-arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <div class="phone-card">
+        <div class="clay-phone">
+          <div class="clay-screen">
+            <iframe src="04-payment.html" title="Payment" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>
+          </div>
+        </div>
+        <div class="screen-label"><div class="sl-step">04</div><div class="sl-name">Thanh toán</div></div>
+      </div>
+      <div class="flow-arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <div class="phone-card">
+        <div class="clay-phone">
+          <div class="clay-screen">
+            <iframe src="05-confirmation.html" title="Confirmation" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>
+          </div>
+        </div>
+        <div class="screen-label"><div class="sl-step">05</div><div class="sl-name">Đặt vé thành công</div></div>
+      </div>
+    </div>
+
+    <div class="spec-footer">
+      <div class="spec-item"><div class="spec-num">5</div><div class="spec-label">SCREENS</div></div>
+      <div class="spec-item"><div class="spec-num">12</div><div class="spec-label">MOLECULES</div></div>
+      <div class="spec-item"><div class="spec-num">25</div><div class="spec-label">DATA-SLOTS</div></div>
+      <div class="spec-item"><div class="spec-num">4</div><div class="spec-label">SHELLS</div></div>
+    </div>
+  </div>
+</body>
+</html>

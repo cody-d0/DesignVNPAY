@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=390, initial-scale=1">
+  <meta name="theme-color" content="#fcfcfd">
+  <title>Đặt vé thành công · Vietnam Airlines</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+  (function(){var p=new URLSearchParams(location.search).get('dir');if(!p||p==='modern')return;var t={tech:':root{--bg:oklch(98% 0.005 250);--surface:oklch(100% 0 0);--fg:oklch(22% 0.02 240);--muted:oklch(50% 0.018 240);--border:oklch(90% 0.008 240);--accent:oklch(58% 0.16 145);--radius-card:4px;--radius-xl:6px;--radius-pill:4px}.btn-primary,.btn-secondary,.input-field,.card,.nav-back,.nav-action,.pill{border-radius:4px!important}',brutalist:':root{--bg:oklch(96% 0.004 100);--surface:oklch(100% 0 0);--fg:oklch(15% 0.02 100);--muted:oklch(40% 0.02 100);--border:oklch(15% 0.02 100);--accent:oklch(60% 0.22 25);--radius-card:0;--radius-xl:0;--radius-pill:0}*{border-radius:0!important}.h1,.h2,.nav-title{font-family:"Times New Roman",Georgia,serif}.btn-primary{background:var(--fg);border:2px solid var(--fg)}.btn-secondary{border:2px solid var(--fg)}.card,.input-field{border-color:var(--fg);border-width:1.5px}.pill{background:transparent;border:1px solid currentColor}.nav-back,.nav-action{border:1.5px solid var(--fg)}body{font-family:ui-monospace,"IBM Plex Mono",Menlo,monospace}'};if(t[p]){var s=document.createElement('style');s.textContent=t[p];document.head.appendChild(s);}})();
+  </script>
+  <style>
+    /* Success header */
+    .success-header { text-align: center; padding: 8px 20px 0; }
+    .check-circle {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: var(--success-soft); display: grid; place-items: center;
+      margin: 0 auto 12px;
+    }
+    .check-circle svg {
+      width: 30px; height: 30px; stroke: var(--success); fill: none; stroke-width: 2.5;
+      stroke-dasharray: 50; stroke-dashoffset: 50;
+      animation: draw-check 0.5s ease 0.3s forwards;
+    }
+    .success-title { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 4px; }
+    .success-sub   { font-size: 14px; color: var(--muted); margin: 0; }
+
+    /* Boarding pass */
+    .boarding-pass {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .bp-header {
+      background: linear-gradient(135deg, oklch(44% 0.18 255) 0%, oklch(36% 0.16 258) 100%);
+      padding: 16px 20px;
+      color: #fff;
+    }
+    .bp-airline { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.75; margin-bottom: 10px; font-family: var(--font-mono); }
+    .bp-route { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .bp-city { text-align: center; }
+    .bp-code { font-size: 28px; font-weight: 700; font-family: var(--font-mono); letter-spacing: -0.01em; line-height: 1; }
+    .bp-name { font-size: 11px; opacity: 0.75; margin-top: 3px; font-family: var(--font-mono); }
+    .bp-flight-line { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .bp-flight-code { font-size: 12px; font-family: var(--font-mono); opacity: 0.85; }
+    .bp-arrow { color: rgba(255,255,255,0.4); font-size: 18px; }
+    .bp-time-row { display: flex; justify-content: space-between; margin-top: 14px; }
+    .bp-field { }
+    .bp-field-label { font-size: 9px; opacity: 0.6; letter-spacing: 0.06em; text-transform: uppercase; font-family: var(--font-mono); }
+    .bp-field-value { font-size: 14px; font-weight: 600; margin-top: 2px; font-family: var(--font-mono); }
+
+    /* Dashed tear line */
+    .tear-line {
+      display: flex; align-items: center;
+      border-top: 2px dashed var(--border); position: relative;
+    }
+    .tear-circle {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--bg); border: 1px solid var(--border);
+      position: absolute; top: -11px;
+    }
+    .tear-circle.left  { left: -10px; }
+    .tear-circle.right { right: -10px; }
+
+    /* PNR */
+    .bp-body { padding: 16px 20px; }
+    .pnr-block { text-align: center; margin-bottom: 16px; }
+    .pnr-label { font-size: 11px; font-family: var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .pnr-code  { font-size: 28px; font-weight: 700; font-family: var(--font-mono); letter-spacing: 0.12em; color: var(--fg); }
+    .bp-details { display: flex; justify-content: space-between; }
+    .bp-detail-item { }
+    .bp-detail-label { font-size: 10px; font-family: var(--font-mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .bp-detail-value { font-size: 14px; font-weight: 500; margin-top: 2px; }
+
+    /* Barcode placeholder */
+    .barcode {
+      width: 100%; height: 44px; margin-top: 16px;
+      border-radius: 6px; overflow: hidden;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--fg) 0px, var(--fg) 2px,
+        transparent 2px, transparent 4px,
+        var(--fg) 4px, var(--fg) 5px,
+        transparent 5px, transparent 8px,
+        var(--fg) 8px, var(--fg) 11px,
+        transparent 11px, transparent 13px
+      );
+      opacity: 0.12;
+    }
+
+    /* Miles earned */
+    .miles-earned {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px; border-radius: 14px;
+      background: color-mix(in oklch, var(--warn) 8%, transparent);
+      border: 1px solid color-mix(in oklch, var(--warn) 22%, transparent);
+    }
+    .miles-icon { width: 36px; height: 36px; border-radius: 50%; background: color-mix(in oklch, var(--warn) 18%, transparent); display: grid; place-items: center; flex-shrink: 0; }
+    .miles-icon svg { width: 18px; height: 18px; stroke: var(--warn); fill: none; stroke-width: 1.8; }
+    .miles-earned-num { font-size: 18px; font-weight: 700; font-family: var(--font-mono); color: var(--warn); }
+    .miles-earned-label { font-size: 12px; color: var(--muted); }
+
+    /* Wallet added */
+    .wallet-added {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; border-radius: 12px;
+      background: var(--success-soft); border: 1px solid color-mix(in oklch, var(--success) 25%, transparent);
+    }
+    .wallet-added svg { width: 18px; height: 18px; stroke: var(--success); fill: none; stroke-width: 1.8; flex-shrink: 0; }
+    .wallet-added span { font-size: 13px; font-weight: 500; color: var(--success); }
+
+    /* Share buttons */
+    .share-strip { display: flex; gap: 10px; }
+    .share-btn {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px;
+      padding: 12px 8px; border-radius: 14px;
+      background: var(--surface); border: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .share-btn .sb-icon { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; }
+    .share-btn .sb-label { font-size: 11px; font-family: var(--font-mono); color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="app" data-slot="confirmation-shell">
+
+    <div class="statusbar">
+      <span class="num">9:49</span>
+      <div class="statusbar-icons">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor" aria-hidden>
+          <rect x="0" y="7" width="3" height="4" rx=".5"/><rect x="4" y="5" width="3" height="6" rx=".5"/>
+          <rect x="8" y="3" width="3" height="8" rx=".5"/><rect x="12" y="0" width="3" height="11" rx=".5"/>
+        </svg>
+        <svg width="25" height="11" viewBox="0 0 25 11" fill="currentColor" aria-hidden>
+          <rect x=".5" y=".5" width="21" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-opacity=".35"/>
+          <rect x="22" y="3.5" width="1.5" height="4" rx=".4" fill-opacity=".35"/>
+          <rect x="2" y="2" width="18" height="7" rx="1.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="scroll">
+      <div class="pad stack anim" style="gap: 14px; padding-top: 12px; padding-bottom: 16px;">
+
+        <!-- Success header -->
+        <div data-slot="confirmation-main-content" class="success-header">
+          <div class="check-circle">
+            <svg viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>
+          </div>
+          <h1 class="success-title">Đặt vé thành công!</h1>
+          <p class="success-sub">Email xác nhận đã được gửi đến bạn</p>
+        </div>
+
+        <!-- M-11: BookingConfirmationCard -->
+        <div data-slot="booking-confirmation" class="boarding-pass">
+          <div class="bp-header">
+            <div class="bp-airline">Vietnam Airlines · VN225</div>
+            <div class="bp-route">
+              <div class="bp-city">
+                <div class="bp-code">SGN</div>
+                <div class="bp-name">Hồ Chí Minh</div>
+              </div>
+              <div class="bp-flight-line">
+                <div class="bp-flight-code">2h 05m</div>
+                <div class="bp-arrow">————›</div>
+              </div>
+              <div class="bp-city" style="text-align: right;">
+                <div class="bp-code">HAN</div>
+                <div class="bp-name">Hà Nội</div>
+              </div>
+            </div>
+            <div class="bp-time-row">
+              <div class="bp-field">
+                <div class="bp-field-label">Khởi hành</div>
+                <div class="bp-field-value">10:30</div>
+              </div>
+              <div class="bp-field" style="text-align: center;">
+                <div class="bp-field-label">Ngày bay</div>
+                <div class="bp-field-value">16 TH6 2026</div>
+              </div>
+              <div class="bp-field" style="text-align: right;">
+                <div class="bp-field-label">Ghế</div>
+                <div class="bp-field-value">12C</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tear line -->
+          <div class="tear-line">
+            <div class="tear-circle left"></div>
+            <div class="tear-circle right"></div>
+          </div>
+
+          <!-- PNR + barcode -->
+          <div class="bp-body">
+            <div class="pnr-block">
+              <div class="pnr-label">Mã đặt chỗ</div>
+              <div class="pnr-code">HVN4A2</div>
+            </div>
+            <div class="bp-details">
+              <div class="bp-detail-item">
+                <div class="bp-detail-label">Hành khách</div>
+                <div class="bp-detail-value">3 người</div>
+              </div>
+              <div class="bp-detail-item" style="text-align: center;">
+                <div class="bp-detail-label">Hạng vé</div>
+                <div class="bp-detail-value">Phổ thông</div>
+              </div>
+              <div class="bp-detail-item" style="text-align: right;">
+                <div class="bp-detail-label">Hành lý</div>
+                <div class="bp-detail-value">20 kg</div>
+              </div>
+            </div>
+            <div class="barcode"></div>
+          </div>
+        </div>
+
+        <!-- Miles earned -->
+        <div class="miles-earned">
+          <div class="miles-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <div>
+            <div class="miles-earned-num num" id="miles-counter">+1,000</div>
+            <div class="miles-earned-label">miles Lotusmiles đã được ghi nhận</div>
+          </div>
+        </div>
+
+        <!-- Wallet added -->
+        <div class="wallet-added">
+          <svg viewBox="0 0 24 24"><path d="m22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10.01-3-3"/></svg>
+          <span>Vé đã được thêm vào Wallet tự động</span>
+        </div>
+
+        <!-- M-12: TripShareToFamily -->
+        <div data-slot="confirmation-share-area">
+          <p style="font-size: 11px; font-family: var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px;">Chia sẻ chuyến đi</p>
+          <div class="share-strip">
+            <div class="share-btn">
+              <div class="sb-icon" style="background: #e8f5e9;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M20.5 3.5a12 12 0 0 0-17 17l-1.5 4.5 4.5-1.5a12 12 0 0 0 14-20z" fill="#25d366" stroke="none"/>
+                  <path d="M14.4 12.4c-.3-.1-1.7-.8-2-1-.3-.1-.5-.1-.7.1l-.9 1.2c-.1.2-.3.2-.5.1-.5-.2-2-1-3-2s-1.5-2-1.7-2.5c-.1-.3 0-.5.1-.6l.6-.7c.1-.2.1-.4 0-.6l-.9-2.1c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.7.3-.7.7-1 1.5-1 2.4 0 1.3.6 2.8 2.5 4.7 1.9 1.9 3.4 2.5 4.7 2.5.9 0 1.7-.3 2.4-1 .2-.2.3-.5.3-.7v-.6c-.1-.2-.3-.3-.6-.3z" fill="#fff"/>
+                </svg>
+              </div>
+              <div class="sb-label">Zalo</div>
+            </div>
+            <div class="share-btn">
+              <div class="sb-icon" style="background: #e3f2fd;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M21 5H3c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z" fill="#25a4e1" stroke="none"/>
+                  <path d="m3 7 9 6 9-6" stroke="#fff" stroke-width="1.5" fill="none"/>
+                </svg>
+              </div>
+              <div class="sb-label">Email</div>
+            </div>
+            <div class="share-btn">
+              <div class="sb-icon" style="background: #f3e5f5;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <rect x="2" y="2" width="20" height="20" rx="5" fill="#6c35ab"/>
+                  <path d="m7 17 10-10M17 7H9M17 7v8" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="sb-label">Khác</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height: 4px;"></div>
+      </div>
+    </div>
+
+    <div class="action-bar anim">
+      <button class="btn-primary">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" aria-hidden><path d="M2.5 19.5 21 12 2.5 4.5V10l13 2-13 2v5.5z"/></svg>
+        Xem chi tiết chuyến bay
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    /* Count-up animation for miles */
+    const el = document.getElementById('miles-counter');
+    let start = 0;
+    const target = 1000;
+    const dur = 1200;
+    const startTime = performance.now() + 600;
+    function tick(now) {
+      const elapsed = Math.max(0, now - startTime);
+      const t = Math.min(elapsed / dur, 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+      const val = Math.round(ease * target);
+      el.textContent = '+' + val.toLocaleString('vi-VN');
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  </script>
+</body>
+</html>

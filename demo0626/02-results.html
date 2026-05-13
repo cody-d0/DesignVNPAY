@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=390, initial-scale=1">
+  <meta name="theme-color" content="#fcfcfd">
+  <title>Kết quả · Vietnam Airlines</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+  (function(){var p=new URLSearchParams(location.search).get('dir');if(!p||p==='modern')return;var t={tech:':root{--bg:oklch(98% 0.005 250);--surface:oklch(100% 0 0);--fg:oklch(22% 0.02 240);--muted:oklch(50% 0.018 240);--border:oklch(90% 0.008 240);--accent:oklch(58% 0.16 145);--radius-card:4px;--radius-xl:6px;--radius-pill:4px}.btn-primary,.btn-secondary,.input-field,.card,.nav-back,.nav-action,.pill{border-radius:4px!important}',brutalist:':root{--bg:oklch(96% 0.004 100);--surface:oklch(100% 0 0);--fg:oklch(15% 0.02 100);--muted:oklch(40% 0.02 100);--border:oklch(15% 0.02 100);--accent:oklch(60% 0.22 25);--radius-card:0;--radius-xl:0;--radius-pill:0}*{border-radius:0!important}.h1,.h2,.nav-title{font-family:"Times New Roman",Georgia,serif}.btn-primary{background:var(--fg);border:2px solid var(--fg)}.btn-secondary{border:2px solid var(--fg)}.card,.input-field{border-color:var(--fg);border-width:1.5px}.pill{background:transparent;border:1px solid currentColor}.nav-back,.nav-action{border:1.5px solid var(--fg)}body{font-family:ui-monospace,"IBM Plex Mono",Menlo,monospace}'};if(t[p]){var s=document.createElement('style');s.textContent=t[p];document.head.appendChild(s);}})();
+  </script>
+  <style>
+    .filters { display: flex; gap: 8px; overflow-x: auto; padding: 0 20px 12px; scrollbar-width: none; }
+    .filters::-webkit-scrollbar { display: none; }
+
+    .flight-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 16px;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .flight-card.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .fc-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .fc-airline { display: flex; align-items: center; gap: 8px; }
+    .fc-logo {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: oklch(44% 0.18 255); display: grid; place-items: center;
+    }
+    .fc-logo span { color: #fff; font-size: 9px; font-weight: 700; font-family: var(--font-mono); letter-spacing: 0.02em; }
+    .fc-airline-name { font-size: 13px; font-weight: 500; color: var(--muted); }
+    .fc-flight-num { font-size: 12px; font-family: var(--font-mono); color: var(--muted); }
+    .fc-price-block { text-align: right; }
+    .fc-price { font-size: 18px; font-weight: 700; font-family: var(--font-mono); letter-spacing: -0.02em; color: var(--fg); }
+    .fc-price-sub { font-size: 11px; color: var(--muted); font-family: var(--font-mono); }
+
+    /* Flight timeline */
+    .fc-timeline { display: flex; align-items: center; gap: 0; }
+    .fc-port { text-align: center; width: 52px; flex-shrink: 0; }
+    .fc-time { font-size: 20px; font-weight: 700; font-family: var(--font-mono); letter-spacing: -0.02em; line-height: 1; }
+    .fc-code { font-size: 11px; font-family: var(--font-mono); color: var(--muted); margin-top: 3px; }
+    .fc-line { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0 8px; }
+    .fc-dur { font-size: 11px; font-family: var(--font-mono); color: var(--muted); }
+    .fc-track { width: 100%; height: 1px; background: var(--border); position: relative; }
+    .fc-track::before {
+      content: ''; position: absolute; right: 0; top: -4px;
+      border-top: 5px solid transparent; border-bottom: 5px solid transparent;
+      border-left: 7px solid var(--border);
+    }
+    .fc-direct { font-size: 10px; font-family: var(--font-mono); color: var(--muted); }
+
+    /* Fare class row */
+    .fc-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+    .fc-amenities { display: flex; gap: 8px; }
+    .fc-amenity { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 3px; }
+    .fc-amenity svg { width: 13px; height: 13px; stroke: var(--muted); fill: none; stroke-width: 1.8; }
+
+    .badge-cheap {
+      display: inline-flex; align-items: center;
+      padding: 3px 9px; border-radius: var(--radius-pill);
+      background: var(--success-soft); color: var(--success);
+      font-size: 10px; font-family: var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .badge-selected {
+      display: inline-flex; align-items: center;
+      padding: 3px 9px; border-radius: var(--radius-pill);
+      background: var(--accent); color: #fff;
+      font-size: 10px; font-family: var(--font-mono); letter-spacing: 0.04em;
+    }
+    .result-count { font-size: 13px; color: var(--muted); padding: 0 20px; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <div class="app" data-slot="booking-shell">
+
+    <div class="statusbar">
+      <span class="num">9:43</span>
+      <div class="statusbar-icons">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor" aria-hidden>
+          <rect x="0" y="7" width="3" height="4" rx=".5"/><rect x="4" y="5" width="3" height="6" rx=".5"/>
+          <rect x="8" y="3" width="3" height="8" rx=".5"/><rect x="12" y="0" width="3" height="11" rx=".5"/>
+        </svg>
+        <svg width="16" height="11" viewBox="0 0 16 12" fill="currentColor" aria-hidden>
+          <path d="M8 1C5 1 2.3 2.2.5 4.2L2 5.7C3.4 4.1 5.6 3 8 3s4.6 1 6 2.7l1.5-1.5C13.7 2.2 11 1 8 1z"/>
+          <path d="M8 5c-1.8 0-3.3.7-4.5 1.8L5 8.2c.8-.8 2-1.2 3-1.2s2.2.5 3 1.2L12.5 6.8C11.3 5.7 9.8 5 8 5z"/>
+          <circle cx="8" cy="11" r="1.2"/>
+        </svg>
+        <svg width="25" height="11" viewBox="0 0 25 11" fill="currentColor" aria-hidden>
+          <rect x=".5" y=".5" width="21" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-opacity=".35"/>
+          <rect x="22" y="3.5" width="1.5" height="4" rx=".4" fill-opacity=".35"/>
+          <rect x="2" y="2" width="18" height="7" rx="1.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <div class="nav-header anim">
+      <button class="nav-back" aria-label="Quay lại">
+        <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      </button>
+      <div class="nav-title">SGN → HAN · T3, 16/6</div>
+      <button class="nav-action" aria-label="Lọc">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M10 18h4"/></svg>
+      </button>
+    </div>
+
+    <div class="scroll">
+      <!-- Filter chips -->
+      <div class="filters anim">
+        <span class="tag active">Tất cả</span>
+        <span class="tag">Bay thẳng</span>
+        <span class="tag">Buổi sáng</span>
+        <span class="tag">Buổi chiều</span>
+        <span class="tag">Buổi tối</span>
+      </div>
+
+      <p class="result-count anim">14 chuyến bay · 3 hạng vé</p>
+
+      <!-- Flight cards — data-slot="booking-results-list" -->
+      <div data-slot="booking-results-list" class="pad stack" style="gap: 12px;">
+
+        <!-- M-05 Card 1: VN421 — cheapest -->
+        <div data-slot="flight-option-card" class="flight-card anim">
+          <div class="fc-top">
+            <div class="fc-airline">
+              <div class="fc-logo"><span>VN</span></div>
+              <div>
+                <div class="fc-airline-name">Vietnam Airlines</div>
+                <div class="fc-flight-num">VN421</div>
+              </div>
+            </div>
+            <div class="fc-price-block">
+              <div class="fc-price">780K</div>
+              <div class="fc-price-sub">/ người</div>
+            </div>
+          </div>
+          <div class="fc-timeline">
+            <div class="fc-port">
+              <div class="fc-time num">06:00</div>
+              <div class="fc-code">SGN</div>
+            </div>
+            <div class="fc-line">
+              <div class="fc-dur">2h 05m</div>
+              <div class="fc-track"></div>
+              <div class="fc-direct">Bay thẳng</div>
+            </div>
+            <div class="fc-port">
+              <div class="fc-time num">08:05</div>
+              <div class="fc-code">HAN</div>
+            </div>
+          </div>
+          <div class="fc-bottom">
+            <div class="fc-amenities">
+              <div class="fc-amenity">
+                <svg viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+                7 kg xách tay
+              </div>
+              <div class="fc-amenity">
+                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                Không có hành lý
+              </div>
+            </div>
+            <div class="badge-cheap">Rẻ nhất</div>
+          </div>
+        </div>
+
+        <!-- M-05 Card 2: VN225 — selected -->
+        <div data-slot="flight-option-card" class="flight-card selected anim">
+          <div class="fc-top">
+            <div class="fc-airline">
+              <div class="fc-logo"><span>VN</span></div>
+              <div>
+                <div class="fc-airline-name">Vietnam Airlines</div>
+                <div class="fc-flight-num">VN225</div>
+              </div>
+            </div>
+            <div class="fc-price-block">
+              <div class="fc-price" style="color: var(--accent);">890K</div>
+              <div class="fc-price-sub">/ người</div>
+            </div>
+          </div>
+          <div class="fc-timeline">
+            <div class="fc-port">
+              <div class="fc-time num">10:30</div>
+              <div class="fc-code">SGN</div>
+            </div>
+            <div class="fc-line">
+              <div class="fc-dur">2h 05m</div>
+              <div class="fc-track"></div>
+              <div class="fc-direct">Bay thẳng</div>
+            </div>
+            <div class="fc-port">
+              <div class="fc-time num">12:35</div>
+              <div class="fc-code">HAN</div>
+            </div>
+          </div>
+          <div class="fc-bottom">
+            <div class="fc-amenities">
+              <div class="fc-amenity">
+                <svg viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+                7 kg xách tay
+              </div>
+              <div class="fc-amenity">
+                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                Không có hành lý
+              </div>
+            </div>
+            <div class="badge-selected">Đang chọn</div>
+          </div>
+        </div>
+
+        <!-- M-05 Card 3: VN319 -->
+        <div data-slot="flight-option-card" class="flight-card anim">
+          <div class="fc-top">
+            <div class="fc-airline">
+              <div class="fc-logo"><span>VN</span></div>
+              <div>
+                <div class="fc-airline-name">Vietnam Airlines</div>
+                <div class="fc-flight-num">VN319</div>
+              </div>
+            </div>
+            <div class="fc-price-block">
+              <div class="fc-price">1,150K</div>
+              <div class="fc-price-sub">/ người</div>
+            </div>
+          </div>
+          <div class="fc-timeline">
+            <div class="fc-port">
+              <div class="fc-time num">14:00</div>
+              <div class="fc-code">SGN</div>
+            </div>
+            <div class="fc-line">
+              <div class="fc-dur">2h 05m</div>
+              <div class="fc-track"></div>
+              <div class="fc-direct">Bay thẳng</div>
+            </div>
+            <div class="fc-port">
+              <div class="fc-time num">16:05</div>
+              <div class="fc-code">HAN</div>
+            </div>
+          </div>
+          <div class="fc-bottom">
+            <div class="fc-amenities">
+              <div class="fc-amenity">
+                <svg viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+                7 kg xách tay
+              </div>
+              <div class="fc-amenity">
+                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                20 kg hành lý
+              </div>
+            </div>
+            <span class="tag" style="font-size: 11px; padding: 3px 9px;">Flex +50K</span>
+          </div>
+        </div>
+
+        <div style="height: 4px;"></div>
+      </div>
+    </div>
+
+    <div class="action-bar anim">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px;">
+        <span style="font-size: 13px; color: var(--muted);">VN225 · 10:30 → 12:35 · 3 người</span>
+        <span class="num" style="font-size: 18px; font-weight: 700; letter-spacing: -0.02em;">2,670,000đ</span>
+      </div>
+      <button class="btn-primary">Chọn chuyến này</button>
+    </div>
+
+  </div>
+</body>
+</html>

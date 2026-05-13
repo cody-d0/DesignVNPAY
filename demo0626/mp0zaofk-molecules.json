@@ -1,0 +1,295 @@
+{
+  "$comment": ["BOOKING Domain — Compliant v3.0 — Sequential M-01..M-12"],
+  "meta": {
+    "domain": "booking",
+    "version": "v1.0",
+    "schema_version": "3.0",
+    "molecule_count": 12,
+    "enriched_count": 12,
+    "generated_at": "2026-05-08",
+    "shells": ["SearchShell", "BookingShell", "PaymentShell", "ConfirmationShell"],
+    "source_artifacts": [
+      "urd/core/booking.md",
+      "domains/booking/SF1-booking/ANALYSIS.md",
+      "domains/booking/SF1-booking/SCREEN-MODEL.md",
+      "EXECUTIVE-SUMMARY.md §8 Phase 1+3",
+      "airline pack heuristics.json AR-BKG-01..07"
+    ]
+  },
+  "molecules": [
+    {
+      "id": "M-01", "name": "OriginInputSmart", "shell": "SearchShell", "slot": "InputArea",
+      "category": "🔁 SHARED", "level": "molecule",
+      "screens": "MH-B1 Search + MH-Home Search shortcut (cross-context)",
+      "note": "GPS auto-detect + recent override; cloud sync across devices",
+      "structure": [
+        {"name": "OriginField", "detail": "auto-detected city + GPS", "type": "input"},
+        {"name": "GPSLocationBadge", "detail": "📍 indicator", "type": "badge"},
+        {"name": "RecentOriginsDropdown", "detail": "last 3 origins", "type": "container"}
+      ],
+      "state_dimensions": [
+        {"key": "auto_detect_state", "values": ["GPS_detected", "manual_input", "recent_used"]},
+        {"key": "vn_airport", "values": ["HAN", "SGN", "DAD", "PQC", "international_outbound"]}
+      ],
+      "enrichment": {
+        "context": {"problem": "Manual origin entry every search — 100% session friction", "trigger": "AR-BKG-01 [Critical]", "origin": "[EXEC-SUMM] N-01 Foundation gap", "predecessor": null},
+        "intent": {"quote": "GPS + recent = origin auto-suggested 90%", "primary_goal": "Reduce origin entry to 0 taps for 90% sessions", "personas": "All — esp P-02 Titanium", "context_of_use": "Search flight first input", "value_pyramid": "Functional → Time-savings"},
+        "insight": {"core_pattern": "Smart origin (Google Flights pattern)", "behavioral": "Reduce input friction +25% completion", "differentiation": "Cross-device sync (vs single-device cache)", "state_machine": "3 detect × 5 airport = 15"},
+        "evidence": [{"type": "🔍", "claim": "AR-BKG-01 Smart origin detection [Critical]", "source": "airline pack heuristics.json"}],
+        "handoff": {"priority": "P0", "complexity": "low", "dependencies": ["GPS permission"], "acceptance": ["GPS detect within 2s", "Manual override always available", "Recent origins sync from cloud"]}
+      }
+    },
+    {
+      "id": "M-02", "name": "DestinationInput", "shell": "SearchShell", "slot": "InputArea",
+      "category": "🔁 SHARED", "level": "molecule",
+      "screens": "MH-B1 + Home search shortcut",
+      "note": "Multi-modal input (typed/voice/popular chips)",
+      "structure": [
+        {"name": "DestinationField", "detail": "free input + autocomplete", "type": "input"},
+        {"name": "PopularDestinationChips", "detail": "5 suggested cities", "type": "container"},
+        {"name": "VoiceInputCTA", "detail": "🎤 mic shortcut", "type": "action"}
+      ],
+      "state_dimensions": [
+        {"key": "input_method", "values": ["typed", "voice", "selected_from_promo", "auto_from_recent"]},
+        {"key": "destination_market", "values": ["vn_domestic", "asia_pacific", "europe", "americas", "skyteam_partner"]}
+      ],
+      "enrichment": {
+        "context": {"problem": "Lonely text field not discoverable", "trigger": "AR-BKG-01 + Pillar 3 voice", "origin": "Foundation + Voice cross-cutting", "predecessor": "M-01"},
+        "intent": {"quote": "Type, speak, or pick popular", "primary_goal": "First-time users complete in <10s", "personas": "P-01 Linh + P-06 foreign tourist", "context_of_use": "Search flight second input", "value_pyramid": "Functional → Discovery"},
+        "insight": {"core_pattern": "Multi-modal input + voice integration", "behavioral": "Voice 40-45% faster (Nuance)", "differentiation": "Voice 1st-class option", "state_machine": "4 method × 5 market = 20"},
+        "evidence": [{"type": "📊", "claim": "Nuance voice 40-45% faster", "source": "I-003 citation"}],
+        "handoff": {"priority": "P1", "complexity": "medium", "dependencies": ["Voice service"], "acceptance": ["Voice recognition >80% accuracy", "Autocomplete from recent + popular", "Chips populate from analytics"]}
+      }
+    },
+    {
+      "id": "M-03", "name": "PassengerCounter", "shell": "SearchShell", "slot": "InputArea",
+      "category": "🔁 SHARED", "level": "molecule",
+      "screens": "MH-B1 + booking review",
+      "note": "Family + group threshold detection",
+      "structure": [
+        {"name": "AdultCounter", "detail": "+/- counter", "type": "input"},
+        {"name": "ChildCounter", "detail": "child age 2-12", "type": "input"},
+        {"name": "InfantCounter", "detail": "infant <2", "type": "input"},
+        {"name": "GroupBookingCTA", "detail": "Group >9 contact sales", "type": "action"}
+      ],
+      "state_dimensions": [
+        {"key": "passenger_mix", "values": ["solo", "couple", "family_with_children", "family_with_infant", "group_5plus"]},
+        {"key": "group_threshold", "values": ["under_9_self_service", "9_plus_contact_sales"]}
+      ],
+      "enrichment": {
+        "context": {"problem": "Family booking forces multiple sessions", "trigger": "AR-BKG-05 [Critical] + N-08", "origin": "Family persona enablement", "predecessor": "M-02"},
+        "intent": {"quote": "Single session for all family", "primary_goal": "Family booking 1 session vs 2+", "personas": "P-04 Platinum + P-07 Family", "context_of_use": "Search passenger step", "value_pyramid": "Functional → Family care"},
+        "insight": {"core_pattern": "Group booking flow", "behavioral": "30-40% VN leisure = family", "differentiation": "Status gift integration (Platinum 5 recipients)", "state_machine": "5 mix × 2 threshold = 10"},
+        "evidence": [{"type": "🔍", "claim": "AR-BKG-05 Group/companion booking [Critical]", "source": "airline pack heuristics.json"}, {"type": "🛡️", "claim": "N-08 Family travel undermarketed", "source": "EXECUTIVE-SUMMARY.md §5"}],
+        "handoff": {"priority": "P1", "complexity": "medium", "dependencies": [], "acceptance": ["Counter validates max 9 self-service", "Group >9 routes to sales contact", "Child/infant age picker required"]}
+      }
+    },
+    {
+      "id": "M-04", "name": "FlexPricingCalendar", "shell": "SearchShell", "slot": "DateArea",
+      "category": "⭐ ĐẶC THÙ", "level": "molecule",
+      "screens": "MH-B1 (Search only)",
+      "note": "VN-specific cheap day patterns highlighted",
+      "structure": [
+        {"name": "CalendarHeatmap", "detail": "weekly grid with price colors", "type": "container"},
+        {"name": "CheapDayHighlight", "detail": "🟢 green markers", "type": "badge"},
+        {"name": "ExpensiveDayWarning", "detail": "🔴 red markers", "type": "badge"},
+        {"name": "FlexibilityToggle", "detail": "± 3d / 7d / monthly", "type": "toggle"}
+      ],
+      "state_dimensions": [
+        {"key": "pricing_view", "values": ["heatmap_cheap_days", "fixed_dates", "loading", "cached_pricing"]},
+        {"key": "flexibility_window", "values": ["exact_date", "plus_minus_3d", "plus_minus_7d", "monthly_cheapest"]}
+      ],
+      "enrichment": {
+        "context": {"problem": "Fixed date input — user doesn't know flex savings", "trigger": "AR-BKG-02 + Skyscanner pattern", "origin": "Pillar 1 dynamic pricing", "predecessor": "M-03"},
+        "intent": {"quote": "Show cheap days visually", "primary_goal": "Flex booking +20% adoption", "personas": "P-01 Silver + business flex", "context_of_use": "Date picker step", "value_pyramid": "Functional → Savings"},
+        "insight": {"core_pattern": "Calendar heatmap (Skyscanner)", "behavioral": "Visual pricing reduces fatigue", "differentiation": "VN cheap days (Tuesday/Wed lower for HAN-SGN)", "state_machine": "4 view × 4 flex = 16"},
+        "evidence": [{"type": "🔍", "claim": "AR-BKG-02 Flex-pricing visualization [Recommended]", "source": "airline pack heuristics.json"}],
+        "handoff": {"priority": "P2", "complexity": "high", "dependencies": ["NDC pricing API"], "acceptance": ["Cheap days API <500ms", "Color thresholds: <80% avg = green, >120% = red", "Cache for offline"]}
+      }
+    },
+    {
+      "id": "M-05", "name": "FlightOptionCard", "shell": "BookingShell", "slot": "ResultsList",
+      "category": "🔁 SHARED", "level": "molecule",
+      "screens": "MH-B2 Results + similar in IROP alternates",
+      "note": "Tier discount visible (vs hidden Members-only)",
+      "structure": [
+        {"name": "FlightTimeline", "detail": "depart-duration-arrive", "type": "container"},
+        {"name": "FareClassPicker", "detail": "Economy/Premium/Business/First tabs", "type": "toggle"},
+        {"name": "PriceDisplay", "detail": "tabular numerals + tier discount preview", "type": "text"},
+        {"name": "AmenitiesIcons", "detail": "Wi-Fi/meal/entertainment", "type": "icon"}
+      ],
+      "state_dimensions": [
+        {"key": "fare_class", "values": ["economy", "premium_economy", "business", "first"]},
+        {"key": "tier_aware_pricing", "values": ["standard", "tier_discount_visible_5pct", "tier_member_exclusive"]}
+      ],
+      "enrichment": {
+        "context": {"problem": "Tier benefits hidden in flight cards", "trigger": "06-propose §Phase 1 SC-03", "origin": "Tier visibility N-02 + booking", "predecessor": "M-04"},
+        "intent": {"quote": "Clean card. Tier discount surfaced", "primary_goal": "Decide flight in <30s", "personas": "All travelers", "context_of_use": "Search results", "value_pyramid": "Functional → Tier visibility"},
+        "insight": {"core_pattern": "Card-based comparison", "behavioral": "Tier discount visibility +18% conversion", "differentiation": "Tier-exclusive fare class shown", "state_machine": "4 class × 3 pricing = 12"},
+        "evidence": [{"type": "🏦", "claim": "Tier-aware pricing per Lotusmiles", "source": "airline pack lotusmiles.json"}],
+        "handoff": {"priority": "P1", "complexity": "medium", "dependencies": ["Lotusmiles CRM tier API"], "acceptance": ["Tier discount badge visible Gold+", "Members-only fares clearly marked", "Amenities icons render in <100ms"]}
+      }
+    },
+    {
+      "id": "M-06", "name": "TotalPriceUpfront", "shell": "BookingShell", "slot": "PriceArea",
+      "category": "🔁 SHARED", "level": "molecule",
+      "screens": "MH-B4 Review + MH-B5 Payment summary",
+      "note": "Eliminates audit C-05 hidden fees anxiety",
+      "structure": [
+        {"name": "BasePriceLine", "detail": "Vé cơ bản", "type": "text"},
+        {"name": "TaxesBreakdown", "detail": "expandable tax detail", "type": "container"},
+        {"name": "AncillariesAdded", "detail": "bag + meal + seat", "type": "text"},
+        {"name": "TotalPriceLarge", "detail": "final total — no surprises", "type": "text"},
+        {"name": "MilesEarnPreview", "detail": "✨ +X miles tích lũy", "type": "badge"}
+      ],
+      "state_dimensions": [
+        {"key": "fees_breakdown", "values": ["expanded_full_detail", "collapsed_total_only"]},
+        {"key": "voucher_applied", "values": ["none", "tier_discount", "irop_voucher", "promo_code"]}
+      ],
+      "enrichment": {
+        "context": {"problem": "Hidden fees revealed at payment — trust eroded", "trigger": "AR-BKG-03 [Critical] + audit C-05", "origin": "Foundation Phase 1 transparency", "predecessor": "M-05"},
+        "intent": {"quote": "Total upfront — every line BEFORE payment", "primary_goal": "Eliminate price surprise", "personas": "P-01 Silver + foreign tourists", "context_of_use": "Review pre-payment", "value_pyramid": "Trust (foundational)"},
+        "insight": {"core_pattern": "Total upfront pricing (Booking.com EU)", "behavioral": "Transparency +20% conversion", "differentiation": "Miles preview at booking (vs post-payment)", "state_machine": "2 breakdown × 4 voucher = 8"},
+        "evidence": [{"type": "🔍", "claim": "AR-BKG-03 Total price upfront [Critical]", "source": "airline pack heuristics.json"}],
+        "handoff": {"priority": "P0", "complexity": "low", "dependencies": [], "acceptance": ["No fees revealed at payment that aren't in review", "Miles preview matches actual credit", "Voucher discount applied correctly"]}
+      }
+    },
+    {
+      "id": "M-07", "name": "SeatPicker", "shell": "BookingShell", "slot": "AddOnsArea",
+      "category": "🔁 SHARED", "level": "molecule",
+      "screens": "MH-B4 + Check-in seat re-pick (cross-context)",
+      "note": "Cross-ref with M-SUN-01 (tools-ar) for sunlight prediction",
+      "structure": [
+        {"name": "SeatMap", "detail": "aircraft layout grid", "type": "container"},
+        {"name": "SeatTypeIcons", "detail": "🪟 window / 🚪 aisle / 🦵 extra-legroom", "type": "icon"},
+        {"name": "TierFreeSeatBadge", "detail": "Gold+ premium FREE", "type": "badge"},
+        {"name": "SunlightIntegration", "detail": "Cross-ref M-SUN-01", "type": "container"}
+      ],
+      "state_dimensions": [
+        {"key": "seat_availability", "values": ["available", "premium_locked_pay", "premium_free_for_tier", "selected", "reserved"]},
+        {"key": "tier", "values": ["Silver", "Titanium", "Gold", "Platinum", "MillionMiler"]}
+      ],
+      "enrichment": {
+        "context": {"problem": "Premium seat benefit hidden until checkout", "trigger": "AR-CKI-04 + lotusmiles.json benefits", "origin": "Tier UX + M-BKG-03 cross-ref", "predecessor": "M-06"},
+        "intent": {"quote": "Premium seats highlighted FREE for Gold+. Sunlight integration optional", "primary_goal": "Tier members use seat benefit", "personas": "Gold+ + P-01 Linh (Sunlight game)", "context_of_use": "Booking add-ons step", "value_pyramid": "Tier recognition → Comfort"},
+        "insight": {"core_pattern": "Tier-aware seat map (SQ KrisFlyer)", "behavioral": "Tier benefit visibility +30% NPS Gold+", "differentiation": "Sunlight predictor integration — first airline globally", "state_machine": "5 availability × 5 tier = 25"},
+        "evidence": [{"type": "🔍", "claim": "AR-CKI-04 Tier-aware seat selection [Recommended]", "source": "airline pack heuristics.json"}, {"type": "🛡️", "claim": "Cross-ref M-SUN-01 SunlightHeatmap", "source": "domains/tools-ar/molecules.json"}],
+        "handoff": {"priority": "P1", "complexity": "medium", "dependencies": ["M-13 home tier badge"], "acceptance": ["Premium seats free for Gold+ tier", "Sunlight overlay optional toggle", "Selected seat visible on map"]}
+      }
+    },
+    {
+      "id": "M-08", "name": "MealSelector", "shell": "BookingShell", "slot": "AddOnsArea",
+      "category": "🔁 SHARED", "level": "molecule",
+      "screens": "MH-B4 + Check-in meal re-select",
+      "note": "Saved preferences across trips",
+      "structure": [
+        {"name": "MealCategoryTabs", "detail": "Standard/Veg/Halal/Kosher/Special", "type": "toggle"},
+        {"name": "DietaryIcons", "detail": "🌱 vegan / 🕌 halal / 🍞 gluten-free", "type": "icon"},
+        {"name": "TierFreeMealBadge", "detail": "Premium tier free upgrade", "type": "badge"}
+      ],
+      "state_dimensions": [
+        {"key": "meal_category", "values": ["standard", "vegetarian", "vegan", "halal", "kosher", "gluten_free", "child_meal", "diabetic"]},
+        {"key": "tier_aware", "values": ["paid_silver_titanium", "free_gold_plus"]}
+      ],
+      "enrichment": {
+        "context": {"problem": "Special meals require manual input", "trigger": "AR-A8 family + dietary inclusivity", "origin": "Inclusive design + tier benefit", "predecessor": "M-07"},
+        "intent": {"quote": "Dietary 1-tap. Saved per profile", "primary_goal": "Dietary clarity + tier benefit", "personas": "Foreign + premium tiers", "context_of_use": "Booking add-ons step", "value_pyramid": "Inclusive → Tier recognition"},
+        "insight": {"core_pattern": "Lufthansa seat & meal recommendation", "behavioral": "+12% ancillary, +15% CSAT", "differentiation": "Saved preferences cross-trip", "state_machine": "8 category × 2 tier = 16"},
+        "evidence": [{"type": "📊", "claim": "Lufthansa seat & meal +12% ancillary", "source": "I-001 citation"}],
+        "handoff": {"priority": "P2", "complexity": "low", "dependencies": ["User preferences API"], "acceptance": ["Save dietary preference per profile", "Premium tier free meal badge visible Gold+", "Halal/Kosher availability per route"]}
+      }
+    },
+    {
+      "id": "M-09", "name": "OneTapPayBiometric", "shell": "PaymentShell", "slot": "ActionArea",
+      "category": "🔁 SHARED", "level": "molecule",
+      "screens": "MH-B5 + Reward redemption (cross-domain)",
+      "note": "PCI-DSS compliant via tokenization",
+      "structure": [
+        {"name": "SavedCardDisplay", "detail": "Card brand + last 4", "type": "display"},
+        {"name": "BiometricPrompt", "detail": "Face ID / Fingerprint", "type": "action"},
+        {"name": "ApplePayGooglePayButton", "detail": "Quick options", "type": "action"},
+        {"name": "AddNewCardLink", "detail": "[Thêm thẻ mới]", "type": "action"}
+      ],
+      "state_dimensions": [
+        {"key": "auth_method", "values": ["face_id", "fingerprint", "pin_fallback", "passcode_fallback"]},
+        {"key": "saved_card", "values": ["yes_default", "yes_pick_from_list", "none_add_first"]},
+        {"key": "tokenization", "values": ["pci_compliant_token_only", "encrypted_full_card"]}
+      ],
+      "enrichment": {
+        "context": {"problem": "Re-enter card every booking — 5+ min payment", "trigger": "AR-BKG-06 [Critical] + audit C-04", "origin": "Foundation Phase 1 P0", "predecessor": "M-06"},
+        "intent": {"quote": "1-tap with biometric + saved card", "primary_goal": "Payment <5s for return user (vs 90s+)", "personas": "ALL — esp P-02 Titanium", "context_of_use": "Booking payment step", "value_pyramid": "Functional → Time-savings + Trust"},
+        "insight": {"core_pattern": "Biometric 1-tap pay (Apple Pay)", "behavioral": "Reduce abandonment 30%+", "differentiation": "Industry table-stakes 2026", "state_machine": "4 auth × 3 saved × 2 tokenization = 24"},
+        "evidence": [{"type": "🔍", "claim": "AR-BKG-06 1-tap pay [Critical]", "source": "airline pack heuristics.json"}, {"type": "🛡️", "claim": "PCI-DSS via tokenization", "source": "airline pack regulations.md"}],
+        "handoff": {"priority": "P0", "complexity": "high", "dependencies": ["Biometric API", "Payment Gateway tokenization"], "acceptance": ["Face ID / Fingerprint accepted", "Saved card token never re-entered", "Apple Pay / Google Pay native integration"]}
+      }
+    },
+    {
+      "id": "M-10", "name": "AddNewCardFlow", "shell": "PaymentShell", "slot": "AddCardArea",
+      "category": "🔁 SHARED", "level": "molecule",
+      "screens": "MH-B5 + Profile add card (cross-context)",
+      "note": "Camera scan via iOS Vision / Android ML Kit",
+      "structure": [
+        {"name": "CardScanCamera", "detail": "OCR card scan", "type": "input"},
+        {"name": "ManualEntryFields", "detail": "card number, exp, CVV", "type": "input"},
+        {"name": "SaveForFutureToggle", "detail": "Save for next booking", "type": "toggle"},
+        {"name": "BillingAddressForm", "detail": "PCI-DSS required", "type": "input"}
+      ],
+      "state_dimensions": [
+        {"key": "input_method", "values": ["camera_scan", "manual_typing", "paste_from_password_manager"]},
+        {"key": "save_state", "values": ["save_default_on", "use_once_only"]}
+      ],
+      "enrichment": {
+        "context": {"problem": "Manual card entry tedious", "trigger": "AR-BKG-06 + iOS/Android camera scan", "origin": "Reduce new card add friction", "predecessor": "M-09"},
+        "intent": {"quote": "Camera scan vs typing", "primary_goal": "First-card-add 80%+ completion", "personas": "First-time users + foreign tourists", "context_of_use": "Adding new payment method", "value_pyramid": "Functional → Time-savings"},
+        "insight": {"core_pattern": "Camera card scan (Stripe + iOS pattern)", "behavioral": "Reduce typing errors", "differentiation": "Industry standard 2026", "state_machine": "3 input × 2 save = 6"},
+        "evidence": [{"type": "🔍", "claim": "iOS Vision / Android ML Kit OCR card scan", "source": "general capability"}],
+        "handoff": {"priority": "P1", "complexity": "medium", "dependencies": ["Camera permission", "PCI tokenization"], "acceptance": ["Camera scan accuracy >90%", "Save default ON (PCI tokenized)", "Billing address required for international"]}
+      }
+    },
+    {
+      "id": "M-11", "name": "BookingConfirmationCard", "shell": "ConfirmationShell", "slot": "MainContent",
+      "category": "🔁 SHARED", "level": "molecule",
+      "screens": "MH-B6 + IROP rebook confirmation (cross-context)",
+      "note": "Auto-add to Wallet + tier celebration if upgrade",
+      "structure": [
+        {"name": "SuccessHeader", "detail": "✅ Đã đặt {flight} {date}", "type": "text"},
+        {"name": "PNRCode", "detail": "Mã đặt chỗ: {pnr}", "type": "text"},
+        {"name": "MilesEarnedConfirm", "detail": "✨ +{miles} miles", "type": "badge"},
+        {"name": "AddToWalletAuto", "detail": "Auto-add boarding pass", "type": "action"},
+        {"name": "ShareWithFamilyCTA", "detail": "[Chia sẻ với gia đình]", "type": "action"}
+      ],
+      "state_dimensions": [
+        {"key": "post_action", "values": ["share_to_family", "add_to_wallet_now", "go_to_trips", "view_eticket_pdf"]},
+        {"key": "tier_celebration", "values": ["standard_thank_you", "tier_upgrade_celebration", "milestone_reached_animation"]}
+      ],
+      "enrichment": {
+        "context": {"problem": "Generic 'success' confirmation — users miss Wallet add + share", "trigger": "06-propose §Phase 1 SC-07", "origin": "Confirmation as celebration moment", "predecessor": "M-09"},
+        "intent": {"quote": "Specific confirmation + miles celebration + Wallet auto-add", "primary_goal": "Confirmation actions completed (Wallet 90%, share 40%)", "personas": "All travelers", "context_of_use": "Post-payment success", "value_pyramid": "Functional → Reward (miles celebration)"},
+        "insight": {"core_pattern": "Specific confirmation (vs generic 'thành công')", "behavioral": "Specific feedback +35% retention", "differentiation": "Tier upgrade celebration if pushes tier", "state_machine": "4 post_action × 3 celebration = 12"},
+        "evidence": [{"type": "🔍", "claim": "Copy-deck spec: '✅ Đã đặt VN225...'", "source": "09-handoff/copy-deck.md"}],
+        "handoff": {"priority": "P0", "complexity": "medium", "dependencies": ["Wallet API auto-trigger", "Share sheet"], "acceptance": ["PNR visible immediately", "Miles credited within 24h", "Wallet add 100% on iOS, 95% Android"]}
+      }
+    },
+    {
+      "id": "M-12", "name": "TripShareToFamily", "shell": "ConfirmationShell", "slot": "ShareArea",
+      "category": "🔁 SHARED", "level": "molecule",
+      "screens": "MH-B6 + Trip Detail share",
+      "note": "Zalo first (VN context) — organic family network exposure",
+      "structure": [
+        {"name": "ShareOptionsList", "detail": "Email/SMS/Zalo/WhatsApp/Calendar", "type": "container"},
+        {"name": "ShareablePreview", "detail": "Trip summary card preview", "type": "display"},
+        {"name": "AddToCalendarCTA", "detail": "Auto-add to phone calendar", "type": "action"}
+      ],
+      "state_dimensions": [
+        {"key": "share_channel", "values": ["zalo_vn_default", "whatsapp", "sms", "email", "ical_calendar"]}
+      ],
+      "enrichment": {
+        "context": {"problem": "VN family multi-pax travel — info needs sharing", "trigger": "N-08 family/group + VN cultural pattern", "origin": "Family enablement + brand exposure", "predecessor": "M-11"},
+        "intent": {"quote": "1-tap share to Zalo/WhatsApp", "primary_goal": "Family travelers communicate trip without re-typing", "personas": "P-04 Platinum + P-07 Family", "context_of_use": "Post-confirmation", "value_pyramid": "Family care → Communication"},
+        "insight": {"core_pattern": "Native share sheet (iOS/Android)", "behavioral": "Share = organic family network exposure", "differentiation": "Zalo first (VN context)", "state_machine": "5 channel"},
+        "evidence": [{"type": "🛡️", "claim": "N-08 Family travel undermarketed", "source": "EXECUTIVE-SUMMARY.md §5"}],
+        "handoff": {"priority": "P2", "complexity": "low", "dependencies": ["iOS / Android share sheet"], "acceptance": ["Zalo as first channel for VN locale", "Calendar add via iCal", "Share preview includes flight details"]}
+      }
+    }
+  ]
+}

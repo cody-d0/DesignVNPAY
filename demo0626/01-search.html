@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=390, initial-scale=1">
+  <meta name="theme-color" content="#fcfcfd">
+  <title>Tìm chuyến bay · Vietnam Airlines</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+  (function(){var p=new URLSearchParams(location.search).get('dir');if(!p||p==='modern')return;var t={tech:':root{--bg:oklch(98% 0.005 250);--surface:oklch(100% 0 0);--fg:oklch(22% 0.02 240);--muted:oklch(50% 0.018 240);--border:oklch(90% 0.008 240);--accent:oklch(58% 0.16 145);--radius-card:4px;--radius-xl:6px;--radius-pill:4px}.btn-primary,.btn-secondary,.input-field,.card,.nav-back,.nav-action,.pill{border-radius:4px!important}',brutalist:':root{--bg:oklch(96% 0.004 100);--surface:oklch(100% 0 0);--fg:oklch(15% 0.02 100);--muted:oklch(40% 0.02 100);--border:oklch(15% 0.02 100);--accent:oklch(60% 0.22 25);--radius-card:0;--radius-xl:0;--radius-pill:0}*{border-radius:0!important}.h1,.h2,.nav-title{font-family:"Times New Roman",Georgia,serif}.btn-primary{background:var(--fg);border:2px solid var(--fg)}.btn-secondary{border:2px solid var(--fg)}.card,.input-field{border-color:var(--fg);border-width:1.5px}.pill{background:transparent;border:1px solid currentColor}.nav-back,.nav-action{border:1.5px solid var(--fg)}body{font-family:ui-monospace,"IBM Plex Mono",Menlo,monospace}'};if(t[p]){var s=document.createElement('style');s.textContent=t[p];document.head.appendChild(s);}})();
+  </script>
+  <style>
+    .gps-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 3px 8px; border-radius: var(--radius-pill);
+      background: var(--success-soft); color: var(--success);
+      font-size: 10px; font-family: var(--font-mono); letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+    .gps-badge svg { width: 10px; height: 10px; stroke: currentColor; fill: none; stroke-width: 2.2; }
+
+    .swap-wrap { position: relative; }
+    .swap-btn {
+      position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--bg); border: 1px solid var(--border);
+      display: grid; place-items: center; cursor: pointer; z-index: 2;
+    }
+    .swap-btn svg { width: 14px; height: 14px; stroke: var(--muted); fill: none; stroke-width: 2; }
+    .od-connector {
+      position: absolute; left: 27px; top: 52px; bottom: 14px;
+      width: 1px; background: var(--border); z-index: 1;
+    }
+
+    .section-label {
+      padding: 0 20px; margin: 20px 0 8px;
+      font-size: 11px; font-family: var(--font-mono); letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted);
+    }
+
+    .pax-field {
+      display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+      background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px;
+      cursor: pointer;
+    }
+    .pax-field .pf-icon { width: 18px; height: 18px; flex-shrink: 0; }
+    .pax-field .pf-icon svg { width: 18px; height: 18px; stroke: var(--muted); fill: none; stroke-width: 1.7; }
+    .pax-field .pf-body { flex: 1; }
+    .pf-label { font-size: 11px; color: var(--muted); font-family: var(--font-mono); letter-spacing: 0.04em; margin-bottom: 2px; }
+    .pf-value { font-size: 15px; font-weight: 500; }
+    .pf-sep { width: 1px; height: 32px; background: var(--border); }
+    .pf-class { text-align: right; }
+
+    /* Calendar */
+    .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .cal-nav-btn { background: none; border: none; font: inherit; font-size: 20px; color: var(--muted); cursor: pointer; padding: 4px 8px; line-height: 1; }
+    .cal-nav-btn.active-side { color: var(--fg); }
+    .cal-month { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+    .cal-dow {
+      display: grid; grid-template-columns: repeat(7, 1fr);
+      text-align: center; margin-bottom: 4px;
+      font-size: 11px; font-family: var(--font-mono); color: var(--muted);
+    }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+    .cal-day {
+      aspect-ratio: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      border-radius: 8px; cursor: pointer; transition: background 0.1s;
+    }
+    .cal-day.empty { pointer-events: none; }
+    .cal-day .dn { font-size: 13px; font-weight: 500; line-height: 1; }
+    .cal-day .dp { font-size: 8px; font-family: var(--font-mono); margin-top: 2px; color: var(--muted); }
+    .cal-day.cheap { background: var(--success-soft); }
+    .cal-day.cheap .dn { color: var(--success); }
+    .cal-day.cheap .dp { color: var(--success); }
+    .cal-day.pricey { background: var(--danger-soft); }
+    .cal-day.pricey .dn { color: var(--danger); }
+    .cal-day.pricey .dp { color: var(--danger); }
+    .cal-day.selected { background: var(--accent); }
+    .cal-day.selected .dn { color: #fff; font-weight: 700; }
+    .cal-day.selected .dp { color: rgba(255,255,255,0.75); }
+    .cal-legend { display: flex; gap: 14px; margin-top: 10px; }
+    .cl-item { display: flex; align-items: center; gap: 5px; font-size: 11px; font-family: var(--font-mono); color: var(--muted); }
+    .cl-dot { width: 8px; height: 8px; border-radius: 2px; }
+  </style>
+</head>
+<body>
+  <div class="app" data-slot="search-shell">
+
+    <div class="statusbar">
+      <span class="num">9:41</span>
+      <div class="statusbar-icons">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor" aria-hidden>
+          <rect x="0" y="7" width="3" height="4" rx=".5"/><rect x="4" y="5" width="3" height="6" rx=".5"/>
+          <rect x="8" y="3" width="3" height="8" rx=".5"/><rect x="12" y="0" width="3" height="11" rx=".5"/>
+        </svg>
+        <svg width="16" height="11" viewBox="0 0 16 12" fill="currentColor" aria-hidden>
+          <path d="M8 1C5 1 2.3 2.2.5 4.2L2 5.7C3.4 4.1 5.6 3 8 3s4.6 1 6 2.7l1.5-1.5C13.7 2.2 11 1 8 1z"/>
+          <path d="M8 5c-1.8 0-3.3.7-4.5 1.8L5 8.2c.8-.8 2-1.2 3-1.2s2.2.5 3 1.2L12.5 6.8C11.3 5.7 9.8 5 8 5z"/>
+          <circle cx="8" cy="11" r="1.2"/>
+        </svg>
+        <svg width="25" height="11" viewBox="0 0 25 11" fill="currentColor" aria-hidden>
+          <rect x=".5" y=".5" width="21" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-opacity=".35"/>
+          <rect x="22" y="3.5" width="1.5" height="4" rx=".4" fill-opacity=".35"/>
+          <rect x="2" y="2" width="18" height="7" rx="1.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="scroll">
+      <div class="pad anim" style="padding-top: 10px; padding-bottom: 14px;">
+        <h1 style="font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 3px;">Tìm chuyến bay</h1>
+        <p style="margin: 0; font-size: 13px; color: var(--muted);">Khứ hồi · 3 hành khách</p>
+      </div>
+
+      <!-- M-01 + M-02: Origin / Destination inputs -->
+      <div data-slot="search-input-area" class="pad stack anim" style="gap: 8px;">
+        <div class="swap-wrap">
+          <div data-slot="origin-input" class="input-field active">
+            <div class="if-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="3"/><path d="M12 2C7.6 2 4 5.6 4 10c0 5.4 6.7 12.3 7.3 12.8.4.3 1 .3 1.4 0C13.3 22.3 20 15.4 20 10c0-4.4-3.6-8-8-8z"/></svg>
+            </div>
+            <div class="if-body">
+              <div class="if-label">TỪ</div>
+              <div class="if-value">SGN — Hồ Chí Minh</div>
+            </div>
+            <div data-slot="origin-input-gps" class="gps-badge">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+              GPS
+            </div>
+          </div>
+          <div class="od-connector" aria-hidden></div>
+          <button class="swap-btn" aria-label="Đổi chiều">
+            <svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4 4 4M17 8v12m0 0 4-4m-4 4-4-4"/></svg>
+          </button>
+          <div data-slot="destination-input" class="input-field" style="margin-top: 8px;">
+            <div class="if-icon">
+              <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div class="if-body">
+              <div class="if-label">ĐẾN</div>
+              <div class="if-value">HAN — Hà Nội</div>
+            </div>
+            <span style="color: var(--muted); font-size: 18px; line-height: 1;">›</span>
+          </div>
+        </div>
+
+        <!-- M-03: PassengerCounter -->
+        <div data-slot="passenger-counter" class="pax-field">
+          <div class="pf-icon">
+            <svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3a3 3 0 0 1 0 6"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>
+          </div>
+          <div class="pf-body">
+            <div class="pf-label">HÀNH KHÁCH</div>
+            <div class="pf-value">2 người lớn, 1 trẻ em</div>
+          </div>
+          <div class="pf-sep"></div>
+          <div class="pf-class">
+            <div class="pf-label">HẠNG VÉ</div>
+            <div class="pf-value">Phổ thông</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M-04: FlexPricingCalendar -->
+      <div class="section-label anim">Chọn ngày</div>
+      <div data-slot="search-date-area" class="pad anim">
+        <div data-slot="flex-pricing-calendar" class="card" style="padding: 14px 12px;">
+          <div class="cal-nav">
+            <button class="cal-nav-btn">‹</button>
+            <span class="cal-month">Tháng 6 · 2026</span>
+            <button class="cal-nav-btn active-side">›</button>
+          </div>
+          <div class="cal-dow"><span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span></div>
+          <div class="cal-grid">
+            <!-- June 2026: starts Monday -->
+            <div class="cal-day"><div class="dn">1</div><div class="dp">840K</div></div>
+            <div class="cal-day cheap" data-slot="flex-pricing-calendar-cheap"><div class="dn">2</div><div class="dp">680K</div></div>
+            <div class="cal-day cheap"><div class="dn">3</div><div class="dp">650K</div></div>
+            <div class="cal-day cheap"><div class="dn">4</div><div class="dp">710K</div></div>
+            <div class="cal-day pricey"><div class="dn">5</div><div class="dp">1.2M</div></div>
+            <div class="cal-day pricey"><div class="dn">6</div><div class="dp">1.4M</div></div>
+            <div class="cal-day pricey"><div class="dn">7</div><div class="dp">1.3M</div></div>
+
+            <div class="cal-day"><div class="dn">8</div><div class="dp">820K</div></div>
+            <div class="cal-day cheap"><div class="dn">9</div><div class="dp">690K</div></div>
+            <div class="cal-day cheap"><div class="dn">10</div><div class="dp">660K</div></div>
+            <div class="cal-day"><div class="dn">11</div><div class="dp">800K</div></div>
+            <div class="cal-day pricey"><div class="dn">12</div><div class="dp">1.1M</div></div>
+            <div class="cal-day pricey"><div class="dn">13</div><div class="dp">1.3M</div></div>
+            <div class="cal-day pricey"><div class="dn">14</div><div class="dp">1.2M</div></div>
+
+            <div class="cal-day"><div class="dn">15</div><div class="dp">870K</div></div>
+            <div class="cal-day selected"><div class="dn">16</div><div class="dp">780K</div></div>
+            <div class="cal-day cheap"><div class="dn">17</div><div class="dp">700K</div></div>
+            <div class="cal-day cheap"><div class="dn">18</div><div class="dp">720K</div></div>
+            <div class="cal-day pricey"><div class="dn">19</div><div class="dp">1.0M</div></div>
+            <div class="cal-day pricey"><div class="dn">20</div><div class="dp">1.2M</div></div>
+            <div class="cal-day pricey"><div class="dn">21</div><div class="dp">1.1M</div></div>
+
+            <div class="cal-day"><div class="dn">22</div><div class="dp">840K</div></div>
+            <div class="cal-day cheap"><div class="dn">23</div><div class="dp">670K</div></div>
+            <div class="cal-day cheap"><div class="dn">24</div><div class="dp">655K</div></div>
+            <div class="cal-day"><div class="dn">25</div><div class="dp">790K</div></div>
+            <div class="cal-day pricey"><div class="dn">26</div><div class="dp">1.1M</div></div>
+            <div class="cal-day pricey"><div class="dn">27</div><div class="dp">1.3M</div></div>
+            <div class="cal-day pricey"><div class="dn">28</div><div class="dp">1.2M</div></div>
+
+            <div class="cal-day"><div class="dn">29</div><div class="dp">800K</div></div>
+            <div class="cal-day cheap"><div class="dn">30</div><div class="dp">690K</div></div>
+            <div class="cal-day empty"></div><div class="cal-day empty"></div>
+            <div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div>
+          </div>
+          <div class="cal-legend">
+            <div class="cl-item"><div class="cl-dot" style="background:var(--success-soft);border:1px solid var(--success);"></div>Rẻ</div>
+            <div class="cl-item"><div class="cl-dot" style="background:var(--border);"></div>Bình thường</div>
+            <div class="cl-item"><div class="cl-dot" style="background:var(--danger-soft);border:1px solid var(--danger);"></div>Cao</div>
+          </div>
+        </div>
+      </div>
+      <div style="height: 8px;"></div>
+    </div>
+
+    <div class="action-bar anim">
+      <button class="btn-primary">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" aria-hidden><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        Tìm chuyến bay
+      </button>
+    </div>
+
+  </div>
+</body>
+</html>
