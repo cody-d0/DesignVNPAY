@@ -47,7 +47,9 @@
   }
   @keyframes grid-drift { from { background-position: 0 0, 0 0, 0 0; } to { background-position: 0 0, 28px 28px, 0 0; } }
   .canvas { width: 1920px; height: 1080px; position: relative; transform-origin: center; }
-  .slide { position: absolute; inset: 0; padding: 144px 80px 96px; opacity: 0; pointer-events: none; transform: translateX(0); }
+  .slide { position: absolute; inset: 0; padding: 144px 80px 96px; opacity: 0; pointer-events: none; transform: translateX(0); overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: color-mix(in oklch, var(--fg) 18%, transparent) transparent; }
+  .slide::-webkit-scrollbar { width: 6px; }
+  .slide::-webkit-scrollbar-thumb { background: color-mix(in oklch, var(--fg) 18%, transparent); border-radius: 3px; }
   .slide.active { opacity: 1; pointer-events: auto; }
   .slide.active.enter-right { animation: slide-enter-right 360ms cubic-bezier(.22,1,.36,1) forwards; }
   .slide.active.enter-left  { animation: slide-enter-left  360ms cubic-bezier(.22,1,.36,1) forwards; }
@@ -126,7 +128,7 @@
   .slide.active.play .stat-ribbon .stat .spark .b { height: var(--h, 0); }
   /* ─── SLIDE 02: TEMPO ─────────────────────────────────────────── */
   .tempo { display: grid; grid-template-rows: auto auto 1fr; gap: 48px; }
-  .yearbars { display: flex; gap: 16px; align-items: flex-end; height: 280px; padding: 0; border-bottom: 1px solid var(--fg); }
+  .yearbars { display: flex; gap: 16px; align-items: flex-end; height: 340px; padding: 0; border-bottom: 1px solid var(--fg); }
   .yearbar { flex: 1; display: flex; flex-direction: column; align-items: stretch; gap: 12px; }
   .yearbar .stack { display: flex; flex-direction: column-reverse; height: 240px; background: color-mix(in oklch, var(--fg) 4%, transparent); position: relative; overflow: hidden; }
   .yearbar .seg { width: 100%; min-height: 0; transition: height 700ms cubic-bezier(.22,1,.36,1); height: 0; }
@@ -396,6 +398,10 @@
     .priority-row .p .bar i { width: var(--p, 0%) !important; }
     .executor-block .bar i { width: var(--ratio, 0%) !important; }
     .brow .barwrap .bar i { width: var(--p, 0%) !important; }
+    .brow .spectrum .stack .seg { width: var(--w, 0%) !important; }
+    .brow .label .typemix .seg { width: var(--w, 0%) !important; }
+    .issuetype-block .stacked .seg { width: var(--w, 0%) !important; }
+    .sig-card .spectrum-row .stack .seg { width: var(--w, 0%) !important; }
     .nw-row .bar i { width: var(--p, 0%) !important; }
     /* Editorial chrome ẩn — quá hẹp để đọc */
     .chrome, .folio, .counter { display: none !important; }
@@ -429,6 +435,8 @@
     .heatmap { grid-template-columns: 32px repeat(12, 1fr) !important; gap: 2px !important; font-size: 9px !important; }
     .donut-row { grid-template-columns: minmax(0, 1fr) !important; gap: 24px !important; }
     .donut { width: min(280px, 90%) !important; height: 280px !important; margin: 0 auto; }
+    .donut .inner .v { font-size: 40px !important; line-height: 1.1 !important; white-space: nowrap; }
+    .donut .inner .meta { font-size: 11px !important; }
     .donut-legend { gap: 8px !important; }
     /* Plate containers: drop fixed height + 2-col layout */
     .specialty, .signature, .brands, .network, .tempo { grid-template-columns: minmax(0, 1fr) !important; height: auto !important; gap: 24px !important; align-items: stretch !important; }
@@ -481,7 +489,6 @@
     <div class="chrome top"><div id="chr-tl">VNPAY DESIGN — DESIGNER DISPATCH · 2026</div><div class="right"><div class="rule"></div><div id="chr-tr">JR.SERVICEHUB.VN</div></div><div class="baseline"></div></div>
     <div class="chrome bot"><div><span class="live-dot"></span><b>SIGNAL · LIVE</b> &nbsp; DES PROJECT</div><div id="chr-br">DISPATCH / 0001</div><div class="baseline"></div></div>
     <div class="folio" id="folio"><span class="roman">i.</span><span class="rule"></span><span id="folio-name">PLATE ONE · COVER</span></div>
-    <div class="counter"><span id="cnum">01</span><span class="total"> / 06</span></div>
 
     <!-- SLIDE 01 — COVER -->
     <section class="slide cover" data-slide="1" data-screen-label="01 Cover">
@@ -641,9 +648,9 @@ function showSlide(i, direction) {
   });
   const enterClass = direction === 'back' ? 'enter-left' : 'enter-right';
   slides[cur].classList.add(enterClass);
-  // Replay entrance after frame
+  // Replay entrance after frame, reset scroll
+  slides[cur].scrollTop = 0;
   requestAnimationFrame(() => slides[cur].classList.add('play'));
-  document.getElementById('cnum').textContent = String(cur + 1).padStart(2, '0');
   document.getElementById('pos-num').textContent = String(cur + 1).padStart(2, '0');
   const folioRomans = ['i','ii','iii','iv','v','vi'];
   document.querySelector('.folio .roman').textContent = folioRomans[cur] + '.';
@@ -674,6 +681,22 @@ addEventListener('keydown', e => {
   else if (e.key === 'Home') { showSlide(0, 'back'); }
   else if (e.key === 'End') { showSlide(slides.length - 1, 'forward'); }
 });
+// Wheel: navigate slides at boundary; allow internal scroll mid-slide
+let _wheelLock = false;
+addEventListener('wheel', e => {
+  if (innerWidth <= 900) return; // mobile uses natural body scroll
+  const sl = slides[cur];
+  const atBottom = sl.scrollTop + sl.clientHeight >= sl.scrollHeight - 8;
+  const atTop = sl.scrollTop <= 0;
+  const goNext = e.deltaY > 0 && atBottom;
+  const goPrev = e.deltaY < 0 && atTop;
+  if (!goNext && !goPrev) return;
+  e.preventDefault();
+  if (_wheelLock) return;
+  _wheelLock = true;
+  showSlide(goNext ? cur + 1 : cur - 1, goNext ? 'forward' : 'back');
+  setTimeout(() => { _wheelLock = false; }, 650);
+}, { passive: false });
 // ─── Load + render ────────────────────────────────────────
 let currentToken = null;
 const params = new URLSearchParams(location.search);
