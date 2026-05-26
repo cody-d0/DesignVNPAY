@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Storyboard Review · VNPAY Soundbox · v0.3 Draft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0e1726;
+  --ink-soft: #2a3445;
+  --ink-mute: #6a7388;
+  --paper: #fbf8f3;
+  --paper-warm: #f3ede1;
+  --sand: #e8dfcd;
+  --sand-line: #d8ccb3;
+  --vnpay: #0058a3;
+  --vnpay-deep: #003d75;
+  --red: #c83a3a;
+  --red-deep: #9c2a2a;
+  --ok: #2f7a4e;
+  --warn: #b8742c;
+  --grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.08 0 0 0 0 0.09 0 0 0 0 0.15 0 0 0 0.18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Inter Tight", system-ui, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.55;
+  font-size: 15px;
+  position: relative;
+  min-height: 100vh;
+}
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background-image: var(--grain);
+  background-size: 240px 240px;
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: multiply;
+}
+.serif { font-family: "Fraunces", "Times New Roman", serif; font-feature-settings: "ss01" 1, "ss02" 1; }
+.mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+
+/* ======= TOP BAR ======= */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--paper);
+  border-bottom: 1px solid var(--sand-line);
+  padding: 16px 28px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+  backdrop-filter: blur(8px);
+  background: rgba(251, 248, 243, 0.92);
+}
+.topbar .brand {
+  display: flex; align-items: center; gap: 12px;
+}
+.brand-mark {
+  width: 34px; height: 34px;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 7px;
+  display: grid; place-items: center;
+  font-family: "Fraunces"; font-weight: 700; font-size: 17px;
+  letter-spacing: -0.5px;
+}
+.brand-meta { display: flex; flex-direction: column; line-height: 1.2; }
+.brand-meta .label {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-weight: 500;
+}
+.brand-meta .name {
+  font-family: "Fraunces"; font-weight: 500; font-size: 17px;
+  font-style: italic;
+  font-variation-settings: "opsz" 14;
+}
+.topbar .center {
+  display: flex; align-items: center; gap: 14px;
+  font-size: 12px;
+}
+.pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px;
+  border-radius: 50px;
+  background: var(--paper-warm);
+  border: 1px solid var(--sand-line);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.pill.live::before {
+  content: ""; width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--warn);
+  box-shadow: 0 0 0 4px rgba(184, 116, 44, 0.18);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.pill.approved::before {
+  content: ""; width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--ok);
+}
+.topbar .actions { display: flex; gap: 10px; justify-content: flex-end; }
+.btn {
+  font-family: inherit;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px;
+  border: 1px solid var(--ink);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(.4,0,.2,1);
+}
+.btn:hover { background: var(--ink); color: var(--paper); }
+.btn.primary {
+  background: var(--ink);
+  color: var(--paper);
+}
+.btn.primary:hover {
+  background: var(--vnpay);
+  border-color: var(--vnpay);
+}
+.btn.ghost {
+  border-color: var(--sand-line);
+  color: var(--ink-soft);
+}
+.btn.ghost:hover {
+  background: var(--paper-warm);
+  color: var(--ink);
+}
+
+/* ======= LAYOUT ======= */
+.shell {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr) 340px;
+  min-height: calc(100vh - 70px);
+}
+
+/* ======= SIDEBAR (SCENE LIST) ======= */
+.scene-rail {
+  border-right: 1px solid var(--sand-line);
+  background: linear-gradient(180deg, var(--paper) 0%, var(--paper-warm) 100%);
+  overflow-y: auto;
+  max-height: calc(100vh - 70px);
+  position: sticky;
+  top: 70px;
+}
+.rail-head {
+  padding: 22px 22px 14px;
+  border-bottom: 1px solid var(--sand-line);
+}
+.rail-head .eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.rail-head h2 {
+  font-family: "Fraunces";
+  font-weight: 400;
+  font-style: italic;
+  font-size: 26px;
+  font-variation-settings: "opsz" 28;
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-top: 12px;
+  padding: 3px;
+  background: var(--ink);
+  border-radius: 8px;
+}
+.tab {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: rgba(251, 248, 243, 0.55);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.18s;
+}
+.tab.active {
+  background: var(--paper);
+  color: var(--ink);
+}
+.scene-list {
+  padding: 8px 0;
+}
+.scene-item {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 22px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all 0.18s;
+  position: relative;
+}
+.scene-item:hover { background: rgba(232, 223, 205, 0.4); }
+.scene-item.active {
+  background: var(--paper);
+  border-left-color: var(--vnpay);
+}
+.scene-num {
+  font-family: "Fraunces";
+  font-weight: 500;
+  font-style: italic;
+  font-size: 20px;
+  color: var(--ink-mute);
+  text-align: right;
+  font-variation-settings: "opsz" 18;
+}
+.scene-item.active .scene-num { color: var(--vnpay); }
+.scene-text {
+  min-width: 0;
+}
+.scene-text .actor {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--ink-mute);
+}
+.scene-item .actor.mca { color: var(--vnpay); }
+.scene-item .actor.device { color: var(--red); }
+.scene-text .title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.scene-text .tc {
+  font-family: "JetBrains Mono";
+  font-size: 10px;
+  color: var(--ink-mute);
+  margin-top: 2px;
+}
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--sand-line);
+}
+.status-dot.approved { background: var(--ok); }
+.status-dot.changes { background: var(--warn); }
+.status-dot.pending { background: var(--sand-line); }
+
+/* ======= STAGE (CENTER) ======= */
+.stage {
+  padding: 36px 44px 60px;
+  overflow: hidden;
+}
+.stage-meta {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 18px;
+  gap: 24px;
+}
+.stage-meta .scene-actor {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--ink-mute);
+  margin-bottom: 6px;
+}
+.stage-meta .scene-actor.mca { color: var(--vnpay); }
+.stage-meta .scene-actor.device { color: var(--red); }
+.stage-meta h1 {
+  font-family: "Fraunces";
+  font-weight: 400;
+  font-size: 38px;
+  letter-spacing: -0.02em;
+  margin: 0;
+  font-variation-settings: "opsz" 36;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.stage-meta h1 em {
+  font-style: italic;
+  font-weight: 300;
+}
+.tc-block {
+  text-align: right;
+  font-family: "JetBrains Mono";
+  font-size: 11px;
+  color: var(--ink-mute);
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.tc-block .big {
+  font-family: "Fraunces";
+  font-size: 28px;
+  color: var(--ink);
+  font-weight: 400;
+  font-variation-settings: "opsz" 24;
+  display: block;
+}
+.canvas {
+  background: var(--ink);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 16 / 9;
+  box-shadow: 0 30px 60px -20px rgba(14, 23, 38, 0.4);
+  border: 1px solid var(--ink);
+}
+.canvas-inner {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, #f5f9ff 0%, #dde6f2 100%);
+}
+.canvas-inner img {
+  max-width: 60%;
+  max-height: 80%;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 30px rgba(0, 30, 80, 0.18));
+}
+.canvas-inner.mca img {
+  max-width: 22%;
+  max-height: 88%;
+  border-radius: 28px;
+  background: #fff;
+  box-shadow: 0 18px 40px rgba(0, 30, 80, 0.22);
+  padding: 4px;
+}
+.canvas-inner.mca {
+  background: radial-gradient(ellipse at center, #1a2538 0%, #0e1726 100%);
+}
+.canvas-inner.placeholder {
+  background: var(--ink);
+  color: var(--paper);
+  flex-direction: column;
+  gap: 14px;
+  font-family: "Fraunces";
+  font-style: italic;
+}
+.canvas-inner.placeholder .start-mark {
+  border: 2px solid var(--paper);
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 36px;
+  font-weight: 300;
+}
+.canvas-overlay {
+  position: absolute;
+  top: 14px; right: 14px;
+  display: flex; gap: 6px;
+  z-index: 2;
+}
+.chip {
+  background: rgba(14, 23, 38, 0.6);
+  backdrop-filter: blur(8px);
+  color: var(--paper);
+  padding: 5px 10px;
+  border-radius: 50px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.canvas-grain {
+  position: absolute; inset: 0;
+  background-image: var(--grain);
+  background-size: 240px;
+  opacity: 0.4;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+.canvas-corners {
+  position: absolute; inset: 0;
+  pointer-events: none;
+}
+.canvas-corners span {
+  position: absolute;
+  width: 22px; height: 22px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}
+.canvas-corners .tl { top: 14px; left: 14px; border-right: none; border-bottom: none; }
+.canvas-corners .tr { top: 14px; right: 14px; border-left: none; border-bottom: none; }
+.canvas-corners .bl { bottom: 14px; left: 14px; border-right: none; border-top: none; }
+.canvas-corners .br { bottom: 14px; right: 14px; border-left: none; border-top: none; }
+
+/* ======= NARRATION & ACTION ======= */
+.script-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-top: 28px;
+}
+.script-block {
+  background: var(--paper);
+  border: 1px solid var(--sand-line);
+  border-radius: 12px;
+  padding: 22px 24px;
+  position: relative;
+}
+.script-block .label {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--ink-mute);
+  margin-bottom: 12px;
+}
+.script-block.voice .label { color: var(--vnpay); }
+.script-block.action .label { color: var(--red); }
+.script-block p {
+  font-family: "Fraunces";
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1.45;
+  margin: 0;
+  font-variation-settings: "opsz" 20;
+}
+.script-block p .quote-mark {
+  font-style: italic;
+  color: var(--vnpay);
+  font-size: 28px;
+  line-height: 0;
+  vertical-align: -8px;
+  margin-right: 2px;
+}
+.script-block.action p { font-family: "Inter Tight"; font-size: 15px; }
+.script-block ul {
+  font-family: "Inter Tight";
+  font-size: 14px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--ink-soft);
+}
+.script-block ul li { margin-bottom: 4px; }
+
+/* ======= APPROVAL BAR ======= */
+.approval {
+  margin-top: 32px;
+  padding: 18px 24px;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--paper);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px;
+}
+.approval .status-text {
+  font-family: "Fraunces";
+  font-style: italic;
+  font-size: 18px;
+  font-variation-settings: "opsz" 20;
+}
+.approval .status-text .mono { font-family: "JetBrains Mono"; font-style: normal; opacity: 0.6; font-size: 11px; margin-left: 8px; }
+.approval-actions { display: flex; gap: 8px; }
+.btn.approve {
+  background: var(--ok); border-color: var(--ok); color: var(--paper);
+}
+.btn.approve:hover { background: #1f5d38; border-color: #1f5d38; }
+.btn.changes {
+  background: transparent; border-color: rgba(255, 255, 255, 0.4); color: var(--paper);
+}
+.btn.changes:hover { background: var(--warn); border-color: var(--warn); }
+
+/* ======= RIGHT RAIL (COMMENTS + META) ======= */
+.meta-rail {
+  border-left: 1px solid var(--sand-line);
+  background: var(--paper-warm);
+  padding: 30px 24px;
+  max-height: calc(100vh - 70px);
+  overflow-y: auto;
+  position: sticky;
+  top: 70px;
+}
+.meta-rail .group {
+  margin-bottom: 28px;
+}
+.meta-rail .group h3 {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--ink-mute);
+  margin: 0 0 12px;
+}
+.meta-row {
+  display: flex; justify-content: space-between;
+  padding: 6px 0;
+  font-size: 13px;
+  border-bottom: 1px dashed var(--sand-line);
+}
+.meta-row:last-child { border-bottom: none; }
+.meta-row .k { color: var(--ink-mute); }
+.meta-row .v { font-weight: 500; }
+.meta-row .v.mono { font-family: "JetBrains Mono"; font-size: 12px; }
+.thread {
+  display: flex; flex-direction: column; gap: 14px;
+}
+.comment {
+  background: var(--paper);
+  border: 1px solid var(--sand-line);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+.comment .who {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+.avatar {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--vnpay);
+  color: var(--paper);
+  display: grid; place-items: center;
+  font-family: "Fraunces"; font-style: italic; font-weight: 500;
+  font-size: 12px;
+}
+.avatar.red { background: var(--red); }
+.avatar.ink { background: var(--ink); }
+.comment .name { font-weight: 600; }
+.comment .when { color: var(--ink-mute); font-size: 11px; margin-left: auto; }
+.comment .body {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.comment-form {
+  margin-top: 12px;
+}
+.comment-form textarea {
+  width: 100%;
+  border: 1px solid var(--sand-line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 13px;
+  background: var(--paper);
+  resize: vertical;
+  min-height: 60px;
+  color: var(--ink);
+}
+.comment-form textarea:focus {
+  outline: none;
+  border-color: var(--vnpay);
+}
+.comment-form button {
+  margin-top: 8px;
+  width: 100%;
+}
+
+/* ======= PAGE HEAD (above hero) ======= */
+.page-head {
+  position: relative;
+  z-index: 6;
+  display: flex;
+  justify-content: flex-start;
+  padding: 28px 36px 18px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--sand-line);
+}
+.page-head-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+}
+.page-head .eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.page-head h2 {
+  font-family: "Fraunces";
+  font-weight: 400;
+  font-size: 32px;
+  margin: 0;
+  letter-spacing: -0.02em;
+  font-variation-settings: "opsz" 30;
+  line-height: 1.1;
+}
+.page-head h2 em {
+  font-style: italic;
+  color: var(--ink-mute);
+  font-weight: 300;
+}
+.page-head .tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--ink);
+  border-radius: 10px;
+}
+.page-head .tab {
+  min-width: 200px;
+  padding: 9px 18px;
+  border: none;
+  background: transparent;
+  color: rgba(251, 248, 243, 0.55);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 7px;
+  transition: all 0.18s;
+  text-align: center;
+}
+.page-head .tab.active {
+  background: var(--paper);
+  color: var(--ink);
+}
+.page-head .tab:hover:not(.active) { color: rgba(251, 248, 243, 0.85); }
+
+/* ======= HERO TIMELINE STRIP ======= */
+.hero-timeline {
+  position: relative;
+  z-index: 5;
+  background: linear-gradient(180deg, var(--paper) 0%, var(--paper-warm) 100%);
+  border-bottom: 1px solid var(--sand-line);
+  padding: 28px 36px 30px;
+}
+.hero-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 16px;
+  gap: 24px;
+}
+.hero-head .left .eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.hero-head .left h2 {
+  font-family: "Fraunces";
+  font-weight: 400;
+  font-size: 30px;
+  margin: 0;
+  letter-spacing: -0.02em;
+  font-variation-settings: "opsz" 30;
+  line-height: 1.1;
+}
+.hero-head .left h2 em {
+  font-style: italic;
+  color: var(--ink-mute);
+  font-weight: 300;
+}
+.hero-head .right {
+  text-align: right;
+  font-family: "JetBrains Mono";
+  font-size: 11px;
+  color: var(--ink-mute);
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+}
+.hero-head .right .big {
+  font-family: "Fraunces";
+  font-size: 24px;
+  font-variation-settings: "opsz" 22;
+  color: var(--ink);
+  display: block;
+  letter-spacing: -0.01em;
+}
+.hero-head .legend {
+  display: inline-flex; gap: 14px;
+  font-family: "JetBrains Mono";
+  font-size: 10px;
+  color: var(--ink-mute);
+  letter-spacing: 0.04em;
+  margin-top: 6px;
+}
+.hero-head .legend i {
+  display: inline-block; width: 9px; height: 9px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+  transform: translateY(-1px);
+}
+.hero-head .legend i.mca { background: var(--vnpay); border-radius: 1px; }
+.hero-head .legend i.dev { background: var(--red); border-radius: 1px; }
+.hero-head .legend i.ok { background: var(--ok); }
+.hero-head .legend i.warn { background: var(--warn); }
+.hero-head .legend i.pen { background: var(--sand-line); }
+
+.hero-track {
+  height: 96px;
+  background: var(--paper);
+  border-radius: 10px;
+  position: relative;
+  border: 1px solid var(--sand-line);
+  display: flex;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(14,23,38,0.04);
+}
+.tile {
+  flex: var(--w, 1);
+  border-right: 1px solid var(--sand-line);
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(.4,0,.2,1);
+  background-color: var(--paper-warm);
+  min-width: 32px;
+}
+.tile:last-child { border-right: none; }
+.tile::after {
+  content: attr(data-n);
+  position: absolute;
+  top: 6px; left: 6px;
+  font-family: "Fraunces";
+  font-style: italic;
+  font-size: 13px;
+  color: rgba(14, 23, 38, 0.85);
+  font-weight: 500;
+  background: rgba(251, 248, 243, 0.88);
+  padding: 2px 7px;
+  border-radius: 4px;
+  backdrop-filter: blur(2px);
+}
+.tile::before {
+  content: "";
+  position: absolute;
+  bottom: 6px; left: 7px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--sand-line);
+  box-shadow: 0 0 0 2px rgba(251,248,243,0.7);
+}
+.tile[data-status="approved"]::before { background: var(--ok); }
+.tile[data-status="changes"]::before { background: var(--warn); }
+.tile-dur {
+  position: absolute;
+  bottom: 6px; right: 6px;
+  font-family: "JetBrains Mono";
+  font-size: 10px;
+  color: rgba(14, 23, 38, 0.75);
+  background: rgba(251, 248, 243, 0.85);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+.tile:hover { filter: brightness(1.05); transform: translateY(-1px); }
+.tile.active {
+  outline: 3px solid var(--vnpay);
+  outline-offset: -3px;
+  z-index: 2;
+}
+.tile.actor-mca { border-top: 4px solid var(--vnpay); }
+.tile.actor-device { border-top: 4px solid var(--red); }
+
+/* ======= RESPONSIVE ======= */
+@media (max-width: 1280px) {
+  .shell { grid-template-columns: 280px 1fr 300px; }
+  .stage { padding: 28px 32px 60px; }
+  .stage-meta h1 { font-size: 32px; }
+}
+@media (max-width: 980px) {
+  .shell { grid-template-columns: 1fr; }
+  .scene-rail, .meta-rail { position: static; max-height: none; }
+  .scene-rail { border-right: none; border-bottom: 1px solid var(--sand-line); }
+  .meta-rail { border-left: none; border-top: 1px solid var(--sand-line); }
+  .script-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ====================== PAGE HEAD (above hero) ====================== -->
+<header class="page-head">
+  <div class="page-head-stack">
+    <div class="tabs">
+      <button class="tab active" data-flow="wifi">Wi-Fi · A</button>
+      <button class="tab" data-flow="cellular">4G · B</button>
+    </div>
+    <div class="eyebrow" id="heroEyebrow">Flow A · Wi-Fi</div>
+    <h2 id="heroTitle">Cấu hình <em>Wi-Fi</em> — storyboard timeline</h2>
+  </div>
+</header>
+
+<!-- ====================== HERO TIMELINE ====================== -->
+<section class="hero-timeline">
+  <div class="hero-head">
+    <div class="left">
+      <div class="legend">
+        <span><i class="mca"></i>MCA</span>
+        <span><i class="dev"></i>Soundbox</span>
+        <span><i class="ok"></i>Approved</span>
+        <span><i class="warn"></i>Changes</span>
+        <span><i class="pen"></i>Pending</span>
+      </div>
+    </div>
+    <div class="right">
+      <span class="big mono" id="heroTotal">01:48</span>
+      <span class="mono" id="heroScene">Scene 4 of 14</span><br>
+      <span class="mono">cursor <span id="heroNow">00:18</span></span>
+    </div>
+  </div>
+  <div class="hero-track" id="track"></div>
+</section>
+
+<!-- ====================== SHELL ====================== -->
+<main class="shell">
+
+  <!-- =========== SCENE RAIL (LEFT) =========== -->
+  <aside class="scene-rail">
+    <div class="scene-list" id="sceneList"></div>
+  </aside>
+
+  <!-- =========== STAGE (CENTER) =========== -->
+  <section class="stage">
+    <div class="stage-meta">
+      <div>
+        <div class="scene-actor" id="sActor">📱 MCA app</div>
+        <h1 id="sTitle">Scene <em>title</em></h1>
+      </div>
+      <div class="tc-block">
+        <span class="big mono" id="sTcStart">00:00</span>
+        DURATION <span class="mono" id="sDur">6.0s</span><br>
+        ENDS <span class="mono" id="sTcEnd">00:06</span>
+      </div>
+    </div>
+
+    <div class="canvas" id="canvas">
+      <div class="canvas-inner" id="canvasInner"></div>
+      <div class="canvas-grain"></div>
+      <div class="canvas-corners">
+        <span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>
+      </div>
+      <div class="canvas-overlay">
+        <span class="chip" id="cChipActor">MCA</span>
+        <span class="chip" id="cChipScene">SCN 01</span>
+      </div>
+    </div>
+
+    <div class="script-grid">
+      <div class="script-block voice">
+        <div class="label">Voiceover · Vi-VN</div>
+        <p id="sVoice"><span class="quote-mark">“</span>Lorem ipsum…</p>
+      </div>
+      <div class="script-block action">
+        <div class="label">On-screen action</div>
+        <ul id="sAction"></ul>
+      </div>
+    </div>
+
+    <div class="approval">
+      <div class="status-text" id="sStatusText">Pending review <span class="mono">— scene #1</span></div>
+      <div class="approval-actions">
+        <button class="btn changes" id="btnChanges">Request changes</button>
+        <button class="btn approve" id="btnApprove">Approve scene</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========== META RAIL (RIGHT) =========== -->
+  <aside class="meta-rail">
+    <div class="group">
+      <h3>Scene metadata</h3>
+      <div class="meta-row"><span class="k">Type</span><span class="v" id="mType">MCA screen</span></div>
+      <div class="meta-row"><span class="k">Frame source</span><span class="v mono" id="mSrc">studio</span></div>
+      <div class="meta-row"><span class="k">Motion</span><span class="v" id="mMotion">Push-in</span></div>
+      <div class="meta-row"><span class="k">Audio</span><span class="v" id="mAudio">VO + SFX</span></div>
+      <div class="meta-row"><span class="k">Aspect</span><span class="v mono">16:9 · 1920×1080</span></div>
+    </div>
+
+    <div class="group">
+      <h3>Revision history</h3>
+      <div class="meta-row"><span class="k">v0.3 (now)</span><span class="v mono">26 May · 14:02</span></div>
+      <div class="meta-row"><span class="k">v0.2</span><span class="v mono">25 May · 18:30</span></div>
+      <div class="meta-row"><span class="k">v0.1</span><span class="v mono">24 May · 11:10</span></div>
+    </div>
+  </aside>
+
+</main>
+
+<script>
+const FLOWS = {
+  wifi: {
+    title: "Cấu hình Wi-Fi",
+    eyebrow: "Flow A · Wi-Fi",
+    scenes: [
+      { n: 1, actor: "device", title: "Cắm nguồn cho <em>Soundbox</em>", dur: 5,
+        voice: "Trước tiên, cắm cáp USB-C vào Soundbox và nối nguồn. Đặt Soundbox cạnh điện thoại để dễ thao tác đan xen.",
+        action: [
+          "Cắm cáp USB-C vào Soundbox và nối nguồn (adapter / cổng USB).",
+          "Đặt Soundbox cạnh điện thoại để dễ thao tác đan xen."
+        ],
+        img: null, isStart: true, motion: "Title card · static", status: "approved" },
+
+      { n: 2, actor: "mca", title: "Mở app MCA → chọn tile <em>Soundbox</em>", dur: 6,
+        voice: "Đăng nhập app MCA bằng tài khoản đại lý. Tại mục Dịch vụ mới trên trang chủ, chạm tile Soundbox.",
+        action: [
+          "Đăng nhập app MCA bằng tài khoản đại lý.",
+          "Tại mục Dịch vụ mới trên trang chủ → chạm tile Soundbox."
+        ],
+        img: "assets/mca/1.png", motion: "Phone tilt-in", status: "approved" },
+
+      { n: 3, actor: "mca", title: "Đăng ký <em>thiết bị mới</em>", dur: 4,
+        voice: "Tại màn Quản lý thiết bị Soundbox, bấm nút Đăng ký thiết bị mới.",
+        action: [
+          "Màn 'Quản lý thiết bị Soundbox' hiện ra.",
+          "Bấm nút Đăng ký thiết bị mới."
+        ],
+        img: "assets/mca/2.png", motion: "Slide-up + CTA highlight", status: "approved" },
+
+      { n: 4, actor: "mca", title: "Quét <em>mã thiết bị</em>", dur: 7,
+        voice: "App mở camera. Quét mã vạch in trên thân Soundbox. Nhận diện thành công sẽ tự chuyển bước. Có thể bấm Nhập mã thủ công nếu cần.",
+        action: [
+          "Camera mở ra với khung quét.",
+          "Quét mã vạch in trên thân Soundbox.",
+          "Khi nhận diện thành công → chuyển bước tiếp theo.",
+          "Fallback: bấm 'Nhập mã thủ công' nếu cần."
+        ],
+        img: "assets/mca/scan%20b.png", motion: "Camera frame zoom + tick", status: "changes" },
+
+      { n: 5, actor: "mca", title: "Chọn <em>điểm bán</em> cho thiết bị", dur: 6,
+        voice: "Tìm và tick chọn điểm bán cho thiết bị, rồi bấm Xác nhận. Nút bật sáng khi đã có lựa chọn.",
+        action: [
+          "Danh sách điểm bán khả dụng.",
+          "Tick chọn 1 điểm bán.",
+          "Nút Xác nhận chuyển từ disabled → active.",
+          "Bấm Xác nhận."
+        ],
+        img: "assets/mca/Danh%20s%C3%A1ch%20c%C3%A1c%20%C4%91i%E1%BB%83m%20b%C3%A1n%20kh%E1%BA%A3%20d%E1%BB%A5ng%20b.png", motion: "List highlight + CTA activate", status: "pending" },
+
+      { n: 6, actor: "mca", title: "Chọn <em>Kết nối mạng Wi-Fi</em>", dur: 4,
+        voice: "Màn Kết nối mạng hiện 2 lựa chọn. Chọn Kết nối mạng Wi-Fi.",
+        action: [
+          "Màn 'Kết nối mạng' với 2 card lựa chọn.",
+          "Chọn 'Kết nối mạng Wi-Fi'."
+        ],
+        img: "assets/mca/3.png", motion: "Card highlight", status: "pending" },
+
+      { n: 7, actor: "mca", title: "MCA hiện <em>hướng dẫn 3 bước</em> trên Soundbox", dur: 7,
+        voice: "App hiện 3 bước cần thao tác trên thiết bị. Chưa bấm Tiếp tục ngay — chuyển sang Soundbox thực hiện trước.",
+        action: [
+          "Slide vào 3 numbered steps.",
+          "Pause để người xem đọc.",
+          "Nút 'Tiếp tục, Soundbox đã thông báo' ở dưới."
+        ],
+        img: "assets/mca/4%20a0.png", motion: "Staggered reveal · pause", status: "pending" },
+
+      { n: 8, actor: "device", title: "Soundbox · Vào chế độ <em>Cấu hình mạng WIFI</em>", dur: 10,
+        voice: "Nhấn giữ nút nguồn 3 giây để khởi động máy. Nhấn giữ M đến khi loa báo Cấu hình mạng. Nhấn cộng đến khi loa báo Cấu hình mạng WIFI.",
+        action: [
+          "Close-up hàng nút Soundbox.",
+          "Giữ ⏻ 3 giây → khởi động máy.",
+          "Giữ M → loa báo 'Cấu hình mạng'.",
+          "Nhấn + → loa báo 'Cấu hình mạng WIFI'.",
+          "Voice bubbles overlay khi loa báo."
+        ],
+        img: "assets/studio/wifi-step1-buttons-studio.png", motion: "Macro push-in + voice bubbles", status: "pending" },
+
+      { n: 9, actor: "mca", title: "MCA → bấm <em>Tiếp tục</em> + nhập SSID/password", dur: 10,
+        voice: "Quay lại MCA, bấm Tiếp tục, Soundbox đã thông báo. App hiện màn Chọn mạng Wi-Fi: mã thiết bị, SSID cho Soundbox, ô nhập mật khẩu Wi-Fi. Dùng Wi-Fi băng tần 2.4 GHz. Bấm Kết nối.",
+        action: [
+          "Bấm 'Tiếp tục, Soundbox đã thông báo'.",
+          "Màn 'Chọn mạng Wi-Fi' xuất hiện.",
+          "Field SSID + ô password.",
+          "Banner: 'Dùng Wi-Fi băng tần 2.4 GHz'.",
+          "Bấm Kết nối."
+        ],
+        img: "assets/mca/4%20a1.png", motion: "Form fill + keyboard slide-up", status: "pending" },
+
+      { n: 10, actor: "mca", title: "App <em>gửi thông tin Wi-Fi</em> đến Soundbox", dur: 5,
+        voice: "Modal Gửi thông tin kết nối thành công đến Soundbox hiện ra. Đợi Soundbox phát thông báo trước khi tiếp tục.",
+        action: [
+          "Modal slides up.",
+          "Icon dấu cấm Wi-Fi xanh (đang gửi).",
+          "Hint: 'Vui lòng chờ Soundbox phát thông báo...'."
+        ],
+        img: "assets/mca/4%20a2.png", motion: "Modal lift + pulse", status: "pending" },
+
+      { n: 11, actor: "device", title: "Soundbox kết nối Wi-Fi → bấm <em>+</em>", dur: 9,
+        voice: "Đợi loa báo Kết nối mạng Wifi thành công. Bấm giữ cộng, loa báo Đang tạo yêu cầu, rồi Kết nối thành công. Nếu chưa nghe báo thành công, tắt bật lại nguồn và lặp lại từ bước 8.",
+        action: [
+          "Loa Soundbox báo 'Kết nối mạng Wifi thành công'.",
+          "Bấm giữ +.",
+          "Loa báo 'Đang tạo yêu cầu' → 'Kết nối thành công'.",
+          "Fallback warning: tắt/bật nguồn nếu thất bại."
+        ],
+        img: "assets/studio/wifi-step1-buttons-studio.png", motion: "Audio wave + finger hold +", status: "pending" },
+
+      { n: 12, actor: "mca", title: "MCA → bấm <em>Tiếp tục</em> → màn Hoàn tất cấu hình", dur: 6,
+        voice: "Bấm Tiếp tục, Soundbox đã thông báo. App hiện 3 bước hoàn tất: chờ Soundbox update và chào mừng. Để máy chạy, không tác động lúc này.",
+        action: [
+          "Bấm 'Tiếp tục, Soundbox đã thông báo'.",
+          "Màn 'Hoàn tất cấu hình' với 3 bước hiển thị.",
+          "Progress bar/3 dot animation."
+        ],
+        img: "assets/mca/4%20a3.png", motion: "Slide forward + progress dots", status: "pending" },
+
+      { n: 13, actor: "device", title: "Soundbox <em>tự update + chào mừng</em>", dur: 8,
+        voice: "Soundbox tự update. Loa báo Kết nối thành công, rồi Update success. Thiết bị khởi động lại và loa báo Chào mừng bạn đến với VNPAY Soundbox.",
+        action: [
+          "Loa báo 'Kết nối thành công'.",
+          "Loa báo 'Update success'.",
+          "Thiết bị reboot.",
+          "Loa báo 'Chào mừng bạn đến với VNPAY Soundbox'.",
+          "Logo VNPAY gleam ngắn."
+        ],
+        img: "assets/studio/wifi-step3-front-studio.png", motion: "Hero spotlight + logo gleam", status: "pending" },
+
+      { n: 14, actor: "mca", title: "MCA → bấm <em>Hoàn tất</em> → màn thành công", dur: 8,
+        voice: "Bấm Hoàn tất, Soundbox đã thông báo. App hiện thông tin chi nhánh, điểm bán, mã thiết bị, phương thức kết nối Wi-Fi, trạng thái Hoạt động và Đã kết nối. Có thể bấm Phát thử tin để kiểm tra.",
+        action: [
+          "Bấm 'Hoàn tất, Soundbox đã thông báo'.",
+          "Màn thành công với check xanh.",
+          "Chi nhánh · Điểm bán · Mã thiết bị.",
+          "Phương thức kết nối: Wi-Fi.",
+          "Status: 'Hoạt động' + 'Đã kết nối'.",
+          "CTA 'Phát thử tin' nổi bật."
+        ],
+        img: "assets/mca/4%20a4.png", motion: "Success burst + info card", status: "pending" }
+    ]
+  },
+
+  cellular: {
+    title: "Cấu hình 4G",
+    eyebrow: "Flow B · 4G",
+    scenes: [
+      { n: 1, actor: "device", title: "Soundbox · Mở <em>nắp pin</em>", dur: 6,
+        voice: "Đảm bảo Soundbox đang tắt nguồn. Dùng tua vít mở ốc vít nắp lưng pin, mở nắp và lấy pin ra.",
+        action: [
+          "Đảm bảo thiết bị tắt nguồn (chưa cắm điện hoặc đã tắt).",
+          "Tua vít rotate-out ốc vít nắp lưng pin.",
+          "Mở nắp pin.",
+          "Lấy pin ra."
+        ],
+        img: "assets/studio/4g-step1-back-studio.png", motion: "Top-down dolly · close on lid", status: "approved" },
+
+      { n: 2, actor: "device", title: "Soundbox · Lắp <em>SIM</em> đã kích hoạt", dur: 8,
+        voice: "Đặt SIM với bề mặt chip hướng xuống dưới, ô vát bên trái khe. Lắp pin và đóng nắp pin. Chú ý: tắt nguồn trước khi lắp/tháo SIM, dùng SIM thường chưa cắt Micro Nano.",
+        action: [
+          "Macro SIM tray.",
+          "SIM slides vào, chip face-down, ô vát bên trái.",
+          "Lắp pin trở lại.",
+          "Đóng nắp pin.",
+          "Warning overlay: 'Tắt nguồn trước khi lắp/tháo SIM'.",
+          "Note: SIM thường, chưa cắt."
+        ],
+        img: "assets/studio/4g-step2-sim-studio.png", motion: "Macro slide + warning overlay", status: "approved" },
+
+      { n: 3, actor: "device", title: "Cắm nguồn cho <em>Soundbox</em>", dur: 4,
+        voice: "Cắm cáp USB-C vào Soundbox và nối nguồn.",
+        action: [
+          "Cắm cáp USB-C vào Soundbox và nối nguồn (adapter / cổng USB).",
+          "Đặt Soundbox cạnh điện thoại để dễ thao tác đan xen."
+        ],
+        img: null, isStart: true, motion: "Title card · static", status: "approved" },
+
+      { n: 4, actor: "mca", title: "Mở app MCA → tile <em>Soundbox</em>", dur: 6,
+        voice: "Đăng nhập MCA. Tile Soundbox nằm trong mục Dịch vụ mới.",
+        action: [
+          "Đăng nhập app MCA bằng tài khoản đại lý.",
+          "Trang chủ → mục 'Dịch vụ mới'.",
+          "Chạm tile Soundbox."
+        ],
+        img: "assets/mca/1.png", motion: "Phone tilt-in", status: "pending" },
+
+      { n: 5, actor: "mca", title: "Đăng ký <em>thiết bị mới</em>", dur: 4,
+        voice: "Tại màn Quản lý thiết bị Soundbox, bấm Đăng ký thiết bị mới.",
+        action: [
+          "Màn 'Quản lý thiết bị Soundbox'.",
+          "Bấm Đăng ký thiết bị mới."
+        ],
+        img: "assets/mca/2.png", motion: "Slide-up + CTA highlight", status: "pending" },
+
+      { n: 6, actor: "mca", title: "Quét <em>mã thiết bị</em>", dur: 7,
+        voice: "App mở camera. Quét mã vạch in trên thân Soundbox. Có thể bấm Nhập mã thủ công nếu cần.",
+        action: [
+          "Camera mở với khung quét.",
+          "Mã vạch nhận diện → tick xanh.",
+          "Fallback: 'Nhập mã thủ công'."
+        ],
+        img: "assets/mca/scan%20b.png", motion: "Camera frame zoom + tick", status: "pending" },
+
+      { n: 7, actor: "mca", title: "Chọn <em>điểm bán</em> cho thiết bị", dur: 6,
+        voice: "Tìm và tick chọn điểm bán, rồi bấm Xác nhận.",
+        action: [
+          "Danh sách điểm bán khả dụng.",
+          "Tick 1 điểm bán.",
+          "Nút Xác nhận chuyển active.",
+          "Bấm Xác nhận."
+        ],
+        img: "assets/mca/Danh%20s%C3%A1ch%20c%C3%A1c%20%C4%91i%E1%BB%83m%20b%C3%A1n%20kh%E1%BA%A3%20d%E1%BB%A5ng%20b.png", motion: "List highlight + CTA activate", status: "pending" },
+
+      { n: 8, actor: "mca", title: "Chọn <em>Kết nối mạng 4G</em>", dur: 4,
+        voice: "Tại màn Kết nối mạng, chọn Kết nối mạng 4G.",
+        action: [
+          "Màn 'Kết nối mạng' với 2 card.",
+          "Chọn 'Kết nối mạng 4G'."
+        ],
+        img: "assets/mca/3.png", motion: "Card highlight", status: "pending" },
+
+      { n: 9, actor: "mca", title: "MCA hiện <em>hướng dẫn 6 bước</em> trên Soundbox", dur: 8,
+        voice: "App hiện Kết nối 4G với 6 bước trên Soundbox. Chuyển sang Soundbox thao tác rồi quay lại app.",
+        action: [
+          "Slide vào 6 numbered steps.",
+          "Scroll list các bước.",
+          "Nút 'Hoàn tất, Soundbox đã thông báo' phía dưới."
+        ],
+        img: "assets/mca/4%20b0.png", motion: "Staggered reveal · scroll list", status: "pending" },
+
+      { n: 10, actor: "device", title: "Soundbox · Vào chế độ <em>Cấu hình mạng 4G</em>", dur: 11,
+        voice: "Nhấn giữ nút nguồn 3 giây để khởi động máy. Nhấn giữ M đến khi loa báo Cấu hình mạng. Nhấn trừ đến khi loa báo Cấu hình mạng 4G. Thiết bị tự kết nối và loa báo Kết nối mạng 4G thành công.",
+        action: [
+          "Close-up hàng nút Soundbox.",
+          "Giữ ⏻ 3 giây → khởi động máy.",
+          "Giữ M → loa báo 'Cấu hình mạng'.",
+          "Nhấn − → loa báo 'Cấu hình mạng 4G'.",
+          "Auto-connect indicator (4G signal pulse).",
+          "Loa báo 'Kết nối mạng 4G thành công'.",
+          "Voice bubbles overlay."
+        ],
+        img: "assets/studio/4g-step3-buttons-studio.png", motion: "Macro push-in + 4G signal pulse", status: "pending" },
+
+      { n: 11, actor: "device", title: "Soundbox · Bấm giữ <em>+</em> → chào mừng", dur: 8,
+        voice: "Bấm giữ cộng, loa báo Đang tạo yêu cầu rồi Kết nối thành công. Thiết bị khởi động lại và loa báo Chào mừng bạn đến với VNPAY Soundbox.",
+        action: [
+          "Bấm giữ +.",
+          "Loa báo 'Đang tạo yêu cầu' → 'Kết nối thành công'.",
+          "Thiết bị reboot sweep.",
+          "Front of device gleam.",
+          "Loa báo 'Chào mừng bạn đến với VNPAY Soundbox'."
+        ],
+        img: "assets/studio/wifi-step3-front-studio.png", motion: "Reboot sweep + hero reveal", status: "pending" },
+
+      { n: 12, actor: "mca", title: "MCA → bấm <em>Hoàn tất</em> → màn thành công", dur: 8,
+        voice: "Quay lại app, bấm Hoàn tất, Soundbox đã thông báo. App hiện chi nhánh, điểm bán, mã thiết bị, phương thức kết nối 4G, trạng thái Hoạt động và Đã kết nối. Có thể bấm Phát thử tin để kiểm tra.",
+        action: [
+          "Bấm 'Hoàn tất, Soundbox đã thông báo'.",
+          "Màn thành công với check xanh.",
+          "Chi nhánh · Điểm bán · Mã thiết bị.",
+          "Phương thức kết nối: 4G.",
+          "Status: 'Hoạt động' + 'Đã kết nối'.",
+          "CTA 'Phát thử tin' nổi bật."
+        ],
+        img: "assets/mca/4%20b1.png", motion: "Success burst + info card", status: "pending" }
+    ]
+  }
+};
+
+let CURRENT_FLOW = "wifi";
+let CURRENT_SCENE = 4;
+
+const $ = (sel) => document.querySelector(sel);
+
+function totalDur(scenes) { return scenes.reduce((s, x) => s + x.dur, 0); }
+function fmtTC(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = Math.round(seconds % 60);
+  return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+function startOf(scenes, idx) {
+  return scenes.slice(0, idx - 1).reduce((s, x) => s + x.dur, 0);
+}
+
+function renderSceneList() {
+  const f = FLOWS[CURRENT_FLOW];
+  const list = $("#sceneList");
+  list.innerHTML = "";
+  let cum = 0;
+  f.scenes.forEach((sc) => {
+    const tc = fmtTC(cum);
+    cum += sc.dur;
+    const el = document.createElement("div");
+    el.className = "scene-item" + (sc.n === CURRENT_SCENE ? " active" : "");
+    el.dataset.n = sc.n;
+    el.innerHTML = `
+      <div class="scene-num">${String(sc.n).padStart(2,"0")}</div>
+      <div class="scene-text">
+        <div class="actor ${sc.actor}">${sc.actor === "mca" ? "MCA" : "Soundbox"}</div>
+        <div class="title">${sc.title.replace(/<\/?em>/g,"")}</div>
+        <div class="tc">${tc} · ${sc.dur}s</div>
+      </div>
+      <div class="status-dot ${sc.status}"></div>
+    `;
+    el.addEventListener("click", () => { CURRENT_SCENE = sc.n; renderAll(); });
+    list.appendChild(el);
+  });
+}
+
+function renderStage() {
+  const f = FLOWS[CURRENT_FLOW];
+  const sc = f.scenes.find(s => s.n === CURRENT_SCENE);
+  if (!sc) return;
+  $("#sActor").innerHTML = (sc.actor === "mca" ? "📱 MCA app" : "🔊 Soundbox device");
+  $("#sActor").className = "scene-actor " + sc.actor;
+  $("#sTitle").innerHTML = sc.title;
+  const start = startOf(f.scenes, sc.n);
+  $("#sTcStart").textContent = fmtTC(start);
+  $("#sTcEnd").textContent = fmtTC(start + sc.dur);
+  $("#sDur").textContent = sc.dur.toFixed(1) + "s";
+
+  const inner = $("#canvasInner");
+  inner.className = "canvas-inner " + (sc.actor || "");
+  if (sc.isStart) {
+    inner.classList.add("placeholder");
+    inner.innerHTML = `<div class="start-mark">▶</div><div>Scene ${String(sc.n).padStart(2,"0")} · Start</div>`;
+  } else if (sc.img) {
+    inner.innerHTML = `<img src="${sc.img}" alt="${sc.title.replace(/<[^>]+>/g,"")}">`;
+  } else {
+    inner.innerHTML = `<div style="color:#aaa;font-family:Fraunces;font-style:italic;">No frame</div>`;
+  }
+
+  $("#cChipActor").textContent = sc.actor === "mca" ? "MCA" : "SOUNDBOX";
+  $("#cChipScene").textContent = "SCN " + String(sc.n).padStart(2,"0");
+
+  $("#sVoice").innerHTML = `<span class="quote-mark">“</span>${sc.voice}`;
+  $("#sAction").innerHTML = sc.action.map(a => `<li>${a}</li>`).join("");
+
+  $("#mType").textContent = sc.actor === "mca" ? "MCA screen" : "Soundbox device shot";
+  $("#mSrc").textContent = sc.isStart ? "—" : (sc.actor === "mca" ? "MCA screenshot" : "Studio HQ");
+  $("#mMotion").textContent = sc.motion || "Static";
+  $("#mAudio").textContent = sc.actor === "mca" ? "VO + UI SFX" : "VO + speaker SFX";
+
+  // status text
+  const statusMap = {
+    approved: { txt: `Approved`, cls: "approved" },
+    changes: { txt: `Changes requested`, cls: "changes" },
+    pending: { txt: `Pending review`, cls: "pending" }
+  };
+  const st = statusMap[sc.status] || statusMap.pending;
+  $("#sStatusText").innerHTML = `${st.txt}<span class="mono">— scene #${sc.n}</span>`;
+
+}
+
+function renderScrubber() {
+  const f = FLOWS[CURRENT_FLOW];
+  const track = $("#track");
+  track.innerHTML = "";
+  f.scenes.forEach((sc) => {
+    const tile = document.createElement("div");
+    tile.className = "tile actor-" + sc.actor + (sc.n === CURRENT_SCENE ? " active" : "");
+    tile.style.setProperty("--w", sc.dur);
+    tile.dataset.n = String(sc.n).padStart(2, "0");
+    tile.dataset.status = sc.status;
+    if (sc.img) {
+      tile.style.backgroundImage = `linear-gradient(180deg, rgba(14,23,38,0.0) 0%, rgba(14,23,38,0.55) 100%), url("${sc.img}")`;
+    } else {
+      tile.style.background = "linear-gradient(135deg, var(--ink) 0%, #1a2538 100%)";
+      tile.style.color = "var(--paper)";
+    }
+    const dur = document.createElement("span");
+    dur.className = "tile-dur";
+    dur.textContent = sc.dur + "s";
+    tile.appendChild(dur);
+    tile.addEventListener("click", () => { CURRENT_SCENE = sc.n; renderAll(); });
+    track.appendChild(tile);
+  });
+
+  const start = startOf(f.scenes, CURRENT_SCENE);
+  $("#heroEyebrow").textContent = f.eyebrow;
+  $("#heroTitle").innerHTML = `${f.title.split(" ")[0]} <em>${f.title.split(" ").slice(1).join(" ")}</em> — storyboard timeline`;
+  $("#heroNow").textContent = fmtTC(start);
+  $("#heroTotal").textContent = fmtTC(totalDur(f.scenes));
+  $("#heroScene").textContent = `Scene ${CURRENT_SCENE} of ${f.scenes.length}`;
+}
+
+function renderAll() {
+  renderSceneList();
+  renderStage();
+  renderScrubber();
+}
+
+// Tab switch
+document.querySelectorAll(".tab").forEach(t => {
+  t.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+    t.classList.add("active");
+    CURRENT_FLOW = t.dataset.flow;
+    CURRENT_SCENE = 1;
+    renderAll();
+  });
+});
+
+// Approve / changes buttons (mock toggle on current scene)
+$("#btnApprove").addEventListener("click", () => {
+  const f = FLOWS[CURRENT_FLOW];
+  const sc = f.scenes.find(s => s.n === CURRENT_SCENE);
+  sc.status = sc.status === "approved" ? "pending" : "approved";
+  renderAll();
+});
+$("#btnChanges").addEventListener("click", () => {
+  const f = FLOWS[CURRENT_FLOW];
+  const sc = f.scenes.find(s => s.n === CURRENT_SCENE);
+  sc.status = sc.status === "changes" ? "pending" : "changes";
+  renderAll();
+});
+
+// Keyboard nav
+document.addEventListener("keydown", (e) => {
+  const f = FLOWS[CURRENT_FLOW];
+  if (e.key === "ArrowRight" && CURRENT_SCENE < f.scenes.length) { CURRENT_SCENE++; renderAll(); }
+  if (e.key === "ArrowLeft" && CURRENT_SCENE > 1) { CURRENT_SCENE--; renderAll(); }
+});
+
+renderAll();
+</script>
+</body>
+</html>
