@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Đang tìm chuyến bay — Khứ hồi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --fg:rgba(255,255,255,.96);
+    --w100:#fff;
+    --w48:rgba(255,255,255,.48);
+    --w24:rgba(255,255,255,.24);
+    --w12:rgba(255,255,255,.12);
+    --w8:rgba(255,255,255,.08);
+    --navy:#1d428c;
+    --cap:9999px;
+    --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    font-family:var(--font);
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #16243f 0%, rgba(22,36,63,0) 60%),
+      #0a0e16;
+    min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    padding:40px 16px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .hold{--s:min(1, calc((100vw - 32px)/440px));width:calc(440px*var(--s));height:calc(956px*var(--s));position:relative;}
+
+  .screen{
+    position:absolute;top:0;left:0;
+    width:440px;height:956px;overflow:hidden;
+    border-radius:46px;background:#0b1f3a;
+    color:var(--fg);display:flex;flex-direction:column;isolation:isolate;
+    transform:scale(var(--s));transform-origin:top left;
+    box-shadow:0 40px 90px -30px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.04);
+  }
+
+  /* background */
+  .bg{position:absolute;inset:0;z-index:1;pointer-events:none;background:#0b1f3a;}
+  .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,18,37,.18),rgba(8,18,37,.04) 42%,rgba(8,18,37,.18));}
+  .bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center bottom;opacity:1;transition:opacity .24s var(--ease), transform .4s var(--ease);will-change:opacity,transform;}
+  .bg-img.is-switching{opacity:.42;transform:scale(1.015);}
+
+  /* app bar */
+  .appbar{position:relative;z-index:3;display:flex;flex-direction:column;}
+  .statusbar{height:54px;position:relative;}
+  .statusbar .time{position:absolute;left:40px;top:18px;width:54px;height:22px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600;line-height:22px;color:var(--fg);}
+  .statusbar .sbico{position:absolute;right:31.57px;top:22.6px;width:78.43px;height:13px;}
+  .appbar-c{height:60px;display:flex;align-items:center;padding:8px;}
+  .arrow-slot{width:44px;height:44px;display:flex;align-items:center;justify-content:center;}
+  .glass{background:var(--w8);border:1px solid var(--w8);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 8px 24px rgba(0,0,0,.08);}
+  .iconbtn{width:36px;height:36px;border-radius:var(--cap);display:flex;align-items:center;justify-content:center;}
+  .iconbtn img{width:20px;height:20px;}
+  .spacer{flex:1;}
+  .miniapp{display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:var(--cap);}
+  .miniapp .mi{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:none;border:0;border-radius:var(--cap);}
+  .miniapp .mi img.menu{width:15px;height:auto;}
+  .miniapp .mi img.x{width:13px;height:13px;}
+  .miniapp .vdiv{width:1px;height:20px;background:var(--w12);}
+  .iconbtn,.miniapp .mi{-webkit-appearance:none;appearance:none;cursor:pointer;font:inherit;color:inherit;padding:0;transition:background-color .12s ease;}
+  .iconbtn:hover{background:rgba(255,255,255,.16);}
+  .miniapp .mi:hover{background:rgba(255,255,255,.14);}
+  .iconbtn:active,.miniapp .mi:active{background:rgba(255,255,255,.22);}
+  .iconbtn:focus-visible,.miniapp .mi:focus-visible{outline:2px solid rgba(255,255,255,.92);outline-offset:2px;}
+
+  /* background picker */
+  .bg-picker{
+    position:absolute;left:50%;top:auto;bottom:calc(100% + 20px);z-index:5;transform:translateX(-50%);
+    display:flex;align-items:center;gap:8px;padding:8px;border-radius:22px;
+    background:rgba(8,18,37,.28);border:1px solid rgba(255,255,255,.12);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    box-shadow:0 14px 36px rgba(0,0,0,.14);
+  }
+  .bg-picker span{font-size:12px;font-weight:600;line-height:16px;color:rgba(255,255,255,.82);}
+  .bg-options{display:flex;align-items:center;gap:6px;}
+  .bg-option{
+    width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,.28);
+    padding:0;overflow:hidden;cursor:pointer;background:rgba(255,255,255,.08);
+    transition:transform .14s ease, border-color .14s ease, box-shadow .14s ease;
+  }
+  .bg-option img{width:100%;height:100%;display:block;object-fit:cover;}
+  .bg-option:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.72);}
+  .bg-option:focus-visible{outline:2px solid rgba(255,255,255,.94);outline-offset:2px;}
+  .bg-option.is-active{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.22);}
+
+  /* content */
+  .content{flex:1;display:flex;flex-direction:column;position:relative;z-index:2;width:440px;}
+  .hero{position:relative;height:282px;width:440px;flex:0 0 auto;}
+  .hero .plane{position:absolute;top:24px;left:-2px;width:444px;height:112px;}
+  .hero .titles{position:absolute;top:168px;left:16px;width:408px;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center;}
+  .hero .titles .h{font-size:24px;font-weight:600;line-height:28px;color:var(--w100);margin:0;}
+  .hero .titles .p{font-size:16px;font-weight:400;line-height:24px;color:var(--w48);margin:0;}
+  .hero .progress{position:absolute;top:246px;left:104px;width:232px;}
+  .hero .track{height:6px;width:100%;border-radius:var(--cap);background:var(--w24);position:relative;overflow:hidden;}
+  .hero .fill{position:absolute;top:0;left:0;height:6px;border-radius:3px;background:var(--w100);width:40%;}
+
+  .lower{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:24px;width:100%;}
+
+  /* recent card */
+  .recent{width:100%;padding:24px;border-radius:24px;background:rgba(29,66,140,.25);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;flex-direction:column;gap:20px;}
+  .btnrow{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;}
+  .chip{display:flex;align-items:center;gap:4px;}
+  .chip .ic{opacity:.5;display:flex;align-items:center;}
+  .chip .ic img{height:16px;width:auto;display:block;}
+  .chip .ic.rt img{transform:rotate(90deg);}
+  .chip span{font-size:14px;font-weight:500;line-height:20px;color:var(--fg);white-space:nowrap;}
+  .dotsep{width:4px;height:4px;}
+  .rdiv{height:1px;width:100%;background:var(--w12);}
+  .seg{display:flex;align-items:center;justify-content:space-between;width:100%;}
+  .seg .end{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .seg .end.r{align-items:flex-end;}
+  .seg .code{font-size:20px;font-weight:600;line-height:24px;color:var(--fg);white-space:nowrap;}
+  .seg .city{font-size:12px;font-weight:500;line-height:16px;color:var(--fg);opacity:.8;white-space:nowrap;}
+  .seg .mid{width:56px;display:flex;flex-direction:column;align-items:center;}
+  .conn{display:flex;align-items:center;gap:2px;padding:4px;}
+  .conn .dots{height:3px;width:14px;display:block;}
+  .conn .dots.flip{transform:scaleX(-1);}
+  .conn .arr{height:16px;width:auto;display:block;transform:rotate(90deg);}
+  .seg .date{font-size:12px;font-weight:500;line-height:16px;color:var(--fg);white-space:nowrap;}
+
+  /* bottom auto vertical carousel */
+  .feat{position:relative;width:100%;height:120px;}
+  .feat-slide{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;
+    opacity:0;pointer-events:none;visibility:hidden;
+    transform:translate3d(0,18px,0);
+    transition:opacity .46s var(--ease), transform .46s var(--ease), visibility 0s linear .46s;
+    will-change:opacity,transform;
+  }
+  .feat-slide.is-active{
+    opacity:1;visibility:visible;transform:translate3d(0,0,0);
+    transition-delay:0s,0s,0s;
+  }
+  .feat-slide.is-exiting{
+    opacity:0;visibility:visible;transform:translate3d(0,-18px,0);
+    transition-delay:0s,0s,0s;
+  }
+  .feat .circ{
+    width:64px;height:64px;border-radius:var(--cap);
+    display:flex;align-items:center;justify-content:center;
+    backdrop-filter:blur(10.67px);-webkit-backdrop-filter:blur(10.67px);
+    background:linear-gradient(rgba(29,66,140,.25),rgba(29,66,140,.25)),
+               linear-gradient(rgba(255,255,255,.16),rgba(255,255,255,.16));
+  }
+  .feat .circ img{width:32px;height:32px;}
+  .feat .ftxt{font-size:20px;font-weight:600;line-height:24px;color:var(--fg);text-align:center;width:100%;}
+
+  /* home indicator */
+  .homebar{position:absolute;left:50%;transform:translateX(-50%);bottom:0;width:440px;height:34px;z-index:4;}
+  .homebar i{position:absolute;bottom:8px;left:34.13%;right:33.87%;height:5px;border-radius:4px;background:#131315;display:block;}
+
+  /* one-shot entrance for the screen */
+  @keyframes screen-in{from{opacity:0;transform:scale(var(--s)) translateY(10px);}to{opacity:1;transform:scale(var(--s)) translateY(0);}}
+  .screen{animation:screen-in .55s var(--ease) both;}
+
+  /* indeterminate loading shimmer on the progress fill */
+  @keyframes load-sweep{0%{transform:translateX(-120%);}100%{transform:translateX(360%);}}
+  .hero .fill{animation:load-sweep 2.2s var(--ease) infinite;}
+
+  @media (prefers-reduced-motion:reduce){
+    .iconbtn,.miniapp .mi{transition:none;}
+    .screen{animation:none;}
+    .hero .fill{animation:none;width:69%;}
+    .feat-slide{transform:none;transition:opacity .24s linear, visibility 0s linear .24s;}
+    .feat-slide.is-active,.feat-slide.is-exiting{transform:none;}
+    .bg-img{transition:none;}
+  }
+</style>
+</head>
+<body>
+  <main class="hold">
+    <section class="screen" aria-label="Màn hình đang tìm chuyến bay — Khứ hồi">
+      <div class="bg" aria-hidden="true">
+        <img class="bg-img" id="bgImage" src="assets/bg-sunset.png" alt="" decoding="async">
+      </div>
+
+      <div class="appbar">
+        <div class="statusbar">
+          <div class="time">12:15</div>
+          <img class="sbico" src="assets/ico-statusbar.svg" alt="" aria-hidden="true">
+        </div>
+        <div class="appbar-c">
+          <div class="arrow-slot">
+            <button type="button" class="iconbtn glass" aria-label="Quay lại"><img src="assets/ic-back.svg" alt="" aria-hidden="true"></button>
+          </div>
+          <div class="spacer"></div>
+          <div class="miniapp glass">
+            <button type="button" class="mi" aria-label="Thu nhỏ"><img class="menu" src="assets/ic-miniapp-menu.svg" alt="" aria-hidden="true"></button>
+            <div class="vdiv"></div>
+            <button type="button" class="mi" aria-label="Đóng"><img class="x" src="assets/ic-close.svg" alt="" aria-hidden="true"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="hero">
+          <img class="plane" src="assets/plane-top.svg" alt="" aria-hidden="true">
+          <div class="titles">
+            <h2 class="h">Đang tìm chuyến bay</h2>
+            <p class="p">Vui lòng chờ trong giây lát...</p>
+          </div>
+          <div class="progress"><div class="track" role="progressbar" aria-label="Đang tìm chuyến bay" aria-valuetext="Đang tải"><div class="fill"></div></div></div>
+        </div>
+
+        <div class="lower">
+          <div class="recent">
+            <div class="btnrow">
+              <div class="chip"><span class="ic rt"><img src="assets/ic-roundtrip.svg" alt=""></span><span>Khứ hồi</span></div>
+              <img class="dotsep" src="assets/dot-sep.svg" alt="">
+              <div class="chip"><span class="ic pax"><img src="assets/ic-passenger.svg" alt=""></span><span>2 hành khách</span></div>
+            </div>
+            <div class="rdiv"></div>
+            <div class="seg">
+              <div class="end"><div class="code">HAN</div><div class="city">Hà Nội, VN</div></div>
+              <div class="mid">
+                <div class="conn"><img class="dots" src="assets/dots-1.svg" alt=""><img class="arr" src="assets/ic-oneway-arrow.svg" alt=""><img class="dots flip" src="assets/dots-2.svg" alt=""></div>
+                <div class="date">T6, 28/12/2026</div>
+              </div>
+              <div class="end r"><div class="code">DAD</div><div class="city">Đà Nẵng, VN</div></div>
+            </div>
+            <div class="seg">
+              <div class="end"><div class="code">DAD</div><div class="city">Đà Nẵng, VN</div></div>
+              <div class="mid">
+                <div class="conn"><img class="dots" src="assets/dots-3.svg" alt=""><img class="arr" src="assets/ic-oneway-arrow.svg" alt=""><img class="dots flip" src="assets/dots-4.svg" alt=""></div>
+                <div class="date">CN, 28/12/2026</div>
+              </div>
+              <div class="end r"><div class="code">SGN</div><div class="city">Hồ Chí Minh, VN</div></div>
+            </div>
+          </div>
+
+          <div class="feat" id="featCarousel" aria-label="Đặc điểm dịch vụ" aria-live="off" style="transform:translateY(-40px);">
+            <div class="feat-slide is-active" data-i="0">
+              <div class="circ"><img src="assets/ic-shield.svg" alt="" aria-hidden="true"></div>
+              <div class="ftxt">Thanh toán an toàn</div>
+            </div>
+            <div class="feat-slide" data-i="1">
+              <div class="circ"><img src="assets/ic-plane.svg" alt="" aria-hidden="true"></div>
+              <div class="ftxt">Hơn 100 hãng bay toàn cầu</div>
+            </div>
+            <div class="feat-slide" data-i="2">
+              <div class="circ"><img src="assets/ic-headset.svg" alt="" aria-hidden="true"></div>
+              <div class="ftxt">Hỗ trợ 24/7</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="homebar"><i></i></div>
+    </section>
+
+    <div class="bg-picker" aria-label="Chọn ảnh nền">
+      <span>Nền</span>
+      <div class="bg-options">
+        <button type="button" class="bg-option is-active" data-bg-src="assets/bg-sunset.png" aria-label="Đổi sang nền hoàng hôn" aria-pressed="true">
+          <img src="assets/bg-sunset.png" alt="" aria-hidden="true">
+        </button>
+        <button type="button" class="bg-option" data-bg-src="assets/mr0k26fq-Nhie__u-cha__ng.jpg" aria-label="Đổi sang nền xanh" aria-pressed="false">
+          <img src="assets/mr0k26fq-Nhie__u-cha__ng.jpg" alt="" aria-hidden="true">
+        </button>
+        <button type="button" class="bg-option" data-bg-src="assets/mr0igs7v-Generated-image-2-_1_.png" aria-label="Đổi sang nền 3" aria-pressed="false">
+          <img src="assets/mr0igs7v-Generated-image-2-_1_.png" alt="" aria-hidden="true">
+        </button>
+        <button type="button" class="bg-option" data-bg-src="assets/mr0jyz08-Generated-image-1-_3_.png" aria-label="Đổi sang nền 4" aria-pressed="false">
+          <img src="assets/mr0jyz08-Generated-image-1-_3_.png" alt="" aria-hidden="true">
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var bgImage = document.getElementById('bgImage');
+      var options = Array.prototype.slice.call(document.querySelectorAll('.bg-option'));
+      if (!bgImage || !options.length) return;
+
+      var storageKey = 'khu-hoi-background';
+      var defaultSrc = 'assets/bg-sunset.png';
+      var validSources = options.map(function (option) { return option.getAttribute('data-bg-src'); });
+
+      function setPressed(src) {
+        options.forEach(function (option) {
+          var active = option.getAttribute('data-bg-src') === src;
+          option.classList.toggle('is-active', active);
+          option.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+      }
+
+      function setBackground(src, shouldStore) {
+        if (validSources.indexOf(src) === -1) src = defaultSrc;
+        if (bgImage.getAttribute('src') === src) {
+          setPressed(src);
+          return;
+        }
+
+        bgImage.classList.add('is-switching');
+        window.setTimeout(function () {
+          bgImage.setAttribute('src', src);
+          setPressed(src);
+          if (shouldStore) {
+            try { window.localStorage.setItem(storageKey, src); } catch (err) {}
+          }
+        }, 90);
+      }
+
+      bgImage.addEventListener('load', function () {
+        bgImage.classList.remove('is-switching');
+      });
+
+      options.forEach(function (option) {
+        option.addEventListener('click', function () {
+          setBackground(option.getAttribute('data-bg-src'), true);
+        });
+      });
+
+      try {
+        setBackground(window.localStorage.getItem(storageKey) || defaultSrc, false);
+      } catch (err) {
+        setBackground(defaultSrc, false);
+      }
+    })();
+
+    (function () {
+      var carousel = document.getElementById('featCarousel');
+      if (!carousel) return;
+
+      var slides = Array.prototype.slice.call(carousel.querySelectorAll('.feat-slide'));
+      if (slides.length < 2) return;
+
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      var activeIndex = slides.findIndex(function (slide) { return slide.classList.contains('is-active'); });
+      var intervalId = 0;
+      var cleanupId = 0;
+
+      if (activeIndex < 0) activeIndex = 0;
+
+      function syncA11y() {
+        slides.forEach(function (slide, index) {
+          slide.setAttribute('aria-hidden', index === activeIndex ? 'false' : 'true');
+        });
+      }
+
+      function setInitialState() {
+        slides.forEach(function (slide, index) {
+          slide.classList.toggle('is-active', index === activeIndex);
+          slide.classList.remove('is-exiting');
+        });
+        syncA11y();
+      }
+
+      function showNext() {
+        var current = slides[activeIndex];
+        activeIndex = (activeIndex + 1) % slides.length;
+        var next = slides[activeIndex];
+
+        window.clearTimeout(cleanupId);
+        current.classList.remove('is-active');
+        current.classList.add('is-exiting');
+        next.classList.remove('is-exiting');
+        next.classList.add('is-active');
+        syncA11y();
+
+        cleanupId = window.setTimeout(function () {
+          current.classList.remove('is-exiting');
+        }, reduceMotion.matches ? 260 : 520);
+      }
+
+      function stopAuto() {
+        if (intervalId) window.clearInterval(intervalId);
+        intervalId = 0;
+      }
+
+      function startAuto() {
+        stopAuto();
+        if (document.hidden) return;
+        intervalId = window.setInterval(showNext, reduceMotion.matches ? 3600 : 2600);
+      }
+
+      setInitialState();
+      startAuto();
+
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) stopAuto(); else startAuto();
+      });
+
+      carousel.addEventListener('pointerenter', stopAuto);
+      carousel.addEventListener('pointerleave', startAuto);
+
+      if (reduceMotion.addEventListener) {
+        reduceMotion.addEventListener('change', startAuto);
+      } else if (reduceMotion.addListener) {
+        reduceMotion.addListener(startAuto);
+      }
+    })();
+  </script>
+</body>
+</html>
