@@ -2099,11 +2099,11 @@ function renderHist() {
     if (!buckets.has(key)) buckets.set(key, { y: k.y, m: k.m, items: [] });
     buckets.get(key).items.push(r);
   }
-  const groups = [...buckets.values()].sort((a, b) => (a.y * 100 + a.m) - (b.y * 100 + b.m));
+  const groups = [...buckets.values()].sort((a, b) => (b.y * 100 + b.m) - (a.y * 100 + a.m)); // recent month FIRST
 
   let idx = 0, html = '';
   for (const g of groups) {
-    g.items.sort((a, b) => receiptSortDate(a) - receiptSortDate(b)); // oldest→newest within month
+    g.items.sort((a, b) => receiptSortDate(b) - receiptSortDate(a)); // newest→oldest within month
     const label = g.m ? `Tháng ${g.m}/${g.y}` : 'Chưa xác định kỳ';
     html += `<div class="hist-month-hdr">${label}<span class="hist-month-count">${g.items.length}</span></div>`;
     for (const r of g.items) html += histCardHTML(r, idx++);
