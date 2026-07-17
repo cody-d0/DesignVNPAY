@@ -18,8 +18,11 @@ function setupSheet() {
 
 function doGet(e) {
   var lock = LockService.getScriptLock();
-  lock.tryLock(15000);
-  
+  // Check the lock was actually acquired — otherwise concurrent writes interleave.
+  if (!lock.tryLock(15000)) {
+    return out({success:false, error:'Server busy, try again'});
+  }
+
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
     if (!sheet) return out({success:false, error:'Run setupSheet() first'});
