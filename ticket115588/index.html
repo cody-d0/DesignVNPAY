@@ -2193,7 +2193,6 @@ function confirmPay() {
 
   const data = window._tenantData;
   const now = new Date();
-  const ts = now.toISOString();
   const timeStr = now.toLocaleString('vi-VN');
 
   // Save on tenant device
@@ -2201,27 +2200,20 @@ function confirmPay() {
 
   showPaidStamp(timeStr);
 
-  // Generate confirmation link for landlord
-  const base = location.hostname === 'localhost' || location.protocol === 'file:'
-    ? location.href.split('#')[0].split('?')[0]
-    : 'https://viewer.io.vn/ticket115588/';
-
-  const confirmUrl = `${base}#paid=${data.id}&t=${encodeURIComponent(ts)}`;
+  // Text-only confirmation for the landlord — the receipt URL is never re-shared
+  const confirmMsg = `Đã thanh toán phiếu thu ${fmtPeriodShort(data)} — Căn hộ ${currentRoom}: ${vnd(data.total)} — lúc ${timeStr} (mã phiếu ${data.id})`;
 
   // Try native share
   if (navigator.share) {
     navigator.share({
       title: 'Xác nhận thanh toán',
-      text: `Đã thanh toán phiếu thu ${fmtPeriodShort(data)} — Căn hộ ${currentRoom}: ${vnd(data.total)}`,
-      url: confirmUrl
+      text: confirmMsg
     }).catch(() => {
       // Fallback: copy to clipboard
-      navigator.clipboard.writeText(confirmUrl).then(() => toast('📋', 'Link xác nhận đã được sao chép!'));
+      navigator.clipboard.writeText(confirmMsg).then(() => toast('📋', 'Nội dung xác nhận đã sao chép — gửi cho chủ nhà!'));
     });
   } else {
-    navigator.clipboard.writeText(
-      `Đã thanh toán phiếu thu ${fmtPeriodShort(data)} — Căn hộ ${currentRoom}: ${vnd(data.total)}\n${confirmUrl}`
-    ).then(() => toast('📋', 'Nội dung xác nhận đã sao chép — gửi cho chủ nhà!'));
+    navigator.clipboard.writeText(confirmMsg).then(() => toast('📋', 'Nội dung xác nhận đã sao chép — gửi cho chủ nhà!'));
   }
 }
 
